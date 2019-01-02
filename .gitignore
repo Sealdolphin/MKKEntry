@@ -1,0 +1,13 @@
+#ignore out folder
+/out*
+#ignore intellij and stuff
+/.idea
+*.iml
+
+*.*
+
+#need .java and .jar
+!*.java
+!*.jar
+#need gitignore
+!*.gitignore
