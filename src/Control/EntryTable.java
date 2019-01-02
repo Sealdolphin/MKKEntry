@@ -58,10 +58,15 @@ public class EntryTable extends AbstractTableModel {
     }
 
     String[] exportEntries(ExportFilter filter){
-        String[] lines = new String[listOfEntries.size()];
-        for (int i = 0; i < listOfEntries.size(); i++) {
-            lines[i] = filter.applyFilter(listOfEntries.get(i));
+        ArrayList<String> lines = new ArrayList<>();
+
+        for (Entry entry :
+                listOfEntries) {
+            String filteredEntry = filter.applyFilter(entry);
+            if(filteredEntry != null)
+                lines.add(filteredEntry);
         }
-        return lines;
+        
+        return lines.toArray(new String[0]);
     }
 }

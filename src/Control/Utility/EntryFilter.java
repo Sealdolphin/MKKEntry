@@ -30,7 +30,7 @@ public class EntryFilter extends FileFilter implements ExportFilter{
                 return FilterType.TOMBOLA;
         }
     }
-    
+
     public static String[] filterTypes = {"Alapméretezett","Tombola"};
 
 
