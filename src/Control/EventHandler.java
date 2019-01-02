@@ -13,6 +13,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static Control.Utility.EntryFilter.FilterType.TOMBOLA;
+
 
 public class EventHandler {
 
@@ -29,7 +31,7 @@ public class EventHandler {
     }
 
     public void exportEntries() {
-        Object[] filters = {"Tombola", "Alapméretezett"};
+        Object[] filters = EntryFilter.filterTypes;
         String resultFilter = (String)JOptionPane.showInputDialog(
                 new JFrame(),
                 "Válassz az exportálási lehetőségek közül:",
@@ -37,7 +39,7 @@ public class EventHandler {
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 filters,
-                "Tombola");
+                filters[TOMBOLA.ordinal()]);
 
         if(resultFilter != null && resultFilter.length() > 0){
             //Let the export begin

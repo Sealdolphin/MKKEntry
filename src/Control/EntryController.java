@@ -1,6 +1,7 @@
 package Control;
 
 import Control.Utility.BarcodeReader;
+import Control.Utility.EntryFilter;
 import Control.Utility.ExportFilter;
 import Control.Utility.TombolaFilter;
 import Window.MainWindow;
@@ -18,6 +19,7 @@ import Window.ProgramStateListener;
 
 import static Control.Entry.Member.M_ENTERED;
 import static Control.Entry.Member.M_UID;
+import static Control.Utility.EntryFilter.parseFilterType;
 
 /**
  * The responsible unit for the operative decisions
@@ -202,12 +204,12 @@ public class EntryController implements ItemListener {
 
     void exportList(String resultFilter) {
         ExportFilter filter;
-        switch (resultFilter){
+        switch (parseFilterType(resultFilter)){
             default:
-            case "Alapméretezett":
-                filter = new DefaultFilter();
+            case DEFAULT:
+                filter = new EntryFilter();
                 break;
-            case "Tombola":
+            case TOMBOLA:
                 filter = new TombolaFilter();
                 break;
         }

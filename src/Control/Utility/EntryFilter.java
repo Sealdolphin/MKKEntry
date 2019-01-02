@@ -10,11 +10,28 @@ import static Control.Entry.Member.M_ENTERED;
 
 public class EntryFilter extends FileFilter implements ExportFilter{
 
-    private String[] validExtensions = {
+    private static String[] validExtensions = {
             "txt",
             "csv",
             "log"
     };
+
+    public enum FilterType {
+        DEFAULT,
+        TOMBOLA
+    }
+
+    public static FilterType parseFilterType(String type){
+        switch (type){
+            default:
+            case "Alapméretezett":
+                return FilterType.DEFAULT;
+            case "Tombola":
+                return FilterType.TOMBOLA;
+        }
+    }
+    
+    public static String[] filterTypes = {"Alapméretezett","Tombola"};
 
 
     @Override
