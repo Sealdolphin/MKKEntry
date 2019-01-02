@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static Control.Utility.EntryFilter.FilterType.TOMBOLA;
+import static Control.Utility.EntryFilter.separator;
 
 
 public class EventHandler {
@@ -119,11 +120,14 @@ public class EventHandler {
     }
 
     private static Entry createEntryFromString(String entryString, int offset) throws ParseException{
-        String[] props = entryString.split(String.valueOf(ExportFilter.separator));
-        //if(props.length < 5) throw new ParseException("Egy vagy több argumentum hiányzik",offset);
+        String[] props = entryString.split(separator);
         int uid;
         String name,enter = null ,leave = null;
         boolean entered = false;
+
+        System.out.println(entryString);
+
+        if(props.length < 1) throw new ParseException("A fájl sérült, vagy hibás",offset);
         try {
             uid = Integer.parseInt(props[0]);
         } catch (NumberFormatException format){

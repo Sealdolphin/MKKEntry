@@ -21,6 +21,8 @@ public class EntryFilter extends FileFilter implements ExportFilter{
         TOMBOLA
     }
 
+    public static final String separator = ",";
+
     public static FilterType parseFilterType(String type){
         switch (type){
             default:

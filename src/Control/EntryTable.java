@@ -66,7 +66,7 @@ public class EntryTable extends AbstractTableModel {
             if(filteredEntry != null)
                 lines.add(filteredEntry);
         }
-        
+
         return lines.toArray(new String[0]);
     }
 }
