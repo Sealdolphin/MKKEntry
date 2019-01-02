@@ -1,9 +1,14 @@
 package Control.Utility;
 
+import Control.Entry;
+
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
 
-public class EntryFilter extends FileFilter {
+import static Control.Entry.Member.*;
+import static Control.Entry.Member.M_ENTERED;
+
+public class EntryFilter extends FileFilter implements ExportFilter{
 
     private String[] validExtensions = {
             "txt",
@@ -45,6 +50,20 @@ public class EntryFilter extends FileFilter {
             ext = filename.substring(index + 1).toLowerCase();
 
         return ext;
+    }
+
+    @Override
+    public String applyFilter(Entry entry) {
+
+        return String.valueOf(entry.getValue(M_UID.ordinal())) +
+                separator +
+                entry.getValue(M_NAME.ordinal()) +
+                separator +
+                entry.getValue(M_ENTRY.ordinal()) +
+                separator +
+                entry.getValue(M_LEAVE.ordinal()) +
+                separator +
+                entry.getValue(M_ENTERED.ordinal());
     }
 
 }

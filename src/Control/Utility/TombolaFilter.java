@@ -4,7 +4,7 @@ import Control.Entry;
 
 import static Control.Entry.Member.M_UID;
 
-public class TombolaFilter extends ExportFilter {
+public class TombolaFilter implements ExportFilter {
 
     @Override
     public String applyFilter(Entry entry) {

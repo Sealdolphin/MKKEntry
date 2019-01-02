@@ -2,9 +2,10 @@ package Control.Utility;
 
 import Control.Entry;
 
-public abstract class ExportFilter {
-    public static final char separator = ',';
+public interface ExportFilter {
 
-    public abstract String applyFilter(Entry entry) ;
+    char separator = '.';
+
+    String applyFilter(Entry entry);
 
 }

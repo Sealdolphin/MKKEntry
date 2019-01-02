@@ -1,7 +1,6 @@
 package Control;
 
 import Control.Utility.BarcodeReader;
-import Control.Utility.DefaultFilter;
 import Control.Utility.ExportFilter;
 import Control.Utility.TombolaFilter;
 import Window.MainWindow;
