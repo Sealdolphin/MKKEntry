@@ -25,7 +25,7 @@ import static Control.Utility.EntryFilter.parseFilterType;
  * It contains the List of entries and also the selected port
  * It also contains a default selection of commands
  * These commands are read at the start of the program from config.ini
- * If config.ini file is missing or corrupted than the default command strings are loaded
+ * If options.ini file is missing or corrupted than the default command strings are loaded
  */
 public class EntryController implements ItemListener {
 

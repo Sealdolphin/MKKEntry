@@ -3,10 +3,15 @@ package Window;
 import Control.EntryController;
 import com.fazecast.jSerialComm.SerialPort;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 import static Control.EntryController.DEFAULT_OPTION;
+import static javax.swing.BoxLayout.PAGE_AXIS;
 
 /**
  * The class of the main program window
@@ -24,6 +29,10 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      * A label indicating whether the selected port / device is active
      */
     private JLabel lbdeviceActive = new JLabel();
+
+    private JPanel panelSide;
+
+    private boolean sideBar = false;
 
     /**
      * The EntryController
@@ -48,6 +57,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("MKK Beléptető rendszer");
 
+        panelSide = createSideMenu();
         add(createHeader(),BorderLayout.NORTH);
         add(createBody(),BorderLayout.CENTER);
         setJMenuBar(MainMenu.createMenu(controller.getDefaultEventHandler()));
@@ -74,7 +84,6 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         }
     }
 
-
     private JPanel createHeader(){
         //Header Components
         JPanel panelHeader = new JPanel();
@@ -88,12 +97,25 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         btnRefreshPorts.addActionListener(e -> eventRefreshPorts());
         //Device Combo Box
         cbSelectPort.addItemListener(controller);
+        //SideBar button
+        JButton btnOpenSideBar = new JButton("Opciók");
+        //Adding sidePanel
+        btnOpenSideBar.addActionListener(e -> {
+            sideBar = !sideBar;
+            if(sideBar)
+                add(panelSide,BorderLayout.EAST);
+            else{
+                remove(panelSide);
+            }
+            revalidate();
+        });
 
         //Assembling components
         panelHeader.add(new JLabel("Vonalkód olvasó:"));
         panelHeader.add(cbSelectPort);
         panelHeader.add(lbdeviceActive);
         panelHeader.add(btnRefreshPorts);
+        panelHeader.add(btnOpenSideBar);
 
         return panelHeader;
     }
@@ -126,6 +148,27 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         panelBody.add(spTable,BorderLayout.CENTER);
 
         return panelBody;
+    }
+
+    private JPanel createSideMenu(){
+        JPanel panelSide = new JPanel();
+        panelSide.setLayout(new BoxLayout(panelSide,PAGE_AXIS));
+        BufferedImage barCode = null;
+        try{
+            barCode = ImageIO.read(new File("Barcodes\\foodSale.png"));
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(new JFrame(),"Nem találom a vonalkódképet","Hiba",JOptionPane.ERROR_MESSAGE);
+        }
+
+        JLabel label = new JLabel("Nem hozott sütit vagy üdítőt");
+        label.setFont(new Font(label.getFont().getName(),Font.PLAIN,20));
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        panelSide.add(new ImagePanel(barCode));
+        panelSide.add(label);
+
+
+        return panelSide;
     }
 
     /**
@@ -164,6 +207,33 @@ public class MainWindow extends JFrame implements ProgramStateListener{
     @Override
     public void readBarCode(String barCode) {
         controller.receiveCode(barCode);
+    }
+
+    /**
+     * An empty JPanel containing a custom image
+     */
+    private class ImagePanel extends JPanel {
+        private BufferedImage image;
+
+        ImagePanel(BufferedImage image){
+            this.image = image;
+            //Set layout to fill available space
+            setLayout(new BorderLayout());
+            setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            if(image != null) {
+                //Adding Empty space to fill out image
+                add(Box.createRigidArea(new Dimension(image.getWidth(), image.getHeight())));
+                //Setting maximum height not to be infinity
+                setMaximumSize(new Dimension(image.getWidth(), image.getHeight()));
+            }
+        }
+
+        @Override
+        protected void paintComponent(Graphics g){
+            super.paintComponent(g);
+            g.drawImage(image,0,0,this);
+        }
+
     }
 
 }
