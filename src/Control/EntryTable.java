@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * The Table holding the entries and the model
+ */
 public class EntryTable extends AbstractTableModel {
 
     private List<Entry> listOfEntries;

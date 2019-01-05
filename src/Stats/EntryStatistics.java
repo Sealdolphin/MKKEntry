@@ -5,4 +5,6 @@ package Stats;
  */
 public class EntryStatistics {
 
+
+
 }

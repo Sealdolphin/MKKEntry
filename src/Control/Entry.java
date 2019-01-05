@@ -20,7 +20,7 @@ public class Entry {
     /**
      * A unique ID
      */
-    private final int uniqueId;
+    private final String uniqueId;
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss");
 
@@ -48,12 +48,12 @@ public class Entry {
      * Creates a new guest with a unique ID number
      * @param id the unique number
      */
-    public Entry(int id){
+    public Entry(String id){
         uniqueId = id;
         name = "Külsős Belépő";
     }
 
-    public Entry(int id, String name, String entry, String leave, boolean is_entered){
+    public Entry(String id, String name, String entry, String leave, boolean is_entered){
         uniqueId = id;
         this.name = name;
         entered = is_entered;
@@ -79,7 +79,7 @@ public class Entry {
     }
 
     public Entry(){
-        uniqueId = -1;
+        uniqueId = "DMYID";
         entered = false;
         entryStamp = LocalDateTime.now().format(formatter);
         leaveStamp = LocalDateTime.now().format(formatter);

@@ -1,7 +1,6 @@
 package Control;
 
 import Control.Utility.EntryFilter;
-import Control.Utility.ExportFilter;
 import Window.ProgramStateListener;
 
 import javax.swing.*;
@@ -11,6 +10,7 @@ import java.awt.*;
 import java.io.*;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static Control.Utility.EntryFilter.FilterType.TOMBOLA;
@@ -121,15 +121,12 @@ public class EventHandler {
 
     private static Entry createEntryFromString(String entryString, int offset) throws ParseException{
         String[] props = entryString.split(separator);
-        int uid;
-        String name,enter = null ,leave = null;
+        String uid, name,enter = null ,leave = null;
         boolean entered = false;
-
-        System.out.println(entryString);
 
         if(props.length < 1) throw new ParseException("A fájl sérült, vagy hibás",offset);
         try {
-            uid = Integer.parseInt(props[0]);
+            uid = props[0];
         } catch (NumberFormatException format){
             throw new ParseException("Egyedi azonosító sérült, vagy érvénytelen",offset);
         }
@@ -218,5 +215,42 @@ public class EventHandler {
                 );
             }
         }
+    }
+
+    static HashMap<String,String> SetDefaultCommands(){
+        BufferedReader optionsReader;
+        HashMap<String,String> commands = new HashMap<>();
+        try {
+            optionsReader = new BufferedReader(new InputStreamReader(new FileInputStream("options.ini")));
+            String line;
+            while (true) {
+                line = optionsReader.readLine();
+                if(line == null) break;
+                String[] strings = line.split(" = ");
+                commands.put(strings[0],strings[1]);
+            }
+
+        } catch (FileNotFoundException ex) {
+            commands.put("entry_code","MKK");
+            commands.put("leave_code","GL");
+            commands.put("delete_code","MOD");
+            JOptionPane.showMessageDialog(new JFrame(),"Az options.ini fájl nem található.\n" +
+                    "Új fájl létrehozása alapméretezett paraméterekkel","Figyelem",JOptionPane.WARNING_MESSAGE);
+            File optionsFile = new File("options.ini");
+            try{
+                PrintWriter optionsWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(optionsFile)));
+                optionsWriter.println("entry_code = " + commands.get("entry_code"));
+                optionsWriter.println("leave_code = " + commands.get("leave_code"));
+                optionsWriter.println("delete_code = " + commands.get("delete_code"));
+            } catch (FileNotFoundException ex2) {
+                JOptionPane.showMessageDialog(new JFrame(),"Az options.ini fájl nem hozható létre.\n" +
+                        "A program nem volt képes inicializálni a változókat","Hiba",JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (IOException io) {
+            JOptionPane.showMessageDialog(new JFrame(),"Az options.ini fájl sérült.\n" +
+                    "Fájlművelet közben hiba történt:\n" +
+                    io.getMessage(),"Figyelem",JOptionPane.WARNING_MESSAGE);
+        }
+        return commands;
     }
 }

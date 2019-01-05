@@ -16,7 +16,6 @@ import java.util.List;
 
 import Window.ProgramStateListener;
 
-
 import static Control.Entry.Member.M_ENTERED;
 import static Control.Entry.Member.M_UID;
 import static Control.Utility.EntryFilter.parseFilterType;
@@ -39,9 +38,8 @@ public class EntryController implements ItemListener {
         FL_DEFAULT
     }
 
-    private static String ENTRY_CODE = "MKK";                       //Entry code: a short string that indicates valuable data
-    private static String GUEST_LEAVE = "GL";                       //Command string for leaving guest
-    private static String DELETE_GUEST = "MOD";                     //Command string for deleting guest
+    //Temporary, will be replaced with config.ini
+    private static String ENTRY_CODE;                               //Entry code: a short string that indicates valuable data
     public static final String DEFAULT_OPTION = "Válassz egyet";    //String for null option
 
     private JTable tableView;
@@ -72,14 +70,17 @@ public class EntryController implements ItemListener {
      * Reads the config.ini file and sets up default settings
      */
     public EntryController(){
-        SetDefaultCommands();
+        //Setting up command list
+        HashMap<String, String> optionsMap = EventHandler.SetDefaultCommands();
+        ENTRY_CODE = optionsMap.get("entry_code");
+        commandList.put(optionsMap.get("leave_code"),readCodeFlag.FL_IS_LEAVING);
+        commandList.put(optionsMap.get("delete_code"),readCodeFlag.FL_IS_DELETE);
+
+        System.out.println("ENTRY = " + ENTRY_CODE);
+        System.out.println(commandList);
+
         defaultEventHandler = new EventHandler(this);
         entryList = new EntryTable();
-    }
-
-    private void SetDefaultCommands(){
-        commandList.put(GUEST_LEAVE,readCodeFlag.FL_IS_LEAVING);
-        commandList.put(DELETE_GUEST,readCodeFlag.FL_IS_DELETE);
     }
 
     /**
@@ -123,7 +124,7 @@ public class EntryController implements ItemListener {
             System.out.println("Entry code detected!");
             //Handling entry code correct to the current read operation
             try {
-                int codeNumber = Integer.parseInt(code.replaceFirst(ENTRY_CODE, "").trim());
+                String codeNumber = code.replaceFirst(ENTRY_CODE, "").trim();
                 Entry guest = entryList.stream().filter(e -> e.getValue(M_UID.ordinal()).equals(codeNumber)).findAny().orElse(null);
                 switch (readingFlag) {
                     default:
@@ -150,9 +151,6 @@ public class EntryController implements ItemListener {
                 }
                 refreshViewModel();
 
-            } catch (NumberFormatException ex){
-                //Incoming code was invalid
-                errorMsg = "A megadott kód nem megfelelő formátumú!";
             } finally {
                 readingFlag = readCodeFlag.FL_DEFAULT;
                 if(!errorMsg.equals("")) {
