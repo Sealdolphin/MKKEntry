@@ -10,7 +10,6 @@ import java.awt.*;
 import java.io.*;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static Control.Utility.EntryFilter.FilterType.TOMBOLA;
@@ -18,13 +17,6 @@ import static Control.Utility.EntryFilter.separator;
 
 
 public class EventHandler {
-
-    /**
-     * The Defaults of the command strings
-     */
-    private static String[] defaults = {
-            "entry_code","leave_code","delete_code","food_sale"
-    };
 
     private boolean programState = false;
     private String saveFileName = "";
@@ -253,7 +245,7 @@ public class EventHandler {
      * If the file does not exist, the creates one
      * If it cannot create the new options.ini file, then proceeds without creation
      * @return a HashMap with the different command words. For reference see defaults.
-     */
+     *
     static HashMap<String,String> SetDefaultCommands(){
         BufferedReader optionsReader;
         HashMap<String,String> commands = new HashMap<>();
@@ -290,7 +282,7 @@ public class EventHandler {
                     io.getMessage(),"Figyelem",JOptionPane.WARNING_MESSAGE);
         }
         return commands;
-    }
+    }*/
 
 
 }

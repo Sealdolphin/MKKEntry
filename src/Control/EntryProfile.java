@@ -2,6 +2,8 @@ package Control;
 
 import Control.EntryModifier.Discount;
 import Control.EntryModifier.TicketType;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,23 +18,44 @@ import static javax.swing.BoxLayout.PAGE_AXIS;
 
 public class EntryProfile {
     private String name;
+
     private List<TicketType> types;
     private List<Discount> discounts;
+    private String[] defaultCommands;
+    private String entryCode;
 
-    public EntryProfile(){
+    /**
+     * The Defaults of the command strings
+     */
+    private static String[] defaults = {
+            "leave","delete"
+    };
+
+    private EntryProfile(){
         types = new ArrayList<>();
         discounts = new ArrayList<>();
-        //TODO: Custom profiles
+    }
 
-        discounts.add(new Discount("Büfé",
-                "Barcodes\\foodSale.png",
-                "Hozott sütit, vagy üdítőt",
-                "FOOD_SALE",500));
-        discounts.add(new Discount("Büfé",
-                "Barcodes\\foodSale.png",
-                "Hozott sütit, vagy üdítőt",
-                "FOOD_SALE",500));
+    /**
+     * Deafult constructor
+     * @param jsonProfile the JSONObject of the Profile
+     * @return a fully parsed profile
+     */
+    public static EntryProfile parseProfileFromJson(JSONObject jsonProfile){
+        EntryProfile profile = new EntryProfile();
+        //Loading discounts
+        JSONArray jsonDiscounts = (JSONArray) jsonProfile.get("discounts");
+        for (Object discountObject: jsonDiscounts) {
+            profile.discounts.add(Discount.parseDiscountFromJson((JSONObject)discountObject));
+        }
+        profile.name = jsonProfile.get("name").toString();
+        profile.entryCode = jsonProfile.get("entry_code").toString();
+        String[] defaults = new String[2];
+        defaults[0] = ((JSONObject)jsonProfile.get("commands")).get("leave").toString();
+        defaults[1] = ((JSONObject)jsonProfile.get("commands")).get("delete").toString();
+        profile.defaultCommands = defaults;
 
+        return profile;
     }
 
     /**
@@ -47,8 +70,7 @@ public class EntryProfile {
         //Iterate through discounts
         BufferedImage barCode;
 
-        for (Discount discount :
-                discounts) {
+        for (Discount discount : discounts) {
             try{
                 //Adding image and image label
                 barCode = ImageIO.read(new File(discount.getImage()));
@@ -58,22 +80,27 @@ public class EntryProfile {
                 label.setToolTipText(discount.getName());
                 panelSide.add(new ImagePanel(barCode));
                 panelSide.add(label);
+                System.out.println("Loaded discount: " + discount.getName());
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(new JFrame(),"Nem találom a vonalkódképet a kedvezményhez:" +
-                        discount.getName(),"Hiba",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(new JFrame(),"Nem találom a vonalkódképet a kedvezményhez\n" +
+                        discount.getName() + ": " + discount.getImage(),"Hiba",JOptionPane.ERROR_MESSAGE);
             }
         }
 
         return panelSide;
     }
 
-    List<String> getDiscountMeta(){
-        List<String> discountMetadata = new ArrayList<>();
-        for (Discount discount :
-                discounts) {
-            discountMetadata.add(discount.getMeta());
+    public String getName() {
+        return name;
+    }
+
+    void setController(EntryController controller) {
+        //Set MetaData for discounts
+        List<String> discountMeta = new ArrayList<>();
+        for (Discount discount : discounts) {
+            discountMeta.add(discount.getMeta());
         }
-        return discountMetadata;
+        controller.setMetaData(entryCode,discountMeta,defaultCommands);
     }
 
     /**

@@ -3,9 +3,19 @@ package Window;
 import Control.EntryController;
 import Control.EntryProfile;
 import com.fazecast.jSerialComm.SerialPort;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import static Control.EntryController.DEFAULT_OPTION;
 
@@ -28,7 +38,8 @@ public class MainWindow extends JFrame implements ProgramStateListener{
     private JPanel panelSide;
     private JTable entryView;
 
-    private EntryProfile profile;
+    private EntryProfile activeProfile;
+    private List<EntryProfile> profiles;
 
     private boolean sideBar = false;
 
@@ -44,11 +55,18 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      * Builds the main window of the program
      */
     MainWindow(){
-        //Loading profile TODO: reload profile etc.
-        profile = new EntryProfile();
+        //Loading activeProfile TODO: reload activeProfile etc.
+        try {
+            loadProfiles();
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(new JFrame(),"Nem tudtam betölteni a profilokat!\n"+
+                    "A profiles.json fájl hiányzik, vagy sérült.","Hiba",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         //Creating EntryController
-        controller = new EntryController(profile);
+        controller = new EntryController(activeProfile);
         controller.addProgramStateListener(this);
 
         //Setting Layout for header and body
@@ -58,7 +76,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("MKK Beléptető rendszer");
 
-        panelSide = profile.createSideMenu();
+        panelSide = activeProfile.createSideMenu();
         add(createHeader(),BorderLayout.NORTH);
         add(createBody(),BorderLayout.CENTER);
         setJMenuBar(MainMenu.createMenu(controller.getDefaultEventHandler()));
@@ -68,6 +86,29 @@ public class MainWindow extends JFrame implements ProgramStateListener{
 
         //Pack window
         pack();
+
+    }
+
+    /**
+     * TODO: Work in progress
+     */
+    private void loadProfiles() throws IOException, ParseException {
+
+        profiles = new ArrayList<>();
+
+        JSONParser parser = new JSONParser();
+        JSONObject obj = null;
+        obj = (JSONObject) parser.parse(new BufferedReader(new InputStreamReader(new FileInputStream("profiles.json"))));
+        JSONArray jsonProfiles = (JSONArray)obj.get("profiles");
+        for (Object p: jsonProfiles) {
+            profiles.add(EntryProfile.parseProfileFromJson((JSONObject) p));
+        }
+        String active = obj.get("active").toString();
+        for (EntryProfile profile : profiles) {
+            if(active.equals(profile.getName())){
+                activeProfile = profile;
+            }
+        }
 
     }
 
@@ -117,6 +158,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         });
 
         //Assembling components
+        panelHeader.add(new Label("PROFIL: " + activeProfile.getName()));
         panelHeader.add(new JLabel("Vonalkód olvasó:"));
         panelHeader.add(cbSelectPort);
         panelHeader.add(lbdeviceActive);
@@ -199,7 +241,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      */
     @Override
     public void renewState() {
-        controller = new EntryController(profile);
+        controller = new EntryController(activeProfile);
         controller.addProgramStateListener(this);
         controller.setTable(entryView);
     }

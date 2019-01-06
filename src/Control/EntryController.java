@@ -74,12 +74,7 @@ public class EntryController implements ItemListener {
      */
     public EntryController(EntryProfile profile){
         //Setting up command list
-        HashMap<String, String> optionsMap = EventHandler.SetDefaultCommands();
-        ENTRY_CODE = optionsMap.get("entry_code");
-        commandList.put(optionsMap.get("leave_code"),readCodeFlag.FL_IS_LEAVING);
-        commandList.put(optionsMap.get("delete_code"),readCodeFlag.FL_IS_DELETE);
-
-        discountMetaData = profile.getDiscountMeta();
+        profile.setController(this);
 
         System.out.println("ENTRY = " + ENTRY_CODE);
         System.out.println(commandList);
@@ -208,6 +203,14 @@ public class EntryController implements ItemListener {
                 break;
         }
         defaultEventHandler.saveFile(entryList.exportEntries(filter));
+    }
+
+    void setMetaData(String entryCode, List<String> discountMeta, String[] defaultMeta) {
+        ENTRY_CODE = entryCode;
+
+        commandList.put(defaultMeta[0],readCodeFlag.FL_IS_LEAVING);
+        commandList.put(defaultMeta[1],readCodeFlag.FL_IS_DELETE);
+        this.discountMetaData = discountMeta;
     }
 
     /**
