@@ -12,6 +12,7 @@ abstract class MainMenu {
         menuBar.add(createFileMenu(handler));
         menuBar.add(createEditMenu(handler));
         menuBar.add(createChartsMenu(handler));
+        menuBar.add(createProfileMenu(handler));
 
         return menuBar;
     }
@@ -47,6 +48,18 @@ abstract class MainMenu {
         fileMenu.add(miExport);
 
         return fileMenu;
+    }
+
+    private static JMenu createProfileMenu(EventHandler handler) {
+        JMenu menuProfiles = new JMenu("Profilok");
+
+        JMenuItem miChangeProfile = new JMenuItem("Profil váltása");
+        miChangeProfile.addActionListener(e -> handler.changeProfile());
+
+        menuProfiles.add(new JMenuItem("Új profil"));
+        menuProfiles.add(miChangeProfile);
+
+        return menuProfiles;
     }
 
     private static JMenu createChartsMenu(EventHandler handler){

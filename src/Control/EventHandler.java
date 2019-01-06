@@ -14,6 +14,7 @@ import java.util.List;
 
 import static Control.Utility.EntryFilter.FilterType.TOMBOLA;
 import static Control.Utility.EntryFilter.separator;
+import static javax.swing.JOptionPane.YES_OPTION;
 
 
 public class EventHandler {
@@ -21,12 +22,16 @@ public class EventHandler {
     private boolean programState = false;
     private String saveFileName = "";
     private EntryController controller;
+    private String activeProfile;
+    private String[] profileNames;
 
     private List<ProgramStateListener> listenerList = new ArrayList<>();
 
     private final JFileChooser fileDialog = new JFileChooser(System.getProperty("user.home"));
 
-    EventHandler(EntryController c){
+    EventHandler(EntryController c, String profile, String[] profiles){
+        activeProfile = profile;
+        profileNames = profiles;
         controller = c;
     }
 
@@ -48,14 +53,15 @@ public class EventHandler {
     }
 
     public void renewState() {
-        String question = "A munkád nincs még elmentve\n" +
-                "és ha továbblépsz törlésre kerül.\n" +
-                "Folytatod a műveletet?";
-        if(programState && ConfirmAction(question) == JOptionPane.YES_OPTION){
-            for (ProgramStateListener listener :
-                    listenerList) {
-                listener.renewState();
-            }
+        if(!programState) {
+            String question = "A munkád nincs még elmentve\n" +
+                    "és ha továbblépsz törlésre kerül.\n" +
+                    "Folytatod a műveletet?";
+            if (ConfirmAction(question) != YES_OPTION) return;
+        }
+        for (ProgramStateListener listener :
+                listenerList) {
+            listener.renewState();
         }
     }
 
@@ -83,6 +89,30 @@ public class EventHandler {
                         "Hiba", JOptionPane.ERROR_MESSAGE);
             }
 
+        }
+    }
+
+    public void changeProfile(){
+        Object[] profiles = profileNames;
+        String result = (String)JOptionPane.showInputDialog(
+                new JFrame(),
+                "Válassz az profilok közül:",
+                "Profil módosítása",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                profiles,
+                activeProfile);
+        String question = "Ha új profilra váltasz,\n" +
+                "a jelenlegi munkádat nem folytathatod tovább.\n" +
+                "Minden elmentetlen munkád elvész\n" +
+                "Folytatod a műveletet?";
+        if(result != null && ConfirmAction(question) == YES_OPTION) {
+            for (ProgramStateListener listener :
+                    listenerList) {
+                listener.changeProfile(result);
+            }
+            programState = true;
+            renewState();
         }
     }
 
@@ -240,49 +270,6 @@ public class EventHandler {
         }
     }
 
-    /**
-     * Creates the default command words from an existing options.ini file
-     * If the file does not exist, the creates one
-     * If it cannot create the new options.ini file, then proceeds without creation
-     * @return a HashMap with the different command words. For reference see defaults.
-     *
-    static HashMap<String,String> SetDefaultCommands(){
-        BufferedReader optionsReader;
-        HashMap<String,String> commands = new HashMap<>();
-        try {
-            optionsReader = new BufferedReader(new InputStreamReader(new FileInputStream("options.ini")));
-            String line;
-            while (true) {
-                line = optionsReader.readLine();
-                if(line == null) break;
-                String[] strings = line.split(" = ");
-                commands.put(strings[0],strings[1]);
-            }
-
-        } catch (FileNotFoundException ex) {
-            commands.put(defaults[0],"MKK");
-            commands.put(defaults[1],"GL");
-            commands.put(defaults[2],"MOD");
-            commands.put(defaults[3],"FOOD_SALE");
-            JOptionPane.showMessageDialog(new JFrame(),"Az options.ini fájl nem található.\n" +
-                    "Új fájl létrehozása alapméretezett paraméterekkel","Figyelem",JOptionPane.WARNING_MESSAGE);
-            File optionsFile = new File("options.ini");
-            try{
-                PrintWriter optionsWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(optionsFile)));
-                for (String commandString : defaults) {
-                    optionsWriter.println(commandString + " = " + commands.get(commandString));
-                }
-            } catch (FileNotFoundException ex2) {
-                JOptionPane.showMessageDialog(new JFrame(),"Az options.ini fájl nem hozható létre.\n" +
-                        "A program nem volt képes inicializálni a változókat","Hiba",JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (IOException io) {
-            JOptionPane.showMessageDialog(new JFrame(),"Az options.ini fájl sérült.\n" +
-                    "Fájlművelet közben hiba történt:\n" +
-                    io.getMessage(),"Figyelem",JOptionPane.WARNING_MESSAGE);
-        }
-        return commands;
-    }*/
 
 
 }

@@ -72,14 +72,14 @@ public class EntryController implements ItemListener {
      * Default Constructor for the controller
      * Reads the config.ini file and sets up default settings
      */
-    public EntryController(EntryProfile profile){
+    public EntryController(EntryProfile profile, String[] profileNames){
         //Setting up command list
         profile.setController(this);
 
         System.out.println("ENTRY = " + ENTRY_CODE);
         System.out.println(commandList);
 
-        defaultEventHandler = new EventHandler(this);
+        defaultEventHandler = new EventHandler(this,profile.getName(),profileNames);
         entryList = new EntryTable();
     }
 
@@ -212,6 +212,7 @@ public class EntryController implements ItemListener {
         commandList.put(defaultMeta[1],readCodeFlag.FL_IS_DELETE);
         this.discountMetaData = discountMeta;
     }
+
 
     /**
      * Implemented from ItemListener (JComboBoxListener)

@@ -66,7 +66,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         }
 
         //Creating EntryController
-        controller = new EntryController(activeProfile);
+        controller = new EntryController(activeProfile,getProfileNames());
         controller.addProgramStateListener(this);
 
         //Setting Layout for header and body
@@ -221,6 +221,14 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         pack();
     }
 
+    private String[] getProfileNames(){
+        String[] names = new String[profiles.size()];
+        for (int i = 0; i < profiles.size(); i++) {
+            names[i] = profiles.get(i).getName();
+        }
+        return names;
+    }
+
     /**
      * Inherited from ProgramListener
      * Changes the program's save state if the content changes
@@ -241,7 +249,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      */
     @Override
     public void renewState() {
-        controller = new EntryController(activeProfile);
+        controller = new EntryController(activeProfile,getProfileNames());
         controller.addProgramStateListener(this);
         controller.setTable(entryView);
     }
@@ -254,6 +262,12 @@ public class MainWindow extends JFrame implements ProgramStateListener{
     @Override
     public void readBarCode(String barCode) {
         controller.receiveCode(barCode);
+    }
+
+    @Override
+    public void changeProfile(String profileName) {
+        activeProfile = profiles.stream().filter(p -> p.getName().equals(profileName)).findAny().orElse(activeProfile);
+        //Auto renew state?
     }
 
 

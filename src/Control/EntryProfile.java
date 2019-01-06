@@ -50,10 +50,10 @@ public class EntryProfile {
         }
         profile.name = jsonProfile.get("name").toString();
         profile.entryCode = jsonProfile.get("entry_code").toString();
-        String[] defaults = new String[2];
-        defaults[0] = ((JSONObject)jsonProfile.get("commands")).get("leave").toString();
-        defaults[1] = ((JSONObject)jsonProfile.get("commands")).get("delete").toString();
-        profile.defaultCommands = defaults;
+        String[] commands = new String[2];
+        commands[0] = ((JSONObject)jsonProfile.get("commands")).get(defaults[0]).toString();
+        commands[1] = ((JSONObject)jsonProfile.get("commands")).get(defaults[1]).toString();
+        profile.defaultCommands = commands;
 
         return profile;
     }
@@ -94,6 +94,10 @@ public class EntryProfile {
         return name;
     }
 
+    /**
+     * Sets up the controller meta information from the stored profile
+     * @param controller the controller to be set up
+     */
     void setController(EntryController controller) {
         //Set MetaData for discounts
         List<String> discountMeta = new ArrayList<>();
