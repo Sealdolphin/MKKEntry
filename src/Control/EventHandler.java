@@ -19,6 +19,13 @@ import static Control.Utility.EntryFilter.separator;
 
 public class EventHandler {
 
+    /**
+     * The Defaults of the command strings
+     */
+    private static String[] defaults = {
+            "entry_code","leave_code","delete_code","food_sale"
+    };
+
     private boolean programState = false;
     private String saveFileName = "";
     private EntryController controller;
@@ -119,6 +126,13 @@ public class EventHandler {
         return importList;
     }
 
+    /**
+     * Creates a new Entry class from an input string
+     * @param entryString the input string
+     * @param offset the line where the input is found in a file
+     * @return a new Entry with correct attributes
+     * @throws ParseException if the parsing of the string fails
+     */
     private static Entry createEntryFromString(String entryString, int offset) throws ParseException{
         String[] props = entryString.split(separator);
         String uid, name,enter = null ,leave = null;
@@ -154,6 +168,10 @@ public class EventHandler {
         }
     }
 
+    /**
+     * Adds a Programlistener to the listener list
+     * @param l the new listener
+     */
     void addListener(ProgramStateListener l){
         listenerList.add(l);
     }
@@ -175,6 +193,15 @@ public class EventHandler {
                 dialogOptions[0]);
     }
 
+    /**
+     * Opens a file dialog, with which the user can interact.
+     * @param parent the parent component
+     * @param title the title of the dialog
+     * @param approveBtn the text of the OK button
+     * @param acceptAll whether All files(*.*) is an option for file filter
+     * @param filters additional file filters
+     * @return the result of the dialog
+     */
     private int openFileDialog(Component parent, String title, String approveBtn, boolean acceptAll, FileFilter[] filters){
         fileDialog.resetChoosableFileFilters();
         if(filters != null)
@@ -189,6 +216,10 @@ public class EventHandler {
         return fileDialog.showOpenDialog(parent);
     }
 
+    /**
+     * Saves a file to a specific location
+     * @param lines the lines of the file
+     */
     void saveFile(String[] lines) {
         int result = openFileDialog(new JFrame(),"Fájl mentése","Mentés",true,null);
         if(result == JFileChooser.APPROVE_OPTION){
@@ -217,6 +248,12 @@ public class EventHandler {
         }
     }
 
+    /**
+     * Creates the default command words from an existing options.ini file
+     * If the file does not exist, the creates one
+     * If it cannot create the new options.ini file, then proceeds without creation
+     * @return a HashMap with the different command words. For reference see defaults.
+     */
     static HashMap<String,String> SetDefaultCommands(){
         BufferedReader optionsReader;
         HashMap<String,String> commands = new HashMap<>();
@@ -231,17 +268,18 @@ public class EventHandler {
             }
 
         } catch (FileNotFoundException ex) {
-            commands.put("entry_code","MKK");
-            commands.put("leave_code","GL");
-            commands.put("delete_code","MOD");
+            commands.put(defaults[0],"MKK");
+            commands.put(defaults[1],"GL");
+            commands.put(defaults[2],"MOD");
+            commands.put(defaults[3],"FOOD_SALE");
             JOptionPane.showMessageDialog(new JFrame(),"Az options.ini fájl nem található.\n" +
                     "Új fájl létrehozása alapméretezett paraméterekkel","Figyelem",JOptionPane.WARNING_MESSAGE);
             File optionsFile = new File("options.ini");
             try{
                 PrintWriter optionsWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(optionsFile)));
-                optionsWriter.println("entry_code = " + commands.get("entry_code"));
-                optionsWriter.println("leave_code = " + commands.get("leave_code"));
-                optionsWriter.println("delete_code = " + commands.get("delete_code"));
+                for (String commandString : defaults) {
+                    optionsWriter.println(commandString + " = " + commands.get(commandString));
+                }
             } catch (FileNotFoundException ex2) {
                 JOptionPane.showMessageDialog(new JFrame(),"Az options.ini fájl nem hozható létre.\n" +
                         "A program nem volt képes inicializálni a változókat","Hiba",JOptionPane.ERROR_MESSAGE);

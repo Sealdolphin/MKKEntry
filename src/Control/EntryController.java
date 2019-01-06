@@ -44,11 +44,14 @@ public class EntryController implements ItemListener {
 
     private JTable tableView;
     private EventHandler defaultEventHandler;
+    private Entry lastEntry = null;
 
     /**
      * Indicates what the next reading operation means
      */
     private readCodeFlag readingFlag = readCodeFlag.FL_DEFAULT;
+
+    private List<String> discountMetaData;
 
     /**
      * A list of command strings
@@ -69,38 +72,20 @@ public class EntryController implements ItemListener {
      * Default Constructor for the controller
      * Reads the config.ini file and sets up default settings
      */
-    public EntryController(){
+    public EntryController(EntryProfile profile){
         //Setting up command list
         HashMap<String, String> optionsMap = EventHandler.SetDefaultCommands();
         ENTRY_CODE = optionsMap.get("entry_code");
         commandList.put(optionsMap.get("leave_code"),readCodeFlag.FL_IS_LEAVING);
         commandList.put(optionsMap.get("delete_code"),readCodeFlag.FL_IS_DELETE);
 
+        discountMetaData = profile.getDiscountMeta();
+
         System.out.println("ENTRY = " + ENTRY_CODE);
         System.out.println(commandList);
 
         defaultEventHandler = new EventHandler(this);
         entryList = new EntryTable();
-    }
-
-    /**
-     * Implemented from ItemListener (JComboBoxListener)
-     * Changes the selected port
-     * @param e ItemEvent of the selected item
-     */
-    @Override
-    public void itemStateChanged(ItemEvent e) {
-        if(selectedPort != null) selectedPort.closePort();
-        String portSelected = e.getItem().toString();
-        selectedPort = SerialPort.getCommPort(portSelected);
-        if(portSelected.equals(DEFAULT_OPTION)) selectedPort = null;
-        if(portIsActive()){
-            System.out.println("Device connected at " + portSelected);
-            BarcodeReader reader = new BarcodeReader();
-            reader.addListener((MainWindow) SwingUtilities.getWindowAncestor((Component) e.getSource()));
-            selectedPort.addDataListener(reader);
-            selectedPort.openPort();
-        }
     }
 
     /**
@@ -120,13 +105,14 @@ public class EntryController implements ItemListener {
     public void receiveCode(String code) {
         System.out.println("Code received: " + code);
         String errorMsg = "";
-        if(code.toUpperCase().startsWith(ENTRY_CODE)){
+        if(code.toUpperCase().startsWith(ENTRY_CODE)) {
             System.out.println("Entry code detected!");
             //Handling entry code correct to the current read operation
             try {
                 String codeNumber = code.replaceFirst(ENTRY_CODE, "").trim();
                 Entry guest = entryList.stream().filter(e -> e.getValue(M_UID.ordinal()).equals(codeNumber)).findAny().orElse(null);
                 switch (readingFlag) {
+                    //New entry code
                     default:
                     case FL_DEFAULT:
                         System.out.println("New entry: " + code);
@@ -134,17 +120,18 @@ public class EntryController implements ItemListener {
                             guest = new Entry(codeNumber);
                             entryList.addEntry(guest);
                             guest.Enter();
+                            lastEntry = guest;
                         } else if (guest.getValue(M_ENTERED.ordinal()).equals(false)){
                             guest.Enter();
                         } else errorMsg = "Ez a vendég már egyszer belépett!";
                         break;
+                        //Leave code
                     case FL_IS_LEAVING:
                         if(guest != null){
                             guest.Leave();
-                        } else {
-                            errorMsg = "Ez a vendég még nem lépett be!";
-                        }
+                        } else errorMsg = "Ez a vendég még nem lépett be!";
                         break;
+                        //Delete code
                     case FL_IS_DELETE:
                         entryList.removeEntry(guest);
                         break;
@@ -167,7 +154,17 @@ public class EntryController implements ItemListener {
                     readingFlag = commandList.get(commandFlag);
                 }
             }
+            //Command for discounts
+            if(lastEntry != null) {
+                for (String command : discountMetaData) {
+                    if (code.equals(command)) {
+                        System.out.println("Discount detected");
+                        readingFlag = readCodeFlag.FL_DEFAULT;
+                    }
+                }
+            }
         }
+
     }
 
     private void refreshViewModel() {
@@ -199,7 +196,6 @@ public class EntryController implements ItemListener {
         refreshViewModel();
     }
 
-
     void exportList(String resultFilter) {
         ExportFilter filter;
         switch (parseFilterType(resultFilter)){
@@ -214,5 +210,24 @@ public class EntryController implements ItemListener {
         defaultEventHandler.saveFile(entryList.exportEntries(filter));
     }
 
+    /**
+     * Implemented from ItemListener (JComboBoxListener)
+     * Changes the selected port
+     * @param e ItemEvent of the selected item
+     */
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        if(selectedPort != null) selectedPort.closePort();
+        String portSelected = e.getItem().toString();
+        selectedPort = SerialPort.getCommPort(portSelected);
+        if(portSelected.equals(DEFAULT_OPTION)) selectedPort = null;
+        if(portIsActive()){
+            System.out.println("Device connected at " + portSelected);
+            BarcodeReader reader = new BarcodeReader();
+            reader.addListener((MainWindow) SwingUtilities.getWindowAncestor((Component) e.getSource()));
+            selectedPort.addDataListener(reader);
+            selectedPort.openPort();
+        }
+    }
 
 }

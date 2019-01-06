@@ -84,13 +84,11 @@ public class BarcodeReader implements SerialPortDataListener {
                 byte cb = b;
                 builder.append((char)cb);
             }
-            lastReadData = builder.toString();
+            lastReadData = builder.toString().trim();
 
             //Flush the stream
             raw_data.clear();
 
-            //Debug print
-            System.out.print("Data received: " + lastReadData);
             //Alert all controllers
             for (ProgramStateListener controller :
                     controllers) {

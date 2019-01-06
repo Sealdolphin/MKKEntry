@@ -1,5 +1,8 @@
 package Control;
 
+import Control.EntryModifier.Discount;
+import Control.EntryModifier.TicketType;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -22,12 +25,19 @@ public class Entry {
      */
     private final String uniqueId;
 
+    /**
+     * A Time formatter for the proper time format
+     */
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss");
 
     /**
      * The name of the guest
      */
     private String name;
+
+    private boolean foodSale = false;
+
+    private TicketType ticketType;
 
     /**
      * Indicator for the guest to check whether they are entered yet
@@ -100,5 +110,9 @@ public class Entry {
             case M_ENTRY: return entryStamp;
             case M_LEAVE: return leaveStamp;
         }
+    }
+
+    public void toggleDiscount(Discount discount){
+
     }
 }

@@ -1,17 +1,13 @@
 package Window;
 
 import Control.EntryController;
+import Control.EntryProfile;
 import com.fazecast.jSerialComm.SerialPort;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 import static Control.EntryController.DEFAULT_OPTION;
-import static javax.swing.BoxLayout.PAGE_AXIS;
 
 /**
  * The class of the main program window
@@ -28,9 +24,11 @@ public class MainWindow extends JFrame implements ProgramStateListener{
     /**
      * A label indicating whether the selected port / device is active
      */
-    private JLabel lbdeviceActive = new JLabel();
-
+    private JLabel lbdeviceActive;
     private JPanel panelSide;
+    private JTable entryView;
+
+    private EntryProfile profile;
 
     private boolean sideBar = false;
 
@@ -39,15 +37,18 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      * It is responsible for operative decisions
      */
     private EntryController controller;
-    private JTable entryView;
+
 
     /**
      * Main Constructor
      * Builds the main window of the program
      */
     MainWindow(){
+        //Loading profile TODO: reload profile etc.
+        profile = new EntryProfile();
+
         //Creating EntryController
-        controller = new EntryController();
+        controller = new EntryController(profile);
         controller.addProgramStateListener(this);
 
         //Setting Layout for header and body
@@ -57,7 +58,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("MKK Beléptető rendszer");
 
-        panelSide = createSideMenu();
+        panelSide = profile.createSideMenu();
         add(createHeader(),BorderLayout.NORTH);
         add(createBody(),BorderLayout.CENTER);
         setJMenuBar(MainMenu.createMenu(controller.getDefaultEventHandler()));
@@ -84,11 +85,16 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         }
     }
 
+    /**
+     * Creates the header of the application
+     * @return a JPanel containing the header components
+     */
     private JPanel createHeader(){
         //Header Components
         JPanel panelHeader = new JPanel();
 
         //Device state label
+        lbdeviceActive = new JLabel();
         lbdeviceActive.setOpaque(true);
         lbdeviceActive.setBackground(Color.RED);
 
@@ -98,7 +104,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         //Device Combo Box
         cbSelectPort.addItemListener(controller);
         //SideBar button
-        JButton btnOpenSideBar = new JButton("Opciók");
+        JButton btnOpenSideBar = new JButton("Kedvezmények");
         //Adding sidePanel
         btnOpenSideBar.addActionListener(e -> {
             sideBar = !sideBar;
@@ -120,6 +126,10 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         return panelHeader;
     }
 
+    /**
+     * Creates the body of the application
+     * @return a JPanel containing the body components
+     */
     private JPanel createBody(){
         JPanel panelBody = new JPanel();
         panelBody.setLayout(new BorderLayout());
@@ -150,26 +160,6 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         return panelBody;
     }
 
-    private JPanel createSideMenu(){
-        JPanel panelSide = new JPanel();
-        panelSide.setLayout(new BoxLayout(panelSide,PAGE_AXIS));
-        BufferedImage barCode = null;
-        try{
-            barCode = ImageIO.read(new File("Barcodes\\foodSale.png"));
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(new JFrame(),"Nem találom a vonalkódképet","Hiba",JOptionPane.ERROR_MESSAGE);
-        }
-
-        JLabel label = new JLabel("Nem hozott sütit vagy üdítőt");
-        label.setFont(new Font(label.getFont().getName(),Font.PLAIN,20));
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        panelSide.add(new ImagePanel(barCode));
-        panelSide.add(label);
-
-
-        return panelSide;
-    }
 
     /**
      * Refreshes the available ports from the system
@@ -189,6 +179,12 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         pack();
     }
 
+    /**
+     * Inherited from ProgramListener
+     * Changes the program's save state if the content changes
+     * @param stateChanged the program's new save state
+     * @param headerName the application's name appearing on the header
+     */
     @Override
     public void stateChanged(boolean stateChanged, String headerName) {
         if(stateChanged)
@@ -197,43 +193,26 @@ public class MainWindow extends JFrame implements ProgramStateListener{
             setTitle(headerName);
     }
 
+    /**
+     * Inherited from ProgramStateListener
+     * Creates a new file and clears all data
+     */
     @Override
     public void renewState() {
-        controller = new EntryController();
+        controller = new EntryController(profile);
         controller.addProgramStateListener(this);
         controller.setTable(entryView);
     }
 
+    /**
+     * Inherited from ProgramStateListener
+     * Receives a string data from a BarCode reader
+     * @param barCode the string data received
+     */
     @Override
     public void readBarCode(String barCode) {
         controller.receiveCode(barCode);
     }
 
-    /**
-     * An empty JPanel containing a custom image
-     */
-    private class ImagePanel extends JPanel {
-        private BufferedImage image;
-
-        ImagePanel(BufferedImage image){
-            this.image = image;
-            //Set layout to fill available space
-            setLayout(new BorderLayout());
-            setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            if(image != null) {
-                //Adding Empty space to fill out image
-                add(Box.createRigidArea(new Dimension(image.getWidth(), image.getHeight())));
-                //Setting maximum height not to be infinity
-                setMaximumSize(new Dimension(image.getWidth(), image.getHeight()));
-            }
-        }
-
-        @Override
-        protected void paintComponent(Graphics g){
-            super.paintComponent(g);
-            g.drawImage(image,0,0,this);
-        }
-
-    }
 
 }
