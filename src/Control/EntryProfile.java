@@ -21,15 +21,15 @@ public class EntryProfile {
 
     private List<TicketType> types;
     private List<Discount> discounts;
+
     private String[] defaultCommands;
     private String entryCode;
+    private TicketType defaultType;
 
     /**
      * The Defaults of the command strings
      */
-    private static String[] defaults = {
-            "leave","delete"
-    };
+    private static String[] defaults = {"leave","delete"};
 
     private EntryProfile(){
         types = new ArrayList<>();
@@ -44,15 +44,28 @@ public class EntryProfile {
     public static EntryProfile parseProfileFromJson(JSONObject jsonProfile){
         EntryProfile profile = new EntryProfile();
         //Loading discounts
-        JSONArray jsonDiscounts = (JSONArray) jsonProfile.get("discounts");
-        for (Object discountObject: jsonDiscounts) {
+        JSONArray jArray = (JSONArray) jsonProfile.get("discounts");
+        for (Object discountObject: jArray) {
             profile.discounts.add(Discount.parseDiscountFromJson((JSONObject)discountObject));
         }
-        profile.name = jsonProfile.get("name").toString();
-        profile.entryCode = jsonProfile.get("entry_code").toString();
+        //Loading Ticket types
+        jArray = (JSONArray) jsonProfile.get("tickets");
+        for (Object discountObject: jArray) {
+            profile.types.add(TicketType.parseTicketTypeFromJson((JSONObject)discountObject));
+        }
+
+        //Setting the default ticket type
+        String defType = jsonProfile.get("defaultType").toString();
+        profile.defaultType = profile.types.stream().filter(ticketType -> ticketType.getName().equals(defType)).findAny().orElse(profile.types.get(0));
+
+        //Loading commands
         String[] commands = new String[2];
         commands[0] = ((JSONObject)jsonProfile.get("commands")).get(defaults[0]).toString();
         commands[1] = ((JSONObject)jsonProfile.get("commands")).get(defaults[1]).toString();
+
+        //Loading basic information
+        profile.name = jsonProfile.get("name").toString();
+        profile.entryCode = jsonProfile.get("entry_code").toString();
         profile.defaultCommands = commands;
 
         return profile;
