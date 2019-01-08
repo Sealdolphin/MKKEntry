@@ -22,6 +22,7 @@ import java.util.List;
 
 import static Control.EntryController.DEFAULT_OPTION;
 import static Window.Main.options;
+import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
 /**
  * The class of the main program window
@@ -205,6 +206,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         JTextField tfInputField = new JTextField(32);
         entryView = new JTable();
         entryView.getTableHeader().setReorderingAllowed(false);
+        entryView.setSelectionMode(SINGLE_SELECTION);
 
         controller.setTable(entryView);
 

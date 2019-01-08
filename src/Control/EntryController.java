@@ -142,6 +142,7 @@ public class EntryController implements ItemListener {
                         //Delete code
                     case FL_IS_DELETE:
                         entryList.removeEntry(guest);
+                        lastEntry = null;
                         break;
                 }
                 refreshViewModel();
@@ -192,6 +193,12 @@ public class EntryController implements ItemListener {
 
     public void setTable(JTable entryView) {
         tableView = entryView;
+        if(tableView != null) {
+            tableView.getSelectionModel().addListSelectionListener(e -> {
+                if(!(tableView.getSelectedRow() == -1))
+                    lastEntry = entryList.getEntryById(tableView.getValueAt(tableView.getSelectedRow(), 0).toString());
+            });
+        }
         refreshViewModel();
     }
 

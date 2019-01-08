@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static Control.Entry.Member.M_UID;
+
 /**
  * The Table holding the entries
  * The database is integrated into the table model for convenience.
@@ -35,6 +37,7 @@ public class EntryTable extends AbstractTableModel {
     EntryTable(TicketType defaultType){
         this.defaultType = defaultType;
         listOfEntries = new ArrayList<>();
+
     }
 
     /**
@@ -112,5 +115,9 @@ public class EntryTable extends AbstractTableModel {
         if(columnIndex < columns.length && rowIndex < listOfEntries.size())
             return listOfEntries.get(rowIndex).getValue(columnIndex);
         return null;
+    }
+
+    Entry getEntryById(String idSelect) {
+        return listOfEntries.stream().filter(entry -> entry.getValue(M_UID.ordinal()).equals(idSelect)).findAny().orElse(null);
     }
 }
