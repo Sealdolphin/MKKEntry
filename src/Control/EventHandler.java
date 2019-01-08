@@ -15,7 +15,8 @@ import java.util.List;
 
 import static Control.Utility.EntryFilter.FilterType.TOMBOLA;
 import static Control.Utility.EntryFilter.separator;
-import static javax.swing.JOptionPane.YES_OPTION;
+import static javax.swing.JOptionPane.*;
+import static Window.Main.options;
 
 
 public class EventHandler {
@@ -55,7 +56,7 @@ public class EventHandler {
         if(!programState) {
             String question = "A munkád nincs még elmentve\n" +
                     "és ha továbblépsz törlésre kerül.\n" +
-                    "Folytatod a műveletet?";
+                    options.getUIStr("MSG","CONFIRM_ACTION");
             if (ConfirmAction(question) != YES_OPTION) return;
         }
         listener.renewState();
@@ -75,14 +76,16 @@ public class EventHandler {
 
             try {
                 List<Entry> imported = parseEntryImportFile(entryFile,listener.getProfile());
+                //If parsing fails exception is thrown and the import is cancelled all together
                 listener.getController().importEntries(imported);
 
             } catch (ParseException ex){
                 JOptionPane.showMessageDialog(new JFrame(),
-                        "Értelmezési hiba történt a fájl olvasása közben.\n" +
-                        "Hiba pozicíója: " + ex.getErrorOffset() + "\n" +
-                        "Hiba részletei:\n" + ex.getMessage(),
-                        "Hiba", JOptionPane.ERROR_MESSAGE);
+                        options.getUIStr("ERR","IMPORT_PARSE_FAIL") +"\n" +
+                                options.getUIStr("ERR","POSITION") + ": " + ex.getErrorOffset() + "\n" +
+                                options.getUIStr("ERR","DETAILS") + ":\n" + ex.getMessage(),
+                        options.getUIStr("ERR","HEADER"), JOptionPane.ERROR_MESSAGE);
+                System.out.println(ex.getMessage());
             }
 
         }
@@ -98,10 +101,10 @@ public class EventHandler {
                 null,
                 profiles,
                 activeProfile);
-        String question = "Ha új profilra váltasz,\n" +
+        String question = "Ha új profilra váltasz, " +
                 "a jelenlegi munkádat nem folytathatod tovább.\n" +
-                "Minden elmentetlen munkád elvész\n" +
-                "Folytatod a műveletet?";
+                "Minden elmentetlen munkád elvész.\n" +
+                options.getUIStr("MSG","CONFIRM_ACTION");
         if(result != null && ConfirmAction(question) == YES_OPTION) {
             listener.changeProfile(result);
         }
@@ -112,7 +115,6 @@ public class EventHandler {
         int lineNumber = 0;
         try {
             BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-
 
             boolean eof = false;
             while (!eof){
@@ -126,13 +128,15 @@ public class EventHandler {
             }
 
         } catch (FileNotFoundException fnf) {
-            throw new ParseException("A fájl nem létezik.",lineNumber);
+            throw new ParseException(options.getUIStr("ERR","FILE_MISSING"),lineNumber);
         } catch (IOException io) {
-            throw new ParseException("Nem várt olvasási hiba:\n" + io.getMessage(),lineNumber);
+            throw new ParseException(options.getUIStr("ERR","IO_FAIL") + ":\n" + io.getMessage(),lineNumber);
         }
 
         if(importList.isEmpty()){
-            JOptionPane.showMessageDialog(new JFrame(),"A megnyitott fájl üres","Figyelem",JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(),
+                    options.getUIStr("ERR","FILE_EMPTY"),
+                    options.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
         }
 
 
@@ -142,9 +146,9 @@ public class EventHandler {
     /**
      * Creates a new Entry class from an input string
      * The input string must follow the default Filter format which is:
-     * 0: UID,
-     * 1: NAME,
-     * 2: TYPE_NAME,
+     * 0: UID - required,
+     * 1: NAME - required,
+     * 2: TYPE_NAME - required,
      * 3: ENTRY_DATE - optional,
      * 4: LEAVE_DATE - optional
      * @param entryString the input string
@@ -157,25 +161,25 @@ public class EventHandler {
         String[] props = entryString.split(separator);
         String uid, name,enter = null ,leave = null;
         boolean entered = false;
-        TicketType type = null;
+        TicketType type;
 
-        if(props.length < 1) throw new ParseException("A fájl sérült, vagy hibás",offset);
+        //Throw it if the array is empty
+        if(props.length < 1) throw new ParseException("A rekord sérült, vagy hibás",offset);
         //Setting ID
-        try {
-            uid = props[0];
-        } catch (NumberFormatException format){
-            throw new ParseException("Egyedi azonosító sérült, vagy érvénytelen",offset);
+        uid = props[0];
+
+        //Looking for required fields
+        //Alert if does not meet the number of fields required
+        if(props.length < 3) {
+            throw new ParseException("A rekordból hiányoznak argumentumok",offset);
+            //TODO: needs implementing
+            //fillDefault = fillOptionIsDefault(offset);
         }
-        //Setting name
-        if(props.length > 1)
-            name = props[1];
-        else name = "Ismeretlen";
 
-        //Setting TicketType
-        if(props.length > 2){
-            type = profile.identifyTicketType(props[2]);
-        } else type = TicketType.defaultType;
+        name = props[1];
+        type = profile.identifyTicketType(props[2]);
 
+        //Looking for optional fields
         //Setting ENTRY date (optional)
         if(props.length > 3) {
             enter = props[3];
@@ -189,7 +193,6 @@ public class EventHandler {
 
         return new Entry(uid,type,name,enter,leave,entered);
     }
-
 
     void changeState(boolean stateChanged) {
         programState = stateChanged;
@@ -213,7 +216,7 @@ public class EventHandler {
         return JOptionPane.showOptionDialog(
                 new JFrame(),
                 message,
-                "Figyelem",
+                options.getUIStr("MSG","WARNING"),
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,
@@ -279,5 +282,21 @@ public class EventHandler {
     }
 
 
+    /*
+    private static boolean fillOptionIsDefault(int offset) throws ParseException {
+        //Detecting anomaly: There are not enough required fields
+        String message = "A rekord egyes argumentumai hiányoznak.\n" +
+                "Hogyan szeretnéd őket kitölteni?";
+        Object[] recordOptions = {"Alapméretezett értékekkel","Majd én kitöltöm őket"};
+        //Request smart input from user
+        Object r = JOptionPane.showInputDialog(new JFrame(),message,"Figyelem",WARNING_MESSAGE,null,recordOptions,recordOptions[0]);
+        if(r == null){
+            int res = JOptionPane.showConfirmDialog(new JFrame(),options.getUIStr("MSG","CANCEL_ACTION")+"\n"+
+                    "Válassz igent, ha meg akarod szakítani az importálást","Figyelem",YES_NO_OPTION,WARNING_MESSAGE);
+            if(res == YES_OPTION) throw new ParseException("Az importálás kézileg lett megszakítva",offset);
+        } else return r.equals(recordOptions[0]);
+        return true;
+    }
+    */
 
 }

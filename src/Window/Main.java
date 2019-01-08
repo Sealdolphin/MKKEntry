@@ -1,7 +1,13 @@
 package Window;
 
+import Control.Options;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
 
 /**
  * The Application's main class
@@ -10,21 +16,39 @@ import java.awt.*;
  */
 public class Main {
 
+    public static Options options;
+
     /**
      * The entry point of the Application.
      * @param args optional system arguments (currently unused)
      */
     public static void main(String[] args) {
+        JSONObject optionsJSON;
+
         //Setting up L&F
         try {
             // Set System L&F
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
+            JSONParser parser = new JSONParser();
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("options.json")));
+            optionsJSON = (JSONObject) parser.parse(br);
+            //Loading options
+            options = new Options();
+            options.refreshOptions(optionsJSON);
+
         }
         catch (UnsupportedLookAndFeelException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             // handle exception
             String errorMsg = "Nem található a rendszer által használt kinézet.\n" +
                     "Az alkalmazás ezért a Java kinézetet fogja használni.";
             JOptionPane.showMessageDialog(null,errorMsg,"Üzenet",JOptionPane.PLAIN_MESSAGE);
+        } catch (ParseException | IOException e) {
+            String errorMsg = "Nem tudtam betölteni a beállításokat a 'options.json' fáljból.\n" +
+                    "Az alkalmazás ezért nem tud elindulni.\n" +
+                    "Részletek:\n" + e.getMessage();
+            JOptionPane.showMessageDialog(null,errorMsg,"Hiba",JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         //Starting point of the application

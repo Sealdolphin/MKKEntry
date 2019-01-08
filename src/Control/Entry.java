@@ -90,7 +90,7 @@ public class Entry {
     }
 
     public Entry(TicketType type){
-        uniqueId = "DMYID";
+        uniqueId = "UNDEFINED";
         entered = false;
         entryStamp = LocalDateTime.now().format(formatter);
         leaveStamp = LocalDateTime.now().format(formatter);

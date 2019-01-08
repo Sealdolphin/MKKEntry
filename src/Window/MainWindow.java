@@ -10,7 +10,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static Control.EntryController.DEFAULT_OPTION;
+import static Window.Main.options;
 
 /**
  * The class of the main program window
@@ -85,8 +85,8 @@ public class MainWindow extends JFrame implements ProgramStateListener{
             loadProfiles();
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(new JFrame(),"Nem tudtam betölteni a profilokat!\n"+
-                    "A profiles.json fájl hiányzik, vagy sérült.","Hiba",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(),options.getUIStr("ERR","ERR_PROFILE_LOAD_FAILED")+ "\n"+
+                    options.getUIStr("ERR","ERR_PROFILE_JSON_MISSING"),options.getUIStr("ERR","ERR_HEADER"),JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -98,7 +98,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         //Setting up default parameters
         setMinimumSize(new Dimension(640,200));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle("MKK Beléptető rendszer");
+        setTitle(options.getUIStr("UI","WINDOW_TITLE"));
 
         panelDiscount = activeProfile.createSideMenu();
         add(createHeader(),BorderLayout.NORTH);
@@ -144,10 +144,10 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      */
     private void onClickBtnRefreshPorts(boolean active) {
         if(active){
-            lbDeviceActive.setText("Aktív");
+            lbDeviceActive.setText(options.getUIStr("UI","PORT_ACTIVE"));
             lbDeviceActive.setBackground(Color.green);
         } else {
-            lbDeviceActive.setText("Inaktív");
+            lbDeviceActive.setText(options.getUIStr("UI","PORT_INACTIVE"));
             lbDeviceActive.setBackground(Color.red);
         }
     }
@@ -166,12 +166,12 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         lbDeviceActive.setBackground(Color.RED);
 
         //Device refresher button
-        JButton btnRefreshPorts = new JButton("Frissíts");
+        JButton btnRefreshPorts = new JButton(options.getUIStr("UI","PORT_BTN"));
         btnRefreshPorts.addActionListener(e -> eventRefreshPorts());
         //Device Combo Box
         cbSelectPort.addItemListener(controller);
         //SideBar button
-        JButton btnOpenSideBar = new JButton("Kedvezmények");
+        JButton btnOpenSideBar = new JButton(options.getUIStr("UI","DISCOUNT_BTN"));
         //Adding sidePanel
         btnOpenSideBar.addActionListener(e -> {
             discountPanelState = !discountPanelState;
@@ -185,7 +185,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
 
         //Assembling components
         panelHeader.add(lbProfile);
-        panelHeader.add(new JLabel("Vonalkód olvasó:"));
+        panelHeader.add(new JLabel(options.getUIStr("UI","READER_LB") + ":"));
         panelHeader.add(cbSelectPort);
         panelHeader.add(lbDeviceActive);
         panelHeader.add(btnRefreshPorts);
@@ -210,7 +210,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
 
         ToggleInputButton btnToggleInput = new ToggleInputButton();
 
-        JButton btnSendCommand = new JButton("Küldés");
+        JButton btnSendCommand = new JButton(options.getUIStr("UI","SENDCODE_BTN"));
         btnSendCommand.addActionListener(e -> {
             if(!tfInputField.getText().isEmpty()) {
                 String data = btnToggleInput.codeInput ? EntryController.ENTRY_CODE : "";
@@ -286,7 +286,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         controller.setProgramStateListener(this);
         controller.setTable(entryView);
         //Creating new layout / menu
-        lbProfile.setText("PROFIL: " + activeProfile.getName());
+        lbProfile.setText(options.getUIStr("UI","PROFILE_LB") + ": " + activeProfile.getName());
         add(infoPanel,BorderLayout.SOUTH);
     }
 
@@ -305,7 +305,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         activeProfile = profiles.stream().filter(p -> p.getName().equals(profileName)).findAny().orElse(activeProfile);
         //Invoke renew state. Clear Database and create new Controller
         renewState();
-        JOptionPane.showMessageDialog(new JFrame(),"Profil váltás megtörtént.\n"+
+        JOptionPane.showMessageDialog(new JFrame(),options.getUIStr("MSG","PROFILE_CHANGED") + "\n"+
                 "Új profil: " + activeProfile.getName(),"Kész",JOptionPane.INFORMATION_MESSAGE);
     }
 
@@ -345,15 +345,15 @@ public class MainWindow extends JFrame implements ProgramStateListener{
             switch (flag){
                 default:
                 case FL_DEFAULT:
-                    lbInfo.setText("Belépésre vár");
+                    lbInfo.setText(options.getUIStr("UI","BOTTOM_INFO_DEF"));
                     setBackground(Color.GREEN);
                     break;
                 case FL_IS_LEAVING:
-                    lbInfo.setText("Kilépésre vár");
+                    lbInfo.setText(options.getUIStr("UI","BOTTOM_INFO_MOD"));
                     setBackground(Color.YELLOW);
                     break;
                 case FL_IS_DELETE:
-                    lbInfo.setText("Törlésre vár");
+                    lbInfo.setText(options.getUIStr("UI","BOTTOM_INFO_DEL"));
                     setBackground(Color.RED);
                     break;
             }
@@ -365,7 +365,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         private boolean codeInput;
 
         ToggleInputButton(){
-            super("Belépő kód");
+            super(options.getUIStr("UI","TOGGLECODE_BTN_1"));
             codeInput = true;
             addActionListener(this);
         }
@@ -374,9 +374,9 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         public void actionPerformed(ActionEvent e) {
             codeInput = !codeInput;
             if(codeInput)
-                setText("Belépő kód");
+                setText(options.getUIStr("UI","TOGGLECODE_BTN_1"));
             else
-                setText("Teljes kód");
+                setText(options.getUIStr("UI","TOGGLECODE_BTN_2"));
         }
     }
 }

@@ -23,6 +23,7 @@ import Window.ProgramStateListener;
 import static Control.Entry.Member.M_ENTERED;
 import static Control.Entry.Member.M_UID;
 import static Control.Utility.EntryFilter.parseFilterType;
+import static Window.Main.options;
 
 /**
  * The responsible unit for the operative decisions
@@ -43,7 +44,7 @@ public class EntryController implements ItemListener {
     }
 
     public static String ENTRY_CODE;                               //Entry code: a short string that indicates valuable data
-    public static final String DEFAULT_OPTION = "Válassz egyet";    //String for null option
+    public static final String DEFAULT_OPTION = options.getUIStr("UI","CHOOSE_ONE");    //String for null option
 
     private JTable tableView;
     private EventHandler defaultEventHandler;
