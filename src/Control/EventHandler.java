@@ -235,9 +235,11 @@ public class EventHandler {
         int result = openFileDialog(new JFrame(),"Fájl mentése","Mentés",true,null);
         if(result == JFileChooser.APPROVE_OPTION){
             File file = fileDialog.getSelectedFile();
-            if(!file.getName().endsWith(".csv"))
-                if (!file.renameTo(new File(file.getAbsolutePath() + file.getName() + ".csv")))
-                    JOptionPane.showMessageDialog(new JFrame(),"A fájlformátumot nem sikerült átírni","Figyelem",JOptionPane.WARNING_MESSAGE);
+            //File file2 = null;
+            if(!file.getName().contains(".")) {
+                file = new File(file.getPath() + ".txt");
+            }
+            //JOptionPane.showMessageDialog(new JFrame(),"A fájlformátumot nem sikerült átírni","Figyelem",JOptionPane.WARNING_MESSAGE);
 
             try {
                 PrintWriter fileWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file)));

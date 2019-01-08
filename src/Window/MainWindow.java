@@ -38,6 +38,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      * A label indicating whether the selected port / device is active
      */
     private JLabel lbDeviceActive;
+    private JLabel lbProfile = new JLabel("PROFIL: ");
     /**
      * The panel which contains the different discounts (and their respective barcodes) assosiated with the active profile
      */
@@ -177,7 +178,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         });
 
         //Assembling components
-        panelHeader.add(new Label("PROFIL: " + activeProfile.getName()));
+        panelHeader.add(lbProfile);
         panelHeader.add(new JLabel("Vonalkód olvasó:"));
         panelHeader.add(cbSelectPort);
         panelHeader.add(lbDeviceActive);
@@ -274,6 +275,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         controller.setProgramStateListener(this);
         controller.setTable(entryView);
         //Creating new layout / menu
+        lbProfile.setText("PROFIL: " + activeProfile.getName());
         add(infoPanel,BorderLayout.SOUTH);
     }
 
@@ -292,6 +294,8 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         activeProfile = profiles.stream().filter(p -> p.getName().equals(profileName)).findAny().orElse(activeProfile);
         //Invoke renew state. Clear Database and create new Controller
         renewState();
+        JOptionPane.showMessageDialog(new JFrame(),"Profil váltás megtörtént.\n"+
+                "Új profil: " + activeProfile.getName(),"Kész",JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override

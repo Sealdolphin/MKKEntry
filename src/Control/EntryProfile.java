@@ -119,6 +119,8 @@ public class EntryProfile {
         controller.setMetaData(entryCode,discountMeta,defaultCommands);
     }
 
+
+
     /**
      * An empty JPanel containing a custom image
      */

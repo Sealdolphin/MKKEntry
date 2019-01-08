@@ -41,7 +41,6 @@ public class EntryController implements ItemListener {
         FL_DEFAULT
     }
 
-    //Temporary, will be replaced with config.ini
     private static String ENTRY_CODE;                               //Entry code: a short string that indicates valuable data
     public static final String DEFAULT_OPTION = "Válassz egyet";    //String for null option
 
@@ -75,7 +74,11 @@ public class EntryController implements ItemListener {
 
     /**
      * Default Constructor for the controller
-     * Reads the config.ini file and sets up default settings
+     * Relies on eventhandler to set up defaults
+     * @param profile the active profile
+     * @param handler the active EventHandler (can be null)
+     * @param profileNames all the loaded profile names
+     * @param infoBar the applications information bar
      */
     public EntryController(EntryProfile profile,EventHandler handler, Object[] profileNames, ReadingFlagListener infoBar){
         //Setting up command list
@@ -85,6 +88,7 @@ public class EntryController implements ItemListener {
         System.out.println("ENTRY = " + ENTRY_CODE);
         System.out.println(commandList);
 
+        //Connecting with EventHandler if it does not exist then create one
         defaultEventHandler = Objects.requireNonNullElseGet(handler, () -> new EventHandler(profile.getName(), profileNames));
         entryList = new EntryTable(TicketType.defaultType);
         infoBar.flagChange(readingFlag);
