@@ -1,6 +1,5 @@
 package Control;
 
-import Control.EntryModifier.Discount;
 import Control.EntryModifier.TicketType;
 
 import java.time.LocalDateTime;

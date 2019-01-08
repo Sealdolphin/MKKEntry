@@ -25,7 +25,7 @@ public class EventHandler {
     private String activeProfile;
     private Object[] profileNames;
 
-    private List<ProgramStateListener> listenerList = new ArrayList<>();
+    private ProgramStateListener listener;
 
     private final JFileChooser fileDialog = new JFileChooser(System.getProperty("user.home"));
 
@@ -59,10 +59,7 @@ public class EventHandler {
                     "Folytatod a műveletet?";
             if (ConfirmAction(question) != YES_OPTION) return;
         }
-        for (ProgramStateListener listener :
-                listenerList) {
-            listener.renewState();
-        }
+        listener.renewState();
     }
 
     public void loadState() {
@@ -107,12 +104,9 @@ public class EventHandler {
                 "Minden elmentetlen munkád elvész\n" +
                 "Folytatod a műveletet?";
         if(result != null && ConfirmAction(question) == YES_OPTION) {
-            for (ProgramStateListener listener :
-                    listenerList) {
-                listener.changeProfile(result);
-            }
+            listener.changeProfile(result);
             programState = true;
-            renewState();
+            //renewState();
         }
     }
 
@@ -186,18 +180,15 @@ public class EventHandler {
 
     void changeState(boolean stateChanged) {
         programState = stateChanged;
-        for (ProgramStateListener listener :
-                listenerList) {
-            listener.stateChanged(programState, saveFileName);
-        }
+        listener.stateChanged(programState, saveFileName);
     }
 
     /**
      * Adds a Programlistener to the listener list
      * @param l the new listener
      */
-    void addListener(ProgramStateListener l){
-        listenerList.add(l);
+    void setListener(ProgramStateListener l){
+        listener = l;
     }
 
     public void save(boolean saveAs) {
@@ -249,7 +240,7 @@ public class EventHandler {
         if(result == JFileChooser.APPROVE_OPTION){
             File file = fileDialog.getSelectedFile();
             if(!file.getName().endsWith(".csv"))
-                if (file.renameTo(new File(file + ".csv")))
+                if (!file.renameTo(new File(file.getAbsolutePath() + file.getName() + ".csv")))
                     JOptionPane.showMessageDialog(new JFrame(),"A fájlformátumot nem sikerült átírni","Figyelem",JOptionPane.WARNING_MESSAGE);
 
             try {

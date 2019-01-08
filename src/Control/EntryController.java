@@ -14,6 +14,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import Window.ReadingFlagListener;
 import Window.ProgramStateListener;
@@ -76,7 +77,7 @@ public class EntryController implements ItemListener {
      * Default Constructor for the controller
      * Reads the config.ini file and sets up default settings
      */
-    public EntryController(EntryProfile profile, Object[] profileNames, ReadingFlagListener infoBar){
+    public EntryController(EntryProfile profile,EventHandler handler, Object[] profileNames, ReadingFlagListener infoBar){
         //Setting up command list
         profile.setController(this);
 
@@ -84,7 +85,7 @@ public class EntryController implements ItemListener {
         System.out.println("ENTRY = " + ENTRY_CODE);
         System.out.println(commandList);
 
-        defaultEventHandler = new EventHandler(this,profile.getName(),profileNames);
+        defaultEventHandler = Objects.requireNonNullElseGet(handler, () -> new EventHandler(this, profile.getName(), profileNames));
         entryList = new EntryTable(TicketType.defaultType);
         infoBar.flagChange(readingFlag);
     }
@@ -177,8 +178,8 @@ public class EntryController implements ItemListener {
         defaultEventHandler.changeState(true);
     }
 
-    public void addProgramStateListener(ProgramStateListener l){
-        defaultEventHandler.addListener(l);
+    public void setProgramStateListener(ProgramStateListener l){
+        defaultEventHandler.setListener(l);
     }
 
     public void setTable(JTable entryView) {

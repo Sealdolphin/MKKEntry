@@ -2,6 +2,7 @@ package Window;
 
 import Control.EntryController;
 import Control.EntryProfile;
+import Control.EventHandler;
 import com.fazecast.jSerialComm.SerialPort;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -95,9 +96,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         panelDiscount = activeProfile.createSideMenu();
         add(createHeader(),BorderLayout.NORTH);
         add(createBody(),BorderLayout.CENTER);
-
         setJMenuBar(MainMenu.createMenu(controller.getDefaultEventHandler()));
-
 
         //Running basic event routines
         eventRefreshPorts();
@@ -265,10 +264,15 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      */
     @Override
     public void renewState() {
+        //Creating new infoPanel
         InfoPanel infoPanel = new InfoPanel("");
-        controller = new EntryController(activeProfile,profiles.stream().map(EntryProfile::getName).toArray(),infoPanel);
-        controller.addProgramStateListener(this);
+        //Creating new EntryController
+        EventHandler handler = null;
+        if(controller != null) handler = controller.getDefaultEventHandler();
+        controller = new EntryController(activeProfile,handler,profiles.stream().map(EntryProfile::getName).toArray(),infoPanel);
+        controller.setProgramStateListener(this);
         controller.setTable(entryView);
+        //Creating new layout / menu
         add(infoPanel,BorderLayout.SOUTH);
     }
 
@@ -285,6 +289,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
     @Override
     public void changeProfile(String profileName) {
         activeProfile = profiles.stream().filter(p -> p.getName().equals(profileName)).findAny().orElse(activeProfile);
+        renewState();
         //TODO: Take renewState to consideration
     }
 
