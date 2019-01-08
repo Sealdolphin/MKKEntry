@@ -85,7 +85,7 @@ public class EntryController implements ItemListener {
         System.out.println("ENTRY = " + ENTRY_CODE);
         System.out.println(commandList);
 
-        defaultEventHandler = Objects.requireNonNullElseGet(handler, () -> new EventHandler(this, profile.getName(), profileNames));
+        defaultEventHandler = Objects.requireNonNullElseGet(handler, () -> new EventHandler(profile.getName(), profileNames));
         entryList = new EntryTable(TicketType.defaultType);
         infoBar.flagChange(readingFlag);
     }

@@ -21,7 +21,6 @@ public class EventHandler {
 
     private boolean programState = false;
     private String saveFileName = "";
-    private EntryController controller;
     private String activeProfile;
     private Object[] profileNames;
 
@@ -29,10 +28,9 @@ public class EventHandler {
 
     private final JFileChooser fileDialog = new JFileChooser(System.getProperty("user.home"));
 
-    EventHandler(EntryController c, String profile, Object[] profiles){
+    EventHandler(String profile, Object[] profiles){
         activeProfile = profile;
         profileNames = profiles;
-        controller = c;
     }
 
     public void exportEntries() {
@@ -48,7 +46,7 @@ public class EventHandler {
 
         if(resultFilter != null && resultFilter.length() > 0){
             //Let the export begin
-            controller.exportList(resultFilter);
+            listener.getController().exportList(resultFilter);
         }
     }
 
@@ -76,7 +74,7 @@ public class EventHandler {
 
             try {
                 List<Entry> imported = parseEntryImportFile(entryFile);
-                controller.importEntries(imported);
+                listener.getController().importEntries(imported);
 
             } catch (ParseException ex){
                 JOptionPane.showMessageDialog(new JFrame(),
@@ -105,8 +103,6 @@ public class EventHandler {
                 "Folytatod a műveletet?";
         if(result != null && ConfirmAction(question) == YES_OPTION) {
             listener.changeProfile(result);
-            programState = true;
-            //renewState();
         }
     }
 

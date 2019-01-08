@@ -1,5 +1,7 @@
 package Window;
 
+import Control.EntryController;
+
 /**
  * An interface handling the Program's behavior
  * @author Márk Mihalovits
@@ -28,4 +30,10 @@ public interface ProgramStateListener {
      * @param profileName the new active profile
      */
     void changeProfile(String profileName);
+
+    /**
+     * Returns the current entryController
+     * @return the Application's control class
+     */
+    EntryController getController();
 }

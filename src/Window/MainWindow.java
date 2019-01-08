@@ -268,6 +268,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         InfoPanel infoPanel = new InfoPanel("");
         //Creating new EntryController
         EventHandler handler = null;
+        //If an event handler exists
         if(controller != null) handler = controller.getDefaultEventHandler();
         controller = new EntryController(activeProfile,handler,profiles.stream().map(EntryProfile::getName).toArray(),infoPanel);
         controller.setProgramStateListener(this);
@@ -289,8 +290,13 @@ public class MainWindow extends JFrame implements ProgramStateListener{
     @Override
     public void changeProfile(String profileName) {
         activeProfile = profiles.stream().filter(p -> p.getName().equals(profileName)).findAny().orElse(activeProfile);
+        //Invoke renew state. Clear Database and create new Controller
         renewState();
-        //TODO: Take renewState to consideration
+    }
+
+    @Override
+    public EntryController getController() {
+        return controller;
     }
 
     /*
