@@ -86,6 +86,7 @@ public class EntryController implements ItemListener {
 
         defaultEventHandler = new EventHandler(this,profile.getName(),profileNames);
         entryList = new EntryTable(TicketType.defaultType);
+        infoBar.flagChange(readingFlag);
     }
 
     /**

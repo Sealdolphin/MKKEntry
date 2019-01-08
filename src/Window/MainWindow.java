@@ -35,7 +35,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
     /**
      * A label indicating whether the selected port / device is active
      */
-    private JLabel lbdeviceActive;
+    private JLabel lbDeviceActive;
     private JPanel panelSide;
     private JTable entryView;
 
@@ -56,7 +56,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      * Builds the main window of the program
      */
     MainWindow(){
-        //Loading activeProfile TODO: reload activeProfile etc.
+        //Loading activeProfile
         try {
             loadProfiles();
         } catch (IOException | ParseException e) {
@@ -66,7 +66,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
             return;
         }
 
-        InfoPanel infoPanel = new InfoPanel("Belépésre vár");
+        InfoPanel infoPanel = new InfoPanel("Info Panel placeholder text");
         //Creating EntryController
         controller = new EntryController(activeProfile,getProfileNames(),infoPanel);
         controller.addProgramStateListener(this);
@@ -94,14 +94,16 @@ public class MainWindow extends JFrame implements ProgramStateListener{
     }
 
     /**
-     * TODO: Work in progress
+     * Loads the different profiles from the default json file
+     * @throws IOException if the reading fails
+     * @throws ParseException if cannot parse the file (damaged, or missing JSON property)
      */
     private void loadProfiles() throws IOException, ParseException {
 
         profiles = new ArrayList<>();
 
         JSONParser parser = new JSONParser();
-        JSONObject obj = null;
+        JSONObject obj;
         obj = (JSONObject) parser.parse(new BufferedReader(new InputStreamReader(new FileInputStream("profiles.json"))));
         JSONArray jsonProfiles = (JSONArray)obj.get("profiles");
         for (Object p: jsonProfiles) {
@@ -122,11 +124,11 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      */
     private void activateButton(boolean active) {
         if(active){
-            lbdeviceActive.setText("Aktív");
-            lbdeviceActive.setBackground(Color.green);
+            lbDeviceActive.setText("Aktív");
+            lbDeviceActive.setBackground(Color.green);
         } else {
-            lbdeviceActive.setText("Inaktív");
-            lbdeviceActive.setBackground(Color.red);
+            lbDeviceActive.setText("Inaktív");
+            lbDeviceActive.setBackground(Color.red);
         }
     }
 
@@ -139,9 +141,9 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         JPanel panelHeader = new JPanel();
 
         //Device state label
-        lbdeviceActive = new JLabel();
-        lbdeviceActive.setOpaque(true);
-        lbdeviceActive.setBackground(Color.RED);
+        lbDeviceActive = new JLabel();
+        lbDeviceActive.setOpaque(true);
+        lbDeviceActive.setBackground(Color.RED);
 
         //Device refresher button
         JButton btnRefreshPorts = new JButton("Frissíts");
@@ -165,7 +167,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         panelHeader.add(new Label("PROFIL: " + activeProfile.getName()));
         panelHeader.add(new JLabel("Vonalkód olvasó:"));
         panelHeader.add(cbSelectPort);
-        panelHeader.add(lbdeviceActive);
+        panelHeader.add(lbDeviceActive);
         panelHeader.add(btnRefreshPorts);
         panelHeader.add(btnOpenSideBar);
 
@@ -252,7 +254,9 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      */
     @Override
     public void renewState() {
-        InfoPanel p = (InfoPanel) Arrays.stream(getComponents()).filter(component -> component.getClass().equals(InfoPanel.class)).findAny().orElse(null);
+        //Theoretically it cannot be null, however if it is, then we are in a great pickle
+        //noinspection ConstantConditions
+        InfoPanel p = (InfoPanel) Arrays.stream(getContentPane().getComponents()).filter(component -> component.getClass().equals(InfoPanel.class)).findAny().get();
         controller = new EntryController(activeProfile,getProfileNames(),p);
         controller.addProgramStateListener(this);
         controller.setTable(entryView);
@@ -274,6 +278,11 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         //Auto renew state?
     }
 
+    /**
+     * An information panel at the bottom of the screen.
+     * It reacts to the barcode reading operations and behaves correctly.
+     * Shows the current state of reading, with color codes.
+     */
     private class InfoPanel extends JPanel implements ReadingFlagListener{
 
         private JLabel lbInfo;
@@ -282,7 +291,6 @@ public class MainWindow extends JFrame implements ProgramStateListener{
             setLayout(new BoxLayout(this,BoxLayout.LINE_AXIS));
             lbInfo = new JLabel(defaultString);
             lbInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
-            setBackground(Color.green);
 
             add(Box.createGlue());
             add(lbInfo);

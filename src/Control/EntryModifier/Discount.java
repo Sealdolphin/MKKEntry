@@ -2,6 +2,9 @@ package Control.EntryModifier;
 
 import org.json.simple.JSONObject;
 
+/**
+ * An entry modifier. Upon use it modifies the price of an entry.
+ */
 public class Discount {
     private String name;
     private String imagePath;
@@ -18,6 +21,7 @@ public class Discount {
     }
 
     public static Discount parseDiscountFromJson(JSONObject jsonObject) {
+        //TODO: catching parse exceptions
         String name = jsonObject.get("name").toString();
         String image = jsonObject.get("imgPath").toString();
         String label = jsonObject.get("label").toString();
