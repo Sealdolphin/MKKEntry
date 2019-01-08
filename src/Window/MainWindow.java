@@ -15,7 +15,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static Control.EntryController.DEFAULT_OPTION;
@@ -36,20 +35,35 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      * A label indicating whether the selected port / device is active
      */
     private JLabel lbDeviceActive;
+    /**
+     * The panel which contains the different discounts (and their respective barcodes) assosiated with the active profile
+     */
     private JPanel panelDiscount;
+    /**
+     * The listView of the entries.
+     */
     private JTable entryView;
-
+    /**
+     * The currently active profile
+     */
     private EntryProfile activeProfile;
+    /**
+     * All the available profiles
+     */
     private List<EntryProfile> profiles;
-
-    private boolean sideBar = false;
-
+    /**
+     * Indicates whether the discount panel is on or off
+     */
+    private boolean discountPanelState = false;
     /**
      * The EntryController
      * It is responsible for operative decisions
      */
     private EntryController controller;
 
+    /*
+    ================= FUNCTIONS =================
+     */
 
     /**
      * Main Constructor
@@ -120,7 +134,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      * Activates or deactivates the label indicating the active state of the selected port / device
      * @param active is the state of the port / device
      */
-    private void activateButton(boolean active) {
+    private void onClickBtnRefreshPorts(boolean active) {
         if(active){
             lbDeviceActive.setText("Aktív");
             lbDeviceActive.setBackground(Color.green);
@@ -152,8 +166,8 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         JButton btnOpenSideBar = new JButton("Kedvezmények");
         //Adding sidePanel
         btnOpenSideBar.addActionListener(e -> {
-            sideBar = !sideBar;
-            if(sideBar)
+            discountPanelState = !discountPanelState;
+            if(discountPanelState)
                 add(panelDiscount,BorderLayout.EAST);
             else{
                 remove(panelDiscount);
@@ -216,14 +230,17 @@ public class MainWindow extends JFrame implements ProgramStateListener{
             cbSelectPort.addItem(port.getSystemPortName());
         }
         if (cbSelectPort.getItemCount() > 0) {
-            activateButton(controller.portIsActive());
+            onClickBtnRefreshPorts(controller.portIsActive());
         } else {
-            activateButton(false);
+            onClickBtnRefreshPorts(false);
             cbSelectPort.addItem(DEFAULT_OPTION);
         }
         pack();
     }
 
+    /*
+    ================= INHERITED FUNCTIONS =================
+     */
 
     /**
      * Inherited from ProgramListener
@@ -268,6 +285,10 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         activeProfile = profiles.stream().filter(p -> p.getName().equals(profileName)).findAny().orElse(activeProfile);
         //Auto renew state?
     }
+
+    /*
+    ================= INNER CLASSES =================
+     */
 
     /**
      * An information panel at the bottom of the screen.
