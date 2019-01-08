@@ -209,7 +209,7 @@ public class EntryController implements ItemListener {
                 filter = new TombolaFilter();
                 break;
         }
-        defaultEventHandler.saveFile(entryList.exportEntries(filter));
+        defaultEventHandler.saveFile(entryList.stream().map(filter::applyFilter).toArray());
     }
 
     void setMetaData(String entryCode, List<String> discountMeta, String[] defaultMeta) {

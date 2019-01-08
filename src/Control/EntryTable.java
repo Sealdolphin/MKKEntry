@@ -1,7 +1,6 @@
 package Control;
 
 import Control.EntryModifier.TicketType;
-import Control.Utility.ExportFilter;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
@@ -60,15 +59,6 @@ public class EntryTable extends AbstractTableModel {
      */
     void removeEntry(Entry guest) {
         listOfEntries.remove(guest);
-    }
-
-    /**
-     * Creates an array to be exported with a filter
-     * @param filter the filter to be applied
-     * @return an array of strings (of the entries)
-     */
-    Object[] exportEntries(ExportFilter filter){
-        return listOfEntries.stream().map(filter::applyFilter).toArray();
     }
 
     /**
