@@ -1,5 +1,6 @@
 package Control;
 
+import Control.EntryModifier.TicketType;
 import Control.Utility.BarcodeReader;
 import Control.Utility.EntryFilter;
 import Control.Utility.ExportFilter;
@@ -14,6 +15,7 @@ import java.awt.event.ItemListener;
 import java.util.HashMap;
 import java.util.List;
 
+import Window.ReadingFlagListener;
 import Window.ProgramStateListener;
 
 import static Control.Entry.Member.M_ENTERED;
@@ -32,7 +34,7 @@ public class EntryController implements ItemListener {
     /**
      *  For the different reading operations
      */
-    private enum readCodeFlag{
+    public enum readCodeFlag{
         FL_IS_LEAVING,
         FL_IS_DELETE,
         FL_DEFAULT
@@ -45,6 +47,8 @@ public class EntryController implements ItemListener {
     private JTable tableView;
     private EventHandler defaultEventHandler;
     private Entry lastEntry = null;
+    private ReadingFlagListener infoBar;
+
 
     /**
      * Indicates what the next reading operation means
@@ -72,15 +76,16 @@ public class EntryController implements ItemListener {
      * Default Constructor for the controller
      * Reads the config.ini file and sets up default settings
      */
-    public EntryController(EntryProfile profile, String[] profileNames){
+    public EntryController(EntryProfile profile, String[] profileNames, ReadingFlagListener infoBar){
         //Setting up command list
         profile.setController(this);
 
+        this.infoBar = infoBar;
         System.out.println("ENTRY = " + ENTRY_CODE);
         System.out.println(commandList);
 
         defaultEventHandler = new EventHandler(this,profile.getName(),profileNames);
-        entryList = new EntryTable();
+        entryList = new EntryTable(TicketType.defaultType);
     }
 
     /**
@@ -112,7 +117,7 @@ public class EntryController implements ItemListener {
                     case FL_DEFAULT:
                         System.out.println("New entry: " + code);
                         if(guest == null) {
-                            guest = new Entry(codeNumber);
+                            guest = new Entry(codeNumber,TicketType.defaultType);
                             entryList.addEntry(guest);
                             guest.Enter();
                             lastEntry = guest;
@@ -159,6 +164,7 @@ public class EntryController implements ItemListener {
                 }
             }
         }
+        infoBar.flagChange(readingFlag);
 
     }
 

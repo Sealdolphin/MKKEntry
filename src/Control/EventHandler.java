@@ -1,7 +1,9 @@
 package Control;
 
+import Control.EntryModifier.TicketType;
 import Control.Utility.EntryFilter;
 import Window.ProgramStateListener;
+import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -159,6 +161,7 @@ public class EventHandler {
         String[] props = entryString.split(separator);
         String uid, name,enter = null ,leave = null;
         boolean entered = false;
+        //TicketType type = new TicketType();
 
         if(props.length < 1) throw new ParseException("A fájl sérült, vagy hibás",offset);
         try {
@@ -181,6 +184,7 @@ public class EventHandler {
 
         return new Entry(uid,name,enter,leave,entered);
     }
+
 
     void changeState(boolean stateChanged) {
         programState = stateChanged;

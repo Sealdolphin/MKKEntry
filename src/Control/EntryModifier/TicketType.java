@@ -4,6 +4,7 @@ import org.json.simple.JSONObject;
 
 public class TicketType {
 
+    public static TicketType defaultType;
     private String name;
     private int price;
     private boolean hasFee;
@@ -30,6 +31,4 @@ public class TicketType {
     public int getPrice() {
         return price;
     }
-
-
 }

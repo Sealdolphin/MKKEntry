@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static Control.EntryController.DEFAULT_OPTION;
@@ -65,8 +66,9 @@ public class MainWindow extends JFrame implements ProgramStateListener{
             return;
         }
 
+        InfoPanel infoPanel = new InfoPanel("Belépésre vár");
         //Creating EntryController
-        controller = new EntryController(activeProfile,getProfileNames());
+        controller = new EntryController(activeProfile,getProfileNames(),infoPanel);
         controller.addProgramStateListener(this);
 
         //Setting Layout for header and body
@@ -79,7 +81,9 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         panelSide = activeProfile.createSideMenu();
         add(createHeader(),BorderLayout.NORTH);
         add(createBody(),BorderLayout.CENTER);
+        add(infoPanel,BorderLayout.SOUTH);
         setJMenuBar(MainMenu.createMenu(controller.getDefaultEventHandler()));
+
 
         //Running basic event routines
         eventRefreshPorts();
@@ -202,7 +206,6 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         return panelBody;
     }
 
-
     /**
      * Refreshes the available ports from the system
      */
@@ -249,7 +252,8 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      */
     @Override
     public void renewState() {
-        controller = new EntryController(activeProfile,getProfileNames());
+        InfoPanel p = (InfoPanel) Arrays.stream(getComponents()).filter(component -> component.getClass().equals(InfoPanel.class)).findAny().orElse(null);
+        controller = new EntryController(activeProfile,getProfileNames(),p);
         controller.addProgramStateListener(this);
         controller.setTable(entryView);
     }
@@ -270,5 +274,38 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         //Auto renew state?
     }
 
+    private class InfoPanel extends JPanel implements ReadingFlagListener{
 
+        private JLabel lbInfo;
+
+        InfoPanel(String defaultString){
+            setLayout(new BoxLayout(this,BoxLayout.LINE_AXIS));
+            lbInfo = new JLabel(defaultString);
+            lbInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
+            setBackground(Color.green);
+
+            add(Box.createGlue());
+            add(lbInfo);
+            add(Box.createGlue());
+        }
+
+        @Override
+        public void flagChange(EntryController.readCodeFlag flag) {
+            switch (flag){
+                default:
+                case FL_DEFAULT:
+                    lbInfo.setText("Belépésre vár");
+                    setBackground(Color.GREEN);
+                    break;
+                case FL_IS_LEAVING:
+                    lbInfo.setText("Kilépésre vár");
+                    setBackground(Color.YELLOW);
+                    break;
+                case FL_IS_DELETE:
+                    lbInfo.setText("Törlésre vár");
+                    setBackground(Color.RED);
+                    break;
+            }
+        }
+    }
 }

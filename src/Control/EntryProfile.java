@@ -24,7 +24,6 @@ public class EntryProfile {
 
     private String[] defaultCommands;
     private String entryCode;
-    private TicketType defaultType;
 
     /**
      * The Defaults of the command strings
@@ -56,7 +55,7 @@ public class EntryProfile {
 
         //Setting the default ticket type
         String defType = jsonProfile.get("defaultType").toString();
-        profile.defaultType = profile.types.stream().filter(ticketType -> ticketType.getName().equals(defType)).findAny().orElse(profile.types.get(0));
+        TicketType.defaultType = profile.types.stream().filter(ticketType -> ticketType.getName().equals(defType)).findAny().orElse(profile.types.get(0));
 
         //Loading commands
         String[] commands = new String[2];

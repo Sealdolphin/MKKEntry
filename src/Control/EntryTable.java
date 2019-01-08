@@ -1,5 +1,6 @@
 package Control;
 
+import Control.EntryModifier.TicketType;
 import Control.Utility.ExportFilter;
 
 import javax.swing.table.AbstractTableModel;
@@ -14,8 +15,10 @@ public class EntryTable extends AbstractTableModel {
 
     private List<Entry> listOfEntries;
     private String[] columns = Entry.getColumnNames();
+    private TicketType defaultType;
 
-    EntryTable(){
+    EntryTable(TicketType defaultType){
+        this.defaultType = defaultType;
         listOfEntries = new ArrayList<>();
     }
 
@@ -38,7 +41,7 @@ public class EntryTable extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return new Entry().getValue(columnIndex).getClass();
+        return new Entry(defaultType).getValue(columnIndex).getClass();
     }
 
     @Override
@@ -63,8 +66,7 @@ public class EntryTable extends AbstractTableModel {
     String[] exportEntries(ExportFilter filter){
         ArrayList<String> lines = new ArrayList<>();
 
-        for (Entry entry :
-                listOfEntries) {
+        for (Entry entry : listOfEntries) {
             String filteredEntry = filter.applyFilter(entry);
             if(filteredEntry != null)
                 lines.add(filteredEntry);

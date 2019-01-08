@@ -15,6 +15,7 @@ public class Entry {
     public enum Member{
         M_UID,
         M_NAME,
+        M_TYPE,
         M_ENTERED,
         M_ENTRY,
         M_LEAVE
@@ -34,8 +35,6 @@ public class Entry {
      * The name of the guest
      */
     private String name;
-
-    private boolean foodSale = false;
 
     private TicketType ticketType;
 
@@ -58,10 +57,12 @@ public class Entry {
      * Creates a new guest with a unique ID number
      * @param id the unique number
      */
-    public Entry(String id){
+    public Entry(String id, TicketType type){
         uniqueId = id;
         name = "Külsős Belépő";
+        ticketType = type;
     }
+
 
     public Entry(String id, String name, String entry, String leave, boolean is_entered){
         uniqueId = id;
@@ -88,16 +89,17 @@ public class Entry {
         leaveStamp = LocalDateTime.now().format(formatter);
     }
 
-    public Entry(){
+    public Entry(TicketType type){
         uniqueId = "DMYID";
         entered = false;
         entryStamp = LocalDateTime.now().format(formatter);
         leaveStamp = LocalDateTime.now().format(formatter);
         name = "PlaceholderText";
+        ticketType = type;
     }
 
     static String[] getColumnNames(){
-        return new String[]{"ID","NÉV","BELÉPETT","BELÉPÉS","KILÉPÉS"};
+        return new String[]{"ID","NÉV","JEGYTÍPUS","BELÉPETT","BELÉPÉS","KILÉPÉS"};
     }
 
     public Object getValue(int columnIndex) {
@@ -106,13 +108,11 @@ public class Entry {
             default: return null;
             case M_UID: return uniqueId;
             case M_NAME: return name;
+            case M_TYPE: return ticketType.getName();
             case M_ENTERED: return entered;
             case M_ENTRY: return entryStamp;
             case M_LEAVE: return leaveStamp;
         }
     }
 
-    public void toggleDiscount(Discount discount){
-
-    }
 }

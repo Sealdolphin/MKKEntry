@@ -1,7 +1,5 @@
 package Window;
 
-import Control.EntryProfile;
-
 public interface ProgramStateListener {
     void stateChanged(boolean stateChanged, String headerName);
     void renewState();
