@@ -24,6 +24,8 @@ import static Control.EntryController.DEFAULT_OPTION;
  * It contains two panels: A header and a body
  * The header is responsible for the selection of the port / device
  * The Body is responsible for the guest list.
+ * It also has a bottom info panel which displays the state of the reading
+ * @author Márk Mihalovits
  */
 public class MainWindow extends JFrame implements ProgramStateListener{
 
@@ -283,7 +285,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
     @Override
     public void changeProfile(String profileName) {
         activeProfile = profiles.stream().filter(p -> p.getName().equals(profileName)).findAny().orElse(activeProfile);
-        //Auto renew state?
+        //TODO: Take renewState to consideration
     }
 
     /*

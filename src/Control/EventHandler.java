@@ -1,9 +1,7 @@
 package Control;
 
-import Control.EntryModifier.TicketType;
 import Control.Utility.EntryFilter;
 import Window.ProgramStateListener;
-import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;

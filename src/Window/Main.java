@@ -3,9 +3,17 @@ package Window;
 import javax.swing.*;
 import java.awt.*;
 
-
+/**
+ * The Application's main class
+ * This has the entry point.
+ * @author Márk Mihalovits
+ */
 public class Main {
 
+    /**
+     * The entry point of the Application.
+     * @param args optional system arguments (currently unused)
+     */
     public static void main(String[] args) {
         //Setting up L&F
         try {

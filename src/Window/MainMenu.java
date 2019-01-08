@@ -5,7 +5,16 @@ import Control.EventHandler;
 
 import javax.swing.*;
 
+/**
+ * An abstract class responsible for creating the Application's menu bar.
+ * @author Márk Mihalovits
+ */
 abstract class MainMenu {
+    /**
+     * Creates a default menu bar with an event handler
+     * @param handler the event handler handling the action events
+     * @return a default menu bar
+     */
     static JMenuBar createMenu(EventHandler handler){
         JMenuBar menuBar = new JMenuBar();
         //Assembling Menus
@@ -17,6 +26,11 @@ abstract class MainMenu {
         return menuBar;
     }
 
+    /**
+     * Creates the FILE menu for the menu bar
+     * @param handler the event handler handling the action events
+     * @return the FILE menu
+     */
     private static JMenu createFileMenu(EventHandler handler){
         JMenu fileMenu = new JMenu("Fájl");
 
@@ -50,6 +64,11 @@ abstract class MainMenu {
         return fileMenu;
     }
 
+    /**
+     * Creates the PROFILE menu for the menu bar
+     * @param handler the event handler handling the action events
+     * @return the PROFILE menu
+     */
     private static JMenu createProfileMenu(EventHandler handler) {
         JMenu menuProfiles = new JMenu("Profilok");
 
@@ -62,10 +81,22 @@ abstract class MainMenu {
         return menuProfiles;
     }
 
+    /**
+     * Creates the CHARTS menu for the menu bar
+     * TODO: waiting for implementation
+     * @param handler the event handler handling the action events
+     * @return the CHARTS menu
+     */
     private static JMenu createChartsMenu(EventHandler handler){
         return new JMenu("Statisztikák");
     }
 
+    /**
+     * Creates the EDIT menu for the menu bar
+     * TODO: waiting for implementation
+     * @param handler the event handler handling the action events
+     * @return the EDIT menu
+     */
     private static JMenu createEditMenu(EventHandler handler){
         return new JMenu("Szerkesztés");
     }
