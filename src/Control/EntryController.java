@@ -42,7 +42,7 @@ public class EntryController implements ItemListener {
         FL_DEFAULT
     }
 
-    private static String ENTRY_CODE;                               //Entry code: a short string that indicates valuable data
+    public static String ENTRY_CODE;                               //Entry code: a short string that indicates valuable data
     public static final String DEFAULT_OPTION = "Válassz egyet";    //String for null option
 
     private JTable tableView;
@@ -227,7 +227,6 @@ public class EntryController implements ItemListener {
         commandList.put(defaultMeta[1],readCodeFlag.FL_IS_DELETE);
         this.discountMetaData = discountMeta;
     }
-
 
     /**
      * Implemented from ItemListener (JComboBoxListener)

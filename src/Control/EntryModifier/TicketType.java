@@ -1,5 +1,6 @@
 package Control.EntryModifier;
 
+import Control.EntryProfile;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;

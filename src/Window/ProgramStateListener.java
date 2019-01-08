@@ -1,6 +1,7 @@
 package Window;
 
 import Control.EntryController;
+import Control.EntryProfile;
 
 /**
  * An interface handling the Program's behavior
@@ -36,4 +37,6 @@ public interface ProgramStateListener {
      * @return the Application's control class
      */
     EntryController getController();
+
+    EntryProfile getProfile();
 }

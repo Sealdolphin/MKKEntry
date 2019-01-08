@@ -63,9 +63,10 @@ public class Entry {
     }
 
 
-    public Entry(String id, String name, String entry, String leave, boolean is_entered){
+    public Entry(String id,TicketType type, String name, String entry, String leave, boolean is_entered){
         uniqueId = id;
         this.name = name;
+        ticketType = type;
         entered = is_entered;
         entryStamp = entry;
         leaveStamp = leave;

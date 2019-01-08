@@ -106,6 +106,10 @@ public class EntryProfile {
         return name;
     }
 
+    public TicketType identifyTicketType(String name){
+        return types.stream().filter(type -> type.getName().equals(name)).findAny().orElse(TicketType.defaultType);
+    }
+
     /**
      * Sets up the controller meta information from the stored profile
      * @param controller the controller to be set up

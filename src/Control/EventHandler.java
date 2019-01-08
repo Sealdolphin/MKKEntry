@@ -1,5 +1,6 @@
 package Control;
 
+import Control.EntryModifier.TicketType;
 import Control.Utility.EntryFilter;
 import Window.ProgramStateListener;
 
@@ -73,7 +74,7 @@ public class EventHandler {
             System.out.println("Opening " + entryFile);
 
             try {
-                List<Entry> imported = parseEntryImportFile(entryFile);
+                List<Entry> imported = parseEntryImportFile(entryFile,listener.getProfile());
                 listener.getController().importEntries(imported);
 
             } catch (ParseException ex){
@@ -106,7 +107,7 @@ public class EventHandler {
         }
     }
 
-    private static List<Entry> parseEntryImportFile(File file) throws ParseException{
+    private static List<Entry> parseEntryImportFile(File file, EntryProfile profile) throws ParseException{
         List<Entry> importList = new ArrayList<>();
         int lineNumber = 0;
         try {
@@ -121,7 +122,7 @@ public class EventHandler {
                     eof = true;
                     continue;
                 }
-                importList.add(createEntryFromString(line,lineNumber));
+                importList.add(createEntryFromString(line,profile,lineNumber));
             }
 
         } catch (FileNotFoundException fnf) {
@@ -140,37 +141,53 @@ public class EventHandler {
 
     /**
      * Creates a new Entry class from an input string
+     * The input string must follow the default Filter format which is:
+     * 0: UID,
+     * 1: NAME,
+     * 2: TYPE_NAME,
+     * 3: ENTRY_DATE - optional,
+     * 4: LEAVE_DATE - optional
      * @param entryString the input string
+     * @param profile the currently active profile
      * @param offset the line where the input is found in a file
      * @return a new Entry with correct attributes
      * @throws ParseException if the parsing of the string fails
      */
-    private static Entry createEntryFromString(String entryString, int offset) throws ParseException{
+    private static Entry createEntryFromString(String entryString, EntryProfile profile, int offset) throws ParseException{
         String[] props = entryString.split(separator);
         String uid, name,enter = null ,leave = null;
         boolean entered = false;
-        //TicketType type = new TicketType();
+        TicketType type = null;
 
         if(props.length < 1) throw new ParseException("A fájl sérült, vagy hibás",offset);
+        //Setting ID
         try {
             uid = props[0];
         } catch (NumberFormatException format){
             throw new ParseException("Egyedi azonosító sérült, vagy érvénytelen",offset);
         }
+        //Setting name
         if(props.length > 1)
             name = props[1];
         else name = "Ismeretlen";
 
-        if(props.length > 2) {
-            enter = props[2];
+        //Setting TicketType
+        if(props.length > 2){
+            type = profile.identifyTicketType(props[2]);
+        } else type = TicketType.defaultType;
+
+        //Setting ENTRY date (optional)
+        if(props.length > 3) {
+            enter = props[3];
             entered = true;
         }
-        if(props.length > 3) {
-            leave = props[3];
+        //Setting leave date (optional)
+        if(props.length > 4) {
+            leave = props[4];
             entered = false;
         }
 
-        return new Entry(uid,name,enter,leave,entered);
+        return new Entry(uid,type,name,enter,leave,entered);
     }
 
 

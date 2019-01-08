@@ -12,6 +12,8 @@ import org.json.simple.parser.ParseException;
 import javax.swing.*;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -206,10 +208,13 @@ public class MainWindow extends JFrame implements ProgramStateListener{
 
         controller.setTable(entryView);
 
+        ToggleInputButton btnToggleInput = new ToggleInputButton();
+
         JButton btnSendCommand = new JButton("Küldés");
         btnSendCommand.addActionListener(e -> {
             if(!tfInputField.getText().isEmpty()) {
-                controller.receiveCode(tfInputField.getText());
+                String data = btnToggleInput.codeInput ? EntryController.ENTRY_CODE : "";
+                controller.receiveCode(data + tfInputField.getText());
             }
         });
 
@@ -218,7 +223,8 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         spTable.setWheelScrollingEnabled(true);
 
         //Assembling body components
-        JPanel panelBodySearchBar = new JPanel();   //This is the search bar in the bottom
+        JPanel panelBodySearchBar = new JPanel();   //This is the search bar in the bottom??
+        panelBodySearchBar.add(btnToggleInput);
         panelBodySearchBar.add(tfInputField);
         panelBodySearchBar.add(btnSendCommand);
         panelBody.add(panelBodySearchBar,BorderLayout.SOUTH);
@@ -308,6 +314,9 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         return controller;
     }
 
+    @Override
+    public EntryProfile getProfile(){return activeProfile;}
+
     /*
     ================= INNER CLASSES =================
      */
@@ -348,6 +357,26 @@ public class MainWindow extends JFrame implements ProgramStateListener{
                     setBackground(Color.RED);
                     break;
             }
+        }
+    }
+
+    private class ToggleInputButton extends JButton implements ActionListener {
+
+        private boolean codeInput;
+
+        ToggleInputButton(){
+            super("Belépő kód");
+            codeInput = true;
+            addActionListener(this);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            codeInput = !codeInput;
+            if(codeInput)
+                setText("Belépő kód");
+            else
+                setText("Teljes kód");
         }
     }
 }
