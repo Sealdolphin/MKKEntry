@@ -10,6 +10,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -38,6 +39,9 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      * A label indicating whether the selected port / device is active
      */
     private JLabel lbDeviceActive;
+    /**
+     * The label indicating the active profile to the user in the header
+     */
     private JLabel lbProfile = new JLabel("PROFIL: ");
     /**
      * The panel which contains the different discounts (and their respective barcodes) assosiated with the active profile
@@ -199,6 +203,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         JTextField tfInputField = new JTextField(32);
         entryView = new JTable();
         entryView.getTableHeader().setReorderingAllowed(false);
+
         controller.setTable(entryView);
 
         JButton btnSendCommand = new JButton("Küldés");

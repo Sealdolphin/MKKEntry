@@ -78,6 +78,8 @@ public class EntryFilter extends FileFilter implements ExportFilter{
                 separator +
                 entry.getValue(M_NAME.ordinal()) +
                 separator +
+                entry.getValue(M_TYPE.ordinal()) +
+                separator +
                 entry.getValue(M_ENTRY.ordinal()) +
                 separator +
                 entry.getValue(M_LEAVE.ordinal()) +

@@ -9,6 +9,7 @@ import Window.MainWindow;
 import com.fazecast.jSerialComm.SerialPort;
 
 import javax.swing.*;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -177,8 +178,10 @@ public class EntryController implements ItemListener {
     private void refreshViewModel() {
         //Refresh data model
         entryList.fireTableDataChanged();
-        if(tableView != null)
+        if(tableView != null) {
             tableView.setModel(entryList);
+            tableView.setRowSorter(new TableRowSorter<>(entryList));
+        }
         defaultEventHandler.changeState(true);
     }
 
