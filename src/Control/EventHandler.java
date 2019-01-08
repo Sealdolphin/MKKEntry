@@ -25,13 +25,13 @@ public class EventHandler {
     private String saveFileName = "";
     private EntryController controller;
     private String activeProfile;
-    private String[] profileNames;
+    private Object[] profileNames;
 
     private List<ProgramStateListener> listenerList = new ArrayList<>();
 
     private final JFileChooser fileDialog = new JFileChooser(System.getProperty("user.home"));
 
-    EventHandler(EntryController c, String profile, String[] profiles){
+    EventHandler(EntryController c, String profile, Object[] profiles){
         activeProfile = profile;
         profileNames = profiles;
         controller = c;

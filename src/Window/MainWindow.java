@@ -36,7 +36,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      * A label indicating whether the selected port / device is active
      */
     private JLabel lbDeviceActive;
-    private JPanel panelSide;
+    private JPanel panelDiscount;
     private JTable entryView;
 
     private EntryProfile activeProfile;
@@ -66,22 +66,20 @@ public class MainWindow extends JFrame implements ProgramStateListener{
             return;
         }
 
-        InfoPanel infoPanel = new InfoPanel("Info Panel placeholder text");
-        //Creating EntryController
-        controller = new EntryController(activeProfile,getProfileNames(),infoPanel);
-        controller.addProgramStateListener(this);
-
         //Setting Layout for header and body
         setLayout(new BorderLayout());
+
+        //Creating EntryController
+        renewState();
         //Setting up default parameters
         setMinimumSize(new Dimension(640,200));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("MKK Beléptető rendszer");
 
-        panelSide = activeProfile.createSideMenu();
+        panelDiscount = activeProfile.createSideMenu();
         add(createHeader(),BorderLayout.NORTH);
         add(createBody(),BorderLayout.CENTER);
-        add(infoPanel,BorderLayout.SOUTH);
+
         setJMenuBar(MainMenu.createMenu(controller.getDefaultEventHandler()));
 
 
@@ -156,9 +154,9 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         btnOpenSideBar.addActionListener(e -> {
             sideBar = !sideBar;
             if(sideBar)
-                add(panelSide,BorderLayout.EAST);
+                add(panelDiscount,BorderLayout.EAST);
             else{
-                remove(panelSide);
+                remove(panelDiscount);
             }
             revalidate();
         });
@@ -226,13 +224,6 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         pack();
     }
 
-    private String[] getProfileNames(){
-        String[] names = new String[profiles.size()];
-        for (int i = 0; i < profiles.size(); i++) {
-            names[i] = profiles.get(i).getName();
-        }
-        return names;
-    }
 
     /**
      * Inherited from ProgramListener
@@ -251,15 +242,15 @@ public class MainWindow extends JFrame implements ProgramStateListener{
     /**
      * Inherited from ProgramStateListener
      * Creates a new file and clears all data
+     * Also used upon startup
      */
     @Override
     public void renewState() {
-        //Theoretically it cannot be null, however if it is, then we are in a great pickle
-        //noinspection ConstantConditions
-        InfoPanel p = (InfoPanel) Arrays.stream(getContentPane().getComponents()).filter(component -> component.getClass().equals(InfoPanel.class)).findAny().get();
-        controller = new EntryController(activeProfile,getProfileNames(),p);
+        InfoPanel infoPanel = new InfoPanel("");
+        controller = new EntryController(activeProfile,profiles.stream().map(EntryProfile::getName).toArray(),infoPanel);
         controller.addProgramStateListener(this);
         controller.setTable(entryView);
+        add(infoPanel,BorderLayout.SOUTH);
     }
 
     /**

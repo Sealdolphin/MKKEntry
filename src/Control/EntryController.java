@@ -76,7 +76,7 @@ public class EntryController implements ItemListener {
      * Default Constructor for the controller
      * Reads the config.ini file and sets up default settings
      */
-    public EntryController(EntryProfile profile, String[] profileNames, ReadingFlagListener infoBar){
+    public EntryController(EntryProfile profile, Object[] profileNames, ReadingFlagListener infoBar){
         //Setting up command list
         profile.setController(this);
 
