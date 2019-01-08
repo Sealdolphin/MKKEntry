@@ -244,7 +244,7 @@ public class EventHandler {
      * Saves a file to a specific location
      * @param lines the lines of the file
      */
-    void saveFile(String[] lines) {
+    void saveFile(Object[] lines) {
         int result = openFileDialog(new JFrame(),"Fájl mentése","Mentés",true,null);
         if(result == JFileChooser.APPROVE_OPTION){
             File file = fileDialog.getSelectedFile();
@@ -254,8 +254,8 @@ public class EventHandler {
 
             try {
                 PrintWriter fileWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file)));
-                for (String line : lines) {
-                    fileWriter.println(line);
+                for (Object line : lines) {
+                    fileWriter.println(line.toString());
                 }
                 fileWriter.close();
 
