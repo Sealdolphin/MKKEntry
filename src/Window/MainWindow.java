@@ -14,6 +14,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -98,8 +100,6 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle(ui.getUIStr("UI","WINDOW_TITLE"));
 
-
-
         //Setting Layout for header and body
         setLayout(new BorderLayout());
 
@@ -135,9 +135,13 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         if(!obj.get("version").toString().equals(UIHandler.uiVersion))
             throw new IOException(ui.getUIStr("ERR","VERSION_MISMATCH") + UIHandler.uiVersion);
 
-        JSONArray jsonProfiles = (JSONArray)obj.get("profiles");
-        for (Object p: jsonProfiles) {
-            profiles.add(EntryProfile.parseProfileFromJson((JSONObject) p));
+        try {
+            JSONArray jsonProfiles = (JSONArray) obj.get("profiles");
+            for (Object p : jsonProfiles) {
+                profiles.add(EntryProfile.parseProfileFromJson((JSONObject) p));
+            }
+        } catch (Exception e){
+            throw new IOException(ui.getUIStr("ERR","PROFILE_DATA_PARSE"));
         }
         String active = obj.get("active").toString();
         for (EntryProfile profile : profiles) {
@@ -212,7 +216,14 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         JPanel panelBody = new JPanel();
         panelBody.setLayout(new BorderLayout());
 
-        JTextField tfInputField = new JTextField(32);
+        JTextField tfInputField = new JTextField("Ide írd a belépőkódot...",32);
+        tfInputField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                tfInputField.setText("");
+            }
+        });
+
         entryView = new JTable();
         entryView.getTableHeader().setReorderingAllowed(false);
         entryView.setSelectionMode(SINGLE_SELECTION);

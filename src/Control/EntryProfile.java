@@ -25,16 +25,20 @@ public class EntryProfile {
     private List<Discount> discounts;
 
     private String[] defaultCommands;
-    private String entryCode;
+    private CodeRestraints entryCode;
 
     /**
      * The Defaults of the command strings
      */
     private static String[] defaults = {"leave","delete"};
 
-    private EntryProfile(){
+    private EntryProfile(JSONObject codeRestraints) throws Exception {
         types = new ArrayList<>();
         discounts = new ArrayList<>();
+        entryCode = new CodeRestraints(
+                codeRestraints.get("start"),
+                codeRestraints.get("regex")
+        );
     }
 
     /**
@@ -42,8 +46,12 @@ public class EntryProfile {
      * @param jsonProfile the JSONObject of the Profile
      * @return a fully parsed profile
      */
-    public static EntryProfile parseProfileFromJson(JSONObject jsonProfile){
-        EntryProfile profile = new EntryProfile();
+    public static EntryProfile parseProfileFromJson(JSONObject jsonProfile) throws Exception {
+        //Loading basic information
+        JSONObject jsonCode = (JSONObject) jsonProfile.get("entry_code");
+        EntryProfile profile = new EntryProfile(jsonCode);
+        profile.name = jsonProfile.get("name").toString();
+
         //Loading discounts
         JSONArray jArray = (JSONArray) jsonProfile.get("discounts");
         for (Object discountObject: jArray) {
@@ -63,10 +71,6 @@ public class EntryProfile {
         String[] commands = new String[2];
         commands[0] = ((JSONObject)jsonProfile.get("commands")).get(defaults[0]).toString();
         commands[1] = ((JSONObject)jsonProfile.get("commands")).get(defaults[1]).toString();
-
-        //Loading basic information
-        profile.name = jsonProfile.get("name").toString();
-        profile.entryCode = jsonProfile.get("entry_code").toString();
         profile.defaultCommands = commands;
 
         return profile;
@@ -125,9 +129,28 @@ public class EntryProfile {
         for (Discount discount : discounts) {
             discountMeta.add(discount.getMeta());
         }
-        controller.setMetaData(entryCode,discountMeta,defaultCommands);
+        controller.setMetaData(entryCode.start,discountMeta,defaultCommands);
     }
 
+    String validateCode(String code) throws IOException{
+        String validID;
+        //Removing code start part
+        validID = code.replace(entryCode.start,"").toUpperCase().trim();
+        //Checking constraints
+        if(!validID.matches(entryCode.pattern)) throw new IOException("A kód nem követi a megadott mintát");
+
+        return validID;
+    }
+
+    private class CodeRestraints {
+        final String start;
+        final String pattern;
+        private CodeRestraints(Object start, Object pattern) throws Exception {
+            if(start == null || pattern == null) throw new Exception();
+            this.start = start.toString();
+            this.pattern = pattern.toString();
+        }
+    }
 
 
     /**

@@ -110,6 +110,10 @@ public class EventHandler {
         }
     }
 
+    String checkEntryID(String code) throws IOException {
+        return listener.getProfile().validateCode(code);
+    }
+
     private static List<Entry> parseEntryImportFile(File file, EntryProfile profile) throws ParseException{
         List<Entry> importList = new ArrayList<>();
         int lineNumber = 0;

@@ -13,6 +13,7 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -43,8 +44,8 @@ public class EntryController implements ItemListener {
         FL_DEFAULT
     }
 
-    public static String ENTRY_CODE;                               //Entry code: a short string that indicates valuable data
     public static final String DEFAULT_OPTION = ui.getUIStr("UI","CHOOSE_ONE");    //String for null option
+    public static String ENTRY_CODE;                               //Entry code: a short string that indicates valuable data
 
     private JTable tableView;
     private EventHandler defaultEventHandler;
@@ -117,15 +118,15 @@ public class EntryController implements ItemListener {
             System.out.println("Entry code detected!");
             //Handling entry code correct to the current read operation
             try {
-                String codeNumber = code.replaceFirst(ENTRY_CODE, "").trim();
-                Entry guest = entryList.stream().filter(e -> e.getValue(M_UID.ordinal()).equals(codeNumber)).findAny().orElse(null);
+                String entryId = defaultEventHandler.checkEntryID(code);
+                Entry guest = entryList.stream().filter(e -> e.getValue(M_UID.ordinal()).equals(entryId)).findAny().orElse(null);
                 switch (readingFlag) {
                     //New entry code
                     default:
                     case FL_DEFAULT:
                         System.out.println("New entry: " + code);
                         if(guest == null) {
-                            guest = new Entry(codeNumber,TicketType.defaultType);
+                            guest = new Entry(entryId,TicketType.defaultType);
                             entryList.addEntry(guest);
                             guest.Enter();
                             lastEntry = guest;
@@ -147,11 +148,13 @@ public class EntryController implements ItemListener {
                 }
                 refreshViewModel();
 
+            } catch (IOException e) {
+                errorMsg = ui.getUIStr("ERR","CODE_FORMAT") + "\n" + e.getMessage();
             } finally {
                 readingFlag = readCodeFlag.FL_DEFAULT;
                 if(!errorMsg.equals("")) {
                     System.out.println("ERROR: " + errorMsg);
-                    JOptionPane.showMessageDialog(new JFrame(), errorMsg, "Figyelem", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(new JFrame(), errorMsg, ui.getUIStr("MSG","WARNING"), JOptionPane.WARNING_MESSAGE);
                 }
             }
         } else {
