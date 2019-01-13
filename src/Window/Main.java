@@ -16,7 +16,7 @@ import java.io.*;
  */
 public class Main {
 
-    public static Options options;
+    public static Options ui;
 
     /**
      * The entry point of the Application.
@@ -34,8 +34,8 @@ public class Main {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("options.json")));
             optionsJSON = (JSONObject) parser.parse(br);
             //Loading options
-            options = new Options();
-            options.refreshOptions(optionsJSON);
+            ui = new Options();
+            ui.refreshOptions(optionsJSON);
 
         }
         catch (UnsupportedLookAndFeelException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {

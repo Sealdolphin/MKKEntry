@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static Control.EntryController.DEFAULT_OPTION;
-import static Window.Main.options;
+import static Window.Main.ui;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
 /**
@@ -86,8 +86,8 @@ public class MainWindow extends JFrame implements ProgramStateListener{
             loadProfiles();
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(new JFrame(),options.getUIStr("ERR","ERR_PROFILE_LOAD_FAILED")+ "\n"+
-                    options.getUIStr("ERR","ERR_PROFILE_JSON_MISSING"),options.getUIStr("ERR","ERR_HEADER"),JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(new JFrame(), ui.getUIStr("ERR","ERR_PROFILE_LOAD_FAILED")+ "\n"+
+                    ui.getUIStr("ERR","ERR_PROFILE_JSON_MISSING"), ui.getUIStr("ERR","ERR_HEADER"),JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -99,7 +99,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         //Setting up default parameters
         setMinimumSize(new Dimension(640,200));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle(options.getUIStr("UI","WINDOW_TITLE"));
+        setTitle(ui.getUIStr("UI","WINDOW_TITLE"));
 
         panelDiscount = activeProfile.createSideMenu();
         add(createHeader(),BorderLayout.NORTH);
@@ -145,10 +145,10 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      */
     private void onClickBtnRefreshPorts(boolean active) {
         if(active){
-            lbDeviceActive.setText(options.getUIStr("UI","PORT_ACTIVE"));
+            lbDeviceActive.setText(ui.getUIStr("UI","PORT_ACTIVE"));
             lbDeviceActive.setBackground(Color.green);
         } else {
-            lbDeviceActive.setText(options.getUIStr("UI","PORT_INACTIVE"));
+            lbDeviceActive.setText(ui.getUIStr("UI","PORT_INACTIVE"));
             lbDeviceActive.setBackground(Color.red);
         }
     }
@@ -167,12 +167,12 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         lbDeviceActive.setBackground(Color.RED);
 
         //Device refresher button
-        JButton btnRefreshPorts = new JButton(options.getUIStr("UI","PORT_BTN"));
+        JButton btnRefreshPorts = new JButton(ui.getUIStr("UI","PORT_BTN"));
         btnRefreshPorts.addActionListener(e -> eventRefreshPorts());
         //Device Combo Box
         cbSelectPort.addItemListener(controller);
         //SideBar button
-        JButton btnOpenSideBar = new JButton(options.getUIStr("UI","DISCOUNT_BTN"));
+        JButton btnOpenSideBar = new JButton(ui.getUIStr("UI","DISCOUNT_BTN"));
         //Adding sidePanel
         btnOpenSideBar.addActionListener(e -> {
             discountPanelState = !discountPanelState;
@@ -186,7 +186,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
 
         //Assembling components
         panelHeader.add(lbProfile);
-        panelHeader.add(new JLabel(options.getUIStr("UI","READER_LB") + ":"));
+        panelHeader.add(new JLabel(ui.getUIStr("UI","READER_LB") + ":"));
         panelHeader.add(cbSelectPort);
         panelHeader.add(lbDeviceActive);
         panelHeader.add(btnRefreshPorts);
@@ -212,7 +212,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
 
         ToggleInputButton btnToggleInput = new ToggleInputButton();
 
-        JButton btnSendCommand = new JButton(options.getUIStr("UI","SENDCODE_BTN"));
+        JButton btnSendCommand = new JButton(ui.getUIStr("UI","SENDCODE_BTN"));
         btnSendCommand.addActionListener(e -> {
             if(!tfInputField.getText().isEmpty()) {
                 String data = btnToggleInput.codeInput ? EntryController.ENTRY_CODE : "";
@@ -288,7 +288,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         controller.setProgramStateListener(this);
         controller.setTable(entryView);
         //Creating new layout / menu
-        lbProfile.setText(options.getUIStr("UI","PROFILE_LB") + ": " + activeProfile.getName());
+        lbProfile.setText(ui.getUIStr("UI","PROFILE_LB") + ": " + activeProfile.getName());
         add(infoPanel,BorderLayout.SOUTH);
     }
 
@@ -307,7 +307,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         activeProfile = profiles.stream().filter(p -> p.getName().equals(profileName)).findAny().orElse(activeProfile);
         //Invoke renew state. Clear Database and create new Controller
         renewState();
-        JOptionPane.showMessageDialog(new JFrame(),options.getUIStr("MSG","PROFILE_CHANGED") + "\n"+
+        JOptionPane.showMessageDialog(new JFrame(), ui.getUIStr("MSG","PROFILE_CHANGED") + "\n"+
                 "Új profil: " + activeProfile.getName(),"Kész",JOptionPane.INFORMATION_MESSAGE);
     }
 
@@ -347,15 +347,15 @@ public class MainWindow extends JFrame implements ProgramStateListener{
             switch (flag){
                 default:
                 case FL_DEFAULT:
-                    lbInfo.setText(options.getUIStr("UI","BOTTOM_INFO_DEF"));
+                    lbInfo.setText(Main.ui.getUIStr("UI","BOTTOM_INFO_DEF"));
                     setBackground(Color.GREEN);
                     break;
                 case FL_IS_LEAVING:
-                    lbInfo.setText(options.getUIStr("UI","BOTTOM_INFO_MOD"));
+                    lbInfo.setText(Main.ui.getUIStr("UI","BOTTOM_INFO_MOD"));
                     setBackground(Color.YELLOW);
                     break;
                 case FL_IS_DELETE:
-                    lbInfo.setText(options.getUIStr("UI","BOTTOM_INFO_DEL"));
+                    lbInfo.setText(Main.ui.getUIStr("UI","BOTTOM_INFO_DEL"));
                     setBackground(Color.RED);
                     break;
             }
@@ -367,7 +367,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         private boolean codeInput;
 
         ToggleInputButton(){
-            super(options.getUIStr("UI","TOGGLECODE_BTN_1"));
+            super(Main.ui.getUIStr("UI","TOGGLECODE_BTN_1"));
             codeInput = true;
             addActionListener(this);
         }
@@ -376,9 +376,9 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         public void actionPerformed(ActionEvent e) {
             codeInput = !codeInput;
             if(codeInput)
-                setText(options.getUIStr("UI","TOGGLECODE_BTN_1"));
+                setText(Main.ui.getUIStr("UI","TOGGLECODE_BTN_1"));
             else
-                setText(options.getUIStr("UI","TOGGLECODE_BTN_2"));
+                setText(Main.ui.getUIStr("UI","TOGGLECODE_BTN_2"));
         }
     }
 }

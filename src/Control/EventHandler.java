@@ -16,7 +16,7 @@ import java.util.List;
 import static Control.Utility.EntryFilter.FilterType.TOMBOLA;
 import static Control.Utility.EntryFilter.separator;
 import static javax.swing.JOptionPane.*;
-import static Window.Main.options;
+import static Window.Main.ui;
 
 
 public class EventHandler {
@@ -56,7 +56,7 @@ public class EventHandler {
         if(!programState) {
             String question = "A munkád nincs még elmentve\n" +
                     "és ha továbblépsz törlésre kerül.\n" +
-                    options.getUIStr("MSG","CONFIRM_ACTION");
+                    ui.getUIStr("MSG","CONFIRM_ACTION");
             if (ConfirmAction(question) != YES_OPTION) return;
         }
         listener.renewState();
@@ -81,10 +81,10 @@ public class EventHandler {
 
             } catch (ParseException ex){
                 JOptionPane.showMessageDialog(new JFrame(),
-                        options.getUIStr("ERR","IMPORT_PARSE_FAIL") +"\n" +
-                                options.getUIStr("ERR","POSITION") + ": " + ex.getErrorOffset() + "\n" +
-                                options.getUIStr("ERR","DETAILS") + ":\n" + ex.getMessage(),
-                        options.getUIStr("ERR","HEADER"), JOptionPane.ERROR_MESSAGE);
+                        ui.getUIStr("ERR","IMPORT_PARSE_FAIL") +"\n" +
+                                ui.getUIStr("ERR","POSITION") + ": " + ex.getErrorOffset() + "\n" +
+                                ui.getUIStr("ERR","DETAILS") + ":\n" + ex.getMessage(),
+                        ui.getUIStr("ERR","HEADER"), JOptionPane.ERROR_MESSAGE);
                 System.out.println(ex.getMessage());
             }
 
@@ -104,7 +104,7 @@ public class EventHandler {
         String question = "Ha új profilra váltasz, " +
                 "a jelenlegi munkádat nem folytathatod tovább.\n" +
                 "Minden elmentetlen munkád elvész.\n" +
-                options.getUIStr("MSG","CONFIRM_ACTION");
+                ui.getUIStr("MSG","CONFIRM_ACTION");
         if(result != null && ConfirmAction(question) == YES_OPTION) {
             listener.changeProfile(result);
         }
@@ -128,15 +128,15 @@ public class EventHandler {
             }
 
         } catch (FileNotFoundException fnf) {
-            throw new ParseException(options.getUIStr("ERR","FILE_MISSING"),lineNumber);
+            throw new ParseException(ui.getUIStr("ERR","FILE_MISSING"),lineNumber);
         } catch (IOException io) {
-            throw new ParseException(options.getUIStr("ERR","IO_FAIL") + ":\n" + io.getMessage(),lineNumber);
+            throw new ParseException(ui.getUIStr("ERR","IO_FAIL") + ":\n" + io.getMessage(),lineNumber);
         }
 
         if(importList.isEmpty()){
             JOptionPane.showMessageDialog(new JFrame(),
-                    options.getUIStr("ERR","FILE_EMPTY"),
-                    options.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
+                    ui.getUIStr("ERR","FILE_EMPTY"),
+                    ui.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
         }
 
 
@@ -216,7 +216,7 @@ public class EventHandler {
         return JOptionPane.showOptionDialog(
                 new JFrame(),
                 message,
-                options.getUIStr("MSG","WARNING"),
+                ui.getUIStr("MSG","WARNING"),
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
                 null,

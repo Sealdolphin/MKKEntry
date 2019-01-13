@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static Window.Main.ui;
+
 import static javax.swing.BoxLayout.PAGE_AXIS;
 
 public class EntryProfile {
@@ -79,6 +81,9 @@ public class EntryProfile {
         JPanel panelSide = new JPanel();
         panelSide.setLayout(new BoxLayout(panelSide,PAGE_AXIS));
 
+        //Add the label first
+        panelSide.add(new JLabel(ui.getUIStr("UI","DISCOUNT_BTN")));
+
         //Iterate through discounts
         BufferedImage barCode;
 
@@ -106,7 +111,7 @@ public class EntryProfile {
         return name;
     }
 
-    public TicketType identifyTicketType(String name){
+    TicketType identifyTicketType(String name){
         return types.stream().filter(type -> type.getName().equals(name)).findAny().orElse(TicketType.defaultType);
     }
 
