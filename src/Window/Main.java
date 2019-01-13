@@ -1,6 +1,6 @@
 package Window;
 
-import Control.Options;
+import Control.UIHandler;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -16,7 +16,7 @@ import java.io.*;
  */
 public class Main {
 
-    public static Options ui;
+    public static UIHandler ui;
 
     /**
      * The entry point of the Application.
@@ -34,7 +34,7 @@ public class Main {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("options.json")));
             optionsJSON = (JSONObject) parser.parse(br);
             //Loading options
-            ui = new Options();
+            ui = new UIHandler();
             ui.refreshOptions(optionsJSON);
 
         }
@@ -53,12 +53,15 @@ public class Main {
 
         //Starting point of the application
         MainWindow window = new MainWindow();
+
         int x,y;
         x = (int)((Toolkit.getDefaultToolkit().getScreenSize().width - window.getWidth())*.5);
         y = (int)((Toolkit.getDefaultToolkit().getScreenSize().height - window.getHeight())*.5);
         window.setLocation(x,y);
         //setRelativeLocationOnScreen(window, Relative.CENTER);
         window.setVisible(true);
+
+
 
     }
 

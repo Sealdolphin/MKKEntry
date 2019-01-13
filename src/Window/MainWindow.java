@@ -3,6 +3,7 @@ package Window;
 import Control.EntryController;
 import Control.EntryProfile;
 import Control.EventHandler;
+import Control.UIHandler;
 import com.fazecast.jSerialComm.SerialPort;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -45,7 +46,7 @@ public class MainWindow extends JFrame implements ProgramStateListener{
     /**
      * The label indicating the active profile to the user in the header
      */
-    private JLabel lbProfile = new JLabel("PROFIL: ");
+    private JLabel lbProfile = new JLabel();
     /**
      * The panel which contains the different discounts (and their respective barcodes) assosiated with the active profile
      */
@@ -81,25 +82,29 @@ public class MainWindow extends JFrame implements ProgramStateListener{
      * Builds the main window of the program
      */
     MainWindow(){
-        //Loading activeProfile
+
         try {
+            //Loading activeProfile
             loadProfiles();
         } catch (IOException | ParseException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(new JFrame(), ui.getUIStr("ERR","ERR_PROFILE_LOAD_FAILED")+ "\n"+
-                    ui.getUIStr("ERR","ERR_PROFILE_JSON_MISSING"), ui.getUIStr("ERR","ERR_HEADER"),JOptionPane.ERROR_MESSAGE);
-            return;
+            JOptionPane.showMessageDialog(new JFrame(), ui.getUIStr("ERR","PROFILE_LOAD_FAILED")+ "\n"+
+                    ui.getUIStr("ERR","PROFILE_JSON_MISSING") + "\n" + e.getMessage(), ui.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
         }
+
+        //Setting up default parameters
+        setMinimumSize(new Dimension(640,200));
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setTitle(ui.getUIStr("UI","WINDOW_TITLE"));
+
+
 
         //Setting Layout for header and body
         setLayout(new BorderLayout());
 
         //Creating EntryController
         renewState();
-        //Setting up default parameters
-        setMinimumSize(new Dimension(640,200));
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle(ui.getUIStr("UI","WINDOW_TITLE"));
 
         panelDiscount = activeProfile.createSideMenu();
         add(createHeader(),BorderLayout.NORTH);
@@ -126,6 +131,10 @@ public class MainWindow extends JFrame implements ProgramStateListener{
         JSONParser parser = new JSONParser();
         JSONObject obj;
         obj = (JSONObject) parser.parse(new BufferedReader(new InputStreamReader(new FileInputStream("profiles.json"))));
+
+        if(!obj.get("version").toString().equals(UIHandler.uiVersion))
+            throw new IOException(ui.getUIStr("ERR","VERSION_MISMATCH") + UIHandler.uiVersion);
+
         JSONArray jsonProfiles = (JSONArray)obj.get("profiles");
         for (Object p: jsonProfiles) {
             profiles.add(EntryProfile.parseProfileFromJson((JSONObject) p));

@@ -2,11 +2,17 @@ package Control;
 
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 
-public class Options {
+public class UIHandler {
 
-    public void refreshOptions(JSONObject options){
+    public static String uiVersion = "v1.0";
+
+    public void refreshOptions(JSONObject options) throws IOException {
+        if(!options.get("version").toString().equals(uiVersion))
+            throw new IOException("Version mismatch. Correct API version: " + uiVersion);
+
         JSONObject map = (JSONObject) options.get("ui");
         for (Object key : map.keySet()) {
             uiStrings.put(key.toString(),map.get(key).toString());
