@@ -87,26 +87,19 @@ public class EntryProfile {
         panelSide.setLayout(new BoxLayout(panelSide,PAGE_AXIS));
 
         //Add the label first
-        panelSide.add(new JLabel(ui.getUIStr("UI","DISCOUNT_BTN")));
-
-        //Iterate through discounts
-        BufferedImage barCode;
+        JLabel lbHeader = new JLabel(ui.getUIStr("UI","DISCOUNT_BTN"));
+        lbHeader.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panelSide.add(lbHeader);
 
         for (Discount discount : discounts) {
-            try{
-                //Adding image and image label
-                barCode = ImageIO.read(new File(discount.getImage()));
-                JLabel label = new JLabel(discount.getLabel());
-                label.setFont(new Font(label.getFont().getName(),Font.PLAIN,20));
-                label.setAlignmentX(Component.CENTER_ALIGNMENT);
-                label.setToolTipText(discount.getName());
-                panelSide.add(new ImagePanel(barCode));
-                panelSide.add(label);
-                System.out.println("Loaded discount: " + discount.getName());
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(new JFrame(),"Nem találom a vonalkódképet a kedvezményhez\n" +
-                        discount.getName() + ": " + discount.getImage(),"Hiba",JOptionPane.ERROR_MESSAGE);
-            }
+            //Adding image and image label
+            JLabel label = new JLabel(discount.getLabel());
+            label.setFont(new Font(label.getFont().getName(),Font.PLAIN,20));
+            label.setAlignmentX(Component.CENTER_ALIGNMENT);
+            label.setToolTipText(discount.getName());
+            panelSide.add(new ImagePanel(discount.getImage()));
+            panelSide.add(label);
+            System.out.println("Loaded discount: " + discount.getName());
         }
 
         return panelSide;
