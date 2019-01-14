@@ -38,43 +38,74 @@ public class Discount {
         return new Discount(name,image,label,meta,price);
     }
 
-    public static JFrame createDiscountFromWizard(EntryProfile profile, int listindex){
+    public static JFrame createDiscountFromWizard(EntryProfile profile){
         Discount discount = new Discount("",null,"","",0);
-        return discount.getDiscountWizard(profile,listindex);
+        return discount.getDiscountWizard(profile,-1);
     }
 
     public JFrame getDiscountWizard(EntryProfile profile,int index){
         return new DiscountWizard(profile,index);
     }
 
-    public String getName() {
-        return name;
-    }
+    /**
+     * Creates a panel, where the Discount's data is visualized to the user.
+     * It is used to create the side menu of the application
+     * @return a panel containing the Discount information
+     */
+    public JPanel getDiscountPanel(){
+        JPanel panelDiscount = new JPanel();
+        panelDiscount.setLayout(new BoxLayout(panelDiscount,BoxLayout.PAGE_AXIS));
 
-    public String getImage() { return imagePath; }
+        //Creating components
+        JLabel lbTooltip = new JLabel(label);
+        lbTooltip.setFont(new Font(lbTooltip.getFont().getName(),Font.PLAIN,20));
+        lbTooltip.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lbTooltip.setToolTipText(name);
+        //Setting up panel
+        panelDiscount.add(new ImagePanel(imagePath));
+        panelDiscount.add(lbTooltip);
 
-    public String getLabel() {
-        return label;
+        System.out.println("Loaded discount: " + name);
+
+        return panelDiscount;
     }
 
     public String getMeta() {
         return metaData;
     }
 
-    public int getPrice() {
-        return discount;
-    }
-
-
-
+    /**
+     * An inner class of the Discount.
+     * It is responsible for creating or modifying Discounts.
+     */
     private class DiscountWizard extends JFrame {
-
+        /**
+         * The image of the barcode
+         */
         private ImagePanel panelImg = new ImagePanel(null);
+        /**
+         * The field containing the name of the Discount
+         */
         private JTextField fieldName = new JTextField(name);
+        /**
+         * The field containing the metadata of the Discount (the barcode's string data)
+         */
         private JTextField fieldMeta = new JTextField(metaData);
+        /**
+         * The field containing the tooltip of the Discount
+         */
         private JTextField fieldTooltip = new JTextField(label);
+        /**
+         * The field containing the price of the Discount
+         */
         private JFormattedTextField fieldPrice = new JFormattedTextField(NumberFormat.getNumberInstance());
 
+        /**
+         * Default constructor.
+         * It creates a separate window for the user to modify the values.
+         * @param profile the EntryProfile which writes back the modified data
+         * @param index the index of the Discount in the profile's list (-1 for new discounts)
+         */
         DiscountWizard(EntryProfile profile,int index){
             //Set basic window attributes
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);

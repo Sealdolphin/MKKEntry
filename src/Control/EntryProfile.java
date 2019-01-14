@@ -31,8 +31,12 @@ public class EntryProfile {
     private static String[] defaults = {"leave","delete"};
 
     public void modifyDiscount(int index,Discount discount){
-        discounts.remove(index);
-        discounts.add(index,discount);
+        if(index > 0) {
+            discounts.remove(index);
+            discounts.add(index, discount);
+        } else discounts.add(discount);
+
+        //Revalide sidemenu etc...
     }
 
     private EntryProfile(JSONObject codeRestraints) throws Exception {
@@ -95,13 +99,7 @@ public class EntryProfile {
 
         for (Discount discount : discounts) {
             //Adding image and image label
-            JLabel label = new JLabel(discount.getLabel());
-            label.setFont(new Font(label.getFont().getName(),Font.PLAIN,20));
-            label.setAlignmentX(Component.CENTER_ALIGNMENT);
-            label.setToolTipText(discount.getName());
-            panelSide.add(new ImagePanel(discount.getImage()));
-            panelSide.add(label);
-            System.out.println("Loaded discount: " + discount.getName());
+            panelSide.add(discount.getDiscountPanel());
         }
 
         return panelSide;
@@ -147,8 +145,6 @@ public class EntryProfile {
             this.pattern = pattern.toString();
         }
     }
-
-
-
+    
 
 }
