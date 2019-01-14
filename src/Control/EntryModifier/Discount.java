@@ -1,6 +1,5 @@
 package Control.EntryModifier;
 
-import Control.Entry;
 import Control.EntryProfile;
 import Control.Utility.ExtensionFilter;
 import Window.Wizard.ImagePanel;
@@ -10,12 +9,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.NumberFormat;
 
-import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
-
 /**
  * An entry modifier. Upon use it modifies the price of an entry.
  */
 public class Discount {
+
     private String name;
     private String imagePath;
     private String label;
@@ -40,13 +38,13 @@ public class Discount {
         return new Discount(name,image,label,meta,price);
     }
 
-    public static JFrame createDiscountFromWizard(EntryProfile profile){
+    public static JFrame createDiscountFromWizard(EntryProfile profile, int listindex){
         Discount discount = new Discount("",null,"","",0);
-        return discount.getDiscountWizard(profile);
+        return discount.getDiscountWizard(profile,listindex);
     }
 
-    public JFrame getDiscountWizard(EntryProfile profile){
-        return new DiscountWizard(profile);
+    public JFrame getDiscountWizard(EntryProfile profile,int index){
+        return new DiscountWizard(profile,index);
     }
 
     public String getName() {
@@ -77,7 +75,7 @@ public class Discount {
         private JTextField fieldTooltip = new JTextField(label);
         private JFormattedTextField fieldPrice = new JFormattedTextField(NumberFormat.getNumberInstance());
 
-        DiscountWizard(EntryProfile profile){
+        DiscountWizard(EntryProfile profile,int index){
             //Set basic window attributes
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             setTitle("Kedvezmény beállítása");
@@ -92,7 +90,7 @@ public class Discount {
             JButton btnCancel = new JButton("Mégse");
             btnCancel.addActionListener(e -> dispose());
             JButton btnSave = new JButton("Mentés");
-            btnSave.addActionListener(e -> saveDiscount(profile));
+            btnSave.addActionListener(e -> saveDiscount(profile,index));
             JPanel panelDialog = new JPanel();
             panelDialog.add(btnSave);
             panelDialog.add(btnCancel);
@@ -119,8 +117,7 @@ public class Discount {
             setResizable(false);
         }
 
-
-        private void saveDiscount(EntryProfile profile){
+        private void saveDiscount(EntryProfile profile, int index){
             if(fieldName.getText().length() > 0 &&
                     fieldMeta.getText().length() > 0 &&
                     fieldTooltip.getText().length() > 0 &&
@@ -130,6 +127,8 @@ public class Discount {
                 label = fieldTooltip.getText();
                 discount = Integer.parseInt(fieldPrice.getValue().toString());
                 imagePath = panelImg.getPath();
+                //Save modifications in profile
+                profile.modifyDiscount(index,Discount.this);
 
             } else {
                 JOptionPane.showMessageDialog(this,"Not a valid discount!","ERROR",JOptionPane.ERROR_MESSAGE);

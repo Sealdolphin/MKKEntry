@@ -6,11 +6,8 @@ import Window.Wizard.ImagePanel;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +29,11 @@ public class EntryProfile {
      * The Defaults of the command strings
      */
     private static String[] defaults = {"leave","delete"};
+
+    public void modifyDiscount(int index,Discount discount){
+        discounts.remove(index);
+        discounts.add(index,discount);
+    }
 
     private EntryProfile(JSONObject codeRestraints) throws Exception {
         types = new ArrayList<>();
