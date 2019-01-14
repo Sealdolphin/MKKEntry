@@ -8,18 +8,18 @@ import java.io.File;
 import static Control.Entry.Member.*;
 import static Control.Entry.Member.M_ENTERED;
 
-public class EntryFilter extends FileFilter implements ExportFilter{
+public class EntryFilter extends ExtensionFilter implements ExportFilter{
 
-    private static String[] validExtensions = {
-            "txt",
-            "csv",
-            "log"
-    };
+    public EntryFilter() {
+        super(new String[]{"csv","txt","log"}, "MKK Beléptetési tábla");
+    }
 
     public enum FilterType {
         DEFAULT,
         TOMBOLA
     }
+
+    public static String[] filterTypes = {"Alapméretezett","Tombola"};
 
     public static final String separator = ",";
 
@@ -31,44 +31,6 @@ public class EntryFilter extends FileFilter implements ExportFilter{
             case "Tombola":
                 return FilterType.TOMBOLA;
         }
-    }
-
-    public static String[] filterTypes = {"Alapméretezett","Tombola"};
-
-
-    @Override
-    public boolean accept(File f) {
-        if(f.isDirectory()){
-            return true;
-        }
-
-        String extension = getExtension(f);
-        if(extension != null){
-            for (String ext :
-                    validExtensions) {
-                if (extension.equals(ext)){
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    @Override
-    public String getDescription() {
-        return "MKK Beléptetés tábla";
-    }
-
-    private String getExtension(File file){
-        String filename = file.getName();
-        String ext = null;
-
-        int index = filename.lastIndexOf('.');
-        if(index > 0 && index < filename.length() - 1)
-            ext = filename.substring(index + 1).toLowerCase();
-
-        return ext;
     }
 
     @Override

@@ -2,6 +2,7 @@ package Control;
 
 import Control.EntryModifier.Discount;
 import Control.EntryModifier.TicketType;
+import Window.Wizard.ImagePanel;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -153,31 +154,6 @@ public class EntryProfile {
     }
 
 
-    /**
-     * An empty JPanel containing a custom image
-     */
-    private class ImagePanel extends JPanel {
-        private BufferedImage image;
 
-        ImagePanel(BufferedImage image){
-            this.image = image;
-            //Set layout to fill available space
-            setLayout(new BorderLayout());
-            setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            if(image != null) {
-                //Adding Empty space to fill out image
-                add(Box.createRigidArea(new Dimension(image.getWidth(), image.getHeight())));
-                //Setting maximum height not to be infinity
-                setMaximumSize(new Dimension(image.getWidth(), image.getHeight()));
-            }
-        }
-
-        @Override
-        protected void paintComponent(Graphics g){
-            super.paintComponent(g);
-            g.drawImage(image,0,0,this);
-        }
-
-    }
 
 }
