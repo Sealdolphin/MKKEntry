@@ -9,6 +9,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.NumberFormat;
 
+import static Window.Main.Relative.CENTER;
+import static Window.Main.setRelativeLocationOnScreen;
+
 /**
  * An entry modifier. Upon use it modifies the price of an entry.
  */
@@ -153,6 +156,7 @@ public class Discount {
             //Pack
             pack();
             setResizable(false);
+            setRelativeLocationOnScreen(this, CENTER);
         }
 
         private void saveDiscount(EntryProfile profile, int index){

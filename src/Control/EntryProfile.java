@@ -2,12 +2,11 @@ package Control;
 
 import Control.EntryModifier.Discount;
 import Control.EntryModifier.TicketType;
+import Window.Main;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -16,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static Window.Main.ui;
+import static Window.Main.setRelativeLocationOnScreen;
 
 import static javax.swing.BoxLayout.PAGE_AXIS;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
@@ -179,6 +179,7 @@ public class EntryProfile {
             setMinimumSize(new Dimension(300,400));
             pack();
             setResizable(false);
+            setRelativeLocationOnScreen(this, Main.Relative.CENTER);
         }
 
         private JPanel createTabDiscounts(){

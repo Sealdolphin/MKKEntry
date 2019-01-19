@@ -53,20 +53,16 @@ public class Main {
 
         //Starting point of the application
         MainWindow window = new MainWindow();
-
+        /*
         int x,y;
         x = (int)((Toolkit.getDefaultToolkit().getScreenSize().width - window.getWidth())*.5);
         y = (int)((Toolkit.getDefaultToolkit().getScreenSize().height - window.getHeight())*.5);
         window.setLocation(x,y);
-        //setRelativeLocationOnScreen(window, Relative.CENTER);
+        */
+        setRelativeLocationOnScreen(window, Relative.CENTER);
         window.setVisible(true);
 
-
-
     }
-
-    /*
-    STORED FOR FUTURE USE
 
     public enum Relative {
         CENTER,
@@ -76,7 +72,7 @@ public class Main {
         LEFT
     }
 
-    private static void setRelativeLocationOnScreen(Component c, Relative location){
+    public static void setRelativeLocationOnScreen(Component c, Relative location){
         int x,y;
         switch (location){
             default:
@@ -103,6 +99,6 @@ public class Main {
         }
         c.setLocation(x,y);
     }
-    */
+
 
 }
