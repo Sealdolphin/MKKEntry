@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static Window.Main.ui;
 import static Window.Main.setRelativeLocationOnScreen;
@@ -23,8 +24,8 @@ import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 public class EntryProfile {
     private String name;
 
-    private List<TicketType> types;
-    private List<Discount> discounts;
+    private AttributeList<TicketType> types;
+    private AttributeList<Discount> discounts;
 
     private String[] defaultCommands;
     private CodeRestraints entryCode;
@@ -39,12 +40,12 @@ public class EntryProfile {
         if(index >= 0) {
             discounts.remove(index);
             discounts.add(index, discount);
-        } else discounts.add(discount);
+        } else discounts.addElement(discount);
     }
 
     private EntryProfile(JSONObject codeRestraints) throws Exception {
-        types = new ArrayList<>();
-        discounts = new ArrayList<>();
+        types = new AttributeList<>();
+        discounts = new AttributeList<>();
         entryCode = new CodeRestraints(
                 codeRestraints.get("start"),
                 codeRestraints.get("regex")
@@ -65,12 +66,12 @@ public class EntryProfile {
         //Loading discounts
         JSONArray jArray = (JSONArray) jsonProfile.get("discounts");
         for (Object discountObject: jArray) {
-            profile.discounts.add(Discount.parseDiscountFromJson((JSONObject)discountObject));
+            profile.discounts.addElement(Discount.parseDiscountFromJson((JSONObject)discountObject));
         }
         //Loading Ticket types
         jArray = (JSONArray) jsonProfile.get("tickets");
         for (Object discountObject: jArray) {
-            profile.types.add(TicketType.parseTicketTypeFromJson((JSONObject)discountObject));
+            profile.types.addElement(TicketType.parseTicketTypeFromJson((JSONObject)discountObject));
         }
 
         //Setting the default ticket type
@@ -100,7 +101,7 @@ public class EntryProfile {
         lbHeader.setAlignmentX(Component.LEFT_ALIGNMENT);
         panelSide.add(lbHeader);
 
-        for (Discount discount : discounts) {
+        for (Discount discount : discounts.elements) {
             //Adding image and image label
             panelSide.add(discount.getDiscountPanel());
         }
@@ -123,7 +124,7 @@ public class EntryProfile {
     void setController(EntryController controller) {
         //Set MetaData for discounts
         List<String> discountMeta = new ArrayList<>();
-        for (Discount discount : discounts) {
+        for (Discount discount : discounts.elements) {
             discountMeta.add(discount.getMeta());
         }
         controller.setMetaData(entryCode.start,discountMeta,defaultCommands);
@@ -186,18 +187,8 @@ public class EntryProfile {
             JPanel tabDiscount = new JPanel();
             tabDiscount.setLayout(new BorderLayout());
 
-            JList<Discount> listDiscounts = new JList<>();
-            listDiscounts.setModel(new AbstractListModel<>() {
-                @Override
-                public int getSize() {
-                    return discounts.size();
-                }
+            JList<Discount> listDiscounts = new JList<>(discounts);
 
-                @Override
-                public Discount getElementAt(int index) {
-                    return discounts.get(index);
-                }
-            });
             listDiscounts.setSelectionMode(SINGLE_SELECTION);
             listDiscounts.addMouseListener(new MouseAdapter() {
                 @Override
@@ -261,6 +252,26 @@ public class EntryProfile {
             return tabGeneral;
         }
 
+    }
+
+    private class AttributeList<T> extends DefaultListModel<T>{
+        private List<T> elements = new ArrayList<>();
+
+        Stream<T> stream(){
+            return elements.stream();
+        }
+
+        @Override
+        public void add(int index, T element) {
+            super.add(index, element);
+            elements.add(index, element);
+        }
+
+        @Override
+        public void addElement(T element) {
+            super.addElement(element);
+            elements.add(element);
+        }
     }
 
 }
