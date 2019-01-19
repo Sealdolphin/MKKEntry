@@ -2,12 +2,15 @@ package Control;
 
 import Control.EntryModifier.Discount;
 import Control.EntryModifier.TicketType;
-import Window.Wizard.ImagePanel;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +18,7 @@ import java.util.List;
 import static Window.Main.ui;
 
 import static javax.swing.BoxLayout.PAGE_AXIS;
+import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
 public class EntryProfile {
     private String name;
@@ -24,6 +28,7 @@ public class EntryProfile {
 
     private String[] defaultCommands;
     private CodeRestraints entryCode;
+    private int entryMode = 1;
 
     /**
      * The Defaults of the command strings
@@ -35,8 +40,6 @@ public class EntryProfile {
             discounts.remove(index);
             discounts.add(index, discount);
         } else discounts.add(discount);
-
-        //Revalide sidemenu etc...
     }
 
     private EntryProfile(JSONObject codeRestraints) throws Exception {
@@ -136,6 +139,10 @@ public class EntryProfile {
         return validID;
     }
 
+    public JDialog getProfileWizard(){
+        return new ProfileWizard();
+    }
+
     private class CodeRestraints {
         final String start;
         final String pattern;
@@ -145,6 +152,108 @@ public class EntryProfile {
             this.pattern = pattern.toString();
         }
     }
-    
+
+    private class ProfileWizard extends JDialog {
+
+        private ProfileWizard(){
+            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            setModal(true);
+            JTabbedPane panelProfile = new JTabbedPane();
+            setLayout(new BorderLayout());
+
+            //Adding tabs together
+            panelProfile.addTab("Általános",createTabGeneral());
+            panelProfile.addTab("Kedvezmények",createTabDiscounts());
+            panelProfile.addTab("Jegytípusok",new JPanel());
+            //Adding Tabs
+            add(panelProfile,BorderLayout.CENTER);
+
+            JPanel panelDialog = new JPanel();
+            panelDialog.add(new JButton("Mentés"));
+            panelDialog.add(new JButton("Mégse"));
+            panelDialog.add(new JButton("Alkalmaz"));
+
+            add(panelDialog,BorderLayout.SOUTH);
+            //Setting default
+            setTitle("Profil szerkesztése");
+            setMinimumSize(new Dimension(300,400));
+            pack();
+            setResizable(false);
+        }
+
+        private JPanel createTabDiscounts(){
+            JPanel tabDiscount = new JPanel();
+            tabDiscount.setLayout(new BorderLayout());
+
+            JList<Discount> listDiscounts = new JList<>();
+            listDiscounts.setModel(new AbstractListModel<>() {
+                @Override
+                public int getSize() {
+                    return discounts.size();
+                }
+
+                @Override
+                public Discount getElementAt(int index) {
+                    return discounts.get(index);
+                }
+            });
+            listDiscounts.setSelectionMode(SINGLE_SELECTION);
+            listDiscounts.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if(e.getClickCount() >= 2)
+                        listDiscounts.getSelectedValue().getDiscountWizard(EntryProfile.this, listDiscounts.getSelectedIndex()).setVisible(true);
+                }
+            });
+
+            //Assemble List
+            tabDiscount.add(new JLabel("Kedvezmények"),BorderLayout.NORTH);
+            tabDiscount.add(listDiscounts,BorderLayout.CENTER);
+            //Modify panel
+            JPanel panelModify = new JPanel();
+            panelModify.setLayout(new BoxLayout(panelModify,BoxLayout.PAGE_AXIS));
+            panelModify.add(new JButton("Új kedvezmény"));
+            panelModify.add(new JButton("Törlés"));
+            panelModify.add(new JButton("Módosítás"));
+            for (Component c : panelModify.getComponents()) {
+                c.setMaximumSize(new Dimension(getMaximumSize().width, c.getMaximumSize().height));
+            }
+            //Assemble panel
+            tabDiscount.add(panelModify,BorderLayout.SOUTH);
+            return tabDiscount;
+        }
+
+        private JPanel createTabGeneral(){
+            JPanel tabGeneral = new JPanel();
+            //Creating layout
+            tabGeneral.setLayout(new BoxLayout(tabGeneral,BoxLayout.PAGE_AXIS));
+
+            tabGeneral.add(new JLabel("Név"));
+            tabGeneral.add(new JTextField(name));
+            tabGeneral.add(new JLabel("Entry Code"));
+            tabGeneral.add(new JTextField(entryCode.pattern));
+
+            JSpinner spEntry = new JSpinner(new SpinnerNumberModel(2,2,100,1));
+            spEntry.setEnabled(false);
+            spEntry.setEditor(new JSpinner.DefaultEditor(spEntry));
+
+            JComboBox<String> cbEntryMode = new JComboBox<>(new String[]{"Egyszeri","Korlátlan","Egyéni"});
+            cbEntryMode.addItemListener(e -> spEntry.setEnabled(cbEntryMode.getSelectedIndex() == 2));
+
+            tabGeneral.add(cbEntryMode);
+            tabGeneral.add(spEntry);
+
+            //Fixing alignment
+            for (Component c : tabGeneral.getComponents()) {
+                JComponent jComp = (JComponent)c;
+                jComp.setAlignmentX(Component.LEFT_ALIGNMENT);
+                c.setMaximumSize(new Dimension(getMaximumSize().width,jComp.getPreferredSize().height));
+            }
+            spEntry.setMaximumSize(new Dimension(spEntry.getMaximumSize().width,20));
+
+            return tabGeneral;
+        }
+
+    }
 
 }

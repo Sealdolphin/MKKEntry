@@ -38,12 +38,12 @@ public class Discount {
         return new Discount(name,image,label,meta,price);
     }
 
-    public static JFrame createDiscountFromWizard(EntryProfile profile){
+    public static JDialog createDiscountFromWizard(EntryProfile profile){
         Discount discount = new Discount("",null,"","",0);
         return discount.getDiscountWizard(profile,-1);
     }
 
-    public JFrame getDiscountWizard(EntryProfile profile,int index){
+    public JDialog getDiscountWizard(EntryProfile profile,int index){
         return new DiscountWizard(profile,index);
     }
 
@@ -74,11 +74,17 @@ public class Discount {
         return metaData;
     }
 
+    @Override
+    public String toString(){
+        return name;
+    }
+
+
     /**
      * An inner class of the Discount.
      * It is responsible for creating or modifying Discounts.
      */
-    private class DiscountWizard extends JFrame {
+    private class DiscountWizard extends JDialog {
         /**
          * The image of the barcode
          */
@@ -109,6 +115,7 @@ public class Discount {
         DiscountWizard(EntryProfile profile,int index){
             //Set basic window attributes
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            setModal(true);
             setTitle("Kedvezmény beállítása");
             setLayout(new BoxLayout(getContentPane(),BoxLayout.PAGE_AXIS));
 

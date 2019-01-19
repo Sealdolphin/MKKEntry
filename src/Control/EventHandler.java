@@ -110,6 +110,10 @@ public class EventHandler {
         }
     }
 
+    public void editProfile(){
+        listener.getProfile().getProfileWizard().setVisible(true);
+    }
+
     String checkEntryID(String code) throws IOException {
         return listener.getProfile().validateCode(code);
     }

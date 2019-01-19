@@ -74,9 +74,12 @@ abstract class MainMenu {
 
         JMenuItem miChangeProfile = new JMenuItem("Profil váltása");
         miChangeProfile.addActionListener(e -> handler.changeProfile());
+        JMenuItem miEditProfile = new JMenuItem("Profil szerkesztése");
+        miEditProfile.addActionListener(e -> handler.editProfile());
 
         menuProfiles.add(new JMenuItem("Új profil"));
         menuProfiles.add(miChangeProfile);
+        menuProfiles.add(miEditProfile);
 
         return menuProfiles;
     }
