@@ -36,7 +36,7 @@ public class EntryProfile {
     private static String[] defaults = {"leave","delete"};
 
     public void modifyDiscount(int index,Discount discount){
-        if(index > 0) {
+        if(index >= 0) {
             discounts.remove(index);
             discounts.add(index, discount);
         } else discounts.add(discount);
@@ -212,9 +212,15 @@ public class EntryProfile {
             //Modify panel
             JPanel panelModify = new JPanel();
             panelModify.setLayout(new BoxLayout(panelModify,BoxLayout.PAGE_AXIS));
-            panelModify.add(new JButton("Új kedvezmény"));
+
+            JButton btnModify = new JButton("Módosítás");
+            btnModify.addActionListener(e -> listDiscounts.getSelectedValue().getDiscountWizard(EntryProfile.this, listDiscounts.getSelectedIndex()).setVisible(true));
+            JButton btnNew = new JButton("Új kedvezmény");
+            btnNew.addActionListener(e -> Discount.createDiscountFromWizard(EntryProfile.this).setVisible(true));
+            panelModify.add(btnNew);
+            panelModify.add(btnModify);
             panelModify.add(new JButton("Törlés"));
-            panelModify.add(new JButton("Módosítás"));
+
             for (Component c : panelModify.getComponents()) {
                 c.setMaximumSize(new Dimension(getMaximumSize().width, c.getMaximumSize().height));
             }

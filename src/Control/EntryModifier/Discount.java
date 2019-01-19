@@ -88,7 +88,7 @@ public class Discount {
         /**
          * The image of the barcode
          */
-        private ImagePanel panelImg = new ImagePanel(null);
+        private ImagePanel panelImg = new ImagePanel(imagePath);
         /**
          * The field containing the name of the Discount
          */
@@ -167,7 +167,8 @@ public class Discount {
                 imagePath = panelImg.getPath();
                 //Save modifications in profile
                 profile.modifyDiscount(index,Discount.this);
-
+                //Close dialog
+                dispose();
             } else {
                 JOptionPane.showMessageDialog(this,"Not a valid discount!","ERROR",JOptionPane.ERROR_MESSAGE);
             }
@@ -190,7 +191,7 @@ public class Discount {
             remove(panelImg);
             panelImg = new ImagePanel(imagePath);
             panelImg.setAlignmentX(Component.LEFT_ALIGNMENT);
-            add(panelImg,8);
+            add(panelImg,9);
             //Resize window (since the user cannot do it)
             setResizable(true);
             pack();
