@@ -126,18 +126,29 @@ public class EventHandler {
 
             boolean eof = false;
             while (!eof){
-                lineNumber++;
-                String line = fileReader.readLine();
-                if(line == null) {
-                    eof = true;
-                    continue;
+                try {
+                    lineNumber++;
+                    String line = fileReader.readLine();
+                    if (line == null) {
+                        eof = true;
+                        continue;
+                    }
+                    importList.add(createEntryFromString(line, profile, lineNumber));
+                } catch (ParseException ex){
+                    Object[] options = new Object[]{"Következő","Megszakítás"};
+                    int result = JOptionPane.showOptionDialog(new JFrame(),
+                            ui.getUIStr("ERR","IMPORT_PARSE_FAIL") +"\n" +
+                                    ui.getUIStr("ERR","POSITION") + ": " + ex.getErrorOffset() + "\n" +
+                                    ui.getUIStr("ERR","DETAILS") + ":\n" + ex.getMessage(),
+                            ui.getUIStr("ERR","HEADER"),JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE,null,options,options[0]);
+                    System.out.println(ex.getMessage());
+                    if(result == JOptionPane.NO_OPTION) throw new ParseException(ui.getUIStr("ERR","USER_ABORT"),lineNumber);
                 }
-                importList.add(createEntryFromString(line,profile,lineNumber));
             }
 
         } catch (FileNotFoundException fnf) {
             throw new ParseException(ui.getUIStr("ERR","FILE_MISSING"),lineNumber);
-        } catch (IOException io) {
+        }  catch (IOException io) {
             throw new ParseException(ui.getUIStr("ERR","IO_FAIL") + ":\n" + io.getMessage(),lineNumber);
         }
 
@@ -173,8 +184,12 @@ public class EventHandler {
 
         //Throw it if the array is empty
         if(props.length < 1) throw new ParseException("A rekord sérült, vagy hibás",offset);
-        //Setting ID
-        uid = props[0];
+
+        try {
+            uid = profile.validateCode(props[0]);
+        } catch (IOException e) {
+            throw new ParseException(e.getMessage(),offset);
+        }
 
         //Looking for required fields
         //Alert if does not meet the number of fields required

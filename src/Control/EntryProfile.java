@@ -140,7 +140,7 @@ public class EntryProfile {
         return validID;
     }
 
-    public JDialog getProfileWizard(){
+    JDialog getProfileWizard(){
         return new ProfileWizard();
     }
 
