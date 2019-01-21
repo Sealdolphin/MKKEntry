@@ -2,6 +2,8 @@ package Control;
 
 import Control.EntryModifier.Discount;
 import Control.EntryModifier.TicketType;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -62,44 +64,51 @@ public class EntryProfile implements Serializable {
     /**
      * A szükséges parancskódok listája
      */
-    private String[] defaultCommands;
+    private String[] commandCodes;
+
+    private static String[] commandJsonKeys = new String[]{"leave","delete"};
 
 
-    public EntryProfile() {
+    private EntryProfile() {
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
-        defaultCommands = new String[]{"leave","delete"};
     }
 
-//    public static EntryProfile parseProfileFromJson(JSONObject jsonProfile) throws Exception {
-//        //Loading basic information
-//        JSONObject jsonCode = (JSONObject) jsonProfile.get("entry_code");
-//        EntryProfile profile = new EntryProfile(jsonCode);
-//        profile.name = jsonProfile.get("name").toString();
-//
-//        //Loading discounts
-//        JSONArray jArray = (JSONArray) jsonProfile.get("discounts");
-//        for (Object discountObject : jArray) {
-//            profile.discounts.addElement(Discount.parseDiscountFromJson((JSONObject) discountObject));
-//        }
-//        //Loading Ticket types
-//        jArray = (JSONArray) jsonProfile.get("tickets");
-//        for (Object discountObject : jArray) {
-//            profile.types.addElement(TicketType.parseTicketTypeFromJson((JSONObject) discountObject));
-//        }
-//
-//        //Setting the default ticket type
-//        String defType = jsonProfile.get("defaultType").toString();
-//        TicketType.defaultType = profile.types.stream().filter(ticketType -> ticketType.getName().equals(defType)).findAny().orElse(profile.types.get(0));
-//
-//        //Loading commands
-//        String[] commands = new String[2];
-//        commands[0] = ((JSONObject) jsonProfile.get("commands")).get(defaults[0]).toString();
-//        commands[1] = ((JSONObject) jsonProfile.get("commands")).get(defaults[1]).toString();
-//        profile.defaultCommands = commands;
-//
-//        return profile;
-//    }
+    public static void loadProfilesFromJson(JSONObject object, List<EntryProfile> profileList){
+        System.out.println("Load JSON Object!");
+    }
+
+    public static EntryProfile parseProfileFromJson(JSONObject jsonProfile) throws Exception {
+        //Loading basic information
+        EntryProfile profile = new EntryProfile();
+
+        profile.name = jsonProfile.get("name").toString();
+        profile.codeMask = jsonProfile.get("mask").toString();
+
+        //Loading discounts
+        JSONArray jArray = (JSONArray) jsonProfile.get("discounts");
+        for (Object discountObject : jArray) {
+            profile.discounts.add(Discount.parseDiscountFromJson((JSONObject) discountObject));
+        }
+        //Loading Ticket types
+        jArray = (JSONArray) jsonProfile.get("tickets");
+        for (Object discountObject : jArray) {
+            profile.ticketTypes.add(TicketType.parseTicketTypeFromJson((JSONObject) discountObject));
+        }
+
+        //Setting the default ticket type
+        String defType = jsonProfile.get("defaultType").toString();
+        profile.defaultType = profile.ticketTypes.stream().filter(ticketType -> ticketType.toString().equals(defType)).findAny().orElse(profile.ticketTypes.get(0));
+
+        //Loading default commands
+        String[] commands = new String[commandJsonKeys.length];
+        for (int i = 0; i < commands.length; i++) {
+            commands[i] = ((JSONObject) jsonProfile.get("commands")).get(commandJsonKeys[i]).toString();
+        }
+        profile.commandCodes = commands;
+
+        return profile;
+    }
 //
 //    /**
 //     * Creates a side menu with additional attributes and options
@@ -141,7 +150,7 @@ public class EntryProfile implements Serializable {
 //        for (Discount discount : discounts.elements) {
 //            discountMeta.add(discount.getMeta());
 //        }
-//        controller.setMetaData(entryCode.start, discountMeta, defaultCommands);
+//        controller.setMetaData(entryCode.start, discountMeta, commandJsonKeys);
 //    }
 //
 //    String validateCode(String code) throws IOException {

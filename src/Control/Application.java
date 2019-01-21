@@ -61,22 +61,28 @@ public class Application {
             JOptionPane.showMessageDialog(null,errorMsg,ui.getUIStr("MSG","WARNING"),JOptionPane.PLAIN_MESSAGE);
         }
 
-        Application app = new Application();
-        app.start();
+
+        try {
+            Application app = new Application();
+            app.start();
+        } catch (Exception appException) {
+            appException.printStackTrace();
+            JOptionPane.showMessageDialog(null,appException.getMessage(),ui.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+        }
 
     }
 
-    private Application() {
+    private Application() throws Exception {
         try {
             //Starting application
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(configFileName));
             model = (AppData) ois.readObject();
             ois.close();
-        } catch (Exception appException){
-            appException.printStackTrace();
+        } catch (Exception loadException){
+            loadException.printStackTrace();
             JOptionPane.showMessageDialog(
                     null,
-                    ui.getUIStr("ERR","START") + "\n" + appException.getMessage(),
+                    ui.getUIStr("ERR","START") + "\n" + loadException.getMessage(),
                     ui.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
             model = new AppData();
         }
@@ -108,7 +114,7 @@ public class Application {
         view.pack();
         view.setVisible(true);
     }
-    
+
     private static void setRelativeLocationOnScreen(Component c, ScreenLocation location){
         int x,y;
         switch (location){

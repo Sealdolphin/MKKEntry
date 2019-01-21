@@ -1,5 +1,7 @@
 package Control.EntryModifier;
 
+import org.json.simple.JSONObject;
+
 import java.io.Serializable;
 
 public class Discount implements Serializable {
@@ -9,6 +11,11 @@ public class Discount implements Serializable {
     private String label;
     private String metaData;
     private int discount;
+
+    public static Discount parseDiscountFromJson(JSONObject discountObject) {
+        //TODO: needs implementations
+        return new Discount();
+    }
 //
 //    private Discount(String name, String imagePath, String label, String meta, int price){
 //        this.name = name;

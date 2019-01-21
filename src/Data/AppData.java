@@ -2,6 +2,7 @@ package Data;
 
 import Control.EntryProfile;
 import Window.MainWindow;
+import Window.StartupDialog;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -24,33 +25,23 @@ public class AppData implements Serializable {
     /**
      * The list of the loaded profiles
      */
-    private List<EntryProfile> profileList = new ArrayList<>();
+    private List<EntryProfile> profileList;
 
     //private List<Entry> entries;
 
     /**
      * New option file creation with default settings
      */
-    public AppData() {
+    public AppData() throws Exception {
         /*
         LOAD PROFILES FROM FILE...
         CREATE EVENT HANDLER
          */
-
-//        try {
-//            //Loading activeProfile
-//            loadProfiles();
-//        } catch (IOException | ParseException e) {
-//            e.printStackTrace();
-//            JOptionPane.showMessageDialog(new JFrame(), ui.getUIStr("ERR","PROFILE_LOAD_FAILED")+ "\n"+
-//                    ui.getUIStr("ERR","PROFILE_JSON_MISSING") + "\n" + e.getMessage(), ui.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
-//            System.exit(0);
-//        }
-
-
         System.out.println("a new AppData has been constructed");
-        activeProfile = new EntryProfile();
-        profileList.add(activeProfile);
+        System.out.println("creating new profile...");
+        profileList = new ArrayList<>();
+        StartupDialog startupHelper = new StartupDialog(profileList);
+        activeProfile = startupHelper.getProfile();
     }
 
     /*##################################Implemented for java.io.Serializable##########################################*/

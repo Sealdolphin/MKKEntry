@@ -1,6 +1,8 @@
 package Control.EntryModifier;
 
 
+import org.json.simple.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +13,13 @@ public class TicketType implements Serializable {
     private int price;
     private boolean hasFee;
     private List<Discount> appliedDiscounts = new ArrayList<>();
-//
+
+    public static TicketType parseTicketTypeFromJson(JSONObject discountObject) {
+        //TODO: needs implementation
+        return new TicketType();
+    }
+
+    //
 //    /**
 //     * Private constructor
 //     * Can initialize a Ticket type from a generated string (or JSON Object)
