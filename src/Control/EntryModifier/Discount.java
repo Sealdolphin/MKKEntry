@@ -9,7 +9,7 @@
 //import java.awt.*;
 //import java.text.NumberFormat;
 //
-//import static Window.Main.Relative.CENTER;
+//import static Window.Main.ScreenLocation.CENTER;
 //import static Window.Main.setRelativeLocationOnScreen;
 //
 ///**

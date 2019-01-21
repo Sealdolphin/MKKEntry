@@ -1,12 +1,6 @@
 package Window;
 
-import javax.swing.*;
 
-public class MainWindow extends JFrame {
-
-}
-//
-//
 //import Control.EntryController;
 //import Control.EntryProfile;
 //import Control.EventHandler;
@@ -17,6 +11,10 @@ public class MainWindow extends JFrame {
 //import org.json.simple.parser.JSONParser;
 //import org.json.simple.parser.ParseException;
 //
+import Data.AppData;
+
+import javax.swing.*;
+import java.awt.event.WindowListener;
 //import java.awt.*;
 //import java.awt.event.ActionEvent;
 //import java.awt.event.ActionListener;
@@ -33,15 +31,27 @@ public class MainWindow extends JFrame {
 //import static Window.Main.ui;
 //import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 //
-///**
-// * The class of the main program window
-// * It contains two panels: A header and a body
-// * The header is responsible for the selection of the port / device
-// * The Body is responsible for the guest list.
-// * It also has a bottom info panel which displays the state of the reading
-// * @author Márk Mihalovits
-// */
-//public class MainWindow extends JFrame implements ProgramStateListener{
+/**
+ * The class of the main program window
+ * It contains two panels: A header and a body
+ * The header is responsible for the selection of the port / device
+ * The Body is responsible for the guest list.
+ * It also has a bottom info panel which displays the state of the reading
+ * @author Márk Mihalovits
+ */
+public class MainWindow extends JFrame {
+    /*
+    FIELDS:
+        COMPONENTS
+            PANELS
+                HEADER
+                BODY
+                INFOPANEL (SOUTH)
+                SIDEPANEL
+        LISTENERS (CONTROLLER / EVENT HANDLER)
+     */
+    private AppData model;
+
 //
 //    /**
 //     * The list of the selectable Serial Ports in a combo box
@@ -81,15 +91,23 @@ public class MainWindow extends JFrame {
 //     */
 //    private EntryController controller;
 //
-//    /*
-//    ================= FUNCTIONS =================
-//     */
 //
 //    /**
 //     * Main Constructor
 //     * Builds the main window of the program
 //     */
-//    MainWindow(){
+    public MainWindow(AppData model) {
+        //Setting up default fields
+        this.model = model;
+
+
+
+        updateView();
+    }
+
+    private void updateView(){
+
+    }
 //
 //        try {
 //            //Loading activeProfile
@@ -120,8 +138,6 @@ public class MainWindow extends JFrame {
 //        //Running basic event routines
 //        eventRefreshPorts();
 //
-//        //Pack window
-//        pack();
 //
 //    }
 //
@@ -407,4 +423,4 @@ public class MainWindow extends JFrame {
 //                setText(Main.ui.getUIStr("UI","TOGGLECODE_BTN_2"));
 //        }
 //    }
-//}
+}

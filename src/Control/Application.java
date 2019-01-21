@@ -8,20 +8,20 @@ import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.*;
 
 public class Application {
 
+    private static final String configFileName = "config.mkk";
     private MainWindow view;
     private AppData model;
     private EntryController controller;
     private EventHandler eventHandler;
     public static UIHandler ui;
 
-    public enum Relative {
+    public enum ScreenLocation {
         CENTER,
         TOP,
         BOTTOM,
@@ -29,43 +29,91 @@ public class Application {
         LEFT
     }
 
+    /**
+     * Starting point of application
+     * It sets up the basic options and starts the program
+     * @param args the program arguments
+     */
     public static void main(String[] args) {
-        JSONObject optionsJSON;
-
-        //Setting up L&F and loading options
+        //Loading UI HANDLER
+        //UI Handler is essential for the program to run.
+        //It contains the static string messages.
         try {
-            // Set System L&F
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
+            // Parsing ui Handler from file
             JSONParser parser = new JSONParser();
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("options.json")));
-            optionsJSON = (JSONObject) parser.parse(br);
+            BufferedReader optionsReader = new BufferedReader(new InputStreamReader(new FileInputStream("ui.json")));
+            JSONObject optionsJSON = (JSONObject) parser.parse(optionsReader);
             //Loading options
-            //ui = new UIHandler();
-            //ui.refreshOptions(optionsJSON);
-
+            ui = new UIHandler();
+            ui.refreshOptions(optionsJSON);
         }
-        catch (UnsupportedLookAndFeelException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            // handle exception
-            String errorMsg = "Nem található a rendszer által használt kinézet.\n" +
-                    "Az alkalmazás ezért a Java kinézetet fogja használni.";
-            JOptionPane.showMessageDialog(null,errorMsg,"Üzenet",JOptionPane.PLAIN_MESSAGE);
-        } catch (ParseException | IOException e) {
-            String errorMsg = "Nem tudtam betölteni a beállításokat a 'options.json' fáljból.\n" +
+        catch (ParseException | IOException e) {
+            String errorMsg = "Nem tudtam betölteni a beállításokat a 'ui.json' fáljból.\n" +
                     "Az alkalmazás ezért nem tud elindulni.\n" +
-                    "Részletek:\n" + e.getMessage();
+                    "Részletek:\n" + e.toString();
             JOptionPane.showMessageDialog(null,errorMsg,"Hiba",JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        //Starting point of the application
-        MainWindow window = new MainWindow();
-        setRelativeLocationOnScreen(window, Relative.CENTER);
-        window.setVisible(true);
+        Application app = new Application();
+
+        try {
+            // Set System L&F
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
+            //Starting application
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(configFileName));
+            app.model = (AppData) ois.readObject();
+            ois.close();
+
+        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+            String errorMsg = ui.getUIStr("ERR","L&F_ERR");
+            JOptionPane.showMessageDialog(null,errorMsg,ui.getUIStr("MSG","WARNING"),JOptionPane.PLAIN_MESSAGE);
+        } catch (Exception appException){
+            appException.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    null,
+                    ui.getUIStr("ERR","START") + "\n" + appException.getMessage(),
+                    ui.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
+            app.model = new AppData();
+        }
+
+        app.start();
 
     }
 
-    private static void setRelativeLocationOnScreen(Component c, Relative location){
+    private Application(){
+        //Starting point of the application
+        view = new MainWindow(model);
+        view.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e){
+                try {
+                    ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(configFileName));
+                    oos.writeObject(model);
+                    oos.close();
+                    System.out.println("Settings saved.");
+                } catch (IOException io) {
+                    io.printStackTrace();
+                    JOptionPane.showMessageDialog(
+                            null,
+                            ui.getUIStr("ERR","CLOSING") + "\n" + io.getMessage(),
+                            ui.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        view.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setRelativeLocationOnScreen(view, ScreenLocation.CENTER);
+    }
+
+    private void start() {
+        view.pack();
+        view.setVisible(true);
+    }
+
+
+
+    private static void setRelativeLocationOnScreen(Component c, ScreenLocation location){
         int x,y;
         switch (location){
             default:

@@ -1,4 +1,7 @@
-//package Control;
+package Control;
+
+import java.io.Serializable;
+
 //
 //import Control.EntryModifier.Discount;
 //import Control.EntryModifier.TicketType;
@@ -20,7 +23,7 @@
 //import static javax.swing.BoxLayout.PAGE_AXIS;
 //import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 //
-//public class EntryProfile {
+public class EntryProfile implements Serializable {
 //    private String name;
 //
 //    private AttributeList<TicketType> types;
@@ -201,7 +204,7 @@
 //            setMinimumSize(new Dimension(300, 400));
 //            pack();
 //            setResizable(false);
-//            setRelativeLocationOnScreen(this, Main.Relative.CENTER);
+//            setRelativeLocationOnScreen(this, Main.ScreenLocation.CENTER);
 //        }
 //
 //        private JPanel createTabDiscounts() {
@@ -279,4 +282,4 @@
 //
 //    }
 //
-//}
+}
