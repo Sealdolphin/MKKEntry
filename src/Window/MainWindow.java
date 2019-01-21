@@ -1,36 +1,12 @@
 package Window;
 
 
-//import Control.EntryController;
-//import Control.EntryProfile;
-//import Control.EventHandler;
-//import Control.UIHandler;
-//import com.fazecast.jSerialComm.SerialPort;
-//import org.json.simple.JSONArray;
-//import org.json.simple.JSONObject;
-//import org.json.simple.parser.JSONParser;
-//import org.json.simple.parser.ParseException;
-//
+
 import Data.AppData;
 
 import javax.swing.*;
-import java.awt.event.WindowListener;
-//import java.awt.*;
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
-//import java.awt.event.MouseAdapter;
-//import java.awt.event.MouseEvent;
-//import java.io.BufferedReader;
-//import java.io.FileInputStream;
-//import java.io.IOException;
-//import java.io.InputStreamReader;
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//import static Control.EntryController.DEFAULT_OPTION;
-//import static Window.Main.ui;
-//import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
-//
+import java.awt.*;
+
 /**
  * The class of the main program window
  * It contains two panels: A header and a body
@@ -51,6 +27,10 @@ public class MainWindow extends JFrame {
         LISTENERS (CONTROLLER / EVENT HANDLER)
      */
     private AppData model;
+    private JPanel header = new JPanel();
+    private JPanel body = new JPanel();
+    private JPanel sidePanel = new JPanel();
+    private JPanel infoPanel = new JPanel();
 
 //
 //    /**
@@ -99,33 +79,18 @@ public class MainWindow extends JFrame {
     public MainWindow(AppData model) {
         //Setting up default fields
         this.model = model;
-
-
-
-        updateView();
+        //Assembling panels
+        setLayout(new BorderLayout());
+        add(header,BorderLayout.NORTH);
+        add(sidePanel,BorderLayout.EAST);
+        add(body,BorderLayout.CENTER);
+        add(infoPanel,BorderLayout.SOUTH);
+        //Update components
+        model.updateView(this);
     }
 
-    private void updateView(){
-
-    }
-//
-//        try {
-//            //Loading activeProfile
-//            loadProfiles();
-//        } catch (IOException | ParseException e) {
-//            e.printStackTrace();
-//            JOptionPane.showMessageDialog(new JFrame(), ui.getUIStr("ERR","PROFILE_LOAD_FAILED")+ "\n"+
-//                    ui.getUIStr("ERR","PROFILE_JSON_MISSING") + "\n" + e.getMessage(), ui.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
-//            System.exit(0);
-//        }
-//
-//        //Setting up default parameters
-//        setMinimumSize(new Dimension(640,200));
-//        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//        setTitle(ui.getUIStr("UI","WINDOW_TITLE"));
-//
 //        //Setting Layout for header and body
-//        setLayout(new BorderLayout());
+//
 //
 //        //Creating EntryController
 //        renewState();

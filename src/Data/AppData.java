@@ -1,6 +1,7 @@
 package Data;
 
 import Control.EntryProfile;
+import Window.MainWindow;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -10,14 +11,10 @@ import java.util.List;
 public class AppData implements Serializable {
     /*
     FIELDS:
-        LOADED PROFILES
-        ACTIVE PROFILE
         LIST OF ENTRIES
         STATISTICS ON DEMAND
         PROGRAM'S ACTIVE STATE
     FUNCTIONS:
-        SERIALIZATION (JSON, EXPORT, ELSE)
-        DE-SERIALIZATION (JSON, IMPORT, ELSE)
      */
     /**
      * The currently active profile
@@ -29,6 +26,8 @@ public class AppData implements Serializable {
      */
     private List<EntryProfile> profileList = new ArrayList<>();
 
+    //private List<Entry> entries;
+
     /**
      * New option file creation with default settings
      */
@@ -37,7 +36,19 @@ public class AppData implements Serializable {
         LOAD PROFILES FROM FILE...
         CREATE EVENT HANDLER
          */
-        System.out.println("AppData constructed");
+
+//        try {
+//            //Loading activeProfile
+//            loadProfiles();
+//        } catch (IOException | ParseException e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(new JFrame(), ui.getUIStr("ERR","PROFILE_LOAD_FAILED")+ "\n"+
+//                    ui.getUIStr("ERR","PROFILE_JSON_MISSING") + "\n" + e.getMessage(), ui.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+//            System.exit(0);
+//        }
+
+
+        System.out.println("a new AppData has been constructed");
         activeProfile = new EntryProfile();
         profileList.add(activeProfile);
     }
@@ -56,5 +67,9 @@ public class AppData implements Serializable {
         for (Object obj: profileListObject) {
             profileList.add((EntryProfile) obj);
         }
+    }
+
+    public void updateView(MainWindow mainWindow) {
+
     }
 }

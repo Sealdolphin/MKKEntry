@@ -46,6 +46,9 @@ public class Application {
             //Loading options
             ui = new UIHandler();
             ui.refreshOptions(optionsJSON);
+
+            // Set System L&F
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         catch (ParseException | IOException e) {
             String errorMsg = "Nem tudtam betölteni a beállításokat a 'ui.json' fáljból.\n" +
@@ -53,37 +56,30 @@ public class Application {
                     "Részletek:\n" + e.toString();
             JOptionPane.showMessageDialog(null,errorMsg,"Hiba",JOptionPane.ERROR_MESSAGE);
             return;
-        }
-
-        Application app = new Application();
-
-        try {
-            // Set System L&F
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
-            //Starting application
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(configFileName));
-            app.model = (AppData) ois.readObject();
-            ois.close();
-
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             String errorMsg = ui.getUIStr("ERR","L&F_ERR");
             JOptionPane.showMessageDialog(null,errorMsg,ui.getUIStr("MSG","WARNING"),JOptionPane.PLAIN_MESSAGE);
+        }
+
+        Application app = new Application();
+        app.start();
+
+    }
+
+    private Application() {
+        try {
+            //Starting application
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(configFileName));
+            model = (AppData) ois.readObject();
+            ois.close();
         } catch (Exception appException){
             appException.printStackTrace();
             JOptionPane.showMessageDialog(
                     null,
                     ui.getUIStr("ERR","START") + "\n" + appException.getMessage(),
                     ui.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
-            app.model = new AppData();
+            model = new AppData();
         }
-
-        app.start();
-
-    }
-
-    private Application(){
-        //Starting point of the application
         view = new MainWindow(model);
         view.addWindowListener(new WindowAdapter() {
             @Override
@@ -103,16 +99,16 @@ public class Application {
             }
         });
         view.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setRelativeLocationOnScreen(view, ScreenLocation.CENTER);
     }
 
     private void start() {
+        view.setTitle(ui.getUIStr("UI","WINDOW_TITLE"));
+        view.setMinimumSize(new Dimension(640,480));
+        setRelativeLocationOnScreen(view, ScreenLocation.CENTER);
         view.pack();
         view.setVisible(true);
     }
-
-
-
+    
     private static void setRelativeLocationOnScreen(Component c, ScreenLocation location){
         int x,y;
         switch (location){

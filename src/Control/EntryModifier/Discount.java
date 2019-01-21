@@ -1,27 +1,14 @@
-//package Control.EntryModifier;
-//
-//import Control.EntryProfile;
-//import Control.Utility.ExtensionFilter;
-//import ImagePanel;
-//import org.json.simple.JSONObject;
-//
-//import javax.swing.*;
-//import java.awt.*;
-//import java.text.NumberFormat;
-//
-//import static Window.Main.ScreenLocation.CENTER;
-//import static Window.Main.setRelativeLocationOnScreen;
-//
-///**
-// * An entry modifier. Upon use it modifies the price of an entry.
-// */
-//public class Discount {
-//
-//    private String name;
-//    private String imagePath;
-//    private String label;
-//    private String metaData;
-//    private int discount;
+package Control.EntryModifier;
+
+import java.io.Serializable;
+
+public class Discount implements Serializable {
+
+    private String name;
+    private String imagePath;
+    private String label;
+    private String metaData;
+    private int discount;
 //
 //    private Discount(String name, String imagePath, String label, String meta, int price){
 //        this.name = name;
@@ -209,4 +196,4 @@
 //    }
 //
 //
-//}
+}

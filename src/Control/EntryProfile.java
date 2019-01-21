@@ -1,65 +1,76 @@
 package Control;
 
-import java.io.Serializable;
+import Control.EntryModifier.Discount;
+import Control.EntryModifier.TicketType;
 
-//
-//import Control.EntryModifier.Discount;
-//import Control.EntryModifier.TicketType;
-//import org.json.simple.JSONArray;
-//import org.json.simple.JSONObject;
-//
-//import javax.swing.*;
-//import java.awt.*;
-//import java.awt.event.MouseAdapter;
-//import java.awt.event.MouseEvent;
-//import java.io.IOException;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.stream.Stream;
-//
-//import static Window.Main.ui;
-//import static Window.Main.setRelativeLocationOnScreen;
-//
-//import static javax.swing.BoxLayout.PAGE_AXIS;
-//import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
-//
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Beléptetési profil.
+ * A beléptetési profil jellemzi a program aktuális működését.
+ * A profilhoz tartozó adatok:
+ * - A profil neve
+ * - Különböző jegytípusok
+ * - Különböző kedvezmények
+ * - A jellemző belépési kód maszkja
+ * - Exportálási filterek (adatokra vonatkozik)
+ * - Az eseményt jellemző egyéb konvenciók:
+ * -- Belépési kvóta (hányszor léphet be egy vendég)
+ * -- Ismeretlen adat kezelése (Automatikus, vagy egyéni)
+ * -- A szükséges parancskódok listája
+ * A beléptetési profil létrehozása csak varázsló segítségével lehetséges
+ */
 public class EntryProfile implements Serializable {
-//    private String name;
-//
-//    private AttributeList<TicketType> types;
-//    private AttributeList<Discount> discounts;
-//    private AttributeList<Discount> tempDiscounts;
-//
-//    private String[] defaultCommands;
-//    private CodeRestraints entryCode;
-//    private int entryMode = 1;
-//
-//    /**
-//     * The Defaults of the command strings
-//     */
-//    private static String[] defaults = {"leave", "delete"};
-//
-//    public void modifyDiscount(int index, Discount discount) {
-//        if (index >= 0) {
-//            tempDiscounts.remove(index);
-//            tempDiscounts.add(index, discount);
-//        } else tempDiscounts.addElement(discount);
-//    }
-//
-//    private EntryProfile(JSONObject codeRestraints) throws Exception {
-//        types = new AttributeList<>();
-//        discounts = new AttributeList<>();
-//        entryCode = new CodeRestraints(
-//                codeRestraints.get("start"),
-//                codeRestraints.get("regex")
-//        );
-//    }
-//
-//    /**
-//     * Deafult constructor
-//     * @param jsonProfile the JSONObject of the Profile
-//     * @return a fully parsed profile
-//     */
+    /**
+     * A beléptetési profil neve
+     */
+    private String name;
+    /**
+     * A profilhoz tartozó belépési kódok maszkja
+     */
+    private String codeMask;
+    /**
+     * A belépési kvóta.
+     * 0 = nincs kvóta
+     */
+    private int entryLimit;
+    /**
+     * Ismeretlen adat kezelésének megoldása.
+     * true = Automatikus kezelés. Az adatot figyelmen kívül hagyja, vagy az alapméretezett beállításokkal dolgozik.
+     * false = Egyéni kezelés. A felhasználó dönti el
+     */
+    private boolean autoDataHandling;
+    /**
+     * Az exportálási filterek listája
+     */
+    private List exportFilters;
+    /**
+     * A jegytípusok listája
+     */
+    private List<TicketType> ticketTypes;
+    /**
+     * Az alapméretezett jegytípus
+     */
+    private TicketType defaultType;
+    /**
+     * A kedvezmények listája
+     */
+    private List<Discount> discounts;
+
+    /**
+     * A szükséges parancskódok listája
+     */
+    private String[] defaultCommands;
+
+
+    public EntryProfile() {
+        ticketTypes = new ArrayList<>();
+        discounts = new ArrayList<>();
+        defaultCommands = new String[]{"leave","delete"};
+    }
+
 //    public static EntryProfile parseProfileFromJson(JSONObject jsonProfile) throws Exception {
 //        //Loading basic information
 //        JSONObject jsonCode = (JSONObject) jsonProfile.get("entry_code");
@@ -116,9 +127,9 @@ public class EntryProfile implements Serializable {
 //        return name;
 //    }
 //
-//    TicketType identifyTicketType(String name) {
-//        return types.stream().filter(type -> type.getName().equals(name)).findAny().orElse(TicketType.defaultType);
-//    }
+    TicketType identifyTicketType(String unknownType) {
+        return ticketTypes.stream().filter(type -> type.toString().equals(unknownType)).findAny().orElse(defaultType);
+    }
 //
 //    /**
 //     * Sets up the controller meta information from the stored profile

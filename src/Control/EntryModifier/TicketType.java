@@ -1,30 +1,16 @@
-//package Control.EntryModifier;
-//
-//import Control.EntryProfile;
-//import org.json.simple.JSONObject;
-//
-//import javax.swing.*;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//import static javax.swing.JOptionPane.ERROR_MESSAGE;
-//
-///**
-// * A Ticket type. It stores different attributes for each Entry.
-// * Each type has a unique name and a price.
-// * Also it can be decided whether it matters to the financial statistics
-// */
-//public class TicketType {
-//
-//    public static TicketType defaultType;
-//    private String name;
-//    @SuppressWarnings("FieldCanBeLocal") //STORED FOR FUTURE USE
-//    private int price;
-//    @SuppressWarnings("FieldCanBeLocal") //STORED FOR FUTURE USE
-//    private boolean hasFee;
-//
-//    private List<Discount> aplliedDiscounts = new ArrayList<>();
+package Control.EntryModifier;
+
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class TicketType implements Serializable {
+
+    private String name;
+    private int price;
+    private boolean hasFee;
+    private List<Discount> appliedDiscounts = new ArrayList<>();
 //
 //    /**
 //     * Private constructor
@@ -72,9 +58,6 @@
 //        return new TicketType(name,price,fee);
 //    }
 //
-//    public String getName() {
-//        return name;
-//    }
 //
 //    /**
 //     * It applies or removes a discount.
@@ -83,9 +66,13 @@
 //     * @param discount the discount to apply
 //     */
 //    public void applyDiscount(Discount discount){
-//        if(aplliedDiscounts.contains(discount))
-//            aplliedDiscounts.remove(discount);
+//        if(appliedDiscounts.contains(discount))
+//            appliedDiscounts.remove(discount);
 //        else
-//            aplliedDiscounts.add(discount);
+//            appliedDiscounts.add(discount);
 //    }
-//}
+    @Override
+    public String toString(){
+        return name;
+    }
+}
