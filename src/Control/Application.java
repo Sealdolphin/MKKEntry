@@ -1,5 +1,6 @@
 package Control;
 
+import Data.AppData;
 import Window.MainWindow;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -15,7 +16,7 @@ import java.io.InputStreamReader;
 public class Application {
 
     private MainWindow view;
-    //private AppData model;
+    private AppData model;
     private EntryController controller;
     private EventHandler eventHandler;
     public static UIHandler ui;
