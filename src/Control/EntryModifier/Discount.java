@@ -12,7 +12,7 @@ public class Discount implements Serializable {
     private String metaData;
     private int discount;
 
-    public static Discount parseDiscountFromJson(JSONObject discountObject) {
+    public static Discount parseDiscountFromJson(JSONObject discountObject, String profileName) {
         //TODO: needs implementations
         return new Discount();
     }

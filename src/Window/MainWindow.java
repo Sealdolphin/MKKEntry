@@ -119,23 +119,7 @@ public class MainWindow extends JFrame {
 //        JSONObject obj;
 //        obj = (JSONObject) parser.parse(new BufferedReader(new InputStreamReader(new FileInputStream("profiles.json"))));
 //
-//        if(!obj.get("version").toString().equals(UIHandler.uiVersion))
-//            throw new IOException(ui.getUIStr("ERR","VERSION_MISMATCH") + UIHandler.uiVersion);
-//
-//        try {
-//            JSONArray jsonProfiles = (JSONArray) obj.get("profiles");
-//            for (Object p : jsonProfiles) {
-//                profiles.add(EntryProfile.parseProfileFromJson((JSONObject) p));
-//            }
-//        } catch (Exception e){
-//            throw new IOException(ui.getUIStr("ERR","PROFILE_DATA_PARSE"));
-//        }
-//        String active = obj.get("active").toString();
-//        for (EntryProfile profile : profiles) {
-//            if(active.equals(profile.getName())){
-//                activeProfile = profile;
-//            }
-//        }
+
 //
 //    }
 //

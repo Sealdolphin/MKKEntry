@@ -3,9 +3,12 @@ package Control.EntryModifier;
 
 import org.json.simple.JSONObject;
 
+import javax.swing.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class TicketType implements Serializable {
 
@@ -14,57 +17,52 @@ public class TicketType implements Serializable {
     private boolean hasFee;
     private List<Discount> appliedDiscounts = new ArrayList<>();
 
-    public static TicketType parseTicketTypeFromJson(JSONObject discountObject) {
-        //TODO: needs implementation
-        return new TicketType();
+    /**
+     * Private constructor
+     * Can initialize a Ticket type from a generated string (or JSON Object)
+     * For common use see parseTicketTypeFromJson
+     * @param name the name of the TicketType
+     * @param price the price of the TicketType
+     * @param fee whether it matters to the financial statistics
+     */
+    private TicketType(String name, int price, boolean fee){
+        this.name = name;
+        this.price = price;
+        this.hasFee = fee;
     }
 
-    //
-//    /**
-//     * Private constructor
-//     * Can initialize a Ticket type from a generated string (or JSON Object)
-//     * For common use see parseTicketTypeFromJson
-//     * @param name the name of the TicketType
-//     * @param price the price of the TicketType
-//     * @param fee whether it matters to the financial statistics
-//     */
-//    private TicketType(String name, int price, boolean fee){
-//        this.name = name;
-//        this.price = price;
-//        this.hasFee = fee;
-//    }
-//
-//    /**
-//     * Perses a JSONObject and creates a TicketType
-//     * The required attributes are:
-//     * name : String
-//     * price : Integer
-//     * fee : Boolean
-//     * @param jsonObject the JSON object to be parsed
-//     * @return a valid TicketType
-//     */
-//    public static TicketType parseTicketTypeFromJson(JSONObject jsonObject) {
-//        String name = "undefined";
-//        int price = 0;
-//        boolean fee = false;
-//        try {
-//            name = jsonObject.get("name").toString();
-//            price = Integer.parseInt(jsonObject.get("price").toString());
-//            fee = Boolean.parseBoolean(jsonObject.get("fee").toString());
-//        } catch (NumberFormatException num) {
-//            //Show warning message
-//            JOptionPane.showMessageDialog(new JFrame(),"A(z) '" + name +
-//                    "' jegytípushoz csatolt ár formátuma hibás.\n" +
-//                    "Az importálás nem sikerült, az alap beállítás lesz alkalmazva.","Hiba",ERROR_MESSAGE);
-//        } catch (Exception other){
-//            //Show warning message
-//            JOptionPane.showMessageDialog(new JFrame(),"A(z) '" + name +
-//                    "' jegytípus importálása közben hiba történt.\n" +
-//                    "Az importálás nem sikerült. Részletek:\n" + other.getMessage(),"Hiba",ERROR_MESSAGE);
-//        }
-//
-//        return new TicketType(name,price,fee);
-//    }
+    /**
+     * Perses a JSONObject and creates a TicketType
+     * The required attributes are:
+     * name : String
+     * price : Integer
+     * fee : Boolean
+     * @param jsonObject the JSON object to be parsed
+     * @return a valid TicketType
+     */
+    public static TicketType parseTicketTypeFromJson(JSONObject jsonObject, String profileName) {
+        String name = "undefined";
+        int price = 0;
+        boolean fee = false;
+        try {
+            name = jsonObject.get("name").toString();
+            price = Integer.parseInt(jsonObject.get("price").toString());
+            fee = Boolean.parseBoolean(jsonObject.get("fee").toString());
+        } catch (NumberFormatException num) {
+            //Show warning message
+            JOptionPane.showMessageDialog(new JFrame(),profileName +
+                    ":\nA(z) '" + name +
+                    "' jegytípushoz csatolt ár formátuma hibás.\n" +
+                    "Az importálás nem sikerült, az alap beállítás lesz alkalmazva.","Hiba",ERROR_MESSAGE);
+        } catch (Exception other){
+            //Show warning message
+            JOptionPane.showMessageDialog(new JFrame(),profileName+ ":\nA(z) '" + name +
+                    "' jegytípus importálása közben hiba történt.\n" +
+                    "Az importálás nem sikerült. Részletek:\n" + other.toString(),"Hiba",ERROR_MESSAGE);
+        }
+
+        return new TicketType(name,price,fee);
+    }
 //
 //
 //    /**

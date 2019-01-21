@@ -42,6 +42,7 @@ public class AppData implements Serializable {
         profileList = new ArrayList<>();
         StartupDialog startupHelper = new StartupDialog(profileList);
         activeProfile = startupHelper.getProfile();
+        System.out.println("Profile selected: " + activeProfile);
     }
 
     /*##################################Implemented for java.io.Serializable##########################################*/

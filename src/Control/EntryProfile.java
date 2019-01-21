@@ -5,9 +5,12 @@ import Control.EntryModifier.TicketType;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static Control.Application.ui;
 
 /**
  * Beléptetési profil.
@@ -74,11 +77,22 @@ public class EntryProfile implements Serializable {
         discounts = new ArrayList<>();
     }
 
-    public static void loadProfilesFromJson(JSONObject object, List<EntryProfile> profileList){
-        System.out.println("Load JSON Object!");
+    public static void loadProfilesFromJson(JSONObject object, List<EntryProfile> profileList) throws IOException{
+        System.out.println("Loaded JSON Object: " + object);
+        if(!object.get("version").toString().equals(UIHandler.uiVersion))
+            throw new IOException(ui.getUIStr("ERR","VERSION_MISMATCH") + UIHandler.uiVersion);
+
+        try {
+            JSONArray jsonProfiles = (JSONArray) object.get("profiles");
+            for (Object profileObj : jsonProfiles) {
+                profileList.add(parseProfileFromJson((JSONObject) profileObj));
+            }
+        } catch (Exception e){
+            throw new IOException(ui.getUIStr("ERR","PROFILE_DATA_PARSE") + "\n" + e.toString());
+        }
     }
 
-    public static EntryProfile parseProfileFromJson(JSONObject jsonProfile) throws Exception {
+    private static EntryProfile parseProfileFromJson(JSONObject jsonProfile) {
         //Loading basic information
         EntryProfile profile = new EntryProfile();
 
@@ -88,12 +102,12 @@ public class EntryProfile implements Serializable {
         //Loading discounts
         JSONArray jArray = (JSONArray) jsonProfile.get("discounts");
         for (Object discountObject : jArray) {
-            profile.discounts.add(Discount.parseDiscountFromJson((JSONObject) discountObject));
+            profile.discounts.add(Discount.parseDiscountFromJson((JSONObject) discountObject, profile.name));
         }
         //Loading Ticket types
         jArray = (JSONArray) jsonProfile.get("tickets");
         for (Object discountObject : jArray) {
-            profile.ticketTypes.add(TicketType.parseTicketTypeFromJson((JSONObject) discountObject));
+            profile.ticketTypes.add(TicketType.parseTicketTypeFromJson((JSONObject) discountObject, profile.name));
         }
 
         //Setting the default ticket type
@@ -132,9 +146,6 @@ public class EntryProfile implements Serializable {
 //        return panelSide;
 //    }
 //
-//    public String getName() {
-//        return name;
-//    }
 //
     TicketType identifyTicketType(String unknownType) {
         return ticketTypes.stream().filter(type -> type.toString().equals(unknownType)).findAny().orElse(defaultType);
@@ -302,4 +313,8 @@ public class EntryProfile implements Serializable {
 //
 //    }
 //
+    @Override
+    public String toString(){
+        return name;
+    }
 }

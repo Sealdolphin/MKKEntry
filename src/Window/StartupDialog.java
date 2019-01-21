@@ -29,10 +29,13 @@ public class StartupDialog {
                 new String[]{"json","txt"},
                 "Java Script Object Notation fájlok"
         );
+
         final JFileChooser chooser = new JFileChooser();
         chooser.addChoosableFileFilter(jsonFilter);
         chooser.setApproveButtonText("Megnyitás");
         chooser.setDialogTitle("Profilfájl betöltése");
+        chooser.setCurrentDirectory(new File(System.getProperty("user.dir")));
+
         //Open menu
         do{
             //Choose an option
@@ -55,11 +58,12 @@ public class StartupDialog {
                 if(fileDialog == JFileChooser.APPROVE_OPTION){
                     File jsonProfiles = chooser.getSelectedFile();
                     System.out.println("File selected: " + jsonProfiles);
-                    JSONObject profileObj = null;
                     //Load profiles from Json
                     try {
-                        profileObj = (JSONObject) new JSONParser().parse(new BufferedReader(new InputStreamReader(new FileInputStream(jsonProfiles))));
+                        JSONObject profileObj = (JSONObject) new JSONParser().parse(new BufferedReader(new InputStreamReader(new FileInputStream(jsonProfiles))));
                         EntryProfile.loadProfilesFromJson(profileObj,loadedProfiles);
+                        String active = profileObj.get("active").toString();
+                        activeProfile = loadedProfiles.stream().filter(profile -> profile.toString().equals(active)).findAny().orElse(null);
                         menu = false;
                     } catch (IOException | ParseException ex){
                         JOptionPane.showMessageDialog(null,
@@ -70,7 +74,21 @@ public class StartupDialog {
             }
 
         } while (menu);
-        activeProfile = loadedProfiles.get(0);
+
+        //Choosing profile
+        if(activeProfile == null){
+            Object[] profiles = new Object[loadedProfiles.size()];
+            for (int i = 0; i < profiles.length; i++) {
+                profiles[i] = loadedProfiles.get(i);
+            }
+            activeProfile = (EntryProfile) JOptionPane.showInputDialog(
+                    null,
+                    "Válassz egyet",
+                    "Aktív profil kiválasztása",
+                    JOptionPane.QUESTION_MESSAGE, null,
+                    profiles, loadedProfiles.get(0));
+            if(activeProfile == null) activeProfile = loadedProfiles.get(0);
+        }
     }
 
     public EntryProfile getProfile() {

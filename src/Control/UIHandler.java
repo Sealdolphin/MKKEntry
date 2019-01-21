@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class UIHandler {
 
-    public static String uiVersion = "v1.0";
+    public static String uiVersion = "v1.2";
 
     public void refreshOptions(JSONObject options) throws IOException {
         if(!options.get("version").toString().equals(uiVersion))
