@@ -1,31 +1,37 @@
-package Window;
+package Control;
 
-import Control.UIHandler;
+import Window.MainWindow;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
-/**
- * The Application's main class
- * This has the entry point.
- * @author Márk Mihalovits
- */
-public class Main {
+public class Application {
 
+    private MainWindow view;
+    //private AppData model;
+    private EntryController controller;
+    private EventHandler eventHandler;
     public static UIHandler ui;
 
-    /**
-     * The entry point of the Application.
-     * @param args optional system arguments (currently unused)
-     */
+    public enum Relative {
+        CENTER,
+        TOP,
+        BOTTOM,
+        RIGHT,
+        LEFT
+    }
+
     public static void main(String[] args) {
         JSONObject optionsJSON;
 
-        //Setting up L&F
+        //Setting up L&F and loading options
         try {
             // Set System L&F
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -34,8 +40,8 @@ public class Main {
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("options.json")));
             optionsJSON = (JSONObject) parser.parse(br);
             //Loading options
-            ui = new UIHandler();
-            ui.refreshOptions(optionsJSON);
+            //ui = new UIHandler();
+            //ui.refreshOptions(optionsJSON);
 
         }
         catch (UnsupportedLookAndFeelException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
@@ -53,26 +59,12 @@ public class Main {
 
         //Starting point of the application
         MainWindow window = new MainWindow();
-        /*
-        int x,y;
-        x = (int)((Toolkit.getDefaultToolkit().getScreenSize().width - window.getWidth())*.5);
-        y = (int)((Toolkit.getDefaultToolkit().getScreenSize().height - window.getHeight())*.5);
-        window.setLocation(x,y);
-        */
         setRelativeLocationOnScreen(window, Relative.CENTER);
         window.setVisible(true);
 
     }
 
-    public enum Relative {
-        CENTER,
-        TOP,
-        BOTTOM,
-        RIGHT,
-        LEFT
-    }
-
-    public static void setRelativeLocationOnScreen(Component c, Relative location){
+    private static void setRelativeLocationOnScreen(Component c, Relative location){
         int x,y;
         switch (location){
             default:
@@ -99,6 +91,4 @@ public class Main {
         }
         c.setLocation(x,y);
     }
-
-
 }
