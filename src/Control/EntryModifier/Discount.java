@@ -31,6 +31,10 @@ public class Discount {
         discount = price;
     }
 
+    public Discount(Discount other) {
+        this(other.name,other.imagePath,other.label,other.metaData,other.discount);
+    }
+
     public static Discount parseDiscountFromJson(JSONObject jsonObject) {
         //TODO: catching parse exceptions
         String name = jsonObject.get("name").toString();
