@@ -1,4 +1,4 @@
-package Control.EntryModifier;
+package control.modifier;
 
 
 import org.json.simple.JSONObject;

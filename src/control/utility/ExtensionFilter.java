@@ -1,4 +1,4 @@
-package Control.Utility;
+package control.utility;
 
 import javax.swing.filechooser.FileFilter;
 import java.io.File;

@@ -1,39 +1,72 @@
-package Control;
+package control;
+
+import data.AppData;
+import com.fazecast.jSerialComm.SerialPort;
+import data.DataModel;
+
+import javax.swing.*;
+
+
+public class EntryController implements ProgramStateListener {
+
+    private DataModel<EntryProfile> profiles;
+    private EntryProfile activeProfile;
+
+    public EntryController(AppData model, DataModel<EntryProfile> pData){
+        profiles = pData;
+        activeProfile = pData.getSelectedData();
+        if(activeProfile == null)
+            changeProfile();
+
+    }
+
+    public void scanPorts(JComboBox<String> cbSelections){
+        System.out.println("Scanning for ports...");
+        cbSelections.removeAllItems();
+        for (SerialPort port : SerialPort.getCommPorts()) {
+            cbSelections.addItem(port.getSystemPortName());
+            System.out.println("Scanned " + port.getSystemPortName());
+        }
+        if(cbSelections.getItemCount() == 0)
+            cbSelections.addItem("Válassz egyet");
+    }
+
+    public String getProfileName(){
+        return activeProfile.toString();
+    }
+
+    public String changeProfile(){
+        //Choosing profile
+        Object[] profileObjs = new Object[profiles.getDataSize()];
+        for (int i = 0; i < profileObjs.length; i++) {
+            profileObjs[i] = profiles.getDataByIndex(i);
+        }
+        EntryProfile newProfile = (EntryProfile) JOptionPane.showInputDialog(
+                null,
+                "Válassz egyet",
+                "Aktív profil kiválasztása",
+                JOptionPane.QUESTION_MESSAGE, null,
+                profileObjs, profileObjs[0]);
+        if (newProfile != null && newProfile != activeProfile) {
+            activeProfile = newProfile;
+            profiles.setSelection(activeProfile);
+            System.out.println("Profile selected: " + activeProfile);
+            //TODO: Profile change requires restart...
+        }
+        return getProfileName();
+    }
+
+    @Override
+    public void updateView() {
+
+    }
+
+    @Override
+    public void readBarCode(String barCode) {
+
+    }
 //
-//import Control.EntryModifier.TicketType;
-//import Control.Utility.BarcodeReader;
-//import Control.Utility.EntryFilter;
-//import Control.Utility.ExportFilter;
-//import Control.Utility.TombolaFilter;
-//import Window.MainWindow;
-//import com.fazecast.jSerialComm.SerialPort;
-//
-//import javax.swing.*;
-//import javax.swing.table.TableRowSorter;
-//import java.awt.*;
-//import java.awt.event.ItemEvent;
-//import java.awt.event.ItemListener;
-//import java.io.IOException;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Objects;
-//
-//import Window.ReadingFlagListener;
-//import Window.ProgramStateListener;
-//
-//import static Control.Entry.Member.M_ENTERED;
-//import static Control.Entry.Member.M_UID;
-//import static Control.Utility.EntryFilter.parseFilterType;
-//import static Window.Main.ui;
-//
-///**
-// * The responsible unit for the operative decisions
-// * It contains the List of entries and also the selected port
-// * It also contains a default selection of commands
-// * These commands are read at the start of the program from config.ini
-// * If options.ini file is missing or corrupted than the default command strings are loaded
-// */
-public class EntryController {
+
 //
 //    /**
 //     *  For the different reading operations
@@ -44,8 +77,8 @@ public class EntryController {
 //        FL_DEFAULT
 //    }
 //
-//    public static final String DEFAULT_OPTION = ui.getUIStr("UI","CHOOSE_ONE");    //String for null option
-//    public static String ENTRY_CODE;                               //Entry code: a short string that indicates valuable data
+//    public static final String DEFAULT_OPTION = uh.getUIStr("UI","CHOOSE_ONE");       //String for null option
+//    public static String ENTRY_CODE;                                                  //Entry code: a short string that indicates valuable data
 //
 //    private JTable tableView;
 //    private EventHandler defaultEventHandler;
@@ -75,27 +108,6 @@ public class EntryController {
 //     */
 //    private SerialPort selectedPort;
 //
-//    /**
-//     * Default Constructor for the controller
-//     * Relies on eventhandler to set up defaults
-//     * @param profile the active profile
-//     * @param handler the active EventHandler (can be null)
-//     * @param profileNames all the loaded profile names
-//     * @param infoBar the applications information bar
-//     */
-//    public EntryController(EntryProfile profile,EventHandler handler, Object[] profileNames, ReadingFlagListener infoBar){
-//        //Setting up command list
-//        profile.setController(this);
-//
-//        this.infoBar = infoBar;
-//        System.out.println("ENTRY = " + ENTRY_CODE);
-//        System.out.println(commandList);
-//
-//        //Connecting with EventHandler if it does not exist then create one
-//        defaultEventHandler = Objects.requireNonNullElseGet(handler, () -> new EventHandler(profile.getName(), profileNames));
-//        entryList = new EntryTable(TicketType.defaultType);
-//        infoBar.flagChange(readingFlag);
-//    }
 //
 //    /**
 //     * Checks the state of the serial port or device
@@ -149,12 +161,12 @@ public class EntryController {
 //                refreshViewModel();
 //
 //            } catch (IOException e) {
-//                errorMsg = ui.getUIStr("ERR","CODE_FORMAT") + "\n" + e.getMessage();
+//                errorMsg = uh.getUIStr("ERR","CODE_FORMAT") + "\n" + e.getMessage();
 //            } finally {
 //                readingFlag = readCodeFlag.FL_DEFAULT;
 //                if(!errorMsg.equals("")) {
 //                    System.out.println("ERROR: " + errorMsg);
-//                    JOptionPane.showMessageDialog(new JFrame(), errorMsg, ui.getUIStr("MSG","WARNING"), JOptionPane.WARNING_MESSAGE);
+//                    JOptionPane.showMessageDialog(new JFrame(), errorMsg, uh.getUIStr("MSG","WARNING"), JOptionPane.WARNING_MESSAGE);
 //                }
 //            }
 //        } else {
@@ -258,5 +270,5 @@ public class EntryController {
 //            selectedPort.openPort();
 //        }
 //    }
-//
+
 }

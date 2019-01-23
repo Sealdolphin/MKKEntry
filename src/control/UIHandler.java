@@ -1,4 +1,4 @@
-package Control;
+package control;
 
 import org.json.simple.JSONObject;
 
@@ -9,7 +9,7 @@ public class UIHandler {
 
     public static String uiVersion = "v1.2";
 
-    public void refreshOptions(JSONObject options) throws IOException {
+    void refreshOptions(JSONObject options) throws IOException {
         if(!options.get("version").toString().equals(uiVersion))
             throw new IOException("Version mismatch. Correct API version: " + uiVersion);
 

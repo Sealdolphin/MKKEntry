@@ -1,12 +1,5 @@
-package Window;
-//
-//import Control.EntryController;
-//import Control.EntryProfile;
-//
-///**
-// * An interface handling the Program's behavior
-// * @author Márk Mihalovits
-// */
+package control;
+
 public interface ProgramStateListener {
 //    /**
 //     * An event for the Application's save state change
@@ -15,15 +8,13 @@ public interface ProgramStateListener {
 //     */
 //    void stateChanged(boolean stateChanged, String headerName);
 //
-//    /**
-//     * An event for (re)starting the Application and clearing all data
-//     */
-//    void renewState();
-//
-//    /**
-//     * An event for incoming barcode for outer Barcode reader device
-//     * @param barCode the read data
-//     */
+
+    void updateView();
+
+    /**
+     * An event for incoming barcode for outer Barcode reader device
+     * @param barCode the read data
+     */
     void readBarCode(String barCode);
 //
 //    /**

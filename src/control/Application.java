@@ -1,7 +1,8 @@
-package Control;
+package control;
 
-import Data.AppData;
-import Window.MainWindow;
+import data.AppData;
+import data.ProfileData;
+import view.main.MainWindow;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -15,11 +16,13 @@ import java.io.*;
 public class Application {
 
     private static final String configFileName = "config.mkk";
+    private static final String profileFileName = "profiles.mkk";
+
+    public static UIHandler uh;
+
     private MainWindow view;
     private AppData model;
-    private EntryController controller;
-    private EventHandler eventHandler;
-    public static UIHandler ui;
+    private ProfileData profileData;
 
     public enum ScreenLocation {
         CENTER,
@@ -39,26 +42,26 @@ public class Application {
         //UI Handler is essential for the program to run.
         //It contains the static string messages.
         try {
-            // Parsing ui Handler from file
+            // Parsing uh Handler from file
             JSONParser parser = new JSONParser();
             BufferedReader optionsReader = new BufferedReader(new InputStreamReader(new FileInputStream("ui.json")));
             JSONObject optionsJSON = (JSONObject) parser.parse(optionsReader);
             //Loading options
-            ui = new UIHandler();
-            ui.refreshOptions(optionsJSON);
+            uh = new UIHandler();
+            uh.refreshOptions(optionsJSON);
 
             // Set System L&F
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         catch (ParseException | IOException e) {
-            String errorMsg = "Nem tudtam betölteni a beállításokat a 'ui.json' fáljból.\n" +
+            String errorMsg = "Nem tudtam betölteni a beállításokat a 'uh.json' fáljból.\n" +
                     "Az alkalmazás ezért nem tud elindulni.\n" +
                     "Részletek:\n" + e.toString();
             JOptionPane.showMessageDialog(null,errorMsg,"Hiba",JOptionPane.ERROR_MESSAGE);
             return;
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            String errorMsg = ui.getUIStr("ERR","L&F_ERR");
-            JOptionPane.showMessageDialog(null,errorMsg,ui.getUIStr("MSG","WARNING"),JOptionPane.PLAIN_MESSAGE);
+            String errorMsg = uh.getUIStr("ERR","L&F_ERR");
+            JOptionPane.showMessageDialog(null,errorMsg, uh.getUIStr("MSG","WARNING"),JOptionPane.PLAIN_MESSAGE);
         }
 
 
@@ -67,26 +70,41 @@ public class Application {
             app.start();
         } catch (Exception appException) {
             appException.printStackTrace();
-            JOptionPane.showMessageDialog(null,appException.getMessage(),ui.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null,appException.getMessage(), uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
         }
 
     }
 
     private Application() throws Exception {
+
         try {
             //Starting application
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(configFileName));
-            model = (AppData) ois.readObject();
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(profileFileName));
+            profileData = (ProfileData) ois.readObject();
             ois.close();
         } catch (Exception loadException){
             loadException.printStackTrace();
             JOptionPane.showMessageDialog(
                     null,
-                    ui.getUIStr("ERR","START") + "\n" + loadException.getMessage(),
-                    ui.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
+                    uh.getUIStr("ERR","START") + "\n" + loadException.getMessage(),
+                    uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
+            profileData = new ProfileData();
+        }
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(configFileName));
+            model = (AppData) ois.readObject();
+            ois.close();
+        } catch (Exception ex){
+            JOptionPane.showMessageDialog(
+                    null,
+                    uh.getUIStr("ERR","START") + "\n" + ex.getMessage(),
+                    uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
             model = new AppData();
         }
-        view = new MainWindow(model);
+
+        EntryController controller = new EntryController(model, profileData);
+
+        view = new MainWindow(model, controller);
         view.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e){
@@ -95,12 +113,16 @@ public class Application {
                     oos.writeObject(model);
                     oos.close();
                     System.out.println("Settings saved.");
+                    oos = new ObjectOutputStream(new FileOutputStream(profileFileName));
+                    oos.writeObject(profileData);
+                    oos.close();
+                    System.out.println("Profiles saved.");
                 } catch (IOException io) {
                     io.printStackTrace();
                     JOptionPane.showMessageDialog(
                             null,
-                            ui.getUIStr("ERR","CLOSING") + "\n" + io.getMessage(),
-                            ui.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+                            uh.getUIStr("ERR","CLOSING") + "\n" + io.getMessage(),
+                            uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -108,7 +130,7 @@ public class Application {
     }
 
     private void start() {
-        view.setTitle(ui.getUIStr("UI","WINDOW_TITLE"));
+        view.setTitle(uh.getUIStr("UI","WINDOW_TITLE"));
         view.setMinimumSize(new Dimension(640,480));
         setRelativeLocationOnScreen(view, ScreenLocation.CENTER);
         view.pack();

@@ -1,7 +1,7 @@
-package Control;
+package control;
 
-import Control.EntryModifier.Discount;
-import Control.EntryModifier.TicketType;
+import control.modifier.Discount;
+import control.modifier.TicketType;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static Control.Application.ui;
+import static control.Application.uh;
 
 /**
  * Beléptetési profil.
@@ -80,7 +80,7 @@ public class EntryProfile implements Serializable {
     public static void loadProfilesFromJson(JSONObject object, List<EntryProfile> profileList) throws IOException{
         System.out.println("Loaded JSON Object: " + object);
         if(!object.get("version").toString().equals(UIHandler.uiVersion))
-            throw new IOException(ui.getUIStr("ERR","VERSION_MISMATCH") + UIHandler.uiVersion);
+            throw new IOException(uh.getUIStr("ERR","VERSION_MISMATCH") + UIHandler.uiVersion);
 
         try {
             JSONArray jsonProfiles = (JSONArray) object.get("profiles");
@@ -88,7 +88,7 @@ public class EntryProfile implements Serializable {
                 profileList.add(parseProfileFromJson((JSONObject) profileObj));
             }
         } catch (Exception e){
-            throw new IOException(ui.getUIStr("ERR","PROFILE_DATA_PARSE") + "\n" + e.toString());
+            throw new IOException(uh.getUIStr("ERR","PROFILE_DATA_PARSE") + "\n" + e.toString());
         }
     }
 
@@ -134,7 +134,7 @@ public class EntryProfile implements Serializable {
 //        panelSide.setLayout(new BoxLayout(panelSide, PAGE_AXIS));
 //
 //        //Add the label first
-//        JLabel lbHeader = new JLabel(ui.getUIStr("UI", "DISCOUNT_BTN"));
+//        JLabel lbHeader = new JLabel(uh.getUIStr("UI", "DISCOUNT_BTN"));
 //        lbHeader.setAlignmentX(Component.LEFT_ALIGNMENT);
 //        panelSide.add(lbHeader);
 //
@@ -169,7 +169,7 @@ public class EntryProfile implements Serializable {
 //        //Removing code start part
 //        validID = code.replace(entryCode.start, "").toUpperCase().trim();
 //        //Checking constraints
-//        if (!validID.matches(entryCode.pattern)) throw new IOException(ui.getUIStr("ERR","CODE_MISMATCH"));
+//        if (!validID.matches(entryCode.pattern)) throw new IOException(uh.getUIStr("ERR","CODE_MISMATCH"));
 //
 //        return validID;
 //    }

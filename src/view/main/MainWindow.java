@@ -1,11 +1,15 @@
-package Window;
+package view.main;
 
 
 
-import Data.AppData;
+import control.EntryController;
+import data.AppData;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import control.ProgramStateListener;
 
 /**
  * The class of the main program window
@@ -18,93 +22,34 @@ import java.awt.*;
 public class MainWindow extends JFrame {
     /*
     FIELDS:
-        COMPONENTS
-            PANELS
-                HEADER
-                BODY
-                INFOPANEL (SOUTH)
-                SIDEPANEL
         LISTENERS (CONTROLLER / EVENT HANDLER)
      */
     private AppData model;
-    private JPanel header = new JPanel();
-    private JPanel body = new JPanel();
-    private JPanel sidePanel = new JPanel();
-    private JPanel infoPanel = new JPanel();
 
-//
-//    /**
-//     * The list of the selectable Serial Ports in a combo box
-//     */
-//    private JComboBox<String> cbSelectPort = new JComboBox<>();
-//    /**
-//     * A label indicating whether the selected port / device is active
-//     */
-//    private JLabel lbDeviceActive;
-//    /**
-//     * The label indicating the active profile to the user in the header
-//     */
-//    private JLabel lbProfile = new JLabel();
-//    /**
-//     * The panel which contains the different discounts (and their respective barcodes) assosiated with the active profile
-//     */
-//    private JPanel panelDiscount;
-//    /**
-//     * The listView of the entries.
-//     */
-//    private JTable entryView;
-//    /**
-//     * The currently active profile
-//     */
-//    private EntryProfile activeProfile;
-//    /**
-//     * All the available profiles
-//     */
-//    private List<EntryProfile> profiles;
-//    /**
-//     * Indicates whether the discount panel is on or off
-//     */
-//    private boolean discountPanelState = false;
-//    /**
-//     * The EntryController
-//     * It is responsible for operative decisions
-//     */
-//    private EntryController controller;
-//
-//
-//    /**
-//     * Main Constructor
-//     * Builds the main window of the program
-//     */
-    public MainWindow(AppData model) {
+    /**
+     * Main Constructor
+     * Builds the main window of the program
+     * @param model the model of the Application
+     */
+    public MainWindow(AppData model, EntryController controller) {
         //Setting up default fields
         this.model = model;
-        //Assembling panels
+
+        //Create components
         setLayout(new BorderLayout());
-        add(header,BorderLayout.NORTH);
+        JPanel body = new JPanel();
+        JPanel sidePanel = new JPanel();
+        JPanel infoPanel = new JPanel();
+
+        //Assembling panels
+        add(new Header(controller),BorderLayout.NORTH);
         add(sidePanel,BorderLayout.EAST);
         add(body,BorderLayout.CENTER);
         add(infoPanel,BorderLayout.SOUTH);
-        //Update components
-        model.updateView(this);
+
+
     }
 
-//        //Setting Layout for header and body
-//
-//
-//        //Creating EntryController
-//        renewState();
-//
-//        panelDiscount = activeProfile.createSideMenu();
-//        add(createHeader(),BorderLayout.NORTH);
-//        add(createBody(),BorderLayout.CENTER);
-//        setJMenuBar(MainMenu.createMenu(controller.getDefaultEventHandler()));
-//
-//        //Running basic event routines
-//        eventRefreshPorts();
-//
-//
-//    }
 //
 //    /**
 //     * Loads the different profiles from the default json file
@@ -119,8 +64,6 @@ public class MainWindow extends JFrame {
 //        JSONObject obj;
 //        obj = (JSONObject) parser.parse(new BufferedReader(new InputStreamReader(new FileInputStream("profiles.json"))));
 //
-
-//
 //    }
 //
 //    /**
@@ -129,55 +72,14 @@ public class MainWindow extends JFrame {
 //     */
 //    private void onClickBtnRefreshPorts(boolean active) {
 //        if(active){
-//            lbDeviceActive.setText(ui.getUIStr("UI","PORT_ACTIVE"));
+//            lbDeviceActive.setText(uh.getUIStr("UI","PORT_ACTIVE"));
 //            lbDeviceActive.setBackground(Color.green);
 //        } else {
-//            lbDeviceActive.setText(ui.getUIStr("UI","PORT_INACTIVE"));
+//            lbDeviceActive.setText(uh.getUIStr("UI","PORT_INACTIVE"));
 //            lbDeviceActive.setBackground(Color.red);
 //        }
 //    }
-//
-//    /**
-//     * Creates the header of the application
-//     * @return a JPanel containing the header components
-//     */
-//    private JPanel createHeader(){
-//        //Header Components
-//        JPanel panelHeader = new JPanel();
-//
-//        //Device state label
-//        lbDeviceActive = new JLabel();
-//        lbDeviceActive.setOpaque(true);
-//        lbDeviceActive.setBackground(Color.RED);
-//
-//        //Device refresher button
-//        JButton btnRefreshPorts = new JButton(ui.getUIStr("UI","PORT_BTN"));
-//        btnRefreshPorts.addActionListener(e -> eventRefreshPorts());
-//        //Device Combo Box
-//        cbSelectPort.addItemListener(controller);
-//        //SideBar button
-//        JButton btnOpenSideBar = new JButton(ui.getUIStr("UI","DISCOUNT_BTN"));
-//        //Adding sidePanel
-//        btnOpenSideBar.addActionListener(e -> {
-//            discountPanelState = !discountPanelState;
-//            if(discountPanelState)
-//                add(panelDiscount,BorderLayout.EAST);
-//            else{
-//                remove(panelDiscount);
-//            }
-//            revalidate();
-//        });
-//
-//        //Assembling components
-//        panelHeader.add(lbProfile);
-//        panelHeader.add(new JLabel(ui.getUIStr("UI","READER_LB") + ":"));
-//        panelHeader.add(cbSelectPort);
-//        panelHeader.add(lbDeviceActive);
-//        panelHeader.add(btnRefreshPorts);
-//        panelHeader.add(btnOpenSideBar);
-//
-//        return panelHeader;
-//    }
+
 //
 //    /**
 //     * Creates the body of the application
@@ -203,7 +105,7 @@ public class MainWindow extends JFrame {
 //
 //        ToggleInputButton btnToggleInput = new ToggleInputButton();
 //
-//        JButton btnSendCommand = new JButton(ui.getUIStr("UI","SENDCODE_BTN"));
+//        JButton btnSendCommand = new JButton(uh.getUIStr("UI","SENDCODE_BTN"));
 //        btnSendCommand.addActionListener(e -> {
 //            if(!tfInputField.getText().isEmpty()) {
 //                String data = btnToggleInput.codeInput ? EntryController.ENTRY_CODE : "";
@@ -279,7 +181,7 @@ public class MainWindow extends JFrame {
 //        controller.setProgramStateListener(this);
 //        controller.setTable(entryView);
 //        //Creating new layout / menu
-//        lbProfile.setText(ui.getUIStr("UI","PROFILE_LB") + ": " + activeProfile.getName());
+//        lbProfile.setText(uh.getUIStr("UI","PROFILE_LB") + ": " + activeProfile.getName());
 //        add(infoPanel,BorderLayout.SOUTH);
 //    }
 //
@@ -298,7 +200,7 @@ public class MainWindow extends JFrame {
 //        activeProfile = profiles.stream().filter(p -> p.getName().equals(profileName)).findAny().orElse(activeProfile);
 //        //Invoke renew state. Clear Database and create new Controller
 //        renewState();
-//        JOptionPane.showMessageDialog(new JFrame(), ui.getUIStr("MSG","PROFILE_CHANGED") + "\n"+
+//        JOptionPane.showMessageDialog(new JFrame(), uh.getUIStr("MSG","PROFILE_CHANGED") + "\n"+
 //                "Új profil: " + activeProfile.getName(),"Kész",JOptionPane.INFORMATION_MESSAGE);
 //    }
 //
@@ -338,15 +240,15 @@ public class MainWindow extends JFrame {
 //            switch (flag){
 //                default:
 //                case FL_DEFAULT:
-//                    lbInfo.setText(Main.ui.getUIStr("UI","BOTTOM_INFO_DEF"));
+//                    lbInfo.setText(Main.uh.getUIStr("UI","BOTTOM_INFO_DEF"));
 //                    setBackground(Color.GREEN);
 //                    break;
 //                case FL_IS_LEAVING:
-//                    lbInfo.setText(Main.ui.getUIStr("UI","BOTTOM_INFO_MOD"));
+//                    lbInfo.setText(Main.uh.getUIStr("UI","BOTTOM_INFO_MOD"));
 //                    setBackground(Color.YELLOW);
 //                    break;
 //                case FL_IS_DELETE:
-//                    lbInfo.setText(Main.ui.getUIStr("UI","BOTTOM_INFO_DEL"));
+//                    lbInfo.setText(Main.uh.getUIStr("UI","BOTTOM_INFO_DEL"));
 //                    setBackground(Color.RED);
 //                    break;
 //            }
@@ -358,7 +260,7 @@ public class MainWindow extends JFrame {
 //        private boolean codeInput;
 //
 //        ToggleInputButton(){
-//            super(Main.ui.getUIStr("UI","TOGGLECODE_BTN_1"));
+//            super(Main.uh.getUIStr("UI","TOGGLECODE_BTN_1"));
 //            codeInput = true;
 //            addActionListener(this);
 //        }
@@ -367,9 +269,9 @@ public class MainWindow extends JFrame {
 //        public void actionPerformed(ActionEvent e) {
 //            codeInput = !codeInput;
 //            if(codeInput)
-//                setText(Main.ui.getUIStr("UI","TOGGLECODE_BTN_1"));
+//                setText(Main.uh.getUIStr("UI","TOGGLECODE_BTN_1"));
 //            else
-//                setText(Main.ui.getUIStr("UI","TOGGLECODE_BTN_2"));
+//                setText(Main.uh.getUIStr("UI","TOGGLECODE_BTN_2"));
 //        }
 //    }
 }

@@ -1,6 +1,6 @@
-package Control.Utility;
+package control.utility;
 
-import Window.ProgramStateListener;
+import control.ProgramStateListener;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;

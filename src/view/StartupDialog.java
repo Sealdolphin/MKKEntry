@@ -1,7 +1,7 @@
-package Window;
+package view;
 
-import Control.EntryProfile;
-import Control.Utility.ExtensionFilter;
+import control.EntryProfile;
+import control.utility.ExtensionFilter;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -11,7 +11,7 @@ import javax.swing.*;
 import java.io.*;
 import java.util.List;
 
-import static Control.Application.ui;
+import static control.Application.uh;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class StartupDialog {
@@ -21,8 +21,8 @@ public class StartupDialog {
     public StartupDialog(List<EntryProfile> loadedProfiles) throws Exception{
         boolean menu = loadedProfiles.isEmpty();
         Object[] options = new Object[]{
-                ui.getUIStr("UI","PROFILE_FROM_WIZARD"),
-                ui.getUIStr("UI","PROFILE_FROM_JSON")
+                uh.getUIStr("UI","PROFILE_FROM_WIZARD"),
+                uh.getUIStr("UI","PROFILE_FROM_JSON")
         };
         //Create JSON filter
         ExtensionFilter jsonFilter = new ExtensionFilter(
@@ -41,16 +41,16 @@ public class StartupDialog {
             //Choose an option
             String menuResult = (String) JOptionPane.showInputDialog(
                     null,
-                    ui.getUIStr("ERR","NO_PROFILE")+ "\nVálassz a lehetőségek közül.",
+                    uh.getUIStr("ERR","NO_PROFILE")+ "\nVálassz a lehetőségek közül.",
                     "Új profil létrehozása",
                     JOptionPane.QUESTION_MESSAGE,
                     null, options, options[0]);
 
-            if(menuResult == null) throw new Exception(ui.getUIStr("ERR","NO_PROFILE"));
+            if(menuResult == null) throw new Exception(uh.getUIStr("ERR","NO_PROFILE"));
             else if (menuResult.equals(options[0])){
                 //Creating new wizard
-                String msg = ui.getUIStr("ERR","NOT_IMPLEMENTED");
-                JOptionPane.showMessageDialog(null,msg,ui.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
+                String msg = uh.getUIStr("ERR","NOT_IMPLEMENTED");
+                JOptionPane.showMessageDialog(null,msg, uh.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
             } else if (menuResult.equals(options[1])){
                 //Open JSON file dialog
                 int fileDialog = chooser.showOpenDialog(null);
@@ -67,28 +67,13 @@ public class StartupDialog {
                         menu = false;
                     } catch (IOException | ParseException ex){
                         JOptionPane.showMessageDialog(null,
-                                ui.getUIStr("ERR","IO_FAIL")+ "\n" + ex.toString(),
-                                ui.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
+                                uh.getUIStr("ERR","IO_FAIL")+ "\n" + ex.toString(),
+                                uh.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
                     }
                 }
             }
 
         } while (menu);
-
-        //Choosing profile
-        if(activeProfile == null){
-            Object[] profiles = new Object[loadedProfiles.size()];
-            for (int i = 0; i < profiles.length; i++) {
-                profiles[i] = loadedProfiles.get(i);
-            }
-            activeProfile = (EntryProfile) JOptionPane.showInputDialog(
-                    null,
-                    "Válassz egyet",
-                    "Aktív profil kiválasztása",
-                    JOptionPane.QUESTION_MESSAGE, null,
-                    profiles, loadedProfiles.get(0));
-            if(activeProfile == null) activeProfile = loadedProfiles.get(0);
-        }
     }
 
     public EntryProfile getProfile() {

@@ -1,8 +1,11 @@
-package Control.EntryModifier;
+package control.modifier;
 
 import org.json.simple.JSONObject;
 
+import javax.swing.*;
 import java.io.Serializable;
+
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class Discount implements Serializable {
 
@@ -12,32 +15,37 @@ public class Discount implements Serializable {
     private String metaData;
     private int discount;
 
-    public static Discount parseDiscountFromJson(JSONObject discountObject, String profileName) {
-        //TODO: needs implementations
-        return new Discount();
+    private Discount(String name, String imagePath, String label, String meta, int price){
+        this.name = name;
+        this.imagePath = imagePath;
+        this.label = label;
+        metaData = meta;
+        discount = price;
     }
-//
-//    private Discount(String name, String imagePath, String label, String meta, int price){
-//        this.name = name;
-//        this.imagePath = imagePath;
-//        this.label = label;
-//        metaData = meta;
-//        discount = price;
-//    }
-//
-//    public Discount(Discount other) {
-//        this(other.name,other.imagePath,other.label,other.metaData,other.discount);
-//    }
-//
-//    public static Discount parseDiscountFromJson(JSONObject jsonObject) {
-//        //TODO: catching parse exceptions
-//        String name = jsonObject.get("name").toString();
-//        String image = jsonObject.get("imgPath").toString();
-//        String label = jsonObject.get("label").toString();
-//        String meta = jsonObject.get("meta").toString();
-//        int price = Integer.parseInt(jsonObject.get("discount").toString());
-//        return new Discount(name,image,label,meta,price);
-//    }
+
+    public Discount(Discount other) {
+        this(other.name,other.imagePath,other.label,other.metaData,other.discount);
+    }
+
+    public static Discount parseDiscountFromJson(JSONObject jsonObject, String profileName) {
+        String name, label, meta;
+        name = label = meta = "undefined";
+        String image = null;
+        int price = 0;
+        try {
+            name = jsonObject.get("name").toString();
+            image = jsonObject.get("imgPath").toString();
+            label = jsonObject.get("label").toString();
+            meta = jsonObject.get("meta").toString();
+            price = Integer.parseInt(jsonObject.get("discount").toString());
+        } catch (Exception other){
+            //Show warning message
+            JOptionPane.showMessageDialog(new JFrame(),profileName+ ":\nA(z) '" + name +
+                    "' kedvezmény importálása közben hiba történt.\n" +
+                    "Az importálás nem sikerült. Részletek:\n" + other.toString(),"Hiba",ERROR_MESSAGE);
+        }
+        return new Discount(name,image,label,meta,price);
+    }
 //
 //    public static JDialog createDiscountFromWizard(EntryProfile profile){
 //        Discount discount = new Discount("",null,"","",0);
