@@ -1,40 +1,72 @@
 package control;
 
+import control.utility.BarcodeReader;
+import control.utility.EntryFilter;
 import data.AppData;
 import com.fazecast.jSerialComm.SerialPort;
 import data.DataModel;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.io.PrintWriter;
+
+import static control.Application.uh;
 
 
-public class EntryController implements ProgramStateListener {
+public class AppController implements ProgramStateListener {
 
+    private AppData model;
     private DataModel<EntryProfile> profiles;
     private EntryProfile activeProfile;
+    private static final String DEFAULT_OPTION = "Válassz egyet";
+    private SerialPort selectedPort;
 
-    public EntryController(AppData model, DataModel<EntryProfile> pData){
+    AppController(AppData model, DataModel<EntryProfile> pData){
+        this.model = model;
         profiles = pData;
         activeProfile = pData.getSelectedData();
         if(activeProfile == null)
             changeProfile();
-
     }
 
     public void scanPorts(JComboBox<String> cbSelections){
-        System.out.println("Scanning for ports...");
+        System.out.println("[INFO]: Scanning for ports...");
         cbSelections.removeAllItems();
         for (SerialPort port : SerialPort.getCommPorts()) {
             cbSelections.addItem(port.getSystemPortName());
-            System.out.println("Scanned " + port.getSystemPortName());
+            System.out.println("[INFO]: Scanned " + port.getSystemPortName());
         }
         if(cbSelections.getItemCount() == 0)
-            cbSelections.addItem("Válassz egyet");
+            cbSelections.addItem(DEFAULT_OPTION);
+    }
+
+    public void checkPort(ItemEvent event, JLabel label){
+        if(event.getStateChange() == ItemEvent.SELECTED){
+            if(selectedPort != null) selectedPort.closePort();
+            String portSelected = event.getItem().toString();
+            selectedPort = SerialPort.getCommPort(portSelected);
+            if(portSelected.equals(DEFAULT_OPTION)) selectedPort = null;
+            if(selectedPort != null){
+                System.out.println("[INFO]: Device connected at " + portSelected);
+                BarcodeReader reader = new BarcodeReader();
+                reader.addListener(this);
+                selectedPort.addDataListener(reader);
+                selectedPort.openPort();
+                label.setBackground(Color.GREEN);
+                label.setText(uh.getUIStr("UI","PORT_ACTIVE"));
+            } else {
+                label.setBackground(Color.RED);
+                label.setText(uh.getUIStr("UI","PORT_INACTIVE"));
+            }
+        }
     }
 
     public String getProfileName(){
         return activeProfile.toString();
     }
 
+    @Override
     public String changeProfile(){
         //Choosing profile
         Object[] profileObjs = new Object[profiles.getDataSize()];
@@ -50,10 +82,16 @@ public class EntryController implements ProgramStateListener {
         if (newProfile != null && newProfile != activeProfile) {
             activeProfile = newProfile;
             profiles.setSelection(activeProfile);
-            System.out.println("Profile selected: " + activeProfile);
+            System.out.println("[INFO]: Profile selected: " + activeProfile);
+            JOptionPane.showMessageDialog(null,"Profil aktiválva:\n" + activeProfile,"Kész",JOptionPane.INFORMATION_MESSAGE);
             //TODO: Profile change requires restart...
         }
         return getProfileName();
+    }
+
+    @Override
+    public void exportList(PrintWriter writer, EntryFilter filter) {
+        //TODO: needs implementation
     }
 
     @Override
@@ -65,8 +103,8 @@ public class EntryController implements ProgramStateListener {
     public void readBarCode(String barCode) {
 
     }
-//
 
+//
 //
 //    /**
 //     *  For the different reading operations
@@ -81,7 +119,7 @@ public class EntryController implements ProgramStateListener {
 //    public static String ENTRY_CODE;                                                  //Entry code: a short string that indicates valuable data
 //
 //    private JTable tableView;
-//    private EventHandler defaultEventHandler;
+//    private MenuHandler defaultEventHandler;
 //    private Entry lastEntry = null;
 //    private ReadingFlagListener infoBar;
 //
@@ -217,7 +255,7 @@ public class EntryController implements ProgramStateListener {
 //        refreshViewModel();
 //    }
 //
-//    public EventHandler getDefaultEventHandler() {
+//    public MenuHandler getDefaultEventHandler() {
 //        return defaultEventHandler;
 //    }
 //

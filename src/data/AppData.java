@@ -3,7 +3,7 @@ package data;
 
 import java.io.Serializable;
 
-public class AppData implements Serializable {
+public class AppData implements Serializable{
     /*
     FIELDS:
         LIST OF ENTRIES

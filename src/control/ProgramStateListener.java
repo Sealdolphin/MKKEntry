@@ -1,13 +1,15 @@
 package control;
 
+import control.utility.EntryFilter;
+import control.utility.TombolaFilter;
+
+import java.io.PrintWriter;
+
 public interface ProgramStateListener {
-//    /**
-//     * An event for the Application's save state change
-//     * @param stateChanged the Application's save state (true if it's saved)
-//     * @param headerName the Application's header name
-//     */
-//    void stateChanged(boolean stateChanged, String headerName);
-//
+
+    EntryFilter[] filterTypes = {
+            new TombolaFilter()
+    };
 
     void updateView();
 
@@ -16,18 +18,13 @@ public interface ProgramStateListener {
      * @param barCode the read data
      */
     void readBarCode(String barCode);
-//
-//    /**
-//     * An event for profile change
-//     * @param profileName the new active profile
-//     */
-//    void changeProfile(String profileName);
-//
-//    /**
-//     * Returns the current entryController
-//     * @return the Application's control class
-//     */
-//    EntryController getController();
-//
-//    EntryProfile getProfile();
+
+    /**
+     * An event for profile change
+     * @return the name of the new active profile
+     */
+    String changeProfile();
+
+    void exportList(PrintWriter writer, EntryFilter filter);
+
 }

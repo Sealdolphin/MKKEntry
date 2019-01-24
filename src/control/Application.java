@@ -102,7 +102,7 @@ public class Application {
             model = new AppData();
         }
 
-        EntryController controller = new EntryController(model, profileData);
+        AppController controller = new AppController(model, profileData);
 
         view = new MainWindow(model, controller);
         view.addWindowListener(new WindowAdapter() {

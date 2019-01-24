@@ -2,14 +2,12 @@ package view.main;
 
 
 
-import control.EntryController;
+import control.AppController;
+import control.MenuHandler;
 import data.AppData;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import control.ProgramStateListener;
 
 /**
  * The class of the main program window
@@ -26,30 +24,174 @@ public class MainWindow extends JFrame {
      */
     private AppData model;
 
+    private JLabel labelProfile;
+    private JLabel labelDevice;
+    private JButton btnDiscounts;
+
     /**
      * Main Constructor
      * Builds the main window of the program
+     *
      * @param model the model of the Application
      */
-    public MainWindow(AppData model, EntryController controller) {
+    public MainWindow(AppData model, AppController controller) {
         //Setting up default fields
         this.model = model;
+
+        btnDiscounts = new JButton("Kedvezmények");
+
+        labelProfile = new JLabel(controller.getProfileName());
+        labelProfile.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 14));
+        labelProfile.setForeground(new Color(0xcc8500));
+        labelDevice = new JLabel("TEMP");
+        labelDevice.setOpaque(true);
+        labelDevice.setMaximumSize(new Dimension(labelDevice.getMaximumSize().width,btnDiscounts.getMaximumSize().height));
 
         //Create components
         setLayout(new BorderLayout());
         JPanel body = new JPanel();
         JPanel sidePanel = new JPanel();
         JPanel infoPanel = new JPanel();
+        setJMenuBar(new MainMenu().createMenu(controller));
 
         //Assembling panels
-        add(new Header(controller),BorderLayout.NORTH);
-        add(sidePanel,BorderLayout.EAST);
-        add(body,BorderLayout.CENTER);
-        add(infoPanel,BorderLayout.SOUTH);
-
-
+        add(new Header(controller), BorderLayout.NORTH);
+        add(sidePanel, BorderLayout.EAST);
+        add(body, BorderLayout.CENTER);
+        add(infoPanel, BorderLayout.SOUTH);
     }
 
+    private class Header extends JPanel{
+
+        Header(AppController controller) {
+            setLayout(new BoxLayout(this,BoxLayout.LINE_AXIS));
+            //Profile Label
+            add(new JLabel("Profil: "));
+            add(labelProfile);
+            add(Box.createHorizontalGlue());
+            //Comm. Port chooser
+            add(new JLabel("Vonalkód olvasó: "));
+            JComboBox<String> cbPorts = new JComboBox<>();
+            cbPorts.addItemListener(event -> controller.checkPort(event,labelDevice));
+            add(cbPorts);
+            add(labelDevice);
+            JButton btnSelectPort = new JButton("Frissíts");
+            btnSelectPort.addActionListener(e -> controller.scanPorts(cbPorts));
+            add(btnSelectPort);
+            add(Box.createHorizontalGlue());
+            add(btnDiscounts);
+
+            //Set default selection
+            controller.scanPorts(cbPorts);
+            cbPorts.setSelectedIndex(0);
+
+
+        }
+    }
+
+    /**
+     * An abstract class responsible for creating the Application's menu bar.
+     * @author Márk Mihalovits
+     */
+    private class MainMenu {
+        /**
+         * Creates a default menu bar with an event handler
+         * @return a default menu bar
+         */
+        JMenuBar createMenu(AppController controller){
+            JMenuBar menuBar = new JMenuBar();
+
+            MenuHandler handler = new MenuHandler(controller);
+
+            //Assembling Menus
+            menuBar.add(createFileMenu(handler));
+            //menuBar.add(createEditMenu(controller));
+            //menuBar.add(createChartsMenu(controller));
+            menuBar.add(createProfileMenu(controller));
+
+            return menuBar;
+        }
+
+        /**
+         * Creates the FILE menu for the menu bar
+         * @return the FILE menu
+         */
+        private JMenu createFileMenu(MenuHandler handler){
+            JMenu fileMenu = new JMenu("Fájl");
+
+            JMenuItem mi = new JMenuItem("Új Lista");
+            mi.addActionListener(e -> handler.notImplemented());
+            fileMenu.add(mi);
+
+            mi = new JMenuItem("Állás betöltése");
+            mi.addActionListener(e -> handler.notImplemented());
+            fileMenu.add(mi);
+
+            fileMenu.addSeparator();
+
+            mi = new JMenuItem("Mentés");
+            mi.addActionListener(e -> handler.notImplemented());
+            fileMenu.add(mi);
+
+            mi = new JMenuItem("Mentés másként");
+            mi.addActionListener(e -> handler.notImplemented());
+            fileMenu.add(mi);
+
+            fileMenu.addSeparator();
+
+            mi = new JMenuItem("Lista importálása");
+            mi.addActionListener(e -> handler.notImplemented());
+            fileMenu.add(mi);
+
+            mi = new JMenuItem("Lista exportálása");
+            mi.addActionListener(e -> handler.exportEntries());
+            fileMenu.add(mi);
+
+            fileMenu.addSeparator();
+
+            mi = new JMenuItem("Kilépés");
+            mi.addActionListener(e -> handler.notImplemented());
+            fileMenu.add(mi);
+
+            return fileMenu;
+        }
+
+        /**
+         * Creates the PROFILE menu for the menu bar
+         * @param controller the event handler handling the action events
+         * @return the PROFILE menu
+         */
+        private JMenu createProfileMenu(AppController controller) {
+            JMenu menuProfiles = new JMenu("Profilok");
+
+            JMenuItem mi = new JMenuItem("Profil váltása");
+            mi.addActionListener(e-> labelProfile.setText(controller.changeProfile()));
+            menuProfiles.add(mi);
+
+
+            return menuProfiles;
+        }
+
+        /**
+         * Creates the CHARTS menu for the menu bar
+         * TODO: waiting for implementation
+         * @param handler the event handler handling the action events
+         * @return the CHARTS menu
+         */
+        private JMenu createChartsMenu(AppController handler){
+            return new JMenu("Statisztikák");
+        }
+
+        /**
+         * Creates the EDIT menu for the menu bar
+         * TODO: waiting for implementation
+         * @param handler the event handler handling the action events
+         * @return the EDIT menu
+         */
+        private JMenu createEditMenu(AppController handler){
+            return new JMenu("Szerkesztés");
+        }
+    }
 //
 //    /**
 //     * Loads the different profiles from the default json file
@@ -108,7 +250,7 @@ public class MainWindow extends JFrame {
 //        JButton btnSendCommand = new JButton(uh.getUIStr("UI","SENDCODE_BTN"));
 //        btnSendCommand.addActionListener(e -> {
 //            if(!tfInputField.getText().isEmpty()) {
-//                String data = btnToggleInput.codeInput ? EntryController.ENTRY_CODE : "";
+//                String data = btnToggleInput.codeInput ? AppController.ENTRY_CODE : "";
 //                controller.receiveCode(data + tfInputField.getText());
 //            }
 //        });
@@ -173,11 +315,11 @@ public class MainWindow extends JFrame {
 //    public void renewState() {
 //        //Creating new infoPanel
 //        InfoPanel infoPanel = new InfoPanel("");
-//        //Creating new EntryController
-//        EventHandler handler = null;
+//        //Creating new AppController
+//        MenuHandler handler = null;
 //        //If an event handler exists
 //        if(controller != null) handler = controller.getDefaultEventHandler();
-//        controller = new EntryController(activeProfile,handler,profiles.stream().map(EntryProfile::getName).toArray(),infoPanel);
+//        controller = new AppController(activeProfile,handler,profiles.stream().map(EntryProfile::getName).toArray(),infoPanel);
 //        controller.setProgramStateListener(this);
 //        controller.setTable(entryView);
 //        //Creating new layout / menu
@@ -205,7 +347,7 @@ public class MainWindow extends JFrame {
 //    }
 //
 //    @Override
-//    public EntryController getController() {
+//    public AppController getController() {
 //        return controller;
 //    }
 //
@@ -236,7 +378,7 @@ public class MainWindow extends JFrame {
 //        }
 //
 //        @Override
-//        public void flagChange(EntryController.readCodeFlag flag) {
+//        public void flagChange(AppController.readCodeFlag flag) {
 //            switch (flag){
 //                default:
 //                case FL_DEFAULT:

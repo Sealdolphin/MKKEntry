@@ -22,8 +22,6 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
         System.out.println("Active profile: " + activeProfile);
     }
 
-
-
     @Override
     public EntryProfile getDataByIndex(int index) {
         return profiles.get(index);

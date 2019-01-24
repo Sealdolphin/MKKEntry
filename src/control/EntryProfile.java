@@ -155,7 +155,7 @@ public class EntryProfile implements Serializable {
 //     * Sets up the controller meta information from the stored profile
 //     * @param controller the controller to be set up
 //     */
-//    void setController(EntryController controller) {
+//    void setController(AppController controller) {
 //        //Set MetaData for discounts
 //        List<String> discountMeta = new ArrayList<>();
 //        for (Discount discount : discounts.elements) {

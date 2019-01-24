@@ -1,4 +1,17 @@
 package control;
+
+import control.utility.EntryFilter;
+
+import javax.swing.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.HashMap;
+
+import static control.Application.uh;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+
 //
 //import Control.EntryModifier.TicketType;
 //import Control.Utility.EntryFilter;
@@ -19,38 +32,52 @@ package control;
 //import static Window.Main.uh;
 //
 //
-public class EventHandler {
-//
-//    private boolean programState = false;
-//    private String saveFileName = "";
-//    private String activeProfile;
-//    private Object[] profileNames;
-//
-//    private ProgramStateListener listener;
-//
-//    private final JFileChooser fileDialog = new JFileChooser(System.getProperty("user.home"));
-//
-//    EventHandler(String profile, Object[] profiles){
-//        activeProfile = profile;
-//        profileNames = profiles;
-//    }
-//
-//    public void exportEntries() {
-//        Object[] filters = EntryFilter.filterTypes;
-//        String resultFilter = (String)JOptionPane.showInputDialog(
-//                new JFrame(),
-//                "Válassz az exportálási lehetőségek közül:",
-//                "Exportálás",
-//                JOptionPane.QUESTION_MESSAGE,
-//                null,
-//                filters,
-//                filters[TOMBOLA.ordinal()]);
-//
-//        if(resultFilter != null && resultFilter.length() > 0){
-//            //Let the export begin
-//            listener.getController().exportList(resultFilter);
-//        }
-//    }
+public class MenuHandler {
+
+    private ProgramStateListener controller;
+    private final JFileChooser fileDialog = new JFileChooser(System.getProperty("user.home"));
+
+    public MenuHandler(ProgramStateListener listener){
+        controller = listener;
+    }
+
+    public void notImplemented(){
+        String msg = uh.getUIStr("ERR","NOT_IMPLEMENTED");
+        JOptionPane.showMessageDialog(null,msg, uh.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
+    }
+
+
+    public void exportEntries() {
+        Object[] filters = controller.filterTypes;
+        EntryFilter resultFilter = (EntryFilter)JOptionPane.showInputDialog(
+                new JFrame(),
+                "Válassz az exportálási lehetőségek közül:",
+                "Exportálás",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                filters,
+                filters[0]);
+
+        if(resultFilter == null){
+            System.out.println("Export has been cancelled by user : No filter");
+            return;
+        }
+        //Let the export begin
+        fileDialog.resetChoosableFileFilters();
+        fileDialog.addChoosableFileFilter(resultFilter);
+        int expRes = fileDialog.showSaveDialog(null);
+        if(expRes != JFileChooser.APPROVE_OPTION){
+            System.out.println("Export has been cancelled by user : No file");
+            return;
+        }
+        try (PrintWriter exportWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fileDialog.getSelectedFile())))) {
+            controller.exportList(exportWriter, resultFilter);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, e.getMessage(), uh.getUIStr("ERR", "HEADER"), ERROR_MESSAGE);
+        }
+
+    }
 //
 //    public void renewState() {
 //        if(!programState) {
@@ -118,104 +145,7 @@ public class EventHandler {
 //        return listener.getProfile().validateCode(code);
 //    }
 //
-//    private static List<Entry> parseEntryImportFile(File file, EntryProfile profile) throws ParseException{
-//        List<Entry> importList = new ArrayList<>();
-//        int lineNumber = 0;
-//        try {
-//            BufferedReader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-//
-//            boolean eof = false;
-//            while (!eof){
-//                try {
-//                    lineNumber++;
-//                    String line = fileReader.readLine();
-//                    if (line == null) {
-//                        eof = true;
-//                        continue;
-//                    }
-//                    importList.add(createEntryFromString(line, profile, lineNumber));
-//                } catch (ParseException ex){
-//                    Object[] options = new Object[]{"Következő","Megszakítás"};
-//                    int result = JOptionPane.showOptionDialog(new JFrame(),
-//                            uh.getUIStr("ERR","IMPORT_PARSE_FAIL") +"\n" +
-//                                    uh.getUIStr("ERR","POSITION") + ": " + ex.getErrorOffset() + "\n" +
-//                                    uh.getUIStr("ERR","DETAILS") + ":\n" + ex.getMessage(),
-//                            uh.getUIStr("ERR","HEADER"),JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE,null,options,options[0]);
-//                    System.out.println(ex.getMessage());
-//                    if(result == JOptionPane.NO_OPTION) throw new ParseException(uh.getUIStr("ERR","USER_ABORT"),lineNumber);
-//                }
-//            }
-//
-//        } catch (FileNotFoundException fnf) {
-//            throw new ParseException(uh.getUIStr("ERR","FILE_MISSING"),lineNumber);
-//        }  catch (IOException io) {
-//            throw new ParseException(uh.getUIStr("ERR","IO_FAIL") + ":\n" + io.getMessage(),lineNumber);
-//        }
-//
-//        if(importList.isEmpty()){
-//            JOptionPane.showMessageDialog(new JFrame(),
-//                    uh.getUIStr("ERR","FILE_EMPTY"),
-//                    uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
-//        }
-//
-//
-//        return importList;
-//    }
-//
-//    /**
-//     * Creates a new Entry class from an input string
-//     * The input string must follow the default Filter format which is:
-//     * 0: UID - required,
-//     * 1: NAME - required,
-//     * 2: TYPE_NAME - required,
-//     * 3: ENTRY_DATE - optional,
-//     * 4: LEAVE_DATE - optional
-//     * @param entryString the input string
-//     * @param profile the currently active profile
-//     * @param offset the line where the input is found in a file
-//     * @return a new Entry with correct attributes
-//     * @throws ParseException if the parsing of the string fails
-//     */
-//    private static Entry createEntryFromString(String entryString, EntryProfile profile, int offset) throws ParseException{
-//        String[] props = entryString.split(separator);
-//        String uid, name,enter = null ,leave = null;
-//        boolean entered = false;
-//        TicketType type;
-//
-//        //Throw it if the array is empty
-//        if(props.length < 1) throw new ParseException("A rekord sérült, vagy hibás",offset);
-//
-//        try {
-//            uid = profile.validateCode(props[0]);
-//        } catch (IOException e) {
-//            throw new ParseException(e.getMessage(),offset);
-//        }
-//
-//        //Looking for required fields
-//        //Alert if does not meet the number of fields required
-//        if(props.length < 3) {
-//            throw new ParseException("A rekordból hiányoznak argumentumok",offset);
-//            //TODO: needs implementing
-//            //fillDefault = fillOptionIsDefault(offset);
-//        }
-//
-//        name = props[1];
-//        type = profile.identifyTicketType(props[2]);
-//
-//        //Looking for optional fields
-//        //Setting ENTRY date (optional)
-//        if(props.length > 3) {
-//            enter = props[3];
-//            entered = true;
-//        }
-//        //Setting leave date (optional)
-//        if(props.length > 4) {
-//            leave = props[4];
-//            entered = false;
-//        }
-//
-//        return new Entry(uid,type,name,enter,leave,entered);
-//    }
+
 //
 //    void changeState(boolean stateChanged) {
 //        programState = stateChanged;
@@ -303,7 +233,6 @@ public class EventHandler {
 //            }
 //        }
 //    }
-//
 //
 //    /*
 //    private static boolean fillOptionIsDefault(int offset) throws ParseException {
