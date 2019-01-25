@@ -1,4 +1,14 @@
-//package Control;
+package control;
+
+import control.modifier.Discount;
+import control.modifier.TicketType;
+
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
+
 //
 //import Control.EntryModifier.TicketType;
 //
@@ -9,26 +19,21 @@
 ///**
 // * The class representing an entry (a guest entering) to the event
 // */
-//public class Entry {
 //
-//    public enum Member{
-//        M_UID,
-//        M_NAME,
-//        M_TYPE,
-//        M_ENTERED,
-//        M_ENTRY,
-//        M_LEAVE
-//    }
 //
-//    /**
-//     * A unique ID
-//     */
+public class Entry extends Vector<String> {
+
+
+    private TicketType ticketType;
+    private List<Discount> discountList = new ArrayList<>();
+
+
 //    private final String uniqueId;
 //
 //    /**
 //     * A Time formatter for the proper time format
 //     */
-//    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss");
 //
 //    /**
 //     * The name of the guest
@@ -213,4 +218,4 @@
 //        }
 //    }
 //
-//}
+}

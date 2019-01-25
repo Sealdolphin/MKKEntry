@@ -5,11 +5,14 @@ import control.utility.EntryFilter;
 import data.AppData;
 import com.fazecast.jSerialComm.SerialPort;
 import data.DataModel;
+import view.main.ReadFlagListener;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import static control.Application.uh;
 
@@ -19,8 +22,9 @@ public class AppController implements ProgramStateListener {
     private AppData model;
     private DataModel<EntryProfile> profiles;
     private EntryProfile activeProfile;
-    private static final String DEFAULT_OPTION = "Válassz egyet";
+    private static final String DEFAULT_OPTION = uh.getUIStr("UI","CHOOSE_ONE");
     private SerialPort selectedPort;
+    private List<ReadFlagListener> listenerList = new ArrayList<>();
 
     AppController(AppData model, DataModel<EntryProfile> pData){
         this.model = model;
@@ -28,6 +32,10 @@ public class AppController implements ProgramStateListener {
         activeProfile = pData.getSelectedData();
         if(activeProfile == null)
             changeProfile();
+    }
+
+    public void addListener(ReadFlagListener l){
+        listenerList.add(l);
     }
 
     public void scanPorts(JComboBox<String> cbSelections){
@@ -92,6 +100,7 @@ public class AppController implements ProgramStateListener {
     @Override
     public void exportList(PrintWriter writer, EntryFilter filter) {
         //TODO: needs implementation
+        System.out.println("[INFO]: Exporting list...");
     }
 
     @Override
@@ -101,6 +110,7 @@ public class AppController implements ProgramStateListener {
 
     @Override
     public void readBarCode(String barCode) {
+        System.out.println("[INFO]: Code received: " + barCode);
 
     }
 
@@ -115,8 +125,6 @@ public class AppController implements ProgramStateListener {
 //        FL_DEFAULT
 //    }
 //
-//    public static final String DEFAULT_OPTION = uh.getUIStr("UI","CHOOSE_ONE");       //String for null option
-//    public static String ENTRY_CODE;                                                  //Entry code: a short string that indicates valuable data
 //
 //    private JTable tableView;
 //    private MenuHandler defaultEventHandler;
@@ -240,9 +248,6 @@ public class AppController implements ProgramStateListener {
 //        defaultEventHandler.changeState(true);
 //    }
 //
-//    public void setProgramStateListener(ProgramStateListener l){
-//        defaultEventHandler.setListener(l);
-//    }
 //
 //    public void setTable(JTable entryView) {
 //        tableView = entryView;
@@ -255,9 +260,6 @@ public class AppController implements ProgramStateListener {
 //        refreshViewModel();
 //    }
 //
-//    public MenuHandler getDefaultEventHandler() {
-//        return defaultEventHandler;
-//    }
 //
 //    void importEntries(List<Entry> imported) {
 //        for (Entry e :
@@ -289,24 +291,5 @@ public class AppController implements ProgramStateListener {
 //        this.discountMetaData = discountMeta;
 //    }
 //
-//    /**
-//     * Implemented from ItemListener (JComboBoxListener)
-//     * Changes the selected port
-//     * @param e ItemEvent of the selected item
-//     */
-//    @Override
-//    public void itemStateChanged(ItemEvent e) {
-//        if(selectedPort != null) selectedPort.closePort();
-//        String portSelected = e.getItem().toString();
-//        selectedPort = SerialPort.getCommPort(portSelected);
-//        if(portSelected.equals(DEFAULT_OPTION)) selectedPort = null;
-//        if(portIsActive()){
-//            System.out.println("Device connected at " + portSelected);
-//            BarcodeReader reader = new BarcodeReader();
-//            reader.addListener((MainWindow) SwingUtilities.getWindowAncestor((Component) e.getSource()));
-//            selectedPort.addDataListener(reader);
-//            selectedPort.openPort();
-//        }
-//    }
 
 }

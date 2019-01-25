@@ -9,6 +9,9 @@ import data.AppData;
 import javax.swing.*;
 import java.awt.*;
 
+import static control.Application.uh;
+import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
+
 /**
  * The class of the main program window
  * It contains two panels: A header and a body
@@ -19,14 +22,17 @@ import java.awt.*;
  */
 public class MainWindow extends JFrame {
     /*
-    FIELDS:
-        LISTENERS (CONTROLLER / EVENT HANDLER)
-     */
+        FIELDS:
+            LISTENERS (CONTROLLER / EVENT HANDLER)
+         */
     private AppData model;
 
     private JLabel labelProfile;
     private JLabel labelDevice;
     private JButton btnDiscounts;
+    private JPanel sidePanel;
+
+    private boolean discountPanelStatus = false;
 
     /**
      * Main Constructor
@@ -37,28 +43,37 @@ public class MainWindow extends JFrame {
     public MainWindow(AppData model, AppController controller) {
         //Setting up default fields
         this.model = model;
-
+        //Discount panel toggle button
         btnDiscounts = new JButton("Kedvezmények");
-
+        btnDiscounts.addActionListener(e -> {
+            discountPanelStatus = !discountPanelStatus;
+            if(discountPanelStatus)
+                add(sidePanel,BorderLayout.EAST);
+            else
+                remove(sidePanel);
+            revalidate();
+        });
+        //Active profile label
         labelProfile = new JLabel(controller.getProfileName());
         labelProfile.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 14));
         labelProfile.setForeground(new Color(0xcc8500));
+        //Device status label
         labelDevice = new JLabel("TEMP");
         labelDevice.setOpaque(true);
-        labelDevice.setMaximumSize(new Dimension(labelDevice.getMaximumSize().width,btnDiscounts.getMaximumSize().height));
+        labelDevice.setMaximumSize(new Dimension(labelDevice.getMaximumSize().width,btnDiscounts.getPreferredSize().height));
 
         //Create components
         setLayout(new BorderLayout());
-        JPanel body = new JPanel();
-        JPanel sidePanel = new JPanel();
-        JPanel infoPanel = new JPanel();
+        sidePanel = new JPanel();
+        InfoPanel infoPanel = new InfoPanel();
+        controller.addListener(infoPanel);
         setJMenuBar(new MainMenu().createMenu(controller));
 
         //Assembling panels
         add(new Header(controller), BorderLayout.NORTH);
-        add(sidePanel, BorderLayout.EAST);
-        add(body, BorderLayout.CENTER);
+        add(new Body(), BorderLayout.CENTER);
         add(infoPanel, BorderLayout.SOUTH);
+
     }
 
     private class Header extends JPanel{
@@ -84,8 +99,6 @@ public class MainWindow extends JFrame {
             //Set default selection
             controller.scanPorts(cbPorts);
             cbPorts.setSelectedIndex(0);
-
-
         }
     }
 
@@ -192,119 +205,53 @@ public class MainWindow extends JFrame {
             return new JMenu("Szerkesztés");
         }
     }
-//
-//    /**
-//     * Loads the different profiles from the default json file
-//     * @throws IOException if the reading fails
-//     * @throws ParseException if cannot parse the file (damaged, or missing JSON property)
-//     */
-//    private void loadProfiles() throws IOException, ParseException {
-//
-//        profiles = new ArrayList<>();
-//
-//        JSONParser parser = new JSONParser();
-//        JSONObject obj;
-//        obj = (JSONObject) parser.parse(new BufferedReader(new InputStreamReader(new FileInputStream("profiles.json"))));
-//
-//    }
-//
-//    /**
-//     * Activates or deactivates the label indicating the active state of the selected port / device
-//     * @param active is the state of the port / device
-//     */
-//    private void onClickBtnRefreshPorts(boolean active) {
-//        if(active){
-//            lbDeviceActive.setText(uh.getUIStr("UI","PORT_ACTIVE"));
-//            lbDeviceActive.setBackground(Color.green);
-//        } else {
-//            lbDeviceActive.setText(uh.getUIStr("UI","PORT_INACTIVE"));
-//            lbDeviceActive.setBackground(Color.red);
-//        }
-//    }
+
+    private class Body extends JPanel {
+
+        Body() {
+            setLayout(new BorderLayout());
+            JTable entryView = new JTable();
+            entryView.getTableHeader().setReorderingAllowed(false);
+            entryView.setSelectionMode(SINGLE_SELECTION);
+
+            JScrollPane spTable = new JScrollPane(entryView);
+            spTable.setVerticalScrollBar(spTable.createVerticalScrollBar());
+            spTable.setWheelScrollingEnabled(true);
+
+            //Assembling body components
+            add(spTable,BorderLayout.CENTER);
+        }
+    }
+
+    /**
+     * An information panel at the bottom of the screen.
+     * It reacts to the barcode reading operations and behaves correctly.
+     * Shows the current state of reading, with color codes.
+     */
+    private class InfoPanel extends JPanel implements ReadFlagListener{
+
+        private JLabel lbInfo;
+
+        InfoPanel(){
+            setLayout(new BoxLayout(this,BoxLayout.LINE_AXIS));
+            lbInfo = new JLabel("Hello Beléptető rendszer!");
+            lbInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
+            lbInfo.setFont(new Font("Arial", Font.BOLD,15));
+
+            add(Box.createGlue());
+            add(lbInfo);
+            add(Box.createGlue());
+        }
+
+        @Override
+        public void readingFlagChanged(String info, Color bgColor){
+            System.out.println(info);
+            lbInfo.setText(info);
+            setBackground(bgColor);
+        }
+    }
 
 //
-//    /**
-//     * Creates the body of the application
-//     * @return a JPanel containing the body components
-//     */
-//    private JPanel createBody(){
-//        JPanel panelBody = new JPanel();
-//        panelBody.setLayout(new BorderLayout());
-//
-//        JTextField tfInputField = new JTextField("Ide írd a belépőkódot...",32);
-//        tfInputField.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                tfInputField.setText("");
-//            }
-//        });
-//
-//        entryView = new JTable();
-//        entryView.getTableHeader().setReorderingAllowed(false);
-//        entryView.setSelectionMode(SINGLE_SELECTION);
-//
-//        controller.setTable(entryView);
-//
-//        ToggleInputButton btnToggleInput = new ToggleInputButton();
-//
-//        JButton btnSendCommand = new JButton(uh.getUIStr("UI","SENDCODE_BTN"));
-//        btnSendCommand.addActionListener(e -> {
-//            if(!tfInputField.getText().isEmpty()) {
-//                String data = btnToggleInput.codeInput ? AppController.ENTRY_CODE : "";
-//                controller.receiveCode(data + tfInputField.getText());
-//            }
-//        });
-//
-//        JScrollPane spTable = new JScrollPane(entryView);
-//        spTable.setVerticalScrollBar(spTable.createVerticalScrollBar());
-//        spTable.setWheelScrollingEnabled(true);
-//
-//        //Assembling body components
-//        JPanel panelBodySearchBar = new JPanel();   //This is the search bar in the bottom??
-//        panelBodySearchBar.add(btnToggleInput);
-//        panelBodySearchBar.add(tfInputField);
-//        panelBodySearchBar.add(btnSendCommand);
-//        panelBody.add(panelBodySearchBar,BorderLayout.SOUTH);
-//        panelBody.add(spTable,BorderLayout.CENTER);
-//
-//        return panelBody;
-//    }
-//
-//    /**
-//     * Refreshes the available ports from the system
-//     */
-//    private void eventRefreshPorts() {
-//        SerialPort ports[] = SerialPort.getCommPorts();
-//        cbSelectPort.removeAllItems();
-//        for (SerialPort port : ports) {
-//            cbSelectPort.addItem(port.getSystemPortName());
-//        }
-//        if (cbSelectPort.getItemCount() > 0) {
-//            onClickBtnRefreshPorts(controller.portIsActive());
-//        } else {
-//            onClickBtnRefreshPorts(false);
-//            cbSelectPort.addItem(DEFAULT_OPTION);
-//        }
-//        pack();
-//    }
-//
-//    /*
-//    ================= INHERITED FUNCTIONS =================
-//     */
-//
-//    /**
-//     * Inherited from ProgramListener
-//     * Changes the program's save state if the content changes
-//     * @param stateChanged the program's new save state
-//     * @param headerName the application's name appearing on the header
-//     */
-//    @Override
-//    public void stateChanged(boolean stateChanged, String headerName) {
-//        if(stateChanged)
-//            setTitle(headerName + "*");
-//        else
-//            setTitle(headerName);
-//    }
 //
 //    /**
 //     * Inherited from ProgramStateListener
@@ -325,76 +272,6 @@ public class MainWindow extends JFrame {
 //        //Creating new layout / menu
 //        lbProfile.setText(uh.getUIStr("UI","PROFILE_LB") + ": " + activeProfile.getName());
 //        add(infoPanel,BorderLayout.SOUTH);
-//    }
-//
-//    /**
-//     * Inherited from ProgramStateListener
-//     * Receives a string data from a BarCode reader
-//     * @param barCode the string data received
-//     */
-//    @Override
-//    public void readBarCode(String barCode) {
-//        controller.receiveCode(barCode);
-//    }
-//
-//    @Override
-//    public void changeProfile(String profileName) {
-//        activeProfile = profiles.stream().filter(p -> p.getName().equals(profileName)).findAny().orElse(activeProfile);
-//        //Invoke renew state. Clear Database and create new Controller
-//        renewState();
-//        JOptionPane.showMessageDialog(new JFrame(), uh.getUIStr("MSG","PROFILE_CHANGED") + "\n"+
-//                "Új profil: " + activeProfile.getName(),"Kész",JOptionPane.INFORMATION_MESSAGE);
-//    }
-//
-//    @Override
-//    public AppController getController() {
-//        return controller;
-//    }
-//
-//    @Override
-//    public EntryProfile getProfile(){return activeProfile;}
-//
-//    /*
-//    ================= INNER CLASSES =================
-//     */
-//
-//    /**
-//     * An information panel at the bottom of the screen.
-//     * It reacts to the barcode reading operations and behaves correctly.
-//     * Shows the current state of reading, with color codes.
-//     */
-//    private class InfoPanel extends JPanel implements ReadingFlagListener{
-//
-//        private JLabel lbInfo;
-//
-//        InfoPanel(String defaultString){
-//            setLayout(new BoxLayout(this,BoxLayout.LINE_AXIS));
-//            lbInfo = new JLabel(defaultString);
-//            lbInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
-//
-//            add(Box.createGlue());
-//            add(lbInfo);
-//            add(Box.createGlue());
-//        }
-//
-//        @Override
-//        public void flagChange(AppController.readCodeFlag flag) {
-//            switch (flag){
-//                default:
-//                case FL_DEFAULT:
-//                    lbInfo.setText(Main.uh.getUIStr("UI","BOTTOM_INFO_DEF"));
-//                    setBackground(Color.GREEN);
-//                    break;
-//                case FL_IS_LEAVING:
-//                    lbInfo.setText(Main.uh.getUIStr("UI","BOTTOM_INFO_MOD"));
-//                    setBackground(Color.YELLOW);
-//                    break;
-//                case FL_IS_DELETE:
-//                    lbInfo.setText(Main.uh.getUIStr("UI","BOTTOM_INFO_DEL"));
-//                    setBackground(Color.RED);
-//                    break;
-//            }
-//        }
 //    }
 //
 //    private class ToggleInputButton extends JButton implements ActionListener {
