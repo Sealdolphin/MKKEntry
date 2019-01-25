@@ -21,10 +21,7 @@ import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
  * @author Márk Mihalovits
  */
 public class MainWindow extends JFrame {
-    /*
-        FIELDS:
-            LISTENERS (CONTROLLER / EVENT HANDLER)
-         */
+
     private AppData model;
 
     private JLabel labelProfile;
@@ -71,7 +68,7 @@ public class MainWindow extends JFrame {
 
         //Assembling panels
         add(new Header(controller), BorderLayout.NORTH);
-        add(new Body(), BorderLayout.CENTER);
+        add(new Body(controller), BorderLayout.CENTER);
         add(infoPanel, BorderLayout.SOUTH);
 
     }
@@ -208,18 +205,31 @@ public class MainWindow extends JFrame {
 
     private class Body extends JPanel {
 
-        Body() {
+        Body(AppController controller) {
             setLayout(new BorderLayout());
-            JTable entryView = new JTable();
+            JTable entryView = new JTable(model);
             entryView.getTableHeader().setReorderingAllowed(false);
             entryView.setSelectionMode(SINGLE_SELECTION);
+            entryView.createDefaultColumnsFromModel();
 
+            //Table
             JScrollPane spTable = new JScrollPane(entryView);
             spTable.setVerticalScrollBar(spTable.createVerticalScrollBar());
             spTable.setWheelScrollingEnabled(true);
 
+            //Code input
+            JTextField tfInputCode = new JTextField(32);
+            JButton btnSendCode = new JButton("Send");
+            btnSendCode.addActionListener(e -> controller.readBarCode(tfInputCode.getText()));
+
+            JPanel inputPanel = new JPanel();
+            inputPanel.add(tfInputCode);
+            inputPanel.add(btnSendCode);
+
             //Assembling body components
             add(spTable,BorderLayout.CENTER);
+            add(inputPanel,BorderLayout.SOUTH);
+
         }
     }
 

@@ -1,5 +1,6 @@
 package control;
 
+import control.modifier.TicketType;
 import control.utility.BarcodeReader;
 import control.utility.EntryFilter;
 import data.AppData;
@@ -111,7 +112,10 @@ public class AppController implements ProgramStateListener {
     @Override
     public void readBarCode(String barCode) {
         System.out.println("[INFO]: Code received: " + barCode);
-
+        TicketType dummyType = activeProfile.identifyTicketType("Elővételes");
+        Entry entry = new Entry(barCode,"Külsős Belépő",dummyType);
+        entry.Enter();
+        model.addData(entry);
     }
 
 //
