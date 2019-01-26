@@ -61,7 +61,7 @@ public class Application {
             return;
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             String errorMsg = uh.getUIStr("ERR","L&F_ERR");
-            JOptionPane.showMessageDialog(null,errorMsg, uh.getUIStr("MSG","WARNING"),JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(null,errorMsg, uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
         }
 
 

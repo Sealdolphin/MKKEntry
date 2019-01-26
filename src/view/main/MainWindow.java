@@ -218,11 +218,17 @@ public class MainWindow extends JFrame {
             spTable.setWheelScrollingEnabled(true);
 
             //Code input
+            JButton btnDelete = new JButton("Delete");
+            btnDelete.addActionListener(e -> controller.setReadingFlag(AppController.ReadingFlag.FL_IS_DELETE));
+            JButton btnLeave = new JButton("Leave");
+            btnLeave.addActionListener(e -> controller.setReadingFlag(AppController.ReadingFlag.FL_IS_LEAVING));
             JTextField tfInputCode = new JTextField(32);
             JButton btnSendCode = new JButton("Send");
             btnSendCode.addActionListener(e -> controller.readBarCode(tfInputCode.getText()));
 
             JPanel inputPanel = new JPanel();
+            inputPanel.add(btnDelete);
+            inputPanel.add(btnLeave);
             inputPanel.add(tfInputCode);
             inputPanel.add(btnSendCode);
 
@@ -251,12 +257,30 @@ public class MainWindow extends JFrame {
             add(Box.createGlue());
             add(lbInfo);
             add(Box.createGlue());
+            readingFlagChanged(AppController.ReadingFlag.FL_DEFAULT);
         }
 
         @Override
-        public void readingFlagChanged(String info, Color bgColor){
-            System.out.println(info);
-            lbInfo.setText(info);
+        public void readingFlagChanged(AppController.ReadingFlag flag){
+            System.out.println("FLAG READ: " + flag.toString());
+            String msg;
+            Color bgColor;
+            switch (flag) {
+                default:
+                case FL_DEFAULT:
+                    msg = "Belépésre vár";
+                    bgColor = Color.GREEN;
+                    break;
+                case FL_IS_LEAVING:
+                    msg = "Kilépésre vár";
+                    bgColor = Color.YELLOW;
+                    break;
+                case FL_IS_DELETE:
+                    msg = "Törlésre vár";
+                    bgColor = Color.RED;
+                    break;
+            }
+            lbInfo.setText(msg);
             setBackground(bgColor);
         }
     }

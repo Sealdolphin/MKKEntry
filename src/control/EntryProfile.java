@@ -36,6 +36,8 @@ public class EntryProfile implements Serializable {
      * A profilhoz tartozó belépési kódok maszkja
      */
     private String codeMask;
+
+    private String codeStart;
     /**
      * A belépési kvóta.
      * 0 = nincs kvóta
@@ -98,6 +100,7 @@ public class EntryProfile implements Serializable {
 
         profile.name = jsonProfile.get("name").toString();
         profile.codeMask = jsonProfile.get("mask").toString();
+        profile.codeStart = jsonProfile.get("code").toString();
 
         //Loading discounts
         JSONArray jArray = (JSONArray) jsonProfile.get("discounts");
@@ -164,15 +167,12 @@ public class EntryProfile implements Serializable {
 //        controller.setMetaData(entryCode.start, discountMeta, commandJsonKeys);
 //    }
 //
-//    String validateCode(String code) throws IOException {
-//        String validID;
-//        //Removing code start part
-//        validID = code.replace(entryCode.start, "").toUpperCase().trim();
-//        //Checking constraints
-//        if (!validID.matches(entryCode.pattern)) throw new IOException(uh.getUIStr("ERR","CODE_MISMATCH"));
-//
-//        return validID;
-//    }
+    String validateCode(String code) throws IOException{
+        //Checking constraints
+        String validID = code.replaceAll(codeStart,"").toUpperCase().trim();
+        if (!validID.matches(codeMask)) throw new IOException(uh.getUIStr("ERR","CODE_MISMATCH"));
+        return validID;
+    }
 //
 //    JDialog getProfileWizard() {
 //        return new ProfileWizard();
@@ -316,5 +316,10 @@ public class EntryProfile implements Serializable {
     @Override
     public String toString(){
         return name;
+    }
+
+    Entry generateNewEntry(String id, String name) {
+        if(name == null) name = "Generated Entry";
+        return new Entry(id,name,defaultType);
     }
 }

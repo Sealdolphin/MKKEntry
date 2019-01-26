@@ -1,6 +1,8 @@
 package data;
 
 
+import java.io.IOException;
+
 public interface DataModel<T> {
 
     T getDataByIndex(int index);
@@ -13,7 +15,7 @@ public interface DataModel<T> {
 
     int getDataSize();
 
-    void addData(T data);
+    void addData(T data) throws IOException;
 
     void removeData(T data);
 

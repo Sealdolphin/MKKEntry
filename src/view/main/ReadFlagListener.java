@@ -1,7 +1,8 @@
 package view.main;
 
-import java.awt.*;
+import control.AppController;
+
 
 public interface ReadFlagListener {
-    void readingFlagChanged(String info, Color bgColor);
+    void readingFlagChanged(AppController.ReadingFlag flag);
 }

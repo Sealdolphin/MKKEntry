@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static control.Application.uh;
+
 public class AppData extends DefaultTableModel implements Serializable, DataModel<Entry>{
 
     private List<Entry> entryList = new ArrayList<>();
@@ -57,7 +59,9 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     @Override
     public Entry getDataById(String id) {
-        return null;
+        Entry data = entryList.stream().filter(entry -> entry.get(0).equals(id)).findAny().orElse(null);
+        if(data != null) lastSelectedEntry = data;
+        return data;
     }
 
     @Override
@@ -76,13 +80,22 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     }
 
     @Override
-    public void addData(Entry data) {
-        entryList.add(data);
-        addRow(data);
+    public void addData(Entry data) throws IOException{
+        Entry conflict = entryList.stream().filter(entry -> entry.get(0).equals(data.get(0))).findAny().orElse(null);
+        if(conflict != null){
+            if(conflict.isEntered()) throw new IOException(uh.getUIStr("ERR","DUPLICATE"));
+            lastSelectedEntry = conflict;
+        } else {
+            entryList.add(data);
+            addRow(data);
+            lastSelectedEntry = data;
+        }
+
     }
 
     @Override
     public void removeData(Entry data) {
+        if(data == null) return;
         int index = entryList.indexOf(data);
         entryList.remove(data);
         removeRow(index);

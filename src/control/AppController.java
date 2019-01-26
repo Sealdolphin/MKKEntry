@@ -11,6 +11,7 @@ import view.main.ReadFlagListener;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class AppController implements ProgramStateListener {
     private static final String DEFAULT_OPTION = uh.getUIStr("UI","CHOOSE_ONE");
     private SerialPort selectedPort;
     private List<ReadFlagListener> listenerList = new ArrayList<>();
+    private ReadingFlag readingFlag = ReadingFlag.FL_DEFAULT;
 
     AppController(AppData model, DataModel<EntryProfile> pData){
         this.model = model;
@@ -109,25 +111,60 @@ public class AppController implements ProgramStateListener {
 
     }
 
+    public void setReadingFlag(ReadingFlag newFlag){
+        readingFlag = newFlag;
+        for (ReadFlagListener l: listenerList) {
+            l.readingFlagChanged(readingFlag);
+        }
+    }
+
     @Override
     public void readBarCode(String barCode) {
         System.out.println("[INFO]: Code received: " + barCode);
-        TicketType dummyType = activeProfile.identifyTicketType("Elővételes");
-        Entry entry = new Entry(barCode,"Külsős Belépő",dummyType);
-        entry.Enter();
-        model.addData(entry);
+        //Checking for command codes
+        try {
+            if(!(barCode.length() > 0)) return;
+            //Validate as Entry code
+            String entryID = activeProfile.validateCode(barCode);
+
+            //Check for reading flag
+            switch (readingFlag){
+                default:
+                case FL_DEFAULT:
+                    Entry entry = activeProfile.generateNewEntry(entryID,null);
+                    //Add data if correct
+                    model.addData(entry);
+                    entry.Enter();
+                    break;
+                case FL_IS_DELETE:
+                    model.removeData(model.getDataById(entryID));
+                    break;
+                case FL_IS_LEAVING:
+                    Entry leaving = model.getDataById(entryID);
+                    if(leaving == null) throw new IOException(uh.getUIStr("ERR","NO_MATCH"));
+                    leaving.Leave();
+                    break;
+            }
+        } catch (IOException ex){
+            JOptionPane.showMessageDialog(null,ex.getMessage(),"Figyelem",JOptionPane.WARNING_MESSAGE);
+        } finally {
+            readingFlag = ReadingFlag.FL_DEFAULT;
+            for (ReadFlagListener l: listenerList) {
+                l.readingFlagChanged(readingFlag);
+            }
+            model.fireTableDataChanged();
+        }
+
     }
 
-//
-//
-//    /**
-//     *  For the different reading operations
-//     */
-//    public enum readCodeFlag{
-//        FL_IS_LEAVING,
-//        FL_IS_DELETE,
-//        FL_DEFAULT
-//    }
+    /**
+     *  For the different reading operations
+     */
+    public enum ReadingFlag{
+        FL_IS_LEAVING,
+        FL_IS_DELETE,
+        FL_DEFAULT
+    }
 //
 //
 //    private JTable tableView;
