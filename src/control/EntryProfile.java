@@ -2,11 +2,11 @@ package control;
 
 import control.modifier.Discount;
 import control.modifier.TicketType;
+import data.Entry;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -146,6 +146,9 @@ public class EntryProfile implements Serializable {
         return panelSide;
     }
 
+    Discount identifyDiscountMeta(String discountMeta){
+        return discounts.stream().filter(discount -> discount.toString().equals(discountMeta)).findAny().orElse(null);
+    }
 
     TicketType identifyTicketType(String unknownType) {
         return ticketTypes.stream().filter(type -> type.toString().equals(unknownType)).findAny().orElse(defaultType);
@@ -156,6 +159,16 @@ public class EntryProfile implements Serializable {
         String validID = code.replaceAll(codeStart,"").toUpperCase().trim();
         if (!(validID.matches(codeMask) && code.contains(codeStart))) throw new IOException(uh.getUIStr("ERR","CODE_MISMATCH"));
         return validID;
+    }
+
+    @Override
+    public String toString(){
+        return name;
+    }
+
+    Entry generateNewEntry(String id, String name) {
+        if(name == null) name = "Generated Entry";
+        return new Entry(id,name,defaultType);
     }
 //
 //    JDialog getProfileWizard() {
@@ -268,13 +281,5 @@ public class EntryProfile implements Serializable {
 //
 //    }
 //
-    @Override
-    public String toString(){
-        return name;
-    }
 
-    Entry generateNewEntry(String id, String name) {
-        if(name == null) name = "Generated Entry";
-        return new Entry(id,name,defaultType);
-    }
 }

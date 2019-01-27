@@ -1,4 +1,4 @@
-package control;
+package data;
 
 import control.modifier.Discount;
 import control.modifier.TicketType;
@@ -25,10 +25,22 @@ public class Entry extends Vector<String> {
     private TicketType ticketType;
     private List<Discount> discountList = new ArrayList<>();
 
-    public static String[] columnNames = {"ID","NÉV","TÍPUS","KEDVEZMÉNYEK","BELÉPETT","BELÉPÉS","KILÉPÉS"};
+    static String[] columnNames = {"ID","NÉV","TÍPUS","KEDVEZMÉNYEK","BELÉPETT","BELÉPÉS","KILÉPÉS"};
 
-    public Boolean isEntered(){
+    Boolean isEntered(){
         return (get(5) != null && get(6) == null);
+    }
+
+    public void applyDiscount(Discount discount){
+        if(discount == null) return;
+        if(discountList.contains(discount)) {
+            discountList.remove(discount);
+            System.out.println("[ENTRY "+ get(0) +"]: Discount removed (" + discount.toString() + ")");
+        } else {
+            discountList.add(discount);
+            System.out.println("[ENTRY "+ get(0) +"]: Discount added (" + discount.toString() + ")");
+        }
+        set(3,discountList.toString());
     }
 
     private Entry(String id, String name, TicketType type, List<Discount> discounts, String enter, String leave){
@@ -38,8 +50,8 @@ public class Entry extends Vector<String> {
         add(2,type.toString());
         ticketType = type;
         if(discounts != null){
-            add(3,discounts.toString());
             discountList = discounts;
+            add(3,discountList.toString());
         }
         add(5,enter);
         add(6,leave);
@@ -166,34 +178,8 @@ public class Entry extends Vector<String> {
     /**
      * Makes the guest leave, creating / overwriting the time of leave
      */
-    void Leave(){
+    public void Leave(){
         set(6,LocalDateTime.now().format(formatter));
     }
-//
-//    public Entry(TicketType type){
-//        uniqueId = "UNDEFINED";
-//        entered = false;
-//        entryStamp = LocalDateTime.now().format(formatter);
-//        leaveStamp = LocalDateTime.now().format(formatter);
-//        name = "PlaceholderText";
-//        ticketType = type;
-//    }
-//
-//    static String[] getColumnNames(){
-//        return new String[]{"ID","NÉV","JEGYTÍPUS","BELÉPETT","BELÉPÉS","KILÉPÉS"};
-//    }
-//
-//    public Object getValue(int columnIndex) {
-//        Member propertyColumn = Member.values()[columnIndex];
-//        switch (propertyColumn){
-//            default: return null;
-//            case M_UID: return uniqueId;
-//            case M_NAME: return name;
-//            case M_TYPE: return ticketType.getName();
-//            case M_ENTERED: return entered;
-//            case M_ENTRY: return entryStamp;
-//            case M_LEAVE: return leaveStamp;
-//        }
-//    }
-//
+
 }

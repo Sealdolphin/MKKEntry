@@ -1,8 +1,6 @@
 package data;
 
 
-import control.Entry;
-
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
 import java.io.Serializable;
@@ -28,6 +26,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     public void clearData(){
         entryList.clear();
         dataVector.clear();
+        lastSelectedEntry = null;
         fireTableDataChanged();
     }
 
@@ -115,5 +114,11 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
             entryList.add((Entry) entryObj);
         }
         lastSelectedEntry = (Entry) in.readObject();
+    }
+
+    @Override
+    public void fireTableDataChanged() {
+        super.fireTableDataChanged();
+        System.out.println("[ENTRIES] LAST DATA: " + lastSelectedEntry);
     }
 }

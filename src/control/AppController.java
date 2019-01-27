@@ -1,12 +1,12 @@
 package control;
 
-import control.modifier.TicketType;
+import control.modifier.Discount;
 import control.utility.BarcodeReader;
 import control.utility.EntryFilter;
 import data.AppData;
 import com.fazecast.jSerialComm.SerialPort;
 import data.DataModel;
-import view.main.MainWindow;
+import data.Entry;
 import view.main.ReadFlagListener;
 
 import javax.swing.*;
@@ -127,9 +127,21 @@ public class AppController implements ProgramStateListener {
     @Override
     public void readBarCode(String barCode) {
         System.out.println("[INFO]: Code received: " + barCode);
-        //Checking for command codes
         try {
             if(!(barCode.length() > 0)) return;
+            //Checking for command codes
+
+
+            //Checking for discount codes
+            Entry lastSelection = model.getSelectedData();
+            if(lastSelection != null){
+                Discount discount = activeProfile.identifyDiscountMeta(barCode);
+                if(discount != null) {
+                    lastSelection.applyDiscount(discount);
+                    return;
+                }
+            }
+
             //Validate as Entry code
             String entryID = activeProfile.validateCode(barCode);
 

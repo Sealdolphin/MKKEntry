@@ -80,15 +80,11 @@ public class Discount implements Serializable {
 
         return panelDiscount;
     }
-//
-//    public String getMeta() {
-//        return metaData;
-//    }
-//
-//    @Override
-//    public String toString(){
-//        return name;
-//    }
+
+    @Override
+    public String toString(){
+        return metaData;
+    }
 //
 //
 //    /**
