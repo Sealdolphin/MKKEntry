@@ -28,6 +28,7 @@ public class MainWindow extends JFrame {
     private JLabel labelDevice;
     private JButton btnDiscounts;
     private JPanel sidePanel;
+    private JTable entryView;
 
     private boolean discountPanelStatus = false;
 
@@ -53,7 +54,7 @@ public class MainWindow extends JFrame {
         //Active profile label
         labelProfile = new JLabel(controller.getProfileName());
         labelProfile.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 14));
-        labelProfile.setForeground(new Color(0xcc8500));
+        labelProfile.setForeground(new Color(0xc08500));
         //Device status label
         labelDevice = new JLabel("TEMP");
         labelDevice.setOpaque(true);
@@ -61,16 +62,26 @@ public class MainWindow extends JFrame {
 
         //Create components
         setLayout(new BorderLayout());
-        sidePanel = new JPanel();
         InfoPanel infoPanel = new InfoPanel();
         controller.addListener(infoPanel);
         setJMenuBar(new MainMenu().createMenu(controller));
+        initiateView(controller);
 
         //Assembling panels
         add(new Header(controller), BorderLayout.NORTH);
         add(new Body(controller), BorderLayout.CENTER);
         add(infoPanel, BorderLayout.SOUTH);
 
+    }
+
+    private void initiateView(AppController controller) {
+        discountPanelStatus = false;
+        if(sidePanel != null) remove(sidePanel);
+        sidePanel = controller.getSidePanel();
+        entryView = new JTable(model);
+        entryView.getTableHeader().setReorderingAllowed(false);
+        entryView.setSelectionMode(SINGLE_SELECTION);
+        entryView.createDefaultColumnsFromModel();
     }
 
     private class Header extends JPanel{
@@ -175,7 +186,10 @@ public class MainWindow extends JFrame {
             JMenu menuProfiles = new JMenu("Profilok");
 
             JMenuItem mi = new JMenuItem("Profil váltása");
-            mi.addActionListener(e-> labelProfile.setText(controller.changeProfile()));
+            mi.addActionListener(e-> {
+                labelProfile.setText(controller.changeProfile());
+                initiateView(controller);
+            });
             menuProfiles.add(mi);
 
 
@@ -207,10 +221,6 @@ public class MainWindow extends JFrame {
 
         Body(AppController controller) {
             setLayout(new BorderLayout());
-            JTable entryView = new JTable(model);
-            entryView.getTableHeader().setReorderingAllowed(false);
-            entryView.setSelectionMode(SINGLE_SELECTION);
-            entryView.createDefaultColumnsFromModel();
 
             //Table
             JScrollPane spTable = new JScrollPane(entryView);

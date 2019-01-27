@@ -2,7 +2,9 @@ package control;
 
 import control.utility.EntryFilter;
 import control.utility.TombolaFilter;
+import view.main.MainWindow;
 
+import javax.swing.*;
 import java.io.PrintWriter;
 
 public interface ProgramStateListener {

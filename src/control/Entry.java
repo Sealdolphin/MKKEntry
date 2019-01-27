@@ -158,7 +158,7 @@ public class Entry extends Vector<String> {
     /**
      * Enters the guest, creating / overwriting the time of entry
      */
-    void Enter(){
+    public void Enter(){
         set(5,LocalDateTime.now().format(formatter));
         set(6,null);
     }

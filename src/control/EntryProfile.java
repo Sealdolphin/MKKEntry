@@ -5,12 +5,15 @@ import control.modifier.TicketType;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import static control.Application.uh;
+import static javax.swing.BoxLayout.PAGE_AXIS;
 
 /**
  * Beléptetési profil.
@@ -126,51 +129,32 @@ public class EntryProfile implements Serializable {
 
         return profile;
     }
-//
-//    /**
-//     * Creates a side menu with additional attributes and options
-//     * @return a JPanel containing the sideBar components
-//     */
-//    public JPanel createSideMenu() {
-//        //Setting up layout
-//        JPanel panelSide = new JPanel();
-//        panelSide.setLayout(new BoxLayout(panelSide, PAGE_AXIS));
-//
-//        //Add the label first
-//        JLabel lbHeader = new JLabel(uh.getUIStr("UI", "DISCOUNT_BTN"));
-//        lbHeader.setAlignmentX(Component.LEFT_ALIGNMENT);
-//        panelSide.add(lbHeader);
-//
-//        for (Discount discount : discounts.elements) {
-//            //Adding image and image label
-//            panelSide.add(discount.getDiscountPanel());
-//        }
-//
-//        return panelSide;
-//    }
-//
-//
+
+    /**
+     * Creates a side menu with additional attributes and options
+     * @return a JPanel containing the sideBar components
+     */
+    JPanel createDiscountMenu() {
+        //Setting up layout
+        JPanel panelSide = new JPanel();
+        panelSide.setLayout(new BoxLayout(panelSide, PAGE_AXIS));
+        for (Discount discount : discounts) {
+            //Adding image and image label
+            panelSide.add(discount.getDiscountPanel());
+        }
+
+        return panelSide;
+    }
+
+
     TicketType identifyTicketType(String unknownType) {
         return ticketTypes.stream().filter(type -> type.toString().equals(unknownType)).findAny().orElse(defaultType);
     }
-//
-//    /**
-//     * Sets up the controller meta information from the stored profile
-//     * @param controller the controller to be set up
-//     */
-//    void setController(AppController controller) {
-//        //Set MetaData for discounts
-//        List<String> discountMeta = new ArrayList<>();
-//        for (Discount discount : discounts.elements) {
-//            discountMeta.add(discount.getMeta());
-//        }
-//        controller.setMetaData(entryCode.start, discountMeta, commandJsonKeys);
-//    }
-//
+
     String validateCode(String code) throws IOException{
         //Checking constraints
         String validID = code.replaceAll(codeStart,"").toUpperCase().trim();
-        if (!validID.matches(codeMask)) throw new IOException(uh.getUIStr("ERR","CODE_MISMATCH"));
+        if (!(validID.matches(codeMask) && code.contains(codeStart))) throw new IOException(uh.getUIStr("ERR","CODE_MISMATCH"));
         return validID;
     }
 //
@@ -178,36 +162,7 @@ public class EntryProfile implements Serializable {
 //        return new ProfileWizard();
 //    }
 //
-//    private class CodeRestraints {
-//        final String start;
-//        final String pattern;
 //
-//        private CodeRestraints(Object start, Object pattern) throws Exception {
-//            if (start == null || pattern == null) throw new Exception();
-//            this.start = start.toString();
-//            this.pattern = pattern.toString();
-//        }
-//    }
-//
-//    private class AttributeList<T> extends DefaultListModel<T> {
-//        private List<T> elements = new ArrayList<>();
-//
-//        Stream<T> stream() {
-//            return elements.stream();
-//        }
-//
-//        @Override
-//        public void add(int index, T element) {
-//            super.add(index, element);
-//            elements.add(index, element);
-//        }
-//
-//        @Override
-//        public void addElement(T element) {
-//            super.addElement(element);
-//            elements.add(element);
-//        }
-//    }
 //
 //    private class ProfileWizard extends JDialog {
 //

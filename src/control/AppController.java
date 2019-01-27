@@ -6,6 +6,7 @@ import control.utility.EntryFilter;
 import data.AppData;
 import com.fazecast.jSerialComm.SerialPort;
 import data.DataModel;
+import view.main.MainWindow;
 import view.main.ReadFlagListener;
 
 import javax.swing.*;
@@ -33,7 +34,7 @@ public class AppController implements ProgramStateListener {
         this.model = model;
         profiles = pData;
         activeProfile = pData.getSelectedData();
-        if(activeProfile == null)
+        while(activeProfile == null)
             changeProfile();
     }
 
@@ -74,7 +75,12 @@ public class AppController implements ProgramStateListener {
     }
 
     public String getProfileName(){
+        if(activeProfile == null) return null;
         return activeProfile.toString();
+    }
+
+    public JPanel getSidePanel(){
+        return activeProfile.createDiscountMenu();
     }
 
     @Override
@@ -96,6 +102,7 @@ public class AppController implements ProgramStateListener {
             System.out.println("[INFO]: Profile selected: " + activeProfile);
             JOptionPane.showMessageDialog(null,"Profil aktiválva:\n" + activeProfile,"Kész",JOptionPane.INFORMATION_MESSAGE);
             //TODO: Profile change requires restart...
+            model.clearData();
         }
         return getProfileName();
     }
@@ -108,7 +115,6 @@ public class AppController implements ProgramStateListener {
 
     @Override
     public void updateView() {
-
     }
 
     public void setReadingFlag(ReadingFlag newFlag){
@@ -165,18 +171,7 @@ public class AppController implements ProgramStateListener {
         FL_IS_DELETE,
         FL_DEFAULT
     }
-//
-//
-//    private JTable tableView;
-//    private MenuHandler defaultEventHandler;
-//    private Entry lastEntry = null;
-//    private ReadingFlagListener infoBar;
-//
-//
-//    /**
-//     * Indicates what the next reading operation means
-//     */
-//    private readCodeFlag readingFlag = readCodeFlag.FL_DEFAULT;
+
 //
 //    private List<String> discountMetaData;
 //
@@ -185,99 +180,7 @@ public class AppController implements ProgramStateListener {
 //     */
 //    private HashMap<String,readCodeFlag> commandList = new HashMap<>();
 //
-//    /**
-//     * The list of entries
-//     */
-//    private EntryTable entryList;
 //
-//    /**
-//     * The selected serial port of the device
-//     */
-//    private SerialPort selectedPort;
-//
-//
-//    /**
-//     * Checks the state of the serial port or device
-//     * @return true if the selected port is not null false otherwise
-//     */
-//    public boolean portIsActive(){
-//        return selectedPort != null;
-//    }
-//
-//    /**
-//     * Receives a command code from the device through the serial port
-//     * Depending on the code it may activate a feature
-//     * If the code is unknown then disregards it
-//     * @param code the received code
-//     */
-//    public void receiveCode(String code) {
-//        System.out.println("Code received: " + code);
-//        String errorMsg = "";
-//        if(code.toUpperCase().startsWith(ENTRY_CODE)) {
-//            System.out.println("Entry code detected!");
-//            //Handling entry code correct to the current read operation
-//            try {
-//                String entryId = defaultEventHandler.checkEntryID(code);
-//                Entry guest = entryList.stream().filter(e -> e.getValue(M_UID.ordinal()).equals(entryId)).findAny().orElse(null);
-//                switch (readingFlag) {
-//                    //New entry code
-//                    default:
-//                    case FL_DEFAULT:
-//                        System.out.println("New entry: " + code);
-//                        if(guest == null) {
-//                            guest = new Entry(entryId,TicketType.defaultType);
-//                            entryList.addEntry(guest);
-//                            guest.Enter();
-//                            lastEntry = guest;
-//                        } else if (guest.getValue(M_ENTERED.ordinal()).equals(false)){
-//                            guest.Enter();
-//                        } else errorMsg = "Ez a vendég már egyszer belépett!";
-//                        break;
-//                        //Leave code
-//                    case FL_IS_LEAVING:
-//                        if(guest != null){
-//                            guest.Leave();
-//                        } else errorMsg = "Ez a vendég még nem lépett be!";
-//                        break;
-//                        //Delete code
-//                    case FL_IS_DELETE:
-//                        entryList.removeEntry(guest);
-//                        lastEntry = null;
-//                        break;
-//                }
-//                refreshViewModel();
-//
-//            } catch (IOException e) {
-//                errorMsg = uh.getUIStr("ERR","CODE_FORMAT") + "\n" + e.getMessage();
-//            } finally {
-//                readingFlag = readCodeFlag.FL_DEFAULT;
-//                if(!errorMsg.equals("")) {
-//                    System.out.println("ERROR: " + errorMsg);
-//                    JOptionPane.showMessageDialog(new JFrame(), errorMsg, uh.getUIStr("MSG","WARNING"), JOptionPane.WARNING_MESSAGE);
-//                }
-//            }
-//        } else {
-//            //Checking for Command codes
-//            for (String commandFlag :
-//                    commandList.keySet()) {
-//                if (code.toUpperCase().contains(commandFlag)) {
-//                    System.out.println("Command code detected!");
-//                    readingFlag = commandList.get(commandFlag);
-//                }
-//            }
-//            //Command for discounts
-//            if(lastEntry != null) {
-//                for (String command : discountMetaData) {
-//                    if (code.equals(command)) {
-//                        System.out.println("Discount detected");
-//                        readingFlag = readCodeFlag.FL_DEFAULT;
-//                    }
-//                }
-//            }
-//        }
-//        infoBar.flagChange(readingFlag);
-//
-//    }
 //
 //    private void refreshViewModel() {
 //        //Refresh data model

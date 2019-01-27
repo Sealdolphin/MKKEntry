@@ -19,16 +19,16 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     /**
      * New option file creation with default settings
      */
-    public AppData() throws Exception {
+    public AppData() {
         super(0,7);
         setColumnIdentifiers(Entry.columnNames);
-        /*
-        LOAD PROFILES FROM FILE...
-        CREATE EVENT HANDLER
-        CREATE CONTROLLER!!!
-         */
         System.out.println("a new AppData has been constructed");
-        System.out.println("creating new profile...");
+    }
+
+    public void clearData(){
+        entryList.clear();
+        dataVector.clear();
+        fireTableDataChanged();
     }
 
     @Override
@@ -84,6 +84,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
         Entry conflict = entryList.stream().filter(entry -> entry.get(0).equals(data.get(0))).findAny().orElse(null);
         if(conflict != null){
             if(conflict.isEntered()) throw new IOException(uh.getUIStr("ERR","DUPLICATE"));
+            else conflict.Enter();
             lastSelectedEntry = conflict;
         } else {
             entryList.add(data);

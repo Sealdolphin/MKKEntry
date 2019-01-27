@@ -1,8 +1,10 @@
 package control.modifier;
 
 import org.json.simple.JSONObject;
+import view.ImagePanel;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.Serializable;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
@@ -56,28 +58,28 @@ public class Discount implements Serializable {
 //        return new DiscountWizard(profile,index);
 //    }
 //
-//    /**
-//     * Creates a panel, where the Discount's data is visualized to the user.
-//     * It is used to create the side menu of the application
-//     * @return a panel containing the Discount information
-//     */
-//    public JPanel getDiscountPanel(){
-//        JPanel panelDiscount = new JPanel();
-//        panelDiscount.setLayout(new BoxLayout(panelDiscount,BoxLayout.PAGE_AXIS));
-//
-//        //Creating components
-//        JLabel lbTooltip = new JLabel(label);
-//        lbTooltip.setFont(new Font(lbTooltip.getFont().getName(),Font.PLAIN,20));
-//        lbTooltip.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        lbTooltip.setToolTipText(name);
-//        //Setting up panel
-//        panelDiscount.add(new ImagePanel(imagePath));
-//        panelDiscount.add(lbTooltip);
-//
-//        System.out.println("Loaded discount: " + name);
-//
-//        return panelDiscount;
-//    }
+    /**
+     * Creates a panel, where the Discount's data is visualized to the user.
+     * It is used to create the side menu of the application
+     * @return a panel containing the Discount information
+     */
+    public JPanel getDiscountPanel(){
+        JPanel panelDiscount = new JPanel();
+        panelDiscount.setLayout(new BoxLayout(panelDiscount,BoxLayout.PAGE_AXIS));
+
+        //Creating components
+        JLabel lbTooltip = new JLabel(label);
+        lbTooltip.setFont(new Font(lbTooltip.getFont().getName(),Font.PLAIN,20));
+        lbTooltip.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lbTooltip.setToolTipText(name);
+        //Setting up panel
+        panelDiscount.add(new ImagePanel(imagePath));
+        panelDiscount.add(lbTooltip);
+
+        System.out.println("Loaded discount: " + name);
+
+        return panelDiscount;
+    }
 //
 //    public String getMeta() {
 //        return metaData;
