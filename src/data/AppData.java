@@ -8,7 +8,6 @@ import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static control.Application.uh;
@@ -38,14 +37,18 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex){
             default: return String.class;
+            case 3: return Discount.class;
             case 4: return Boolean.class;
         }
     }
+
+
 
     @Override
     public Object getValueAt(int row, int column) {
         switch (column){
             default: return super.getValueAt(row, column);
+            case 3: return entryList.get(row).getDiscounts();
             case 4: return Boolean.parseBoolean(entryList.get(row).isEntered().toString());
         }
     }

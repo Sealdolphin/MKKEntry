@@ -4,14 +4,15 @@ package view.main;
 
 import control.AppController;
 import control.MenuHandler;
+import control.modifier.Discount;
 import data.AppData;
+import view.DiscountRenderer;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 
-import static control.Application.uh;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
 /**
@@ -81,6 +82,8 @@ public class MainWindow extends JFrame {
         if(sidePanel != null) remove(sidePanel);
         sidePanel = controller.getSidePanel();
         entryView = new JTable(model);
+        entryView.setDefaultRenderer(Discount.class,new DiscountRenderer(16));
+        entryView.setRowHeight(32);
         entryView.getTableHeader().setReorderingAllowed(false);
         entryView.setSelectionMode(SINGLE_SELECTION);
         entryView.createDefaultColumnsFromModel();
@@ -240,6 +243,8 @@ public class MainWindow extends JFrame {
             spTable.setVerticalScrollBar(spTable.createVerticalScrollBar());
             spTable.setWheelScrollingEnabled(true);
 
+
+
             //Code input
             JButton btnDelete = new JButton("Delete");
             btnDelete.addActionListener(e -> controller.setReadingFlag(AppController.ReadingFlag.FL_IS_DELETE));
@@ -248,6 +253,22 @@ public class MainWindow extends JFrame {
             JTextField tfInputCode = new JTextField(32);
             JButton btnSendCode = new JButton("Send");
             btnSendCode.addActionListener(e -> controller.readBarCode(tfInputCode.getText()));
+
+//            //TEMPORARY#####
+//            JPanel tempPanel = new JPanel();
+//            tempPanel.setLayout(new BoxLayout(tempPanel,BoxLayout.PAGE_AXIS));
+//            //TEMP DISCOUNTS
+//            JLabel[] labels = new JLabel[]{
+//                    new JLabel("first", new ImageIcon(new ImageIcon("Icons\\DIS_HELP.png").getImage().getScaledInstance(32,32,Image.SCALE_SMOOTH)),SwingConstants.CENTER),
+//                    new JLabel("second", new ImageIcon(new ImageIcon("Icons\\DIS_PIE.png").getImage().getScaledInstance(32,32,Image.SCALE_SMOOTH)),SwingConstants.CENTER)
+//            };
+//            JList<JLabel> disList = new JList<>(labels);
+//            disList.setCellRenderer(new CustomLabelRenderer());
+//            disList.setLayoutOrientation(JList.VERTICAL_WRAP);
+//            disList.setVisibleRowCount(1);
+//            disList.setMaximumSize(new Dimension(getMaximumSize().width,disList.getMaximumSize().height));
+//            tempPanel.add(disList);
+//            //TEMPORARY#####
 
             JPanel inputPanel = new JPanel();
             inputPanel.add(btnDelete);

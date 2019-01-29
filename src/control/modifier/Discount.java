@@ -32,6 +32,10 @@ public class Discount implements Serializable {
         this(other.name,other.imagePath,other.iconPath,other.label,other.metaData,other.discount);
     }
 
+    public String getName(){
+        return name;
+    }
+
     public static Discount parseDiscountFromJson(JSONObject jsonObject, String profileName) {
         String name, label, meta;
         name = label = meta = "undefined";
