@@ -38,6 +38,11 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
     @Override
+    public int getSelectedIndex() {
+        return profiles.indexOf(activeProfile);
+    }
+
+    @Override
     public void setSelection(EntryProfile data) {
         activeProfile = data;
     }
@@ -56,6 +61,8 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     public void removeData(EntryProfile data) {
         profiles.remove(data);
     }
+
+
 
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         out.writeObject(profiles.toArray());

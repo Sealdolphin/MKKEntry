@@ -5,6 +5,7 @@ import view.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.io.Serializable;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
@@ -13,32 +14,35 @@ public class Discount implements Serializable {
 
     private String name;
     private String imagePath;
+    private String iconPath;
     private String label;
     private String metaData;
     private int discount;
 
-    private Discount(String name, String imagePath, String label, String meta, int price){
+    private Discount(String name, String imagePath, String iconPath, String label, String meta, int price){
         this.name = name;
         this.imagePath = imagePath;
         this.label = label;
+        this.iconPath = iconPath;
         metaData = meta;
         discount = price;
     }
 
     public Discount(Discount other) {
-        this(other.name,other.imagePath,other.label,other.metaData,other.discount);
+        this(other.name,other.imagePath,other.iconPath,other.label,other.metaData,other.discount);
     }
 
     public static Discount parseDiscountFromJson(JSONObject jsonObject, String profileName) {
         String name, label, meta;
         name = label = meta = "undefined";
-        String image = null;
+        String image = null, icon = null;
         int price = 0;
         try {
             name = jsonObject.get("name").toString();
             image = jsonObject.get("imgPath").toString();
             label = jsonObject.get("label").toString();
             meta = jsonObject.get("meta").toString();
+            icon = jsonObject.get("icon").toString();
             price = Integer.parseInt(jsonObject.get("discount").toString());
         } catch (Exception other){
             //Show warning message
@@ -46,7 +50,7 @@ public class Discount implements Serializable {
                     "' kedvezmény importálása közben hiba történt.\n" +
                     "Az importálás nem sikerült. Részletek:\n" + other.toString(),"Hiba",ERROR_MESSAGE);
         }
-        return new Discount(name,image,label,meta,price);
+        return new Discount(name,image,icon,label,meta,price);
     }
 //
 //    public static JDialog createDiscountFromWizard(EntryProfile profile){
@@ -85,6 +89,28 @@ public class Discount implements Serializable {
     public String toString(){
         return metaData;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null) return false;
+        if(obj == this) return true;
+        if(!(obj.getClass().equals(Discount.class))) return false;
+        Discount other = (Discount) obj;
+        return other.metaData.equals(metaData);
+    }
+
+    public boolean equals(String meta) {
+        return meta.equals(metaData);
+    }
+
+    public String getIcon(){
+        return iconPath;
+    }
+
+//    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
+//
+//        icon = new ImageIcon(iconPath);
+//    }
 //
 //
 //    /**

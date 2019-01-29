@@ -11,6 +11,8 @@ public interface DataModel<T> {
 
     T getSelectedData();
 
+    int getSelectedIndex();
+
     void setSelection(T data);
 
     int getDataSize();

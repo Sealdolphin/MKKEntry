@@ -147,7 +147,7 @@ public class EntryProfile implements Serializable {
     }
 
     Discount identifyDiscountMeta(String discountMeta){
-        return discounts.stream().filter(discount -> discount.toString().equals(discountMeta)).findAny().orElse(null);
+        return discounts.stream().filter(discount -> discount.equals(discountMeta)).findAny().orElse(null);
     }
 
     TicketType identifyTicketType(String unknownType) {

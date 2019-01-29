@@ -7,6 +7,8 @@ import control.MenuHandler;
 import data.AppData;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.*;
 
 import static control.Application.uh;
@@ -82,6 +84,17 @@ public class MainWindow extends JFrame {
         entryView.getTableHeader().setReorderingAllowed(false);
         entryView.setSelectionMode(SINGLE_SELECTION);
         entryView.createDefaultColumnsFromModel();
+        entryView.getSelectionModel().addListSelectionListener(e -> {
+            if(!(entryView.getSelectedRow() == -1)){
+                model.setSelection(model.getDataByIndex(entryView.getSelectedRow()));
+            }
+        });
+        model.addTableModelListener(e -> {
+            if(e.getType() == TableModelEvent.UPDATE && e.getLastRow() < entryView.getRowCount()) {
+                entryView.setRowSelectionInterval(e.getLastRow(), 0);
+            }
+        });
+
     }
 
     private class Header extends JPanel{

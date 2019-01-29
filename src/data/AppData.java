@@ -1,10 +1,14 @@
 package data;
 
 
+import control.modifier.Discount;
+
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static control.Application.uh;
@@ -66,6 +70,11 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     @Override
     public Entry getSelectedData() {
         return lastSelectedEntry;
+    }
+
+    @Override
+    public int getSelectedIndex(){
+        return entryList.indexOf(lastSelectedEntry);
     }
 
     @Override

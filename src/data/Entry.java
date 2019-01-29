@@ -3,6 +3,7 @@ package data;
 import control.modifier.Discount;
 import control.modifier.TicketType;
 
+import javax.swing.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -33,9 +34,10 @@ public class Entry extends Vector<String> {
 
     public void applyDiscount(Discount discount){
         if(discount == null) return;
-        if(discountList.contains(discount)) {
-            discountList.remove(discount);
-            System.out.println("[ENTRY "+ get(0) +"]: Discount removed (" + discount.toString() + ")");
+        Discount disCopy = discountList.stream().filter(d -> d.equals(discount)).findAny().orElse(null);
+        if(disCopy != null && discountList.contains(disCopy)) {
+            discountList.remove(disCopy);
+            System.out.println("[ENTRY "+ get(0) +"]: Discount removed (" + disCopy.toString() + ")");
         } else {
             discountList.add(discount);
             System.out.println("[ENTRY "+ get(0) +"]: Discount added (" + discount.toString() + ")");
@@ -165,6 +167,9 @@ public class Entry extends Vector<String> {
 //
 //        return new Entry(uid,name,type,null,null,null);
 //    }
+    List<Discount> getDiscounts(){
+        return discountList;
+    }
 
 
     /**
@@ -181,5 +186,6 @@ public class Entry extends Vector<String> {
     public void Leave(){
         set(6,LocalDateTime.now().format(formatter));
     }
+
 
 }

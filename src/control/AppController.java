@@ -205,16 +205,6 @@ public class AppController implements ProgramStateListener {
 //    }
 //
 //
-//    public void setTable(JTable entryView) {
-//        tableView = entryView;
-//        if(tableView != null) {
-//            tableView.getSelectionModel().addListSelectionListener(e -> {
-//                if(!(tableView.getSelectedRow() == -1))
-//                    lastEntry = entryList.getEntryById(tableView.getValueAt(tableView.getSelectedRow(), 0).toString());
-//            });
-//        }
-//        refreshViewModel();
-//    }
 //
 //
 //    void importEntries(List<Entry> imported) {
