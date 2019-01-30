@@ -12,7 +12,10 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumn;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
+import static java.awt.event.KeyEvent.VK_ENTER;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
 /**
@@ -78,7 +81,9 @@ public class MainWindow extends JFrame {
     }
 
     private void initiateView(AppController controller) {
+        //Refresh side panel
         discountPanelStatus = false;
+        //Clear and refresh JTable
         if(sidePanel != null) remove(sidePanel);
         sidePanel = controller.getSidePanel();
         entryView = new JTable(model);
@@ -251,29 +256,31 @@ public class MainWindow extends JFrame {
             JButton btnLeave = new JButton("Leave");
             btnLeave.addActionListener(e -> controller.setReadingFlag(AppController.ReadingFlag.FL_IS_LEAVING));
             JTextField tfInputCode = new JTextField(32);
-            JButton btnSendCode = new JButton("Send");
-            btnSendCode.addActionListener(e -> controller.readBarCode(tfInputCode.getText()));
 
-//            //TEMPORARY#####
-//            JPanel tempPanel = new JPanel();
-//            tempPanel.setLayout(new BoxLayout(tempPanel,BoxLayout.PAGE_AXIS));
-//            //TEMP DISCOUNTS
-//            JLabel[] labels = new JLabel[]{
-//                    new JLabel("first", new ImageIcon(new ImageIcon("Icons\\DIS_HELP.png").getImage().getScaledInstance(32,32,Image.SCALE_SMOOTH)),SwingConstants.CENTER),
-//                    new JLabel("second", new ImageIcon(new ImageIcon("Icons\\DIS_PIE.png").getImage().getScaledInstance(32,32,Image.SCALE_SMOOTH)),SwingConstants.CENTER)
-//            };
-//            JList<JLabel> disList = new JList<>(labels);
-//            disList.setCellRenderer(new CustomLabelRenderer());
-//            disList.setLayoutOrientation(JList.VERTICAL_WRAP);
-//            disList.setVisibleRowCount(1);
-//            disList.setMaximumSize(new Dimension(getMaximumSize().width,disList.getMaximumSize().height));
-//            tempPanel.add(disList);
-//            //TEMPORARY#####
+            JCheckBox checkBoxCode = new JCheckBox("Belépőkód küldése");
+
+            JButton btnSendCode = new JButton("Send");
+
+            Action actionSendCode = new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if(checkBoxCode.isSelected())
+                        controller.readEntryCode(tfInputCode.getText());
+                    else controller.readBarCode(tfInputCode.getText());
+                }
+            };
+
+            btnSendCode.addActionListener(actionSendCode);
+            btnSendCode.getInputMap().put(KeyStroke.getKeyStroke("ENTER"),"released");
+            btnSendCode.getActionMap().put("released",actionSendCode);
+
+
 
             JPanel inputPanel = new JPanel();
             inputPanel.add(btnDelete);
             inputPanel.add(btnLeave);
             inputPanel.add(tfInputCode);
+            inputPanel.add(checkBoxCode);
             inputPanel.add(btnSendCode);
 
             //Assembling body components
@@ -329,46 +336,5 @@ public class MainWindow extends JFrame {
         }
     }
 
-//
-//
-//    /**
-//     * Inherited from ProgramStateListener
-//     * Creates a new file and clears all data
-//     * Also used upon startup
-//     */
-//    @Override
-//    public void renewState() {
-//        //Creating new infoPanel
-//        InfoPanel infoPanel = new InfoPanel("");
-//        //Creating new AppController
-//        MenuHandler handler = null;
-//        //If an event handler exists
-//        if(controller != null) handler = controller.getDefaultEventHandler();
-//        controller = new AppController(activeProfile,handler,profiles.stream().map(EntryProfile::getName).toArray(),infoPanel);
-//        controller.setProgramStateListener(this);
-//        controller.setTable(entryView);
-//        //Creating new layout / menu
-//        lbProfile.setText(uh.getUIStr("UI","PROFILE_LB") + ": " + activeProfile.getName());
-//        add(infoPanel,BorderLayout.SOUTH);
-//    }
-//
-//    private class ToggleInputButton extends JButton implements ActionListener {
-//
-//        private boolean codeInput;
-//
-//        ToggleInputButton(){
-//            super(Main.uh.getUIStr("UI","TOGGLECODE_BTN_1"));
-//            codeInput = true;
-//            addActionListener(this);
-//        }
-//
-//        @Override
-//        public void actionPerformed(ActionEvent e) {
-//            codeInput = !codeInput;
-//            if(codeInput)
-//                setText(Main.uh.getUIStr("UI","TOGGLECODE_BTN_1"));
-//            else
-//                setText(Main.uh.getUIStr("UI","TOGGLECODE_BTN_2"));
-//        }
-//    }
+
 }

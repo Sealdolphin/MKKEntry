@@ -40,7 +40,7 @@ public class EntryProfile implements Serializable {
      */
     private String codeMask;
 
-    private String codeStart;
+    String codeStart;
     /**
      * A belépési kvóta.
      * 0 = nincs kvóta

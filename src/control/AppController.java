@@ -175,6 +175,10 @@ public class AppController implements ProgramStateListener {
 
     }
 
+    public void readEntryCode(String text) {
+        readBarCode(activeProfile.codeStart + text);
+    }
+
     /**
      *  For the different reading operations
      */
