@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 
+import static java.awt.event.KeyEvent.VK_DELETE;
 import static java.awt.event.KeyEvent.VK_ENTER;
 import static java.awt.event.KeyEvent.VK_SPACE;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
@@ -262,18 +263,15 @@ public class MainWindow extends JFrame {
             spTable.setVerticalScrollBar(spTable.createVerticalScrollBar());
             spTable.setWheelScrollingEnabled(true);
 
-
-
-            //Code input
-            JButton btnDelete = new JButton("Delete");
-            btnDelete.addActionListener(e -> controller.setReadingFlag(AppController.ReadingFlag.FL_IS_DELETE));
-            JButton btnLeave = new JButton("Leave");
-            btnLeave.addActionListener(e -> controller.setReadingFlag(AppController.ReadingFlag.FL_IS_LEAVING));
             JTextField tfInputCode = new JTextField(32);
-
             JCheckBox checkBoxCode = new JCheckBox("Belépőkód küldése");
 
-            JButton btnSendCode = new JButton("Send");
+            Action deleteAction = new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    controller.setReadingFlag(AppController.ReadingFlag.FL_IS_DELETE);
+                }
+            };
 
             Action actionSendCode = new AbstractAction() {
                 @Override
@@ -284,9 +282,21 @@ public class MainWindow extends JFrame {
                 }
             };
 
+            //Code input
+            JButton btnDelete = new JButton("Töröl");
+            btnDelete.setForeground(Color.RED);
+            btnDelete.setBackground(new Color(0xff6666));
+            btnDelete.addActionListener(deleteAction);
+            JButton btnLeave = new JButton("Kiléptet");
+            btnLeave.addActionListener(e -> controller.setReadingFlag(AppController.ReadingFlag.FL_IS_LEAVING));
+
+            JButton btnSendCode = new JButton("Olvas");
+
             btnSendCode.addActionListener(actionSendCode);
             getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_ENTER,0),"sendCode");
+            getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_DELETE,0),"deleteCode");
             getActionMap().put("sendCode",actionSendCode);
+            getActionMap().put("deleteCode",deleteAction);
 
 
 
@@ -328,25 +338,8 @@ public class MainWindow extends JFrame {
         @Override
         public void readingFlagChanged(AppController.ReadingFlag flag){
             System.out.println("FLAG READ: " + flag.toString());
-            String msg;
-            Color bgColor;
-            switch (flag) {
-                default:
-                case FL_DEFAULT:
-                    msg = "Belépésre vár";
-                    bgColor = Color.GREEN;
-                    break;
-                case FL_IS_LEAVING:
-                    msg = "Kilépésre vár";
-                    bgColor = Color.YELLOW;
-                    break;
-                case FL_IS_DELETE:
-                    msg = "Törlésre vár";
-                    bgColor = Color.RED;
-                    break;
-            }
-            lbInfo.setText(msg);
-            setBackground(bgColor);
+            lbInfo.setText(flag.getInfo());
+            setBackground(flag.getColor());
         }
     }
 

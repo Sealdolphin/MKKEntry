@@ -185,9 +185,20 @@ public class AppController implements ProgramStateListener {
      *  For the different reading operations
      */
     public enum ReadingFlag{
-        FL_IS_LEAVING,
-        FL_IS_DELETE,
-        FL_DEFAULT
+        FL_IS_LEAVING("Kilépésre vár",Color.YELLOW),
+        FL_IS_DELETE("Törlésre vár",Color.RED),
+        FL_DEFAULT("Belépésre vár",Color.GREEN);
+
+        private final String labelInfo;
+        private final Color labelColor;
+
+        ReadingFlag(String info, Color color){
+            this.labelInfo = info;
+            this.labelColor = color;
+        }
+
+        public String getInfo(){ return labelInfo; }
+        public Color getColor(){ return labelColor; }
     }
 
 //
