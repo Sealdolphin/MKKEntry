@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static control.Application.uh;
@@ -31,6 +32,8 @@ import static javax.swing.BoxLayout.PAGE_AXIS;
  * A beléptetési profil létrehozása csak varázsló segítségével lehetséges
  */
 public class EntryProfile implements Serializable {
+
+    String startCode;
     /**
      * A beléptetési profil neve
      */
@@ -39,8 +42,6 @@ public class EntryProfile implements Serializable {
      * A profilhoz tartozó belépési kódok maszkja
      */
     private String codeMask;
-
-    String codeStart;
     /**
      * A belépési kvóta.
      * 0 = nincs kvóta
@@ -72,9 +73,9 @@ public class EntryProfile implements Serializable {
     /**
      * A szükséges parancskódok listája
      */
-    private String[] commandCodes;
+    private HashMap<String, AppController.ReadingFlag> commandCodes;
 
-    private static String[] commandJsonKeys = new String[]{"leave","delete"};
+    private static AppController.ReadingFlag[] commandJsonKeys = AppController.ReadingFlag.values();
 
 
     private EntryProfile() {
@@ -103,7 +104,6 @@ public class EntryProfile implements Serializable {
 
         profile.name = jsonProfile.get("name").toString();
         profile.codeMask = jsonProfile.get("mask").toString();
-        profile.codeStart = jsonProfile.get("code").toString();
 
         //Loading discounts
         JSONArray jArray = (JSONArray) jsonProfile.get("discounts");
@@ -118,12 +118,15 @@ public class EntryProfile implements Serializable {
 
         //Setting the default ticket type
         String defType = jsonProfile.get("defaultType").toString();
-        profile.defaultType = profile.ticketTypes.stream().filter(ticketType -> ticketType.toString().equals(defType)).findAny().orElse(profile.ticketTypes.get(0));
+        profile.defaultType = profile.ticketTypes.stream().filter(ticketType -> ticketType.toString().equals(defType))
+                .findAny().orElse(profile.ticketTypes.get(0));
 
         //Loading default commands
-        String[] commands = new String[commandJsonKeys.length];
-        for (int i = 0; i < commands.length; i++) {
-            commands[i] = ((JSONObject) jsonProfile.get("commands")).get(commandJsonKeys[i]).toString();
+        HashMap<String, AppController.ReadingFlag> commands = new HashMap<>();
+        for (AppController.ReadingFlag commandFlag : commandJsonKeys) {
+            String key = ((JSONObject) jsonProfile.get("commands")).get(commandFlag.getMeta()).toString();
+            commands.put(key, commandFlag);
+            if(commandFlag.equals(AppController.ReadingFlag.FL_DEFAULT)) profile.startCode = key;
         }
         profile.commandCodes = commands;
 
@@ -156,9 +159,13 @@ public class EntryProfile implements Serializable {
 
     String validateCode(String code) throws IOException{
         //Checking constraints
-        String validID = code.replaceAll(codeStart,"").toUpperCase().trim();
-        if (!(validID.matches(codeMask) && code.contains(codeStart))) throw new IOException(uh.getUIStr("ERR","CODE_MISMATCH"));
+        String validID = code.replaceAll(startCode,"").toUpperCase().trim();
+        if (!(validID.matches(codeMask) && code.contains(startCode))) throw new IOException(uh.getUIStr("ERR","CODE_MISMATCH"));
         return validID;
+    }
+
+    AppController.ReadingFlag validateCommand(String code) {
+        return commandCodes.get(code.toUpperCase());
     }
 
     @Override

@@ -127,10 +127,15 @@ public class AppController implements ProgramStateListener {
     @Override
     public void readBarCode(String barCode) {
         System.out.println("[INFO]: Code received: " + barCode);
+        //Checking for command codes
+        ReadingFlag commandFlag = activeProfile.validateCommand(barCode);
+        if(commandFlag != null){
+            setReadingFlag(commandFlag);
+            return;
+        }
+
         try {
             if(!(barCode.length() > 0)) return;
-            //Checking for command codes
-
 
             //Checking for discount codes
             Entry lastSelection = model.getSelectedData();
@@ -166,10 +171,7 @@ public class AppController implements ProgramStateListener {
         } catch (IOException ex){
             JOptionPane.showMessageDialog(null,ex.getMessage(),"Figyelem",JOptionPane.WARNING_MESSAGE);
         } finally {
-            readingFlag = ReadingFlag.FL_DEFAULT;
-            for (ReadFlagListener l: listenerList) {
-                l.readingFlagChanged(readingFlag);
-            }
+            setReadingFlag(ReadingFlag.FL_DEFAULT);
             int index = model.getSelectedIndex();
             if(index >= 0)
                 model.fireTableRowsUpdated(index,index);
@@ -178,81 +180,33 @@ public class AppController implements ProgramStateListener {
     }
 
     public void readEntryCode(String text) {
-        readBarCode(activeProfile.codeStart + text);
+        readBarCode(activeProfile.startCode + text);
     }
 
     /**
      *  For the different reading operations
      */
     public enum ReadingFlag{
-        FL_IS_LEAVING("Kilépésre vár",Color.YELLOW),
-        FL_IS_DELETE("Törlésre vár",Color.RED),
-        FL_DEFAULT("Belépésre vár",Color.GREEN);
+        FL_IS_LEAVING("leave","Kilépésre vár",new Color(0xffcc00),Color.BLACK),
+        FL_IS_DELETE("delete","Törlésre vár",new Color(0xaa0000),Color.WHITE),
+        FL_DEFAULT("default","Belépésre vár",new Color(0x00aa00),Color.BLACK);
 
+        private final String flagMeta;
         private final String labelInfo;
         private final Color labelColor;
+        private final Color fgColor;
 
-        ReadingFlag(String info, Color color){
-            this.labelInfo = info;
-            this.labelColor = color;
+        ReadingFlag(String meta, String info, Color color, Color fg){
+            flagMeta = meta;
+            labelInfo = info;
+            labelColor = color;
+            fgColor = fg;
         }
 
         public String getInfo(){ return labelInfo; }
+        public String getMeta(){ return flagMeta; }
         public Color getColor(){ return labelColor; }
+        public Color getTextColor(){ return fgColor; }
     }
-
-//
-//    private List<String> discountMetaData;
-//
-//    /**
-//     * A list of command strings
-//     */
-//    private HashMap<String,readCodeFlag> commandList = new HashMap<>();
-//
-//
-//
-//    private void refreshViewModel() {
-//        //Refresh data model
-//        entryList.fireTableDataChanged();
-//        if(tableView != null) {
-//            tableView.setModel(entryList);
-//            tableView.setRowSorter(new TableRowSorter<>(entryList));
-//        }
-//        defaultEventHandler.changeState(true);
-//    }
-//
-//
-//
-//
-//    void importEntries(List<Entry> imported) {
-//        for (Entry e :
-//                imported) {
-//            entryList.addEntry(e);
-//        }
-//        refreshViewModel();
-//    }
-//
-//    void exportList(String resultFilter) {
-//        ExportFilter filter;
-//        switch (parseFilterType(resultFilter)){
-//            default:
-//            case DEFAULT:
-//                filter = new EntryFilter();
-//                break;
-//            case TOMBOLA:
-//                filter = new TombolaFilter();
-//                break;
-//        }
-//        defaultEventHandler.saveFile(entryList.stream().map(filter::applyFilter).toArray());
-//    }
-//
-//    void setMetaData(String entryCode, List<String> discountMeta, String[] defaultMeta) {
-//        ENTRY_CODE = entryCode;
-//
-//        commandList.put(defaultMeta[0],readCodeFlag.FL_IS_LEAVING);
-//        commandList.put(defaultMeta[1],readCodeFlag.FL_IS_DELETE);
-//        this.discountMetaData = discountMeta;
-//    }
-//
 
 }

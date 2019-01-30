@@ -340,6 +340,7 @@ public class MainWindow extends JFrame {
             System.out.println("FLAG READ: " + flag.toString());
             lbInfo.setText(flag.getInfo());
             setBackground(flag.getColor());
+            lbInfo.setForeground(flag.getTextColor());
         }
     }
 
