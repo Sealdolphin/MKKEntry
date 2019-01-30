@@ -197,7 +197,7 @@ public class MainWindow extends JFrame {
             fileMenu.addSeparator();
 
             mi = new JMenuItem("Lista importálása");
-            mi.addActionListener(e -> handler.notImplemented());
+            mi.addActionListener(e -> handler.importEntries());
             fileMenu.add(mi);
 
             mi = new JMenuItem("Lista exportálása");

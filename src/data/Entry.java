@@ -1,10 +1,13 @@
 package data;
 
+import control.EntryProfile;
 import control.modifier.Discount;
 import control.modifier.TicketType;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 import static data.Entry.DataColumn.*;
@@ -27,6 +30,9 @@ public class Entry extends Vector<String> {
     private TicketType ticketType;
     private List<Discount> discountList = new ArrayList<>();
 
+    /**
+     * Enum for the vector data
+     */
     enum DataColumn {
         ID(0,"ID"),
         NAME(1,"NÉV"),
@@ -42,9 +48,27 @@ public class Entry extends Vector<String> {
         public String getName() { return name; }
     }
 
-    public static Entry importEntry(String[] vector) {
-
-        return null;
+    public static Entry importEntry(String[] vector, EntryProfile profile) throws IOException {
+        if(vector.length <= TYPE.column) throw new IOException("Kicsi");
+        //Parsing string vector fields in order:
+        Entry imported = new Entry(vector[ID.column], vector[NAME.column],
+                profile.identifyTicketType(vector[TYPE.column]));
+        int lastIndex = TYPE.column + 1;
+        //Registring entry / leave dates if any
+        try {
+            if(vector.length > lastIndex){
+                formatter.parse(vector[lastIndex]);
+                imported.set(ENTER_DATE.column,vector[lastIndex++]);}
+            if(vector.length > lastIndex){
+                formatter.parse(vector[lastIndex]);
+                imported.set(LEAVE_DATE.column,vector[lastIndex++]);
+            }
+        } catch (DateTimeParseException ignored){ }
+        //Registrating discounts if any
+        for (int i = lastIndex; i < vector.length; i++) {
+            imported.applyDiscount(profile.identifyDiscountMeta(vector[i]));
+        }
+        return imported;
     }
 
     Boolean isEntered(){

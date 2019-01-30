@@ -149,11 +149,11 @@ public class EntryProfile implements Serializable {
         return panelSide;
     }
 
-    Discount identifyDiscountMeta(String discountMeta){
+    public Discount identifyDiscountMeta(String discountMeta){
         return discounts.stream().filter(discount -> discount.equals(discountMeta)).findAny().orElse(null);
     }
 
-    TicketType identifyTicketType(String unknownType) {
+    public TicketType identifyTicketType(String unknownType) {
         return ticketTypes.stream().filter(type -> type.toString().equals(unknownType)).findAny().orElse(defaultType);
     }
 

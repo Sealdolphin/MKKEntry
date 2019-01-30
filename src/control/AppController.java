@@ -119,10 +119,13 @@ public class AppController implements ProgramStateListener {
         System.out.println("[INFO]: Importing list...");
         do {
             String line = reader.readLine();
-            if(line == null) break;
-            Entry imported = Entry.importEntry(filter.parseEntry(line));
-
-        }while (true);
+            if(line == null) break; //Breaks at FIRST EMPTY LINE
+            try{
+                model.addData(Entry.importEntry(filter.parseEntry(line),activeProfile));
+            } catch (IOException ex){
+                JOptionPane.showMessageDialog(null,ex.getMessage(),"Figyelem",JOptionPane.WARNING_MESSAGE);
+            }
+        } while (true);
 
     }
 
