@@ -3,7 +3,6 @@ package data;
 
 import control.modifier.Discount;
 
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
 import java.io.Serializable;
@@ -36,9 +35,9 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex){
-            default: return String.class;
-            case 3: return Discount.class;
-            case 4: return Boolean.class;
+            default: return String.class;   //Use default rendering (String)
+            case 3: return Discount.class;  //Use custom rendering (DiscountRenderer)
+            case 4: return Boolean.class;   //Use checkbox (Boolean)
         }
     }
 
@@ -47,9 +46,9 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     @Override
     public Object getValueAt(int row, int column) {
         switch (column){
-            default: return super.getValueAt(row, column);
-            case 3: return entryList.get(row).getDiscounts();
-            case 4: return Boolean.parseBoolean(entryList.get(row).isEntered().toString());
+            default: return super.getValueAt(row, column);                                  //Return a string
+            case 3: return entryList.get(row).getDiscounts();                               //Return discount list
+            case 4: return Boolean.parseBoolean(entryList.get(row).isEntered().toString()); //Return entered state
         }
     }
 
