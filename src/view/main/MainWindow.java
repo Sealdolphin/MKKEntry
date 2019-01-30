@@ -14,8 +14,10 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 
 import static java.awt.event.KeyEvent.VK_ENTER;
+import static java.awt.event.KeyEvent.VK_SPACE;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
 /**
@@ -91,17 +93,29 @@ public class MainWindow extends JFrame {
         entryView.setRowHeight(32);
         entryView.getTableHeader().setReorderingAllowed(false);
         entryView.setSelectionMode(SINGLE_SELECTION);
+        entryView.setRowSelectionAllowed(true);
+        entryView.setColumnSelectionAllowed(false);
         entryView.createDefaultColumnsFromModel();
         entryView.getSelectionModel().addListSelectionListener(e -> {
-            if(!(entryView.getSelectedRow() == -1)){
+            if((entryView.getSelectedRow() >= 0)){
                 model.setSelection(model.getDataByIndex(entryView.getSelectedRow()));
             }
         });
+
+        Runnable selectionUpdate = () -> {
+            int index = model.getSelectedIndex();
+            System.out.println("SELECTION: " + model.getSelectedData() + " at index " + index);
+            if(index >= 0) {
+                entryView.changeSelection(index, 0, false, false);
+            }
+        };
         model.addTableModelListener(e -> {
-            if(e.getType() == TableModelEvent.UPDATE && e.getLastRow() < entryView.getRowCount()) {
-                entryView.setRowSelectionInterval(e.getLastRow(), 0);
+            if(e.getType() == TableModelEvent.UPDATE) {
+                selectionUpdate.run();
             }
         });
+        selectionUpdate.run();
+
 
     }
 
@@ -271,8 +285,8 @@ public class MainWindow extends JFrame {
             };
 
             btnSendCode.addActionListener(actionSendCode);
-            btnSendCode.getInputMap().put(KeyStroke.getKeyStroke("ENTER"),"released");
-            btnSendCode.getActionMap().put("released",actionSendCode);
+            getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_ENTER,0),"sendCode");
+            getActionMap().put("sendCode",actionSendCode);
 
 
 

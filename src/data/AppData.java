@@ -76,7 +76,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     @Override
     public int getSelectedIndex(){
-        return entryList.indexOf(lastSelectedEntry);
+        return lastSelectedEntry != null ? entryList.indexOf(lastSelectedEntry) : -1;
     }
 
     @Override
@@ -110,6 +110,12 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
         int index = entryList.indexOf(data);
         entryList.remove(data);
         removeRow(index);
+        if(index > 0)
+            lastSelectedEntry = entryList.get(index - 1);
+        else if (entryList.size() > 0)
+            lastSelectedEntry = entryList.get(0);
+        else
+            lastSelectedEntry = null;
     }
 
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
@@ -127,9 +133,4 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
         lastSelectedEntry = (Entry) in.readObject();
     }
 
-    @Override
-    public void fireTableDataChanged() {
-        super.fireTableDataChanged();
-        System.out.println("[ENTRIES] LAST DATA: " + lastSelectedEntry);
-    }
 }

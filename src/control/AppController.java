@@ -134,12 +134,12 @@ public class AppController implements ProgramStateListener {
 
             //Checking for discount codes
             Entry lastSelection = model.getSelectedData();
-            if(lastSelection != null){
-                Discount discount = activeProfile.identifyDiscountMeta(barCode);
-                if(discount != null) {
+            Discount discount = activeProfile.identifyDiscountMeta(barCode);
+            if(discount != null) {
+                if(lastSelection != null) {
                     lastSelection.applyDiscount(discount);
                     return;
-                }
+                } else throw new IOException(uh.getUIStr("ERR","NO_SELECTION"));
             }
 
             //Validate as Entry code
@@ -170,7 +170,9 @@ public class AppController implements ProgramStateListener {
             for (ReadFlagListener l: listenerList) {
                 l.readingFlagChanged(readingFlag);
             }
-            model.fireTableDataChanged();
+            int index = model.getSelectedIndex();
+            if(index >= 0)
+                model.fireTableRowsUpdated(index,index);
         }
 
     }
