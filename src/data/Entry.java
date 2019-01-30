@@ -3,10 +3,11 @@ package data;
 import control.modifier.Discount;
 import control.modifier.TicketType;
 
-import javax.swing.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static data.Entry.DataColumn.*;
 
 /**
  * Az egyes vendég-rekordok tulajdonságai.
@@ -26,13 +27,28 @@ public class Entry extends Vector<String> {
     private TicketType ticketType;
     private List<Discount> discountList = new ArrayList<>();
 
-    static String[] columnNames = {"ID","NÉV","TÍPUS","KEDVEZMÉNYEK","BELÉPETT","BELÉPÉS","KILÉPÉS"};
-    public enum Column{
+    enum DataColumn {
+        ID(0,"ID"),
+        NAME(1,"NÉV"),
+        TYPE(2,"TÍPUS"),
+        DISCOUNTS(3,"KEDVEZMÉNYEK"),
+        ENTERED(4,"BELÉPETT"),
+        ENTER_DATE(5,"BELÉPÉS"),
+        LEAVE_DATE(6,"KILÉPÉS");
+        private final int column;
+        private final String name;
+        DataColumn(int col, String name){column = col; this.name = name;}
 
+        public String getName() { return name; }
+    }
+
+    public static Entry importEntry(String[] vector) {
+
+        return null;
     }
 
     Boolean isEntered(){
-        return (get(5) != null && get(6) == null);
+        return (get(ENTER_DATE.column) != null && get(LEAVE_DATE.column) == null);
     }
 
     public void applyDiscount(Discount discount){
@@ -40,26 +56,26 @@ public class Entry extends Vector<String> {
         Discount disCopy = discountList.stream().filter(d -> d.equals(discount)).findAny().orElse(null);
         if(disCopy != null && discountList.contains(disCopy)) {
             discountList.remove(disCopy);
-            System.out.println("[ENTRY "+ get(0) +"]: Discount removed (" + disCopy.toString() + ")");
+            System.out.println("[ENTRY "+ get(ID.column) +"]: Discount removed (" + disCopy.toString() + ")");
         } else {
             discountList.add(discount);
-            System.out.println("[ENTRY "+ get(0) +"]: Discount added (" + discount.toString() + ")");
+            System.out.println("[ENTRY "+ get(ID.column) +"]: Discount added (" + discount.toString() + ")");
         }
-        set(3,discountList.toString());
+        set(DISCOUNTS.column,discountList.toString());
     }
 
     private Entry(String id, String name, TicketType type, List<Discount> discounts, String enter, String leave){
-        setSize(7);
-        add(0,id);
-        add(1,name);
-        add(2,type.toString());
+        setSize(DataColumn.values().length);
+        add(ID.column,id);
+        add(NAME.column,name);
+        add(TYPE.column,type.toString());
         ticketType = type;
         if(discounts != null){
             discountList = discounts;
-            add(3,discountList.toString());
+            add(DISCOUNTS.column,discountList.toString());
         }
-        add(5,enter);
-        add(6,leave);
+        add(ENTER_DATE.column,enter);
+        add(LEAVE_DATE.column,leave);
     }
 
     /**
@@ -79,15 +95,15 @@ public class Entry extends Vector<String> {
      * Enters the guest, creating / overwriting the time of entry
      */
     public void Enter(){
-        set(5,LocalDateTime.now().format(formatter));
-        set(6,null);
+        set(ENTER_DATE.column,LocalDateTime.now().format(formatter));
+        set(LEAVE_DATE.column,null);
     }
 
     /**
      * Makes the guest leave, creating / overwriting the time of leave
      */
     public void Leave(){
-        set(6,LocalDateTime.now().format(formatter));
+        set(LEAVE_DATE.column,LocalDateTime.now().format(formatter));
     }
 
 

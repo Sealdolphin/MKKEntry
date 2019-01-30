@@ -1,4 +1,4 @@
-package control.utility;
+package control.utility.file;
 
 public class TombolaFilter extends EntryFilter {
 

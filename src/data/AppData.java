@@ -7,9 +7,11 @@ import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static control.Application.uh;
+import static data.Entry.DataColumn.ID;
 
 public class AppData extends DefaultTableModel implements Serializable, DataModel<Entry>{
 
@@ -20,8 +22,8 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
      * New option file creation with default settings
      */
     public AppData() {
-        super(0,7);
-        setColumnIdentifiers(Entry.columnNames);
+        super(0,Entry.DataColumn.values().length);
+        setColumnIdentifiers(Arrays.stream(Entry.DataColumn.values()).map(Entry.DataColumn::getName).toArray());
         System.out.println("a new AppData has been constructed");
     }
 
@@ -34,21 +36,23 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        switch (columnIndex){
+        Entry.DataColumn column = Entry.DataColumn.values()[columnIndex];
+        switch (column){
             default: return String.class;   //Use default rendering (String)
-            case 3: return Discount.class;  //Use custom rendering (DiscountRenderer)
-            case 4: return Boolean.class;   //Use checkbox (Boolean)
+            case DISCOUNTS: return Discount.class;  //Use custom rendering (DiscountRenderer)
+            case ENTERED: return Boolean.class;   //Use checkbox (Boolean)
         }
     }
 
 
 
     @Override
-    public Object getValueAt(int row, int column) {
+    public Object getValueAt(int row, int columnIndex) {
+        Entry.DataColumn column = Entry.DataColumn.values()[columnIndex];
         switch (column){
-            default: return super.getValueAt(row, column);                                  //Return a string
-            case 3: return entryList.get(row).getDiscounts();                               //Return discount list
-            case 4: return Boolean.parseBoolean(entryList.get(row).isEntered().toString()); //Return entered state
+            default: return super.getValueAt(row, columnIndex);                                     //Return a string
+            case DISCOUNTS: return entryList.get(row).getDiscounts();                                    //Return discount list
+            case ENTERED: return Boolean.parseBoolean(entryList.get(row).isEntered().toString());   //Return entered state
         }
     }
 
@@ -64,7 +68,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     @Override
     public Entry getDataById(String id) {
-        Entry data = entryList.stream().filter(entry -> entry.get(0).equals(id)).findAny().orElse(null);
+        Entry data = entryList.stream().filter(entry -> entry.get(ID.ordinal()).equals(id)).findAny().orElse(null);
         if(data != null) lastSelectedEntry = data;
         return data;
     }
@@ -91,7 +95,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     @Override
     public void addData(Entry data) throws IOException{
-        Entry conflict = entryList.stream().filter(entry -> entry.get(0).equals(data.get(0))).findAny().orElse(null);
+        Entry conflict = entryList.stream().filter(entry -> entry.get(0).equals(data.get(ID.ordinal()))).findAny().orElse(null);
         if(conflict != null){
             if(conflict.isEntered()) throw new IOException(uh.getUIStr("ERR","DUPLICATE"));
             else conflict.Enter();
@@ -124,7 +128,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     }
 
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
-        setColumnIdentifiers(Entry.columnNames);
+        setColumnIdentifiers(Arrays.stream(Entry.DataColumn.values()).map(Entry.DataColumn::getName).toArray());
         Object[] objs = (Object[]) in.readObject();
         entryList = new ArrayList<>();
         for (Object entryObj : objs) {

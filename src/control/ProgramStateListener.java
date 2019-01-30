@@ -1,10 +1,11 @@
 package control;
 
-import control.utility.EntryFilter;
-import control.utility.TombolaFilter;
-import view.main.MainWindow;
+import control.utility.file.EntryFilter;
+import control.utility.file.TombolaFilter;
 
-import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 public interface ProgramStateListener {
@@ -29,4 +30,5 @@ public interface ProgramStateListener {
 
     void exportList(PrintWriter writer, EntryFilter filter);
 
+    void importList(BufferedReader reader, EntryFilter importFilter) throws IOException;
 }

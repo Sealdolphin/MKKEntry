@@ -2,7 +2,7 @@ package control;
 
 import control.modifier.Discount;
 import control.utility.BarcodeReader;
-import control.utility.EntryFilter;
+import control.utility.file.EntryFilter;
 import data.AppData;
 import com.fazecast.jSerialComm.SerialPort;
 import data.DataModel;
@@ -12,6 +12,7 @@ import view.main.ReadFlagListener;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -111,6 +112,18 @@ public class AppController implements ProgramStateListener {
     public void exportList(PrintWriter writer, EntryFilter filter) {
         //TODO: needs implementation
         System.out.println("[INFO]: Exporting list...");
+    }
+
+    @Override
+    public void importList(BufferedReader reader, EntryFilter filter) throws IOException{
+        System.out.println("[INFO]: Importing list...");
+        do {
+            String line = reader.readLine();
+            if(line == null) break;
+            Entry imported = Entry.importEntry(filter.parseEntry(line));
+
+        }while (true);
+
     }
 
     @Override

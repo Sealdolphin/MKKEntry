@@ -1,13 +1,9 @@
 package control;
 
-import control.utility.EntryFilter;
+import control.utility.file.EntryFilter;
 
 import javax.swing.*;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.HashMap;
+import java.io.*;
 
 import static control.Application.uh;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
@@ -93,30 +89,34 @@ public class MenuHandler {
 //
 //    }
 //
-//    public void importEntries(){
-//        FileFilter[] filters = {new EntryFilter()};
-//        int choice = openFileDialog(new JFrame(),"Lista importálása","Import",false,filters);
-//
-//        if(choice == JFileChooser.APPROVE_OPTION){
-//            File entryFile = fileDialog.getSelectedFile();
-//            System.out.println("Opening " + entryFile);
-//
-//            try {
-//                List<Entry> imported = parseEntryImportFile(entryFile,listener.getProfile());
-//                //If parsing fails exception is thrown and the import is cancelled all together
-//                listener.getController().importEntries(imported);
-//
-//            } catch (ParseException ex){
-//                JOptionPane.showMessageDialog(new JFrame(),
-//                        uh.getUIStr("ERR","IMPORT_PARSE_FAIL") +"\n" +
-//                                uh.getUIStr("ERR","POSITION") + ": " + ex.getErrorOffset() + "\n" +
-//                                uh.getUIStr("ERR","DETAILS") + ":\n" + ex.getMessage(),
-//                        uh.getUIStr("ERR","HEADER"), JOptionPane.ERROR_MESSAGE);
-//                System.out.println(ex.getMessage());
-//            }
-//
-//        }
-//    }
+    public void importEntries(){
+        EntryFilter importFilter = new EntryFilter();
+        fileDialog.setDialogTitle("Lista importálása");
+        fileDialog.setApproveButtonText("Import");
+        fileDialog.resetChoosableFileFilters();
+        fileDialog.addChoosableFileFilter(importFilter);
+        fileDialog.setAcceptAllFileFilterUsed(false);
+
+        int choice = fileDialog.showOpenDialog(null);
+
+
+        if(choice == JFileChooser.APPROVE_OPTION){
+            File entryFile = fileDialog.getSelectedFile();
+            System.out.println("Opening " + entryFile);
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(entryFile)));
+                controller.importList(reader,importFilter);
+
+            } catch (IOException ex){
+                JOptionPane.showMessageDialog(new JFrame(),
+                        uh.getUIStr("ERR","IMPORT_PARSE_FAIL") +"\n" +
+                                uh.getUIStr("ERR","DETAILS") + ":\n" + ex.getMessage(),
+                        uh.getUIStr("ERR","HEADER"), JOptionPane.ERROR_MESSAGE);
+                System.out.println(ex.getMessage());
+            }
+
+        }
+    }
 //
 //    public void changeProfile(){
 //        Object[] profiles = profileNames;
