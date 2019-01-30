@@ -74,21 +74,8 @@ public class MainWindow extends JFrame {
         InfoPanel infoPanel = new InfoPanel();
         controller.addListener(infoPanel);
         setJMenuBar(new MainMenu().createMenu(controller));
-        initiateView(controller);
 
-        //Assembling panels
-        add(new Header(controller), BorderLayout.NORTH);
-        add(new Body(controller), BorderLayout.CENTER);
-        add(infoPanel, BorderLayout.SOUTH);
-
-    }
-
-    private void initiateView(AppController controller) {
-        //Refresh side panel
-        discountPanelStatus = false;
-        //Clear and refresh JTable
-        if(sidePanel != null) remove(sidePanel);
-        sidePanel = controller.getSidePanel();
+        //Create Entry Table
         entryView = new JTable(model);
         entryView.setDefaultRenderer(Discount.class,new DiscountRenderer(16));
         entryView.setRowHeight(32);
@@ -102,22 +89,35 @@ public class MainWindow extends JFrame {
                 model.setSelection(model.getDataByIndex(entryView.getSelectedRow()));
             }
         });
-
-        Runnable selectionUpdate = () -> {
-            int index = model.getSelectedIndex();
-            System.out.println("SELECTION: " + model.getSelectedData() + " at index " + index);
-            if(index >= 0) {
-                entryView.changeSelection(index, 0, false, false);
-            }
-        };
         model.addTableModelListener(e -> {
             if(e.getType() == TableModelEvent.UPDATE) {
                 selectionUpdate.run();
             }
         });
+        initiateView(controller);
+
+        //Assembling panels
+        add(new Header(controller), BorderLayout.NORTH);
+        add(new Body(controller), BorderLayout.CENTER);
+        add(infoPanel, BorderLayout.SOUTH);
+
+    }
+
+    private Runnable selectionUpdate = () -> {
+        int index = model.getSelectedIndex();
+        System.out.println("SELECTION: " + model.getSelectedData() + " at index " + index);
+        if(index >= 0) {
+            entryView.changeSelection(index, 0, false, false);
+        }
+    };
+
+    private void initiateView(AppController controller) {
+        //Refresh side panel
+        discountPanelStatus = false;
+        //Clear and refresh JTable
+        if(sidePanel != null) remove(sidePanel);
+        sidePanel = controller.getSidePanel();
         selectionUpdate.run();
-
-
     }
 
     private class Header extends JPanel{
