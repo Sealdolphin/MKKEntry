@@ -170,7 +170,7 @@ public class AppController implements ProgramStateListener {
             switch (readingFlag){
                 default:
                 case FL_DEFAULT:
-                    Entry entry = activeProfile.generateNewEntry(entryID,null);
+                    Entry entry = activeProfile.generateNewEntry(entryID);
                     //Add data if correct
                     model.addData(entry);
                     entry.Enter();
@@ -197,6 +197,10 @@ public class AppController implements ProgramStateListener {
 
     public void readEntryCode(String text) {
         readBarCode(activeProfile.startCode + text);
+    }
+
+    public void editProfile() {
+
     }
 
     /**

@@ -221,7 +221,11 @@ public class MainWindow extends JFrame {
         private JMenu createProfileMenu(AppController controller) {
             JMenu menuProfiles = new JMenu("Profilok");
 
-            JMenuItem mi = new JMenuItem("Profil váltása");
+            JMenuItem mi = new JMenuItem("Profil szerkesztése");
+            mi.addActionListener(e -> controller.editProfile());
+            menuProfiles.add(mi);
+
+            mi = new JMenuItem("Profil váltása");
             mi.addActionListener(e-> {
                 labelProfile.setText(controller.changeProfile());
                 initiateView(controller);

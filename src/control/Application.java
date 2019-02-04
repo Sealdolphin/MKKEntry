@@ -51,7 +51,7 @@ public class Application {
             uh.refreshOptions(optionsJSON);
 
             // Set System L&F
-            UIManager.setLookAndFeel(/*UIManager.getSystemLookAndFeelClassName()*/"");
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }
         catch (ParseException | IOException e) {
             String errorMsg = "Nem tudtam betölteni a beállításokat a 'uh.json' fáljból.\n" +

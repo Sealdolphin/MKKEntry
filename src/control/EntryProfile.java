@@ -173,9 +173,8 @@ public class EntryProfile implements Serializable {
         return name;
     }
 
-    Entry generateNewEntry(String id, String name) {
-        if(name == null) name = "Generated Entry";
-        return new Entry(id,name,defaultType);
+    Entry generateNewEntry(String id) {
+        return new Entry(id,null,defaultType);
     }
 //
 //    JDialog getProfileWizard() {

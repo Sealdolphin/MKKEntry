@@ -3,6 +3,7 @@ package data;
 
 import control.modifier.Discount;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static control.Application.uh;
 import static data.Entry.DataColumn.ID;
+import static data.Entry.DataColumn.NAME;
 
 public class AppData extends DefaultTableModel implements Serializable, DataModel<Entry>{
 
@@ -101,6 +103,11 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
             else conflict.Enter();
             lastSelectedEntry = conflict;
         } else {
+            if(data.get(NAME.ordinal()) == null) {
+                String input = JOptionPane.showInputDialog("Adj meg egy nevet!");
+                data.set(NAME.ordinal(),input);
+                if(input == null) throw new IOException("Name is null");
+            }
             entryList.add(data);
             addRow(data);
             lastSelectedEntry = data;
