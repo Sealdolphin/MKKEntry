@@ -7,6 +7,7 @@ import data.AppData;
 import com.fazecast.jSerialComm.SerialPort;
 import data.DataModel;
 import data.Entry;
+import data.EntryProfile;
 import view.main.ReadFlagListener;
 
 import javax.swing.*;
@@ -199,8 +200,9 @@ public class AppController implements ProgramStateListener {
         readBarCode(activeProfile.startCode + text);
     }
 
-    public void editProfile() {
-
+    public void editProfile(JFrame main) {
+        JDialog wizard = activeProfile.getWizardEditor(main);
+        wizard.setVisible(true);
     }
 
     /**

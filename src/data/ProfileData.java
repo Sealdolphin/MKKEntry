@@ -1,6 +1,5 @@
 package data;
 
-import control.EntryProfile;
 import view.StartupDialog;
 
 import java.io.IOException;

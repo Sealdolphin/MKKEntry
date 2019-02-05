@@ -104,9 +104,9 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
             lastSelectedEntry = conflict;
         } else {
             if(data.get(NAME.ordinal()) == null) {
-                String input = JOptionPane.showInputDialog("Adj meg egy nevet!");
+                String input = JOptionPane.showInputDialog("Adj meg egy nevet!"); //TODO: insert UI handler here
                 data.set(NAME.ordinal(),input);
-                if(input == null) throw new IOException("Name is null");
+                if(input == null) throw new IOException("Name is null"); //TODO insert UI msg here
             }
             entryList.add(data);
             addRow(data);

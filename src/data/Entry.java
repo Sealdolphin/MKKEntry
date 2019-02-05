@@ -1,6 +1,5 @@
 package data;
 
-import control.EntryProfile;
 import control.modifier.Discount;
 import control.modifier.TicketType;
 

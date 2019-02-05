@@ -222,7 +222,7 @@ public class MainWindow extends JFrame {
             JMenu menuProfiles = new JMenu("Profilok");
 
             JMenuItem mi = new JMenuItem("Profil szerkesztése");
-            mi.addActionListener(e -> controller.editProfile());
+            mi.addActionListener(e -> controller.editProfile(MainWindow.this));
             menuProfiles.add(mi);
 
             mi = new JMenuItem("Profil váltása");

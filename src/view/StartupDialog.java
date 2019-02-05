@@ -1,6 +1,6 @@
 package view;
 
-import control.EntryProfile;
+import data.EntryProfile;
 import control.utility.file.ExtensionFilter;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

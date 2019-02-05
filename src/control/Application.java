@@ -104,6 +104,8 @@ public class Application {
 
         AppController controller = new AppController(model, profileData);
 
+        Image icon = Toolkit.getDefaultToolkit().getImage("Icons\\mkkMini.png");
+
         view = new MainWindow(model, controller);
         view.addWindowListener(new WindowAdapter() {
             @Override
@@ -127,6 +129,7 @@ public class Application {
             }
         });
         view.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        view.setIconImage(icon);
     }
 
     private void start() {
