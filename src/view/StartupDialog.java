@@ -49,8 +49,9 @@ public class StartupDialog {
             if(menuResult == null) throw new Exception(uh.getUIStr("ERR","NO_PROFILE"));
             else if (menuResult.equals(options[0])){
                 //Creating new wizard
-                String msg = uh.getUIStr("ERR","NOT_IMPLEMENTED");
-                JOptionPane.showMessageDialog(null,msg, uh.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
+                activeProfile = EntryProfile.createProfileFromWizard(null,null);
+                //menu = false;
+
             } else if (menuResult.equals(options[1])){
                 //Open JSON file dialog
                 int fileDialog = chooser.showOpenDialog(null);

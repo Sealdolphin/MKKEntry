@@ -201,8 +201,8 @@ public class AppController implements ProgramStateListener {
     }
 
     public void editProfile(JFrame main) {
-        JDialog wizard = activeProfile.getWizardEditor(main);
-        wizard.setVisible(true);
+        EntryProfile editedProfile = EntryProfile.createProfileFromWizard(main,activeProfile);
+        //TODO: load new profile
     }
 
     /**

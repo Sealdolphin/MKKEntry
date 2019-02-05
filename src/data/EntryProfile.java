@@ -26,6 +26,7 @@ import static control.Application.uh;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.SOUTH;
 import static javax.swing.BoxLayout.PAGE_AXIS;
+import static javax.swing.JFileChooser.CANCEL_OPTION;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
 /**
@@ -137,6 +138,14 @@ public class EntryProfile implements Serializable {
         }
     }
 
+    public static EntryProfile createProfileFromWizard(JFrame main, EntryProfile edit){
+        if(edit == null)
+            edit = new EntryProfile();
+        ProfileWizard wizard = edit.getWizardEditor(main);
+        int result = wizard.open();
+        return wizard.getProfile();
+    }
+
     public static EntryProfile parseProfileFromJson(JSONObject jsonProfile) {
         //Loading basic information
         EntryProfile profile = new EntryProfile();
@@ -216,9 +225,7 @@ public class EntryProfile implements Serializable {
         return new Entry(id,null,defaultType);
     }
 
-    public JDialog getWizardEditor(JFrame main) {
-        return new ProfileWizard(main);
-    }
+    private ProfileWizard getWizardEditor(JFrame main) { return new ProfileWizard(main); }
 
     class ProfileWizard extends JDialog{
 
@@ -227,6 +234,9 @@ public class EntryProfile implements Serializable {
         private JTextField tfCommandDefault;
         private JTextField tfCommandLeave;
         private JTextField tfCommandDelete;
+        private JComboBox<EntryLimit> cbLimit;
+        private JSpinner spEntryLimit;
+        private int result;
 
         ProfileWizard(JFrame parent){
             super(parent,"Profil szerkesztése",true);
@@ -255,26 +265,26 @@ public class EntryProfile implements Serializable {
             pack();
             setResizable(false);
             setLocationRelativeTo(parent);
-
-            //Setting up parameters
-
-            /*
-
-            -> EntryProfile.getData() -> Components.setData
-
-            -> Components.getData() : View.Components -> new EntryProfile -> Save config!
-            VIEW -> CONTROLLER -> VIEW -> MODEL -> SERIALIZE
-            Wizard.JButton -> Controller -> Wizard.getComponent.getText -> new EntryProfile -> writeObject
-
-             */
         }
 
         private void initComponents(){
             tfName = new JTextField(name,32);
             tfMask = new JTextField(codeMask,32);
-            tfCommandDefault = new JTextField(commandCodes.entrySet().stream().filter(flag -> flag.getValue().equals(FL_DEFAULT)).map(Map.Entry::getKey).findAny().orElse(null));
-            tfCommandLeave = new JTextField(commandCodes.entrySet().stream().filter(flag -> flag.getValue().equals(FL_IS_LEAVING)).map(Map.Entry::getKey).findAny().orElse(null));
-            tfCommandDelete = new JTextField(commandCodes.entrySet().stream().filter(flag -> flag.getValue().equals(FL_IS_DELETE)).map(Map.Entry::getKey).findAny().orElse(null));
+            if(commandCodes != null) {
+                tfCommandDefault = new JTextField(commandCodes.entrySet().stream().filter(flag -> flag.getValue().equals(FL_DEFAULT)).map(Map.Entry::getKey).findAny().orElse(""));
+                tfCommandLeave = new JTextField(commandCodes.entrySet().stream().filter(flag -> flag.getValue().equals(FL_IS_LEAVING)).map(Map.Entry::getKey).findAny().orElse(""));
+                tfCommandDelete = new JTextField(commandCodes.entrySet().stream().filter(flag -> flag.getValue().equals(FL_IS_DELETE)).map(Map.Entry::getKey).findAny().orElse(""));
+            } else {
+                tfCommandDefault = new JTextField();
+                tfCommandLeave = new JTextField();
+                tfCommandDelete = new JTextField();
+            }
+            cbLimit = new JComboBox<>(EntryLimit.values());
+            spEntryLimit = new JSpinner(new SpinnerNumberModel(2,2,100,1));
+            spEntryLimit.setEditor(new JSpinner.DefaultEditor(spEntryLimit));
+            if (entryLimit >= 2) { spEntryLimit.setValue(entryLimit);
+            } else { cbLimit.setSelectedIndex(entryLimit); }
+
         }
 
         private JPanel createMainPanel(){
@@ -300,14 +310,13 @@ public class EntryProfile implements Serializable {
             panelMain.add(tfCommandDelete, setConstraints(1,7,2));
 
             //Settings and behaviours
-    //        spEntryLimit.setEditor(new JSpinner.DefaultEditor(spEntryLimit));
-    //        cbLimit.addItemListener(e -> spEntryLimit.setEnabled(Objects.equals(cbLimit.getSelectedItem(), EntryLimit.CUSTOM)));
-    //
-    //        spEntryLimit.setEnabled(Objects.equals(cbLimit.getSelectedItem(), ProfileWizard.EntryLimit.CUSTOM));
+
+            cbLimit.addItemListener(e -> spEntryLimit.setEnabled(Objects.equals(cbLimit.getSelectedItem(), EntryLimit.CUSTOM)));
+            spEntryLimit.setEnabled(Objects.equals(cbLimit.getSelectedItem(), EntryLimit.CUSTOM));
 
             panelMain.add(new JLabel("Belépések sázma:"), setConstraints(0,8,1));
-    //        panelMain.add(cbLimit, setConstraints(1,8,1));
-    //        panelMain.add(spEntryLimit, setConstraints(2,8,1));
+            panelMain.add(cbLimit, setConstraints(1,8,1));
+            panelMain.add(spEntryLimit, setConstraints(2,8,1));
 
             panelMain.add(new JCheckBox("Duplikációk automatikus eldobása"), setConstraints(0,9,2));
             panelMain.add(new JCheckBox("Ismeretlen jegytípusok automatikus eldobása"), setConstraints(0,10,2));
@@ -362,14 +371,26 @@ public class EntryProfile implements Serializable {
             switch (e.getActionCommand()){
                 case "Cancel":
                     System.out.println("EDITING CANCELLED");
+                    result = 1;
                     break;
                 case "OK":
                 case "Accept":
                     System.out.println("EDITING ACCEPTED");
+                    System.out.println(((JButton)e.getSource()).getText());
+                    result = 0;
                     break;
             }
             dispose();
         }
 
+        private int open(){
+            setVisible(true);
+            while(true)
+                if(!isVisible()) return result;
+        }
+
+        EntryProfile getProfile() {
+            return EntryProfile.this;
+        }
     }
 }

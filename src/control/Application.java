@@ -72,7 +72,6 @@ public class Application {
             appException.printStackTrace();
             JOptionPane.showMessageDialog(null,appException.getMessage(), uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
         }
-
     }
 
     private Application() throws Exception {
