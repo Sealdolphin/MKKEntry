@@ -10,10 +10,7 @@ import org.json.simple.JSONObject;
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
@@ -28,6 +25,7 @@ import static java.awt.BorderLayout.SOUTH;
 import static javax.swing.BoxLayout.PAGE_AXIS;
 import static javax.swing.JFileChooser.CANCEL_OPTION;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
+import static view.main.MainWindow.setConstraints;
 
 /**
  * Beléptetési profil.
@@ -253,8 +251,8 @@ public class EntryProfile implements Serializable {
             //Adding tabs
             JTabbedPane mainPanel = new JTabbedPane();
             mainPanel.addTab("Általános",null, createMainPanel(),"A profil általános beállításai");
-            mainPanel.addTab("Jegytípusok",null, new JPanel(),"A profilhoz tartozó jegytípusok");
-            mainPanel.addTab("Kedvezmények",null, new JPanel(),"A profilhoz tartozó kedvezmények");
+            mainPanel.addTab("Jegytípusok",null, createListTab(ticketTypes.toArray(),null),"A profilhoz tartozó jegytípusok");
+            mainPanel.addTab("Kedvezmények",null, createListTab(discounts.toArray(), new Discount.DiscountListener(this,EntryProfile.this)),"A profilhoz tartozó kedvezmények");
             mainPanel.setMnemonicAt(0, KeyEvent.VK_1);
             mainPanel.setMnemonicAt(1, KeyEvent.VK_2);
             mainPanel.setMnemonicAt(2, KeyEvent.VK_3);
@@ -293,54 +291,44 @@ public class EntryProfile implements Serializable {
 
             //Create panels
             //Main (name)
-            panelMain.add(new JLabel("Profil neve:"), setConstraints(0,0,3));
-            panelMain.add(tfName, setConstraints(0,1,3));
-            panelMain.add(new JLabel("Belépési kód maszkja:"), setConstraints(0,2,3));
-            GridBagConstraints c = setConstraints(0,3,3);
+            panelMain.add(new JLabel("Profil neve:"), setConstraints(0,0,3,1));
+            panelMain.add(tfName, setConstraints(0,1,3,1));
+            panelMain.add(new JLabel("Belépési kód maszkja:"), setConstraints(0,2,3,1));
+            GridBagConstraints c = setConstraints(0,3,3,1);
             c.insets = new Insets(0,0,20,0);
             panelMain.add(tfMask,c);
 
             //Commands
-            panelMain.add(new JLabel("Alapvető parancsok:"), setConstraints(0,4,1));
-            panelMain.add(new JLabel("Beléptetés (DEFAULT): "), setConstraints(0,5,1));
-            panelMain.add(new JLabel("Kiléptetés (LEAVE): "), setConstraints(0,6,1));
-            panelMain.add(new JLabel("Törlés (DELETE): "), setConstraints(0,7,1));
-            panelMain.add(tfCommandDefault, setConstraints(1,5,2));
-            panelMain.add(tfCommandLeave, setConstraints(1,6,2));
-            panelMain.add(tfCommandDelete, setConstraints(1,7,2));
+            panelMain.add(new JLabel("Alapvető parancsok:"), setConstraints(0,4,1,1));
+            panelMain.add(new JLabel("Beléptetés (DEFAULT): "), setConstraints(0,5,1,1));
+            panelMain.add(new JLabel("Kiléptetés (LEAVE): "), setConstraints(0,6,1,1));
+            panelMain.add(new JLabel("Törlés (DELETE): "), setConstraints(0,7,1,1));
+            panelMain.add(tfCommandDefault, setConstraints(1,5,2,1));
+            panelMain.add(tfCommandLeave, setConstraints(1,6,2,1));
+            panelMain.add(tfCommandDelete, setConstraints(1,7,2,1));
 
             //Settings and behaviours
 
             cbLimit.addItemListener(e -> spEntryLimit.setEnabled(Objects.equals(cbLimit.getSelectedItem(), EntryLimit.CUSTOM)));
             spEntryLimit.setEnabled(Objects.equals(cbLimit.getSelectedItem(), EntryLimit.CUSTOM));
 
-            panelMain.add(new JLabel("Belépések sázma:"), setConstraints(0,8,1));
-            panelMain.add(cbLimit, setConstraints(1,8,1));
-            panelMain.add(spEntryLimit, setConstraints(2,8,1));
+            panelMain.add(new JLabel("Belépések sázma:"), setConstraints(0,8,1,1));
+            panelMain.add(cbLimit, setConstraints(1,8,1,1));
+            panelMain.add(spEntryLimit, setConstraints(2,8,1,1));
 
-            panelMain.add(new JCheckBox("Duplikációk automatikus eldobása"), setConstraints(0,9,2));
-            panelMain.add(new JCheckBox("Ismeretlen jegytípusok automatikus eldobása"), setConstraints(0,10,2));
+            panelMain.add(new JCheckBox("Duplikációk automatikus eldobása"), setConstraints(0,9,2,1));
+            panelMain.add(new JCheckBox("Ismeretlen jegytípusok automatikus eldobása"), setConstraints(0,10,2,1));
 
             return panelMain;
         }
 
-        private GridBagConstraints setConstraints(int x, int y, int w){
-            GridBagConstraints constraints = new GridBagConstraints();
-            constraints.gridx = x;
-            constraints.gridy = y;
-            constraints.gridwidth = w;
-            constraints.gridheight = 1;
-            constraints.fill = GridBagConstraints.HORIZONTAL;
-            return constraints;
-        }
-
-        private JPanel createListTab(Object[] objectList, ListSelectionListener editor) {
+        private JPanel createListTab(Object[] objectList, MouseAdapter editor) {
             JPanel panelList = new JPanel();
             panelList.setLayout(new BorderLayout());
 
             //noinspection unchecked
             JList<String> list = new JList(objectList);
-            list.addListSelectionListener(editor);
+            list.addMouseListener(editor);
             list.setSelectionMode(SINGLE_SELECTION);
             JScrollPane paneListHolder = new JScrollPane(list);
             panelList.add(paneListHolder,CENTER);
@@ -368,19 +356,30 @@ public class EntryProfile implements Serializable {
         }
 
         private void closeWizard(ActionEvent e){
+            //TODO: need serious rework....
             switch (e.getActionCommand()){
                 case "Cancel":
-                    System.out.println("EDITING CANCELLED");
                     result = 1;
+                    System.out.println("EDITING CANCELLED");
+                    dispose();
                     break;
                 case "OK":
+                    if(validateProfile())
+                        result = 0;
+                        System.out.println("EDITING ACCEPTED");
+                        dispose();
+                    break;
                 case "Accept":
-                    System.out.println("EDITING ACCEPTED");
-                    System.out.println(((JButton)e.getSource()).getText());
-                    result = 0;
+                    if(validateProfile()) {
+                        result = 0;
+                        ((JButton)e.getSource()).setEnabled(false);
+                    }
                     break;
             }
-            dispose();
+        }
+
+        private boolean validateProfile(){
+            return false;
         }
 
         private int open(){

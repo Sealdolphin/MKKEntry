@@ -1,17 +1,23 @@
 package control.modifier;
 
+import control.utility.file.ExtensionFilter;
+import data.EntryProfile;
 import org.json.simple.JSONObject;
 import view.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.Serializable;
+import java.text.NumberFormat;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static view.main.MainWindow.setConstraints;
 
 public class Discount implements Serializable {
 
+    private static final String basicIcon = "Icons\\BasicIcon.png";
     private String name;
     private String imagePath;
     private String iconPath;
@@ -56,16 +62,16 @@ public class Discount implements Serializable {
         }
         return new Discount(name,image,icon,label,meta,price);
     }
-//
-//    public static JDialog createDiscountFromWizard(EntryProfile profile){
-//        Discount discount = new Discount("",null,"","",0);
-//        return discount.getDiscountWizard(profile,-1);
-//    }
-//
-//    public JDialog getDiscountWizard(EntryProfile profile,int index){
-//        return new DiscountWizard(profile,index);
-//    }
-//
+
+    public static JDialog createDiscountFromWizard(Frame parent, EntryProfile profile){
+        Discount discount = new Discount("",null,basicIcon,"","",0);
+        return discount.getDiscountWizard(parent, profile,-1);
+    }
+
+    public JDialog getDiscountWizard(Window parent, EntryProfile profile,int index){
+        return new DiscountWizard(parent,profile,index);
+    }
+
     /**
      * Creates a panel, where the Discount's data is visualized to the user.
      * It is used to create the side menu of the application
@@ -111,132 +117,147 @@ public class Discount implements Serializable {
         return iconPath;
     }
 
-//    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
-//
-//        icon = new ImageIcon(iconPath);
-//    }
-//
-//
-//    /**
-//     * An inner class of the Discount.
-//     * It is responsible for creating or modifying Discounts.
-//     */
-//    private class DiscountWizard extends JDialog {
-//        /**
-//         * The image of the barcode
-//         */
-//        private ImagePanel panelImg = new ImagePanel(imagePath);
-//        /**
-//         * The field containing the name of the Discount
-//         */
-//        private JTextField fieldName = new JTextField(name);
-//        /**
-//         * The field containing the metadata of the Discount (the barcode's string data)
-//         */
-//        private JTextField fieldMeta = new JTextField(metaData);
-//        /**
-//         * The field containing the tooltip of the Discount
-//         */
-//        private JTextField fieldTooltip = new JTextField(label);
-//        /**
-//         * The field containing the price of the Discount
-//         */
-//        private JFormattedTextField fieldPrice = new JFormattedTextField(NumberFormat.getNumberInstance());
-//
-//        /**
-//         * Default constructor.
-//         * It creates a separate window for the user to modify the values.
-//         * @param profile the EntryProfile which writes back the modified data
-//         * @param index the index of the Discount in the profile's list (-1 for new discounts)
-//         */
-//        DiscountWizard(EntryProfile profile,int index){
-//            //Set basic window attributes
-//            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-//            setModal(true);
-//            setTitle("Kedvezmény beállítása");
-//            setLayout(new BoxLayout(getContentPane(),BoxLayout.PAGE_AXIS));
-//
-//            //Set textfield value
-//            fieldPrice.setValue(discount);
-//            //Browse button
-//            JButton btnBrowse = new JButton("Tallózás");
-//            btnBrowse.addActionListener(e -> changePicture());
-//            //Accept and Cancel buttons
-//            JButton btnCancel = new JButton("Mégse");
-//            btnCancel.addActionListener(e -> dispose());
-//            JButton btnSave = new JButton("Mentés");
-//            btnSave.addActionListener(e -> saveDiscount(profile,index));
-//            JPanel panelDialog = new JPanel();
-//            panelDialog.add(btnSave);
-//            panelDialog.add(btnCancel);
-//
-//            //Assemble Window
-//            add(new JLabel("Név"));
-//            add(fieldName);
-//            add(new JLabel("META"));
-//            add(fieldMeta);
-//            add(new JLabel("Tooltip"));
-//            add(fieldTooltip);
-//            add(new JLabel("Kedvezmény"));
-//            add(fieldPrice);
-//            add(new JLabel("Vonalkód képe"));
-//            add(btnBrowse);
-//            add(panelImg);
-//            add(panelDialog);
-//            //Set alignment
-//            for (Component c: getContentPane().getComponents()) {
-//                ((JComponent)c).setAlignmentX(Component.LEFT_ALIGNMENT);
-//            }
-//            //Pack
-//            pack();
-//            setResizable(false);
-//            setRelativeLocationOnScreen(this, CENTER);
-//        }
-//
-//        private void saveDiscount(EntryProfile profile, int index){
-//            if(fieldName.getText().length() > 0 &&
-//                    fieldMeta.getText().length() > 0 &&
-//                    fieldTooltip.getText().length() > 0 &&
+    public static class DiscountListener extends MouseAdapter {
+
+        private final EntryProfile profile;
+        private final Window parent;
+
+        public DiscountListener(Window parent, EntryProfile profile){
+            this.parent = parent;
+            this.profile = profile;
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent evt) {
+            JList list = (JList)evt.getSource();
+            //Double click detection
+            if(evt.getClickCount() == 2) {
+                Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());
+                //Only items in the list detect clicks
+                if (r != null && r.contains(evt.getPoint())) {
+                    Discount selectedDiscount = (Discount) list.getSelectedValue();
+                    JDialog wizard = selectedDiscount.getDiscountWizard(parent, profile, list.getSelectedIndex());
+                    wizard.setVisible(true);
+                }
+            }
+        }
+    }
+
+    /**
+     * An inner class of the Discount.
+     * It is responsible for creating or modifying Discounts.
+     */
+    private class DiscountWizard extends JDialog {
+
+        private ImagePanel panelImg = new ImagePanel(imagePath);
+        private JLabel labelIcon = new JLabel(new ImageIcon(new ImageIcon(iconPath).getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH)));
+        private JTextField tfName = new JTextField(name);
+        private JTextField tfMeta = new JTextField(metaData);
+        private JTextField tfTooltip = new JTextField(label);
+        private JSpinner spPrice = new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,1));
+        JPanel body;
+
+        /**
+         * Default constructor.
+         * It creates a separate window for the user to modify the values.
+         * @param profile the EntryProfile which writes back the modified data
+         * @param index the index of the Discount in the profile's list (-1 for new discounts)
+         */
+        DiscountWizard(Window parent, EntryProfile profile,int index){
+            super(parent,"Kedvezmény beállítása",ModalityType.APPLICATION_MODAL);
+            //Set basic window attributes
+            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            setLayout(new BorderLayout());
+
+            body = new JPanel();
+            body.setLayout(new GridBagLayout());
+            //Set textfield value
+            spPrice.setValue(discount);
+            labelIcon.setVerticalTextPosition(SwingConstants.TOP);
+            labelIcon.setHorizontalTextPosition(SwingConstants.RIGHT);
+            //Browse button
+            JButton btnBrowse = new JButton("Tallózás");
+            btnBrowse.addActionListener(e -> changePicture());
+            //Accept and Cancel buttons
+            JButton btnCancel = new JButton("Mégse");
+            btnCancel.addActionListener(e -> dispose());
+            JButton btnSave = new JButton("Mentés");
+            btnSave.addActionListener(e -> saveDiscount(profile,index));
+            JPanel panelDialog = new JPanel();
+            panelDialog.add(btnSave);
+            panelDialog.add(btnCancel);
+
+            //Assemble Window
+            body.add(new JLabel("Név"),setConstraints(0,0,1,1));
+            body.add(new JLabel("Hozzájárulás"),setConstraints(0,1,1,1));
+            body.add(new JLabel("META"),setConstraints(0,2,1,1));
+            body.add(new JLabel("Tooltip"),setConstraints(0,3,1,1));
+            body.add(new JLabel("Vonalkód képe:"),setConstraints(0,4,1,1));
+            body.add(new JLabel(imagePath),setConstraints(2,4,2,1));
+            body.add(new JLabel(iconPath),setConstraints(2,0,1,1));
+
+            body.add(tfName,setConstraints(1,0,1,1));
+            body.add(spPrice,setConstraints(1,1,1,1));
+            body.add(tfMeta,setConstraints(1,2,1,1));
+            body.add(tfTooltip,setConstraints(1,3,3,1));
+            body.add(labelIcon,setConstraints(3,0,1,3));
+            body.add(new JButton("..."),setConstraints(2,1,1,1));
+            body.add(new JButton("Olvass!"),setConstraints(2,2,1,1));
+            body.add(btnBrowse,setConstraints(1,4,1,1));
+            body.add(panelImg,setConstraints(0,5,4,2));
+
+            add(panelDialog,BorderLayout.SOUTH);
+            add(body,BorderLayout.CENTER);
+            //Pack
+            pack();
+            setResizable(false);
+            setLocationRelativeTo(parent);
+        }
+
+        private void saveDiscount(EntryProfile profile, int index){
+//            if(tfName.getText().length() > 0 &&
+//                    tfMeta.getText().length() > 0 &&
+//                    tfTooltip.getText().length() > 0 &&
 //                    panelImg.validatePicture()){
-//                name = fieldName.getText();
-//                metaData = fieldMeta.getText();
-//                label = fieldTooltip.getText();
-//                discount = Integer.parseInt(fieldPrice.getValue().toString());
+//                name = tfName.getText();
+//                metaData = tfMeta.getText();
+//                label = tfTooltip.getText();
+//                discount = Integer.parseInt(tfPrice.getValue().toString());
 //                imagePath = panelImg.getPath();
 //                //Save modifications in profile
-//                profile.modifyDiscount(index,Discount.this);
+//                //profile.modifyDiscount(index,Discount.this);
 //                //Close dialog
 //                dispose();
 //            } else {
 //                JOptionPane.showMessageDialog(this,"Not a valid discount!","ERROR",JOptionPane.ERROR_MESSAGE);
 //            }
-//        }
-//
-//        private void changePicture() {
-//            JFileChooser fc = new JFileChooser();
-//            fc.setAcceptAllFileFilterUsed(false);
-//            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"png", "jpg", "jpeg", "bmp", "gif"}, "Minden Képfájl"));
-//            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"png"}, "Portable Network Graphics (.png)"));
-//            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"jpg", "jpeg"}, "Joint Photographic Experts Group (.jpg, .jpeg)"));
-//            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"bmp"}, "Bitmap (.bmp)"));
-//            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"gif"}, "Graphics Interchange Format (.gif)"));
-//            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-//                swapPicture(fc.getSelectedFile().getAbsolutePath());
-//            }
-//        }
-//
-//        private void swapPicture(String imagePath){
-//            remove(panelImg);
-//            panelImg = new ImagePanel(imagePath);
-//            panelImg.setAlignmentX(Component.LEFT_ALIGNMENT);
-//            add(panelImg,9);
-//            //Resize window (since the user cannot do it)
-//            setResizable(true);
-//            pack();
-//            setResizable(false);
-//        }
-//
-//    }
-//
-//
+        }
+
+        private void changePicture() {
+            JFileChooser fc = new JFileChooser();
+            fc.setAcceptAllFileFilterUsed(false);
+            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"png", "jpg", "jpeg", "bmp", "gif"}, "Minden Képfájl"));
+            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"png"}, "Portable Network Graphics (.png)"));
+            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"jpg", "jpeg"}, "Joint Photographic Experts Group (.jpg, .jpeg)"));
+            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"bmp"}, "Bitmap (.bmp)"));
+            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"gif"}, "Graphics Interchange Format (.gif)"));
+            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                swapPicture(fc.getSelectedFile().getAbsolutePath());
+            }
+        }
+
+        private void swapPicture(String imagePath){
+            body.remove(panelImg);
+            panelImg = new ImagePanel(imagePath);
+            panelImg.setAlignmentX(Component.LEFT_ALIGNMENT);
+            body.add(panelImg,setConstraints(0,5,4,2));
+            //Resize window (since the user cannot do it)
+            setResizable(true);
+            pack();
+            setResizable(false);
+        }
+
+    }
+
+
 }
