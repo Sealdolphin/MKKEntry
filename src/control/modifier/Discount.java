@@ -7,15 +7,12 @@ import view.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.Serializable;
-import java.text.NumberFormat;
 
+import static control.modifier.ModifierDialog.setConstraints;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
-import static view.main.MainWindow.setConstraints;
 
-public class Discount implements Serializable {
+public class Discount implements Serializable, Modifier {
 
     private static final String basicIcon = "Icons\\BasicIcon.png";
     private String name;
@@ -38,8 +35,8 @@ public class Discount implements Serializable {
         this(other.name,other.imagePath,other.iconPath,other.label,other.metaData,other.discount);
     }
 
-    public String getName(){
-        return name;
+    public String getMeta(){
+        return metaData;
     }
 
     public static Discount parseDiscountFromJson(JSONObject jsonObject, String profileName) {
@@ -65,11 +62,7 @@ public class Discount implements Serializable {
 
     public static JDialog createDiscountFromWizard(Frame parent, EntryProfile profile){
         Discount discount = new Discount("",null,basicIcon,"","",0);
-        return discount.getDiscountWizard(parent, profile,-1);
-    }
-
-    public JDialog getDiscountWizard(Window parent, EntryProfile profile,int index){
-        return new DiscountWizard(parent,profile,index);
+        return discount.getTypeWizard(parent, profile,-1);
     }
 
     /**
@@ -97,7 +90,7 @@ public class Discount implements Serializable {
 
     @Override
     public String toString(){
-        return metaData;
+        return name;
     }
 
     @Override
@@ -117,29 +110,15 @@ public class Discount implements Serializable {
         return iconPath;
     }
 
-    public static class DiscountListener extends MouseAdapter {
+    @Override
+    public JDialog getTypeWizard(Window parent, EntryProfile profile, int index) {
+        return new DiscountWizard(parent,profile,index);
+    }
 
-        private final EntryProfile profile;
-        private final Window parent;
+    public static class DiscountListener extends ModifierWizardEditor<Discount>{
 
-        public DiscountListener(Window parent, EntryProfile profile){
-            this.parent = parent;
-            this.profile = profile;
-        }
-
-        @Override
-        public void mouseClicked(MouseEvent evt) {
-            JList list = (JList)evt.getSource();
-            //Double click detection
-            if(evt.getClickCount() == 2) {
-                Rectangle r = list.getCellBounds(0, list.getLastVisibleIndex());
-                //Only items in the list detect clicks
-                if (r != null && r.contains(evt.getPoint())) {
-                    Discount selectedDiscount = (Discount) list.getSelectedValue();
-                    JDialog wizard = selectedDiscount.getDiscountWizard(parent, profile, list.getSelectedIndex());
-                    wizard.setVisible(true);
-                }
-            }
+        public DiscountListener(Window parent, EntryProfile profile) {
+            super(parent, profile);
         }
     }
 
@@ -147,7 +126,7 @@ public class Discount implements Serializable {
      * An inner class of the Discount.
      * It is responsible for creating or modifying Discounts.
      */
-    private class DiscountWizard extends JDialog {
+    private class DiscountWizard extends ModifierDialog {
 
         private ImagePanel panelImg = new ImagePanel(imagePath);
         private JLabel labelIcon = new JLabel(new ImageIcon(new ImageIcon(iconPath).getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH)));
@@ -155,7 +134,6 @@ public class Discount implements Serializable {
         private JTextField tfMeta = new JTextField(metaData);
         private JTextField tfTooltip = new JTextField(label);
         private JSpinner spPrice = new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,1));
-        JPanel body;
 
         /**
          * Default constructor.
@@ -164,12 +142,8 @@ public class Discount implements Serializable {
          * @param index the index of the Discount in the profile's list (-1 for new discounts)
          */
         DiscountWizard(Window parent, EntryProfile profile,int index){
-            super(parent,"Kedvezmény beállítása",ModalityType.APPLICATION_MODAL);
-            //Set basic window attributes
-            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-            setLayout(new BorderLayout());
+            super(parent,profile,index,"Kedvezmény beállítása");
 
-            body = new JPanel();
             body.setLayout(new GridBagLayout());
             //Set textfield value
             spPrice.setValue(discount);
@@ -177,15 +151,9 @@ public class Discount implements Serializable {
             labelIcon.setHorizontalTextPosition(SwingConstants.RIGHT);
             //Browse button
             JButton btnBrowse = new JButton("Tallózás");
+
             btnBrowse.addActionListener(e -> changePicture());
-            //Accept and Cancel buttons
-            JButton btnCancel = new JButton("Mégse");
-            btnCancel.addActionListener(e -> dispose());
-            JButton btnSave = new JButton("Mentés");
             btnSave.addActionListener(e -> saveDiscount(profile,index));
-            JPanel panelDialog = new JPanel();
-            panelDialog.add(btnSave);
-            panelDialog.add(btnCancel);
 
             //Assemble Window
             body.add(new JLabel("Név"),setConstraints(0,0,1,1));
@@ -206,12 +174,7 @@ public class Discount implements Serializable {
             body.add(btnBrowse,setConstraints(1,4,1,1));
             body.add(panelImg,setConstraints(0,5,4,2));
 
-            add(panelDialog,BorderLayout.SOUTH);
-            add(body,BorderLayout.CENTER);
-            //Pack
-            pack();
-            setResizable(false);
-            setLocationRelativeTo(parent);
+            finishDialog(parent);
         }
 
         private void saveDiscount(EntryProfile profile, int index){

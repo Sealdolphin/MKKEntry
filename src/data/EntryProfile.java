@@ -8,7 +8,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -20,12 +19,11 @@ import static control.AppController.ReadingFlag.FL_DEFAULT;
 import static control.AppController.ReadingFlag.FL_IS_DELETE;
 import static control.AppController.ReadingFlag.FL_IS_LEAVING;
 import static control.Application.uh;
+import static control.modifier.ModifierDialog.setConstraints;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.SOUTH;
 import static javax.swing.BoxLayout.PAGE_AXIS;
-import static javax.swing.JFileChooser.CANCEL_OPTION;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
-import static view.main.MainWindow.setConstraints;
 
 /**
  * Beléptetési profil.
@@ -144,7 +142,7 @@ public class EntryProfile implements Serializable {
         return wizard.getProfile();
     }
 
-    public static EntryProfile parseProfileFromJson(JSONObject jsonProfile) {
+    private static EntryProfile parseProfileFromJson(JSONObject jsonProfile) {
         //Loading basic information
         EntryProfile profile = new EntryProfile();
 
@@ -196,10 +194,10 @@ public class EntryProfile implements Serializable {
     }
 
     public Discount identifyDiscountMeta(String discountMeta){
-        return discounts.stream().filter(discount -> discount.equals(discountMeta)).findAny().orElse(null);
+        return discounts.stream().filter(discount -> discount.getMeta().equals(discountMeta)).findAny().orElse(null);
     }
 
-    public TicketType identifyTicketType(String unknownType) {
+    TicketType identifyTicketType(String unknownType) {
         return ticketTypes.stream().filter(type -> type.toString().equals(unknownType)).findAny().orElse(defaultType);
     }
 
@@ -251,7 +249,7 @@ public class EntryProfile implements Serializable {
             //Adding tabs
             JTabbedPane mainPanel = new JTabbedPane();
             mainPanel.addTab("Általános",null, createMainPanel(),"A profil általános beállításai");
-            mainPanel.addTab("Jegytípusok",null, createListTab(ticketTypes.toArray(),null),"A profilhoz tartozó jegytípusok");
+            mainPanel.addTab("Jegytípusok",null, createListTab(ticketTypes.toArray(),new TicketType.TicketTypeListener(this,EntryProfile.this)),"A profilhoz tartozó jegytípusok");
             mainPanel.addTab("Kedvezmények",null, createListTab(discounts.toArray(), new Discount.DiscountListener(this,EntryProfile.this)),"A profilhoz tartozó kedvezmények");
             mainPanel.setMnemonicAt(0, KeyEvent.VK_1);
             mainPanel.setMnemonicAt(1, KeyEvent.VK_2);

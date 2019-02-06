@@ -46,7 +46,7 @@ public class DiscountRenderer extends JPanel implements TableCellRenderer {
         removeAll();
         for (Object disObj: discounts) {
             Discount discount = (Discount) disObj;
-            add(new DiscountLabel(discount.getName(),discount.getIcon(),isSelected));
+            add(new DiscountLabel(discount.toString(),discount.getIcon(),isSelected));
             add(Box.createRigidArea(new Dimension(10,0)));
         }
         //Rendering selection

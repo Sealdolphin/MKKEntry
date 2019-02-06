@@ -348,15 +348,4 @@ public class MainWindow extends JFrame {
         }
     }
 
-    public static GridBagConstraints setConstraints(int x, int y, int w, int h){
-        GridBagConstraints constraints = new GridBagConstraints();
-        constraints.gridx = x;
-        constraints.gridy = y;
-        constraints.gridwidth = w;
-        constraints.gridheight = h;
-        constraints.fill = GridBagConstraints.HORIZONTAL;
-        return constraints;
-    }
-
-
 }
