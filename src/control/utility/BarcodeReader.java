@@ -25,15 +25,15 @@ public class BarcodeReader implements SerialPortDataListener {
      */
     private String lastReadData;
 
-    private List<ProgramStateListener> controllers = new ArrayList<>();
+    private List<BarcodeListener> controllers = new ArrayList<>();
 
-    public void addListener(ProgramStateListener l){
+    public void addListener(BarcodeListener l){
         controllers.add(l);
     }
 
 
     @SuppressWarnings("unused")
-    public void removeListener(ProgramStateListener l){
+    public void removeListener(BarcodeListener l){
         controllers.remove(l);
     }
 
@@ -90,7 +90,7 @@ public class BarcodeReader implements SerialPortDataListener {
             raw_data.clear();
 
             //Alert all controllers
-            for (ProgramStateListener controller :
+            for (BarcodeListener controller :
                     controllers) {
                 controller.readBarCode(lastReadData);
             }

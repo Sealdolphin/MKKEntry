@@ -1,5 +1,7 @@
 package control.modifier;
 
+import control.utility.BarcodeReader;
+import control.utility.DefaultBarcodeListener;
 import control.utility.file.ExtensionFilter;
 import data.EntryProfile;
 import org.json.simple.JSONObject;
@@ -102,10 +104,6 @@ public class Discount implements Serializable, Modifier {
         return other.metaData.equals(metaData);
     }
 
-    public boolean equals(String meta) {
-        return meta.equals(metaData);
-    }
-
     public String getIcon(){
         return iconPath;
     }
@@ -134,6 +132,7 @@ public class Discount implements Serializable, Modifier {
         private JTextField tfMeta = new JTextField(metaData);
         private JTextField tfTooltip = new JTextField(label);
         private JSpinner spPrice = new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,1));
+        private JButton btnReadPic = new JButton("Olvass!");
 
         /**
          * Default constructor.
@@ -154,6 +153,11 @@ public class Discount implements Serializable, Modifier {
 
             btnBrowse.addActionListener(e -> changePicture());
             btnSave.addActionListener(e -> saveDiscount(profile,index));
+            btnReadPic.addActionListener(e -> {
+                DefaultBarcodeListener dbl = new DefaultBarcodeListener(tfMeta::setText);
+                BarcodeReader reader = new BarcodeReader();
+                reader.addListener(dbl);
+            });
 
             //Assemble Window
             body.add(new JLabel("Név"),setConstraints(0,0,1,1));
@@ -170,7 +174,7 @@ public class Discount implements Serializable, Modifier {
             body.add(tfTooltip,setConstraints(1,3,3,1));
             body.add(labelIcon,setConstraints(3,0,1,3));
             body.add(new JButton("..."),setConstraints(2,1,1,1));
-            body.add(new JButton("Olvass!"),setConstraints(2,2,1,1));
+            body.add(btnReadPic,setConstraints(2,2,1,1));
             body.add(btnBrowse,setConstraints(1,4,1,1));
             body.add(panelImg,setConstraints(0,5,4,2));
 

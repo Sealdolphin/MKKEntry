@@ -31,6 +31,7 @@ public class AppController implements ProgramStateListener {
     private SerialPort selectedPort;
     private List<ReadFlagListener> listenerList = new ArrayList<>();
     private ReadingFlag readingFlag = ReadingFlag.FL_DEFAULT;
+    private boolean menuOpen = false;
 
     AppController(AppData model, DataModel<EntryProfile> pData){
         this.model = model;
@@ -143,6 +144,7 @@ public class AppController implements ProgramStateListener {
 
     @Override
     public void readBarCode(String barCode) {
+        if(menuOpen) return;
         System.out.println("[INFO]: Code received: " + barCode);
         //Checking for command codes
         ReadingFlag commandFlag = activeProfile.validateCommand(barCode);
@@ -201,7 +203,9 @@ public class AppController implements ProgramStateListener {
     }
 
     public void editProfile(JFrame main) {
+        menuOpen = true;
         EntryProfile editedProfile = EntryProfile.createProfileFromWizard(main,activeProfile);
+        menuOpen = false;
         //TODO: load new profile
     }
 

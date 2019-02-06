@@ -138,7 +138,9 @@ public class EntryProfile implements Serializable {
         if(edit == null)
             edit = new EntryProfile();
         ProfileWizard wizard = edit.getWizardEditor(main);
-        int result = wizard.open();
+        wizard.setVisible(true);
+        while (true)
+            if(!wizard.isVisible()) break;
         return wizard.getProfile();
     }
 
