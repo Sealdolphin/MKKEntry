@@ -10,14 +10,13 @@ import view.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
-public class Discount implements Serializable, Modifier {
+public class Discount implements Serializable, TicketModifier {
 
     private static final String basicIcon = "Icons"+ File.separator +"BasicIcon.png";
     private String name;
@@ -121,6 +120,11 @@ public class Discount implements Serializable, Modifier {
 
         public DiscountListener(Window parent, EntryProfile profile) {
             super(parent, profile);
+        }
+
+        @Override
+        public void removeFrom(List<Discount> objectList, Discount selectedValue) {
+            objectList.remove(selectedValue);
         }
     }
 

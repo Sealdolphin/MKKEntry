@@ -6,16 +6,12 @@ import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
-public class TicketType implements Serializable, Modifier {
+public class TicketType implements Serializable, TicketModifier {
 
     private String name;
     private int price;
@@ -87,6 +83,11 @@ public class TicketType implements Serializable, Modifier {
             super(parent, profile);
         }
 
+        @Override
+        public void removeFrom(List<TicketType> objectList, TicketType selectedValue) {
+            objectList.remove(selectedValue);
+        }
+
     }
 
     private class TicketTypeWizard extends ModifierDialog {
@@ -110,7 +111,21 @@ public class TicketType implements Serializable, Modifier {
             body.add(tfName,setConstraints(1,0,1,1));
             body.add(spPrice,setConstraints(1,1,1,1));
 
+            btnSave.addActionListener(e -> saveType());
+
             finishDialog(parent);
+        }
+
+        private void saveType(){
+            if(tfName.getText().length() > 0){
+                name = tfName.getText();
+                price = Integer.parseInt(spPrice.getValue().toString());
+                hasFee = cbHasFee.isSelected();
+                //Close dialog
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this,"Not a valid ticketType!","ERROR",JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }
