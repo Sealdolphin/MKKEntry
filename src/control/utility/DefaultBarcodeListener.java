@@ -6,24 +6,28 @@ import java.util.function.Consumer;
 public class DefaultBarcodeListener implements BarcodeListener {
 
     private Consumer<String> action;
-    private JFrame msg;
+    private JDialog msg;
 
     public DefaultBarcodeListener(Consumer<String> action){
         this.action = action;
 
-        msg = new JFrame();
+        msg = new JDialog();
         msg.add(new JLabel("OLVASS"));
-        msg.setUndecorated(true);
+        //msg.setUndecorated(true);
+        msg.setModal(true);
 
         msg.pack();
         msg.setResizable(false);
+        msg.setLocationRelativeTo(null);
         msg.setVisible(true);
+        System.out.println("VISIBLE: " + msg.isVisible());
     }
 
     @Override
     public void readBarCode(String barCode) {
+        System.out.println("CODE: " + barCode);
         action.accept(barCode);
-        msg.setVisible(false);
+        msg.dispose();
     }
 
 }

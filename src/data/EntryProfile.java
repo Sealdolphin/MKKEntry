@@ -1,5 +1,6 @@
 package data;
 
+import com.fazecast.jSerialComm.SerialPort;
 import control.AppController;
 import control.UIHandler;
 import control.modifier.Discount;
