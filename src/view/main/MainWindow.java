@@ -41,6 +41,14 @@ public class MainWindow extends JFrame {
 
     private boolean discountPanelStatus = false;
 
+    private Runnable selectionUpdate = () -> {
+        int index = model.getSelectedIndex();
+        System.out.println("SELECTION: " + model.getSelectedData() + " at index " + index);
+        if(index >= 0) {
+            entryView.changeSelection(index, 0, false, false);
+        }
+    };
+
     /**
      * Main Constructor
      * Builds the main window of the program
@@ -153,13 +161,7 @@ public class MainWindow extends JFrame {
         return popupEditRecord;
     }
 
-    private Runnable selectionUpdate = () -> {
-        int index = model.getSelectedIndex();
-        System.out.println("SELECTION: " + model.getSelectedData() + " at index " + index);
-        if(index >= 0) {
-            entryView.changeSelection(index, 0, false, false);
-        }
-    };
+
 
     private void initiateView(AppController controller) {
         //Refresh side panel

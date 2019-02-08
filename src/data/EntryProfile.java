@@ -1,9 +1,10 @@
 package data;
 
-import com.fazecast.jSerialComm.SerialPort;
+
 import control.AppController;
 import control.UIHandler;
 import control.modifier.Discount;
+import control.modifier.ModifierWizardEditor;
 import control.modifier.TicketType;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -325,7 +326,7 @@ public class EntryProfile implements Serializable {
             return panelMain;
         }
 
-        private JPanel createListTab(Object[] objectList, MouseAdapter editor) {
+        private JPanel createListTab(Object[] objectList, ModifierWizardEditor editor) {
             JPanel panelList = new JPanel();
             panelList.setLayout(new BorderLayout());
 
@@ -335,6 +336,7 @@ public class EntryProfile implements Serializable {
             list.setSelectionMode(SINGLE_SELECTION);
             JScrollPane paneListHolder = new JScrollPane(list);
             panelList.add(paneListHolder,CENTER);
+            //TODO: need list operations
 
 
             return panelList;
@@ -367,10 +369,11 @@ public class EntryProfile implements Serializable {
                     dispose();
                     break;
                 case "OK":
-                    if(validateProfile())
+                    if(validateProfile()) {
                         result = 0;
                         System.out.println("EDITING ACCEPTED");
                         dispose();
+                    }
                     break;
                 case "Accept":
                     if(validateProfile()) {
@@ -382,7 +385,16 @@ public class EntryProfile implements Serializable {
         }
 
         private boolean validateProfile(){
-            return false;
+            boolean empty = tfName.getText().isEmpty() || tfMask.getText().isEmpty() || tfCommandDefault.getText().isEmpty() || tfCommandLeave.getText().isEmpty() || tfCommandDelete.getText().isEmpty();
+            boolean commandInvalid = Objects.equals(tfCommandDefault.getText(),tfCommandLeave.getText()) || Objects.equals(tfCommandLeave.getText(),tfCommandDelete.getText()) || Objects.equals(tfCommandDefault.getText(),tfCommandDelete.getText());
+            boolean noTicket = ticketTypes.isEmpty();
+
+            //ERROR
+            if(empty) JOptionPane.showMessageDialog(null,"Minden mező kitöltése kötelező",uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+            if(commandInvalid) JOptionPane.showMessageDialog(null,"A parancsok nem lehetnek egyformák",uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+            if(noTicket) JOptionPane.showMessageDialog(null,"Vegyél fel legalább egy jegytípust!",uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+
+            return !(empty || commandInvalid || noTicket);
         }
 
         private int open(){
