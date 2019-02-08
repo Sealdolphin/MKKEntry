@@ -103,7 +103,7 @@ public class Application {
 
         AppController controller = new AppController(model, profileData);
 
-        Image icon = Toolkit.getDefaultToolkit().getImage("Icons\\mkkMini.png");
+        Image icon = Toolkit.getDefaultToolkit().getImage("Icons"+File.separator+"mkkMini.png");
 
         view = new MainWindow(model, controller);
         view.addWindowListener(new WindowAdapter() {
@@ -137,6 +137,10 @@ public class Application {
         setRelativeLocationOnScreen(view, ScreenLocation.CENTER);
         view.pack();
         view.setVisible(true);
+    }
+    
+    public static String parseFilePath(String filePath) {
+    	return filePath.replaceAll("/", File.separator);
     }
 
     private static void setRelativeLocationOnScreen(Component c, ScreenLocation location){

@@ -1,22 +1,6 @@
 package data;
 
 
-import control.AppController;
-import control.UIHandler;
-import control.modifier.Discount;
-import control.modifier.ModifierWizardEditor;
-import control.modifier.TicketType;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.*;
-import java.util.List;
-
 import static control.AppController.ReadingFlag.FL_DEFAULT;
 import static control.AppController.ReadingFlag.FL_IS_DELETE;
 import static control.AppController.ReadingFlag.FL_IS_LEAVING;
@@ -26,6 +10,50 @@ import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.SOUTH;
 import static javax.swing.BoxLayout.PAGE_AXIS;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
+
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.WindowConstants;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+import control.AppController;
+import control.UIHandler;
+import control.modifier.Discount;
+import control.modifier.ModifierWizardEditor;
+import control.modifier.TicketType;
 
 /**
  * Beléptetési profil.
@@ -255,8 +283,8 @@ public class EntryProfile implements Serializable {
             //Adding tabs
             JTabbedPane mainPanel = new JTabbedPane();
             mainPanel.addTab("Általános",null, createMainPanel(),"A profil általános beállításai");
-            mainPanel.addTab("Jegytípusok",null, createListTab(ticketTypes.toArray(),new TicketType.TicketTypeListener(this,EntryProfile.this)),"A profilhoz tartozó jegytípusok");
-            mainPanel.addTab("Kedvezmények",null, createListTab(discounts.toArray(), new Discount.DiscountListener(this,EntryProfile.this)),"A profilhoz tartozó kedvezmények");
+            mainPanel.addTab("Jegytípusok",null, createListTab(ticketTypes,new TicketType.TicketTypeListener(this,EntryProfile.this)),"A profilhoz tartozó jegytípusok");
+            mainPanel.addTab("Kedvezmények",null, createListTab(discounts, new Discount.DiscountListener(this,EntryProfile.this)),"A profilhoz tartozó kedvezmények");
             mainPanel.setMnemonicAt(0, KeyEvent.VK_1);
             mainPanel.setMnemonicAt(1, KeyEvent.VK_2);
             mainPanel.setMnemonicAt(2, KeyEvent.VK_3);
@@ -326,18 +354,30 @@ public class EntryProfile implements Serializable {
             return panelMain;
         }
 
-        private JPanel createListTab(Object[] objectList, ModifierWizardEditor editor) {
+        private JPanel createListTab(List<Object> objectList, ModifierWizardEditor editor) {
             JPanel panelList = new JPanel();
             panelList.setLayout(new BorderLayout());
 
             //noinspection unchecked
-            JList<String> list = new JList(objectList);
+            JList<String> list = new JList(objectList.toArray());
             list.addMouseListener(editor);
             list.setSelectionMode(SINGLE_SELECTION);
             JScrollPane paneListHolder = new JScrollPane(list);
             panelList.add(paneListHolder,CENTER);
-            //TODO: need list operations
-
+            
+            JPanel panelOperations = new JPanel();
+            JButton btnRemove = new JButton("-");
+            btnRemove.addActionListener(e -> {
+            	objectList.remove(list.getSelectedIndex());
+            	
+            });
+            JButton btnAdd = new JButton("+");
+            btnAdd.addActionListener(e -> {
+            	System.out.println(list.getSelectedValue());
+            });          
+            
+            
+            panelList.add(panelOperations,SOUTH);
 
             return panelList;
         }

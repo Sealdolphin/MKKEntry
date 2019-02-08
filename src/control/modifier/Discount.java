@@ -1,5 +1,6 @@
 package control.modifier;
 
+import control.Application;
 import control.utility.BarcodeReader;
 import control.utility.DefaultBarcodeListener;
 import control.utility.file.ExtensionFilter;
@@ -9,6 +10,7 @@ import view.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.Serializable;
 
 import static control.modifier.ModifierDialog.setConstraints;
@@ -16,7 +18,7 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class Discount implements Serializable, Modifier {
 
-    private static final String basicIcon = "Icons\\BasicIcon.png";
+    private static final String basicIcon = "Icons"+ File.separator +"BasicIcon.png";
     private String name;
     private String imagePath;
     private String iconPath;
@@ -48,10 +50,10 @@ public class Discount implements Serializable, Modifier {
         int price = 0;
         try {
             name = jsonObject.get("name").toString();
-            image = jsonObject.get("imgPath").toString();
+            image = Application.parseFilePath((jsonObject.get("imgPath").toString()));
             label = jsonObject.get("label").toString();
             meta = jsonObject.get("meta").toString();
-            icon = jsonObject.get("icon").toString();
+            icon = Application.parseFilePath(jsonObject.get("icon").toString());
             price = Integer.parseInt(jsonObject.get("discount").toString());
         } catch (Exception other){
             //Show warning message

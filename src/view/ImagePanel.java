@@ -22,7 +22,7 @@ public class ImagePanel extends JPanel  {
                 image = ImageIO.read(new File(imagePath));
             } catch (IOException e) {
                 //Some warning
-                JOptionPane.showMessageDialog(new JFrame(),"Nem találom a vonalkódképet a kedvezményhez\n" +
+                JOptionPane.showMessageDialog(new JFrame(),"Nem találom a képet a panelhez\n" +
                         imagePath + ":\n" + e.getMessage(),"Hiba",JOptionPane.ERROR_MESSAGE);
             }
         //Set layout to fill available space

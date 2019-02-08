@@ -7,6 +7,7 @@ import control.MenuHandler;
 import control.modifier.Discount;
 import data.AppData;
 import data.Entry;
+import data.EntryProfile;
 import view.DiscountRenderer;
 
 import javax.swing.*;
@@ -273,7 +274,14 @@ public class MainWindow extends JFrame {
         private JMenu createProfileMenu(AppController controller) {
             JMenu menuProfiles = new JMenu("Profilok");
 
-            JMenuItem mi = new JMenuItem("Profil szerkesztése");
+            JMenuItem mi = new JMenuItem("Új profil létrehozása");
+            mi.addActionListener(e-> {
+                EntryProfile newProfile = EntryProfile.createProfileFromWizard(MainWindow.this, null);
+                System.out.println(newProfile);
+                //TODO: adding new profile to the others
+            });
+            menuProfiles.add(mi);
+            mi = new JMenuItem("Profil szerkesztése");
             mi.addActionListener(e -> controller.editProfile(MainWindow.this));
             menuProfiles.add(mi);
 
@@ -283,6 +291,7 @@ public class MainWindow extends JFrame {
                 initiateView(controller);
             });
             menuProfiles.add(mi);
+
 
 
             return menuProfiles;

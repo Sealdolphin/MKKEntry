@@ -13,3 +13,4 @@
 !*.jar
 #need gitignore
 !*.gitignore
+/bin/
