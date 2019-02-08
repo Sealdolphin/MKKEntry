@@ -10,10 +10,11 @@ import view.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.Serializable;
+import java.util.List;
 
-import static control.modifier.ModifierDialog.setConstraints;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class Discount implements Serializable, Modifier {
@@ -117,6 +118,7 @@ public class Discount implements Serializable, Modifier {
 
     public static class DiscountListener extends ModifierWizardEditor<Discount>{
 
+
         public DiscountListener(Window parent, EntryProfile profile) {
             super(parent, profile);
         }
@@ -154,7 +156,7 @@ public class Discount implements Serializable, Modifier {
             JButton btnBrowse = new JButton("Tallózás");
 
             btnBrowse.addActionListener(e -> changePicture());
-            btnSave.addActionListener(e -> saveDiscount(profile,index));
+            btnSave.addActionListener(e -> saveDiscount());
             btnReadPic.addActionListener(e -> {
                 DefaultBarcodeListener dbl = new DefaultBarcodeListener(tfMeta::setText);
                 BarcodeReader reader = new BarcodeReader();
@@ -183,23 +185,21 @@ public class Discount implements Serializable, Modifier {
             finishDialog(parent);
         }
 
-        private void saveDiscount(EntryProfile profile, int index){
-//            if(tfName.getText().length() > 0 &&
-//                    tfMeta.getText().length() > 0 &&
-//                    tfTooltip.getText().length() > 0 &&
-//                    panelImg.validatePicture()){
-//                name = tfName.getText();
-//                metaData = tfMeta.getText();
-//                label = tfTooltip.getText();
-//                discount = Integer.parseInt(tfPrice.getValue().toString());
-//                imagePath = panelImg.getPath();
-//                //Save modifications in profile
-//                //profile.modifyDiscount(index,Discount.this);
-//                //Close dialog
-//                dispose();
-//            } else {
-//                JOptionPane.showMessageDialog(this,"Not a valid discount!","ERROR",JOptionPane.ERROR_MESSAGE);
-//            }
+        private void saveDiscount(){
+            if(tfName.getText().length() > 0 &&
+                    tfMeta.getText().length() > 0 &&
+                    tfTooltip.getText().length() > 0 &&
+                    panelImg.validatePicture()){
+                name = tfName.getText();
+                metaData = tfMeta.getText();
+                label = tfTooltip.getText();
+                discount = Integer.parseInt(spPrice.getValue().toString());
+                imagePath = panelImg.getPath();
+                //Close dialog
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this,"Not a valid discount!","ERROR",JOptionPane.ERROR_MESSAGE);
+            }
         }
 
         private void changePicture() {

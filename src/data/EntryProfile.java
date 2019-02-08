@@ -27,24 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -143,8 +126,10 @@ public class EntryProfile implements Serializable {
         defaultType = other.defaultType;
         //TODO: exact copying
         commandCodes = other.commandCodes;
-        ticketTypes = other.ticketTypes;
-        discounts = other.discounts;
+        ticketTypes = new ArrayList<>();
+        discounts = new ArrayList<>();
+        for (Discount discount : other.discounts) { discounts.add(new Discount(discount)); }
+        for (TicketType type : other.ticketTypes) { ticketTypes.add(new TicketType(type)); }
         exportFilters = other.exportFilters;
     }
 
@@ -269,7 +254,7 @@ public class EntryProfile implements Serializable {
         private int result;
 
         ProfileWizard(JFrame parent){
-            super(parent,EntryProfile.this.getClassId()/*"Profil szerkesztése"*/,true);
+            super(parent,"Profil szerkesztése",true);
             setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             addWindowListener(new WindowAdapter() {
                 @Override
@@ -283,8 +268,8 @@ public class EntryProfile implements Serializable {
             //Adding tabs
             JTabbedPane mainPanel = new JTabbedPane();
             mainPanel.addTab("Általános",null, createMainPanel(),"A profil általános beállításai");
-            mainPanel.addTab("Jegytípusok",null, createListTab(ticketTypes,new TicketType.TicketTypeListener(this,EntryProfile.this)),"A profilhoz tartozó jegytípusok");
-            mainPanel.addTab("Kedvezmények",null, createListTab(discounts, new Discount.DiscountListener(this,EntryProfile.this)),"A profilhoz tartozó kedvezmények");
+            mainPanel.addTab("Jegytípusok",null, createListTab(ticketTypes.toArray(),new TicketType.TicketTypeListener(this,EntryProfile.this)),"A profilhoz tartozó jegytípusok");
+            mainPanel.addTab("Kedvezmények",null, createListTab(discounts.toArray(), new Discount.DiscountListener(this,EntryProfile.this)),"A profilhoz tartozó kedvezmények");
             mainPanel.setMnemonicAt(0, KeyEvent.VK_1);
             mainPanel.setMnemonicAt(1, KeyEvent.VK_2);
             mainPanel.setMnemonicAt(2, KeyEvent.VK_3);
@@ -354,12 +339,11 @@ public class EntryProfile implements Serializable {
             return panelMain;
         }
 
-        private JPanel createListTab(List<Object> objectList, ModifierWizardEditor editor) {
+        private JPanel createListTab(Object[] objectList, ModifierWizardEditor editor) {
             JPanel panelList = new JPanel();
             panelList.setLayout(new BorderLayout());
 
-            //noinspection unchecked
-            JList<String> list = new JList(objectList.toArray());
+            JList list = new JList(objectList);
             list.addMouseListener(editor);
             list.setSelectionMode(SINGLE_SELECTION);
             JScrollPane paneListHolder = new JScrollPane(list);
@@ -367,15 +351,10 @@ public class EntryProfile implements Serializable {
             
             JPanel panelOperations = new JPanel();
             JButton btnRemove = new JButton("-");
-            btnRemove.addActionListener(e -> {
-            	objectList.remove(list.getSelectedIndex());
-            	
-            });
             JButton btnAdd = new JButton("+");
-            btnAdd.addActionListener(e -> {
-            	System.out.println(list.getSelectedValue());
-            });          
-            
+            panelOperations.add(btnAdd);
+            panelOperations.add(btnRemove);
+
             
             panelList.add(panelOperations,SOUTH);
 
@@ -448,8 +427,4 @@ public class EntryProfile implements Serializable {
         }
     }
 
-    @Deprecated
-    public String getClassId() {
-        return super.toString();
-    }
 }

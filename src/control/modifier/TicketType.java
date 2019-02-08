@@ -6,6 +6,7 @@ import org.json.simple.JSONObject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.Serializable;
@@ -32,6 +33,10 @@ public class TicketType implements Serializable, Modifier {
         this.name = name;
         this.price = price;
         this.hasFee = fee;
+    }
+
+    public TicketType(TicketType other){
+        this(other.name,other.price,other.hasFee);
     }
 
     /**
@@ -81,6 +86,7 @@ public class TicketType implements Serializable, Modifier {
         public TicketTypeListener(Window parent, EntryProfile profile) {
             super(parent, profile);
         }
+
     }
 
     private class TicketTypeWizard extends ModifierDialog {
