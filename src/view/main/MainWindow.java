@@ -12,8 +12,7 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.Arrays;
 
 import static java.awt.event.KeyEvent.VK_DELETE;
@@ -74,21 +73,45 @@ public class MainWindow extends JFrame {
         InfoPanel infoPanel = new InfoPanel();
         controller.addListener(infoPanel);
         setJMenuBar(new MainMenu().createMenu(controller));
+        //Create popup-menu (TEMP)
+        JPopupMenu popupEditRecord = createPopUpMenu();
 
         //Create Entry Table
         entryView = new JTable(model);
+        //Render discounts differently
         entryView.setDefaultRenderer(Discount.class,new DiscountRenderer(16));
-        entryView.setRowHeight(32);
+        //For the icons
+        entryView.setRowHeight(48);
         entryView.getTableHeader().setReorderingAllowed(false);
         entryView.setSelectionMode(SINGLE_SELECTION);
         entryView.setRowSelectionAllowed(true);
-        entryView.setColumnSelectionAllowed(false);
+        entryView.setColumnSelectionAllowed(false); //Selecting a column does not make sense anyway
         entryView.createDefaultColumnsFromModel();
+        //Add selection changer (for live action selecting)
         entryView.getSelectionModel().addListSelectionListener(e -> {
             if((entryView.getSelectedRow() >= 0)){
                 model.setSelection(model.getDataByIndex(entryView.getSelectedRow()));
             }
         });
+        //Add right-click popup menu
+        entryView.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+
+            public void mouseReleased(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+
+            private void maybeShowPopup(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    popupEditRecord.show(e.getComponent(), e.getX(), e.getY());
+                    entryView.changeSelection(entryView.rowAtPoint(e.getPoint()),0,false,false);
+                    System.out.println("DATA SELECTED: " + model.getSelectedData());
+                }
+            }
+        });
+        //Change model selection in consistency with the view's selection model
         model.addTableModelListener(e -> {
             if(e.getType() == TableModelEvent.UPDATE) {
                 selectionUpdate.run();
@@ -101,6 +124,15 @@ public class MainWindow extends JFrame {
         add(new Body(controller), BorderLayout.CENTER);
         add(infoPanel, BorderLayout.SOUTH);
 
+    }
+
+    private JPopupMenu createPopUpMenu() {
+        JPopupMenu popupEditRecord = new JPopupMenu();
+        popupEditRecord.add(new JMenuItem("Beléptetés"));
+        popupEditRecord.add(new JMenuItem("Kiléptetés"));
+        popupEditRecord.add(new JMenuItem("Törlés"));
+        popupEditRecord.add(new JMenuItem("Kedvezmények felvétele"));;
+        return popupEditRecord;
     }
 
     private Runnable selectionUpdate = () -> {
@@ -314,6 +346,7 @@ public class MainWindow extends JFrame {
             //Assembling body components
             add(spTable,BorderLayout.CENTER);
             add(inputPanel,BorderLayout.SOUTH);
+
 
         }
     }

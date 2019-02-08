@@ -105,7 +105,7 @@ public class EntryProfile implements Serializable {
         discounts = new ArrayList<>();
     }
 
-    protected EntryProfile(EntryProfile other){
+    public EntryProfile(EntryProfile other){
         //Reference / primitives
         name = other.name;
         codeMask = other.codeMask;
@@ -139,10 +139,8 @@ public class EntryProfile implements Serializable {
         if(edit == null)
             edit = new EntryProfile();
         ProfileWizard wizard = edit.getWizardEditor(main);
-        wizard.setVisible(true);
-        while (true)
-            if(!wizard.isVisible()) break;
-        return wizard.getProfile();
+        int res = wizard.open();
+        return res == JFileChooser.APPROVE_OPTION ? wizard.getProfile() : null;
     }
 
     private static EntryProfile parseProfileFromJson(JSONObject jsonProfile) {
@@ -238,7 +236,7 @@ public class EntryProfile implements Serializable {
         private int result;
 
         ProfileWizard(JFrame parent){
-            super(parent,"Profil szerkesztése",true);
+            super(parent,EntryProfile.this.getClassId()/*"Profil szerkesztése"*/,true);
             setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             addWindowListener(new WindowAdapter() {
                 @Override
@@ -392,5 +390,10 @@ public class EntryProfile implements Serializable {
         EntryProfile getProfile() {
             return EntryProfile.this;
         }
+    }
+
+    @Deprecated
+    public String getClassId() {
+        return super.toString();
     }
 }

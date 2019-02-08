@@ -102,7 +102,7 @@ public class AppController implements ProgramStateListener {
         if (newProfile != null && newProfile != activeProfile) {
             activeProfile = newProfile;
             profiles.setSelection(activeProfile);
-            System.out.println("[INFO]: Profile selected: " + activeProfile);
+            System.out.println("[INFO]: Profile selected: " + activeProfile.getClassId());
             JOptionPane.showMessageDialog(null,"Profil aktiválva:\n" + activeProfile,"Kész",JOptionPane.INFORMATION_MESSAGE);
             //TODO: Profile change requires restart...
             model.clearData();
@@ -204,7 +204,9 @@ public class AppController implements ProgramStateListener {
 
     public void editProfile(JFrame main) {
         menuOpen = true;
-        EntryProfile editedProfile = EntryProfile.createProfileFromWizard(main,activeProfile);
+        EntryProfile editedProfile = EntryProfile.createProfileFromWizard(main,new EntryProfile(activeProfile));
+        if(editedProfile != null)
+            System.out.println("Returned with: " +editedProfile.getClassId() + " N: ("+editedProfile+")");
         menuOpen = false;
         //TODO: load new profile
     }
