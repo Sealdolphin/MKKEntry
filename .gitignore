@@ -4,7 +4,9 @@
 /.idea
 *.iml
 
-*.*
+*.mkk
+*/temp
+*/META-INF
 
 #need .java and .jar
 !*.java

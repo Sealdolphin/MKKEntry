@@ -1,0 +1,50 @@
+{
+  "ui" : {
+      "WINDOW_TITLE": "MKK Beléptető rendszer",
+      "PORT_ACTIVE" : "Aktív",
+      "PORT_INACTIVE" : "Inaktív",
+      "PORT_BTN" : "Frissíts",
+      "DISCOUNT_BTN" : "Kedvezmények",
+      "READER_LB" : "Vonalkód olvasó",
+      "SENDCODE_BTN" : "Küldés",
+      "TOGGLECODE_BTN_1" : "Belépő kódot írsz",
+      "TOGGLECODE_BTN_2" : "Teljes kódot írsz",
+      "BOTTOM_INFO_DEF" : "Belépésre vár",
+      "BOTTOM_INFO_DEL" : "Törlésre vár",
+      "BOTTOM_INFO_MOD" : "Kilépésre vár",
+      "PROFILE_LB" : "PROFIL",
+      "CHOOSE_ONE" : "Válassz egyet",
+      "PROFILE_FROM_JSON" : "Profilok importálása JSON fájlból",
+      "PROFILE_FROM_WIZARD" : "Új profil létrehozása a varázslóval"
+
+  },
+  "msg" : {
+      "DONE" : "Kész",
+      "PROFILE_CHANGED" : "Profil váltás megtörtént.",
+      "WARNING" : "Figyelem",
+      "CANCEL_ACTION" : "Biztosan megszakítod a műveletet?",
+      "CONFIRM_ACTION" : "Biztosan folytatod a műveletet?"
+  },
+  "error" : {
+      "HEADER" : "Hiba",
+      "NOT_IMPLEMENTED" : "Ez a funkció még nincs implementálva!",
+      "NO_PROFILE" : "Nincs alapméretezett profil létrehozva.",
+      "IMPORT_PARSE_FAIL" : "Értelmezési hiba történt az importálás közben.",
+      "POSITION" : "Hiba pozicíója",
+      "DETAILS" : "Hiba részletei",
+      "FILE_MISSING" : "A fájl nem található",
+      "IO_FAIL" : "Nem várt olvasási hiba",
+      "FILE_EMPTY" : "A megnyitott fájl üres",
+      "VERSION_MISMATCH" : "A fálj verziója elavult, vagy nem kompatibilis.\nA mostani UI verzió: ",
+      "PROFILE_DATA_PARSE" : "Az értelmezés során az egyik tulajdonság formátuma nem bizonyult megfelelőnek.",
+      "CODE_MISMATCH" : "Ez a kód nem megfelelő formátumú.",
+      "USER_ABORT" : "A felhasználó megszakította a műveletet.",
+      "L&F_ERR" : "Nem található a rendszer által használt kinézet.\nAz alkalmazás ezért a Java kinézetet fogja használni.",
+      "CLOSING" : "Az alkalmazás nem tudott megfelelően bezáródni",
+      "START" : "Az alkalmazás nem tudott megfelelően elindulni",
+      "DUPLICATE" : "Ez a vendég már egyszer belépett",
+      "NO_MATCH" : "Ez a vendég még nem lépett be",
+      "NO_SELECTION" : "Előszőr jelölj ki, vagy léptess be egy vendéget!"
+  },
+  "version" : "v1.2"
+}

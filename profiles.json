@@ -1,0 +1,83 @@
+{
+  "profiles" : [
+    {
+      "name" : "PárLépés",
+      "mask" : "[AB][0-9]{3}[^0-9]",
+      "commands" : {
+        "default" : "PLT-FE-",
+        "leave": "LEAVE_GUEST",
+        "delete": "DELETE_GUEST"
+      },
+      "discounts" : [
+        {
+          "name" : "Segítő",
+          "imgPath" : "Barcodes\\helpSale.png",
+          "icon" : "Icons\\DIS_HELP.png",
+          "label" : "Segített egy órát",
+          "meta" : "HELP_SALE",
+          "discount" : 1000
+        },
+        {
+          "name" : "Büfé",
+          "imgPath" : "Barcodes\\foodSale.png",
+          "icon" : "Icons\\DIS_MONEY.png",
+          "label" : "Hozzájárult az agapéhoz",
+          "meta" : "FOOD_SALE",
+          "discount" : -500
+        }
+      ],
+      "tickets" : [
+        {
+          "name" : "Elővételes",
+          "price" : 1800,
+          "fee" : false
+        },
+        {
+          "name" : "Helyszíni",
+          "price" : 2200,
+          "fee" : true
+        },
+        {
+          "name" : "Szervező",
+          "price" : 0,
+          "fee" : true
+        }
+      ],
+      "defaultType" : "Helyszíni"
+    },
+    {
+      "name" : "MKK",
+      "mask" : "[0-9]{4}",
+      "commands" : {
+        "default" : "MKK",
+        "leave" : "GL",
+        "delete" : "MOD"
+      },
+      "discounts" : [
+        {
+          "name" : "Büfé",
+          "imgPath" : "Barcodes\\foodSale.png",
+          "label" : "Hozott sütit, vagy üdítőt",
+          "icon" : "Icons\\DIS_PIE.png",
+          "meta" : "FOOD_SALE",
+          "discount" : 500
+        }
+      ],
+      "tickets" : [
+        {
+          "name" : "Helyszíni",
+          "price" : 3500,
+          "fee" : true
+        },
+        {
+          "name" : "VIP",
+          "price" : 0,
+          "fee" : true
+        }
+      ],
+      "defaultType" : "Helyszíni"
+    }
+  ],
+  "active" : "",
+  "version" : "v1.2"
+}

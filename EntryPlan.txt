@@ -1,0 +1,41 @@
+Entry:
+  has unique ID: String? (Barcode)
+  has a name (optional)
+  has an entryStatus (isEntered or not)
+  has a ticket-type (got at entry, or based)
+  
+EntryController:
+  Handles the default Commands.
+  Commands can be updated! (Changed by hand, also can scan code)* GUI helps with that
+  Handles entry and entry database
+  DB is a List of Entries.. can be updated from file, also can be exported
+  
+  
+  
+Commands are specific ID-s (barcodes)
+  READ_CODE = "": reads the code, and if its in the database, enters the guest
+  ENTRY_FULL = "": enters the guest (custom id generated afterwards, also counts as READ_CODE) with a full-prize ticket
+  
+  LEAVE = "": changes guest status to left (code read afterwards)
+  DISCOUNT_TYPE_1 = "": changes the ticket price with the discount (CODE READ BEFOREHAND!!)
+  DISCOUNT_TYPE_2 = "": changes the ticket price with the discount...
+  
+How it works:
+SCENARIO 1 (Online purchase)
+  1: Guest purchases a ticket online
+  2: We register purchase to the database
+  3: Guest receives a custom ticket / purchase ID
+  3b: in case the guest has more tickets, than receives multiple different IDs
+  4: Guest enters the gate gets his ticket scanned...?
+  5: Program updates guest status (Entered, if was not, error/warning otherwise)
+  
+SCENARIO 2 (Offline purchase)
+  1: Guest enters the gate
+  2: We scan a default price ticket - it generates a custom ID
+  3: If Guest has access to discount, we grant them
+  
+  
+ ----
+ 
+ 
+ 
