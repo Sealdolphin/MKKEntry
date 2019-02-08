@@ -218,6 +218,10 @@ public class EntryProfile implements Serializable {
         return name;
     }
 
+    public Object[] getDiscounts(){
+        return discounts.toArray();
+    }
+
     public Entry generateNewEntry(String id) {
         return new Entry(id,null,defaultType);
     }

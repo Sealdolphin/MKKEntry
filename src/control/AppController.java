@@ -86,6 +86,35 @@ public class AppController implements ProgramStateListener {
         return activeProfile.createDiscountMenu();
     }
 
+    /**
+     * A user can execute a list operation on a record
+     * @param flag the operation flag (Enter, Leave or Delete)
+     * @param entry the entry the operation is executed on. (For thread-safe measures (see: online-mode))
+     */
+    public void flagOperationOnEntry(ReadingFlag flag, Entry entry){
+        readingFlag = flag;
+        //TODO: this is not safe
+        readEntryCode(entry.get(0));
+    }
+
+    /**
+     * A user can execute a discount application or removal in a record
+     * @param entry the entry the discount is applied to or removed from. (For thread-safe measures (see: online-mode))
+     */
+    public void discountOperationOnEntry(Entry entry){
+        //Open the discount menu (JList)
+        Object[] discounts = activeProfile.getDiscounts();
+
+        Discount result = (Discount)JOptionPane.showInputDialog(null,
+                "Melyik kedvezményt módosítod?",
+                "Vendég módosítása",
+                JOptionPane.PLAIN_MESSAGE,null,discounts,discounts[0]);
+        //after selection is not null
+        if (result != null){
+            readBarCode(result.getMeta());
+        }
+    }
+
     @Override
     public String changeProfile(){
         //Choosing profile

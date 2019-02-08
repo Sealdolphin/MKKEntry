@@ -6,6 +6,7 @@ import control.AppController;
 import control.MenuHandler;
 import control.modifier.Discount;
 import data.AppData;
+import data.Entry;
 import view.DiscountRenderer;
 
 import javax.swing.*;
@@ -74,7 +75,7 @@ public class MainWindow extends JFrame {
         controller.addListener(infoPanel);
         setJMenuBar(new MainMenu().createMenu(controller));
         //Create popup-menu (TEMP)
-        JPopupMenu popupEditRecord = createPopUpMenu();
+        JPopupMenu popupEditRecord = createPopUpMenu(controller);
 
         //Create Entry Table
         entryView = new JTable(model);
@@ -107,7 +108,6 @@ public class MainWindow extends JFrame {
                 if (e.isPopupTrigger()) {
                     popupEditRecord.show(e.getComponent(), e.getX(), e.getY());
                     entryView.changeSelection(entryView.rowAtPoint(e.getPoint()),0,false,false);
-                    System.out.println("DATA SELECTED: " + model.getSelectedData());
                 }
             }
         });
@@ -126,12 +126,30 @@ public class MainWindow extends JFrame {
 
     }
 
-    private JPopupMenu createPopUpMenu() {
+    /**
+     * Creates a helper menu for the user with default record actions
+     * - Enter code
+     * - Leave code
+     * - Delete code
+     * - Modify discount
+     * @return a popup menu
+     */
+    private JPopupMenu createPopUpMenu(AppController controller) {
         JPopupMenu popupEditRecord = new JPopupMenu();
-        popupEditRecord.add(new JMenuItem("Beléptetés"));
-        popupEditRecord.add(new JMenuItem("Kiléptetés"));
-        popupEditRecord.add(new JMenuItem("Törlés"));
-        popupEditRecord.add(new JMenuItem("Kedvezmények felvétele"));;
+        JMenuItem miEnter = new JMenuItem("Beléptetés");
+        JMenuItem miLeave = new JMenuItem("Kiléptetés");
+        JMenuItem miDelete = new JMenuItem("Törlés");
+        JMenuItem miDiscounts = new JMenuItem("Kedvezmények módosítása");
+
+        miEnter.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_DEFAULT,model.getSelectedData()));
+        miLeave.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_IS_LEAVING,model.getSelectedData()));
+        miDelete.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_IS_DELETE,model.getSelectedData()));
+        miDiscounts.addActionListener(e -> controller.discountOperationOnEntry(model.getSelectedData()));
+
+        popupEditRecord.add(miEnter);
+        popupEditRecord.add(miLeave);
+        popupEditRecord.add(miDelete);
+        popupEditRecord.add(miDiscounts);
         return popupEditRecord;
     }
 
