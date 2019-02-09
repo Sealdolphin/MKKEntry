@@ -287,7 +287,7 @@ public class MainWindow extends JFrame {
 
             mi = new JMenuItem("Profil váltása");
             mi.addActionListener(e-> {
-                labelProfile.setText(controller.changeProfile());
+                labelProfile.setText(controller.changeProfile(controller.chooseProfile()));
                 initiateView(controller);
             });
             menuProfiles.add(mi);

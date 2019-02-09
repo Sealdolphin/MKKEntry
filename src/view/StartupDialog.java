@@ -50,7 +50,10 @@ public class StartupDialog {
             else if (menuResult.equals(options[0])){
                 //Creating new wizard
                 activeProfile = EntryProfile.createProfileFromWizard(null,null);
-                //menu = false;
+                if(activeProfile != null) {
+                    loadedProfiles.add(activeProfile);
+                    menu = false;
+                }
 
             } else if (menuResult.equals(options[1])){
                 //Open JSON file dialog

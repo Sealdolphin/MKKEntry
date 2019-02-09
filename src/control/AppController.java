@@ -38,7 +38,7 @@ public class AppController implements ProgramStateListener {
         profiles = pData;
         activeProfile = pData.getSelectedData();
         while(activeProfile == null)
-            changeProfile();
+            changeProfile(chooseProfile());
     }
 
     public void addListener(ReadFlagListener l){
@@ -111,30 +111,36 @@ public class AppController implements ProgramStateListener {
                 JOptionPane.PLAIN_MESSAGE,null,discounts,discounts[0]);
         //after selection is not null
         if (result != null){
+            model.setSelection(entry); //This is thread-safe...
             readBarCode(result.getMeta());
         }
     }
 
-    @Override
-    public String changeProfile(){
+    public EntryProfile chooseProfile(){
         //Choosing profile
         Object[] profileObjs = new Object[profiles.getDataSize()];
         for (int i = 0; i < profileObjs.length; i++) {
             profileObjs[i] = profiles.getDataByIndex(i);
         }
-        EntryProfile newProfile = (EntryProfile) JOptionPane.showInputDialog(
+        return (EntryProfile) JOptionPane.showInputDialog(
                 null,
                 "Válassz egyet",
                 "Aktív profil kiválasztása",
                 JOptionPane.QUESTION_MESSAGE, null,
                 profileObjs, profileObjs[0]);
+    }
+
+    @Override
+    public String changeProfile(EntryProfile newProfile){
         if (newProfile != null && newProfile != activeProfile) {
-            activeProfile = newProfile;
-            profiles.setSelection(activeProfile);
-            System.out.println("[INFO]: Profile selected: " + activeProfile);
-            JOptionPane.showMessageDialog(null,"Profil aktiválva:\n" + activeProfile,"Kész",JOptionPane.INFORMATION_MESSAGE);
-            //TODO: Profile change requires restart...
-            model.clearData();
+            if(JOptionPane.showConfirmDialog(null,"Biztos?","BRAH",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+                activeProfile = newProfile;
+                profiles.setSelection(activeProfile);
+                System.out.println("[INFO]: Profile selected: " + activeProfile);
+                JOptionPane.showMessageDialog(null, "Profil aktiválva:\n" + activeProfile, "Kész", JOptionPane.INFORMATION_MESSAGE);
+                //TODO: Profile change requires restart...
+                model.clearData();
+            }
         }
         return getProfileName();
     }
@@ -238,7 +244,7 @@ public class AppController implements ProgramStateListener {
         if(editedProfile != null)
             System.out.println("Returned with: " + editedProfile.hashCode() + " N: ("+editedProfile+")");
         menuOpen = false;
-        //TODO: load new profile
+        changeProfile(editedProfile);
     }
 
     /**

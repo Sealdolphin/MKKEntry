@@ -116,6 +116,7 @@ public class EntryProfile implements Serializable {
     private EntryProfile() {
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
+        commandCodes = new HashMap<>();
     }
 
     public EntryProfile(EntryProfile other){
@@ -125,7 +126,6 @@ public class EntryProfile implements Serializable {
         entryLimit = other.entryLimit;
         autoDataHandling = other.autoDataHandling;
         defaultType = other.defaultType;
-        //TODO: exact copying
         commandCodes = other.commandCodes;
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
@@ -156,7 +156,7 @@ public class EntryProfile implements Serializable {
             edit = new EntryProfile();
         ProfileWizard wizard = edit.getWizardEditor(main);
         int res = wizard.open();
-        return res == JFileChooser.APPROVE_OPTION ? wizard.getProfile() : null;
+        return res == 0 ? edit : null;
     }
 
     private static EntryProfile parseProfileFromJson(JSONObject jsonProfile) {
@@ -403,7 +403,7 @@ public class EntryProfile implements Serializable {
             //TODO: need serious rework....
             switch (e.getActionCommand()){
                 case "Cancel":
-                    result = 1;
+                    result = -1;
                     System.out.println("EDITING CANCELLED");
                     dispose();
                     break;
@@ -417,7 +417,6 @@ public class EntryProfile implements Serializable {
                 case "Accept":
                     if(validateProfile()) {
                         result = 0;
-                        ((JButton)e.getSource()).setEnabled(false);
                     }
                     break;
             }
@@ -433,17 +432,22 @@ public class EntryProfile implements Serializable {
             if(commandInvalid) JOptionPane.showMessageDialog(null,"A parancsok nem lehetnek egyformák",uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
             if(noTicket) JOptionPane.showMessageDialog(null,"Vegyél fel legalább egy jegytípust!",uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
 
+            //Setting variables
+            name = tfName.getText();
+            codeMask = tfMask.getText();
+            commandCodes.clear();
+            commandCodes.put(tfCommandDefault.getText(),FL_DEFAULT);
+            commandCodes.put(tfCommandLeave.getText(),FL_IS_LEAVING);
+            commandCodes.put(tfCommandDelete.getText(),FL_IS_DELETE);
+
             return !(empty || commandInvalid || noTicket);
         }
 
         private int open(){
             setVisible(true);
             while(true)
-                if(!isVisible()) return result;
-        }
-
-        EntryProfile getProfile() {
-            return EntryProfile.this;
+                if(!isVisible()) break;
+            return result;
         }
     }
 

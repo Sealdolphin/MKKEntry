@@ -3,6 +3,7 @@ package control;
 import control.utility.BarcodeListener;
 import control.utility.file.EntryFilter;
 import control.utility.file.TombolaFilter;
+import data.EntryProfile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,7 +21,7 @@ public interface ProgramStateListener extends BarcodeListener {
      * An event for profile change
      * @return the name of the new active profile
      */
-    String changeProfile();
+    String changeProfile(EntryProfile newProfile);
 
     void exportList(PrintWriter writer, EntryFilter filter);
 
