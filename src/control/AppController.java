@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static control.Application.uh;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 
 public class AppController implements ProgramStateListener {
@@ -104,6 +105,10 @@ public class AppController implements ProgramStateListener {
     public void discountOperationOnEntry(Entry entry){
         //Open the discount menu (JList)
         Object[] discounts = activeProfile.getDiscounts();
+        if(discounts.length == 0){
+            JOptionPane.showMessageDialog(null,uh.getUIStr("ERR","NO_DISCOUNT"),uh.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
+            return;
+        }
 
         Discount result = (Discount)JOptionPane.showInputDialog(null,
                 "Melyik kedvezményt módosítod?",
@@ -231,7 +236,7 @@ public class AppController implements ProgramStateListener {
     }
 
     public void readEntryCode(String text) {
-        readBarCode(activeProfile.startCode + text);
+        readBarCode(activeProfile.getEntryCode() + text);
     }
 
     public void editProfile(JFrame main, JLabel label) {
@@ -239,13 +244,13 @@ public class AppController implements ProgramStateListener {
         EntryProfile editedProfile = EntryProfile.createProfileFromWizard(main,new EntryProfile(activeProfile));
         if(editedProfile != null) {
             //Remove active profile
-            if (JOptionPane.showConfirmDialog(null, uh.getUIStr("MSG","CONFIRM_ACTION"), uh.getUIStr("MSG","WARNING"),
+            if (JOptionPane.showConfirmDialog(null, "Ezzel törölsz minden adatot a rendszerből\n" + uh.getUIStr("MSG","CONFIRM_ACTION"), uh.getUIStr("MSG","WARNING"),
                     JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
                 try {
                     profiles.replaceData(activeProfile,editedProfile);
                     label.setText(changeProfile(editedProfile));
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(null,"HIBA: " + ex.getMessage(),uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null,"HIBA: " + ex.getMessage(),uh.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
                 }
             }
         }

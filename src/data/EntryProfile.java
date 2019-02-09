@@ -21,11 +21,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import javax.swing.*;
 
@@ -68,7 +64,6 @@ public class EntryProfile implements Serializable {
         public String toString(){ return name; }
     }
 
-    public String startCode;
     /**
      * A beléptetési profil neve
      */
@@ -187,7 +182,6 @@ public class EntryProfile implements Serializable {
         for (AppController.ReadingFlag commandFlag : commandJsonKeys) {
             String key = ((JSONObject) jsonProfile.get("commands")).get(commandFlag.getMeta()).toString();
             commands.put(key, commandFlag);
-            if(commandFlag.equals(FL_DEFAULT)) profile.startCode = key;
         }
         profile.commandCodes = commands;
 
@@ -220,6 +214,7 @@ public class EntryProfile implements Serializable {
 
     public String validateCode(String code) throws IOException{
         //Checking constraints
+        String startCode = getEntryCode();
         String validID = code.replaceAll(startCode,"").toUpperCase().trim();
         if (!(validID.matches(codeMask) && code.contains(startCode))) throw new IOException(uh.getUIStr("ERR","CODE_MISMATCH"));
         return validID;
@@ -227,6 +222,10 @@ public class EntryProfile implements Serializable {
 
     public AppController.ReadingFlag validateCommand(String code) {
         return commandCodes.get(code.toUpperCase());
+    }
+
+    public String getEntryCode(){
+        return commandCodes.entrySet().stream().filter(c -> c.getValue().equals(FL_DEFAULT)).map(Map.Entry::getKey).findAny().orElse("");
     }
 
     @Override
@@ -253,6 +252,7 @@ public class EntryProfile implements Serializable {
         private JTextField tfCommandDelete;
         private JComboBox<EntryLimit> cbLimit;
         private JSpinner spEntryLimit;
+        private JComboBox<Object> cbTypes;
         private int result;
 
         ProfileWizard(JFrame parent){
@@ -275,6 +275,11 @@ public class EntryProfile implements Serializable {
             mainPanel.setMnemonicAt(0, KeyEvent.VK_1);
             mainPanel.setMnemonicAt(1, KeyEvent.VK_2);
             mainPanel.setMnemonicAt(2, KeyEvent.VK_3);
+            mainPanel.addChangeListener(e -> {
+                cbTypes.removeAllItems();
+                ticketTypes.forEach(t -> cbTypes.addItem(t));
+                cbTypes.setSelectedItem(defaultType);
+            });
             //Assembling wizard panel
             add(mainPanel,CENTER);
             add(createBottomPanel(),SOUTH);
@@ -301,6 +306,8 @@ public class EntryProfile implements Serializable {
             spEntryLimit.setEditor(new JSpinner.DefaultEditor(spEntryLimit));
             if (entryLimit >= 2) { spEntryLimit.setValue(entryLimit);
             } else { cbLimit.setSelectedIndex(entryLimit); }
+            cbTypes = new JComboBox<>(ticketTypes.toArray());
+            cbTypes.addItemListener(e -> defaultType = (TicketType) cbTypes.getSelectedItem());
 
         }
 
@@ -327,16 +334,18 @@ public class EntryProfile implements Serializable {
             panelMain.add(tfCommandDelete, setConstraints(1,7,2,1));
 
             //Settings and behaviours
+            panelMain.add(new JLabel("Alapméretezett jegytípus: "), setConstraints(0,8,1,1));
+            panelMain.add(cbTypes, setConstraints(1,8,2,1));
 
             cbLimit.addItemListener(e -> spEntryLimit.setEnabled(Objects.equals(cbLimit.getSelectedItem(), EntryLimit.CUSTOM)));
             spEntryLimit.setEnabled(Objects.equals(cbLimit.getSelectedItem(), EntryLimit.CUSTOM));
 
-            panelMain.add(new JLabel("Belépések sázma:"), setConstraints(0,8,1,1));
-            panelMain.add(cbLimit, setConstraints(1,8,1,1));
-            panelMain.add(spEntryLimit, setConstraints(2,8,1,1));
+            panelMain.add(new JLabel("Belépések sázma:"), setConstraints(0,9,1,1));
+            panelMain.add(cbLimit, setConstraints(1,9,1,1));
+            panelMain.add(spEntryLimit, setConstraints(2,9,1,1));
 
-            panelMain.add(new JCheckBox("Duplikációk automatikus eldobása"), setConstraints(0,9,2,1));
-            panelMain.add(new JCheckBox("Ismeretlen jegytípusok automatikus eldobása"), setConstraints(0,10,2,1));
+            panelMain.add(new JCheckBox("Duplikációk automatikus eldobása"), setConstraints(0,10,2,1));
+            panelMain.add(new JCheckBox("Ismeretlen jegytípusok automatikus eldobása"), setConstraints(0,11,2,1));
 
             return panelMain;
         }
@@ -361,7 +370,6 @@ public class EntryProfile implements Serializable {
                 //Create respective wizard
                 editor.createNew(objectList);
                 list.setListData(objectList.toArray());
-
             });
             btnRemove.addActionListener(e -> {
                 //Ask for removal
@@ -439,6 +447,7 @@ public class EntryProfile implements Serializable {
             commandCodes.put(tfCommandDefault.getText(),FL_DEFAULT);
             commandCodes.put(tfCommandLeave.getText(),FL_IS_LEAVING);
             commandCodes.put(tfCommandDelete.getText(),FL_IS_DELETE);
+            defaultType = (TicketType) cbTypes.getSelectedItem();
 
             return !(empty || commandInvalid || noTicket);
         }

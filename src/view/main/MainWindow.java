@@ -173,6 +173,7 @@ public class MainWindow extends JFrame {
         if(sidePanel != null) remove(sidePanel);
         sidePanel = controller.getSidePanel();
         selectionUpdate.run();
+        revalidate();
     }
 
     private class Header extends JPanel{
@@ -287,7 +288,10 @@ public class MainWindow extends JFrame {
             });
             menuProfiles.add(mi);
             mi = new JMenuItem("Profil szerkesztése");
-            mi.addActionListener(e -> controller.editProfile(MainWindow.this,labelProfile));
+            mi.addActionListener(e -> {
+                controller.editProfile(MainWindow.this,labelProfile);
+                initiateView(controller);
+            });
             menuProfiles.add(mi);
 
             mi = new JMenuItem("Profil váltása");

@@ -45,6 +45,7 @@
       "DUPLICATE" : "Ez a vendég már egyszer belépett",
       "NO_MATCH" : "Ez a vendég még nem lépett be",
       "NO_SELECTION" : "Előszőr jelölj ki, vagy léptess be egy vendéget!",
+      "NO_DISCOUNT" : "Ehhez a profilhoz nem tartozik kedvezmény",
       "PROFILE_CONFLICT" : "Ilyen nevű profil már létezik!"
   },
   "version" : "v1.2"
