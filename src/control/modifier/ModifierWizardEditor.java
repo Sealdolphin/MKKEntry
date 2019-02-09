@@ -8,14 +8,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-public abstract class ModifierWizardEditor<T extends TicketModifier> extends MouseAdapter{
+public abstract class ModifierWizardEditor<T extends Modifier> extends MouseAdapter{
 
     private Window parent;
-    private EntryProfile profile;
 
-    ModifierWizardEditor(Window parent, EntryProfile profile){
+    ModifierWizardEditor(Window parent){
         this.parent = parent;
-        this.profile = profile;
     }
 
     @Override
@@ -28,11 +26,13 @@ public abstract class ModifierWizardEditor<T extends TicketModifier> extends Mou
             if (r != null && r.contains(evt.getPoint())) {
                 //noinspection unchecked
                 T selectedType = (T) list.getSelectedValue();
-                JDialog wizard = selectedType.getTypeWizard(parent, profile, list.getSelectedIndex());
+                JDialog wizard = selectedType.getTypeWizard(parent);
                 wizard.setVisible(true);
             }
         }
     }
 
     public abstract void removeFrom(List<T> objectList, T selectedValue);
+
+    public abstract void createNew(List<T> objectList);
 }

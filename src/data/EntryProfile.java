@@ -29,7 +29,7 @@ import java.util.Objects;
 
 import javax.swing.*;
 
-import control.modifier.TicketModifier;
+import control.modifier.Modifier;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -270,8 +270,8 @@ public class EntryProfile implements Serializable {
             //Adding tabs
             JTabbedPane mainPanel = new JTabbedPane();
             mainPanel.addTab("Általános",null, createMainPanel(),"A profil általános beállításai");
-            mainPanel.addTab("Jegytípusok",null, createListTab(ticketTypes,new TicketType.TicketTypeListener(this,EntryProfile.this)),"A profilhoz tartozó jegytípusok");
-            mainPanel.addTab("Kedvezmények",null, createListTab(discounts, new Discount.DiscountListener(this,EntryProfile.this)),"A profilhoz tartozó kedvezmények");
+            mainPanel.addTab("Jegytípusok",null, createListTab(ticketTypes,new TicketType.TicketTypeListener(this)),"A profilhoz tartozó jegytípusok");
+            mainPanel.addTab("Kedvezmények",null, createListTab(discounts, new Discount.DiscountListener(this)),"A profilhoz tartozó kedvezmények");
             mainPanel.setMnemonicAt(0, KeyEvent.VK_1);
             mainPanel.setMnemonicAt(1, KeyEvent.VK_2);
             mainPanel.setMnemonicAt(2, KeyEvent.VK_3);
@@ -341,7 +341,7 @@ public class EntryProfile implements Serializable {
             return panelMain;
         }
 
-        private <T extends TicketModifier> JPanel createListTab(List<T> objectList, ModifierWizardEditor<T> editor) {
+        private <T extends Modifier> JPanel createListTab(List<T> objectList, ModifierWizardEditor<T> editor) {
             JPanel panelList = new JPanel();
             panelList.setLayout(new BorderLayout());
 
@@ -358,13 +358,21 @@ public class EntryProfile implements Serializable {
             panelOperations.add(btnAdd);
             panelOperations.add(btnRemove);
             btnAdd.addActionListener(e ->{
-                
+                //Create respective wizard
+                editor.createNew(objectList);
+                list.setListData(objectList.toArray());
+
             });
             btnRemove.addActionListener(e -> {
-                //They will be called in their respected place no worries :)
-                //noinspection unchecked
-                editor.removeFrom(objectList, (T) list.getModel().getElementAt(list.getSelectedIndex()));
-                list.setListData(objectList.toArray());
+                //Ask for removal
+                int res = JOptionPane.showConfirmDialog(null,"Biztos eltávolítod a következőt a listából: " + list.getModel().getElementAt(list.getSelectedIndex()) + "?"
+                        ,uh.getUIStr("MSG","WARNING"),JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+                if(res == JOptionPane.YES_OPTION) {
+                    //They will be called in their respected place no worries :)
+                    //noinspection unchecked
+                    editor.removeFrom(objectList, (T) list.getModel().getElementAt(list.getSelectedIndex()));
+                    list.setListData(objectList.toArray());
+                }
             });
 
             

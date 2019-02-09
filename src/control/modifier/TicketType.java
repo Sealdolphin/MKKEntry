@@ -11,7 +11,7 @@ import java.util.List;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
-public class TicketType implements Serializable, TicketModifier {
+public class TicketType implements Serializable, Modifier {
 
     private String name;
     private int price;
@@ -74,18 +74,28 @@ public class TicketType implements Serializable, TicketModifier {
     }
 
     @Override
-    public JDialog getTypeWizard(Window parent, EntryProfile profile, int index) {
-        return new TicketTypeWizard(parent,profile,index);
+    public ModifierDialog getTypeWizard(Window parent) {
+        return new TicketTypeWizard(parent);
     }
 
     public static class TicketTypeListener extends ModifierWizardEditor<TicketType>{
-        public TicketTypeListener(Window parent, EntryProfile profile) {
-            super(parent, profile);
+        public TicketTypeListener(Window parent) {
+            super(parent);
         }
 
         @Override
         public void removeFrom(List<TicketType> objectList, TicketType selectedValue) {
             objectList.remove(selectedValue);
+        }
+
+        @Override
+        public void createNew(List<TicketType> objectList) {
+            TicketType newType = new TicketType("",0,false);
+            ModifierDialog wizard = newType.getTypeWizard(null);
+            int result = wizard.open();
+            if(result == 0){
+                objectList.add(newType);
+            }
         }
 
     }
@@ -96,8 +106,8 @@ public class TicketType implements Serializable, TicketModifier {
         private JSpinner spPrice = new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,1));
         private JCheckBox cbHasFee = new JCheckBox("A jegytípust számon tartódik a kasszában is");
 
-        TicketTypeWizard(Window parent, EntryProfile profile, int index) {
-            super(parent,profile,index,"Jegytípus szerkesztése");
+        TicketTypeWizard(Window parent) {
+            super(parent,"Jegytípus szerkesztése");
             body.setLayout(new GridBagLayout());
 
             //Set values
@@ -121,6 +131,7 @@ public class TicketType implements Serializable, TicketModifier {
                 name = tfName.getText();
                 price = Integer.parseInt(spPrice.getValue().toString());
                 hasFee = cbHasFee.isSelected();
+                result = 0;
                 //Close dialog
                 dispose();
             } else {

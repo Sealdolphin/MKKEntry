@@ -1,7 +1,5 @@
 package control.modifier;
 
-import data.EntryProfile;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,6 +7,7 @@ public abstract class ModifierDialog extends JDialog {
 
     JPanel body;
     JButton btnSave;
+    int result = -1;
 
     public static GridBagConstraints setConstraints(int x, int y, int w, int h){
         GridBagConstraints constraints = new GridBagConstraints();
@@ -20,7 +19,7 @@ public abstract class ModifierDialog extends JDialog {
         return constraints;
     }
 
-    ModifierDialog(Window parent, EntryProfile profile, int index, String strTitle){
+    ModifierDialog(Window parent, String strTitle){
         super(parent,strTitle,ModalityType.APPLICATION_MODAL);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -45,4 +44,10 @@ public abstract class ModifierDialog extends JDialog {
         setLocationRelativeTo(parent);
     }
 
+    int open(){
+        setVisible(true);
+        while(true)
+            if(!isVisible()) break;
+        return result;
+    }
 }

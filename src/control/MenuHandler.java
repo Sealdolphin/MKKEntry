@@ -9,7 +9,7 @@ import static control.Application.uh;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 //
-//import Control.TicketModifier.TicketType;
+//import Control.Modifier.TicketType;
 //import Control.Utility.EntryFilter;
 //import Window.ProgramStateListener;
 //

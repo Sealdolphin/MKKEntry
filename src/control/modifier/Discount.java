@@ -16,7 +16,7 @@ import java.util.List;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
-public class Discount implements Serializable, TicketModifier {
+public class Discount implements Serializable, Modifier {
 
     private static final String basicIcon = "Icons"+ File.separator +"BasicIcon.png";
     private String name;
@@ -64,10 +64,11 @@ public class Discount implements Serializable, TicketModifier {
         return new Discount(name,image,icon,label,meta,price);
     }
 
-    public static JDialog createDiscountFromWizard(Frame parent, EntryProfile profile){
-        Discount discount = new Discount("",null,basicIcon,"","",0);
-        return discount.getTypeWizard(parent, profile,-1);
-    }
+//    public static JDialog createDiscountFromWizard(Frame parent){
+//        Discount discount = new Discount("",null,basicIcon,"","",0);
+//        return discount.getTypeWizard(parent);
+//    }
+
 
     /**
      * Creates a panel, where the Discount's data is visualized to the user.
@@ -111,20 +112,30 @@ public class Discount implements Serializable, TicketModifier {
     }
 
     @Override
-    public JDialog getTypeWizard(Window parent, EntryProfile profile, int index) {
-        return new DiscountWizard(parent,profile,index);
+    public ModifierDialog getTypeWizard(Window parent) {
+        return new DiscountWizard(parent);
     }
 
     public static class DiscountListener extends ModifierWizardEditor<Discount>{
 
 
-        public DiscountListener(Window parent, EntryProfile profile) {
-            super(parent, profile);
+        public DiscountListener(Window parent) {
+            super(parent);
         }
 
         @Override
         public void removeFrom(List<Discount> objectList, Discount selectedValue) {
             objectList.remove(selectedValue);
+        }
+
+        @Override
+        public void createNew(List<Discount> objectList) {
+            Discount newDiscount = new Discount("",null,basicIcon,"","",0);
+            ModifierDialog wizard = newDiscount.getTypeWizard(null);
+            int result = wizard.open();
+            if(result == 0){
+                objectList.add(newDiscount);
+            }
         }
     }
 
@@ -145,11 +156,9 @@ public class Discount implements Serializable, TicketModifier {
         /**
          * Default constructor.
          * It creates a separate window for the user to modify the values.
-         * @param profile the EntryProfile which writes back the modified data
-         * @param index the index of the Discount in the profile's list (-1 for new discounts)
          */
-        DiscountWizard(Window parent, EntryProfile profile,int index){
-            super(parent,profile,index,"Kedvezmény beállítása");
+        DiscountWizard(Window parent){
+            super(parent,"Kedvezmény beállítása");
 
             body.setLayout(new GridBagLayout());
             //Set textfield value
@@ -199,6 +208,7 @@ public class Discount implements Serializable, TicketModifier {
                 label = tfTooltip.getText();
                 discount = Integer.parseInt(spPrice.getValue().toString());
                 imagePath = panelImg.getPath();
+                result = 0;
                 //Close dialog
                 dispose();
             } else {
