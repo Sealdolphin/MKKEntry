@@ -129,6 +129,12 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
             lastSelectedEntry = null;
     }
 
+    @Override
+    public void replaceData(Entry oldData, Entry newData) throws IOException {
+        addData(newData);
+        removeData(oldData);
+    }
+
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         out.writeObject(entryList.toArray());
         out.writeObject(lastSelectedEntry);

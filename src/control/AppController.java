@@ -133,14 +133,11 @@ public class AppController implements ProgramStateListener {
     @Override
     public String changeProfile(EntryProfile newProfile){
         if (newProfile != null && newProfile != activeProfile) {
-            if(JOptionPane.showConfirmDialog(null,"Biztos?","BRAH",JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
-                activeProfile = newProfile;
-                profiles.setSelection(activeProfile);
-                System.out.println("[INFO]: Profile selected: " + activeProfile);
-                JOptionPane.showMessageDialog(null, "Profil aktiválva:\n" + activeProfile, "Kész", JOptionPane.INFORMATION_MESSAGE);
-                //TODO: Profile change requires restart...
-                model.clearData();
-            }
+            activeProfile = newProfile;
+            profiles.setSelection(activeProfile);
+            System.out.println("[INFO]: Profile selected: " + activeProfile);
+            JOptionPane.showMessageDialog(null, "Profil aktiválva:\n" + activeProfile, "Kész", JOptionPane.INFORMATION_MESSAGE);
+            model.clearData();
         }
         return getProfileName();
     }
@@ -237,14 +234,26 @@ public class AppController implements ProgramStateListener {
         readBarCode(activeProfile.startCode + text);
     }
 
-    public void editProfile(JFrame main) {
+    public void editProfile(JFrame main, JLabel label) {
         menuOpen = true;
-        System.out.println("Active code: " + activeProfile.hashCode());
         EntryProfile editedProfile = EntryProfile.createProfileFromWizard(main,new EntryProfile(activeProfile));
-        if(editedProfile != null)
-            System.out.println("Returned with: " + editedProfile.hashCode() + " N: ("+editedProfile+")");
+        if(editedProfile != null) {
+            //Remove active profile
+            if (JOptionPane.showConfirmDialog(null, uh.getUIStr("MSG","CONFIRM_ACTION"), uh.getUIStr("MSG","WARNING"),
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+                try {
+                    profiles.replaceData(activeProfile,editedProfile);
+                    label.setText(changeProfile(editedProfile));
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null,"HIBA: " + ex.getMessage(),uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
         menuOpen = false;
-        changeProfile(editedProfile);
+    }
+
+    public void addProfile(EntryProfile newProfile) throws IOException {
+        profiles.addData(newProfile);
     }
 
     /**

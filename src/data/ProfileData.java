@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static control.Application.uh;
+
 public class ProfileData implements DataModel<EntryProfile>, Serializable {
 
     private List<EntryProfile> profiles;
@@ -52,7 +54,9 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
     @Override
-    public void addData(EntryProfile data) {
+    public void addData(EntryProfile data) throws IOException
+    {
+        if(profiles.stream().filter(p -> p.toString().equals(data.toString())).findAny().orElse(null) != null) throw new IOException(uh.getUIStr("ERR","PROFILE_CONFLICT"));
         profiles.add(data);
     }
 
@@ -61,6 +65,16 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
         profiles.remove(data);
     }
 
+    @Override
+    public void replaceData(EntryProfile oldData, EntryProfile newData) throws IOException {
+        if(!oldData.toString().equals(newData.toString())){
+            addData(newData);
+            removeData(oldData);
+        } else {
+            removeData(oldData);
+            addData(newData);
+        }
+    }
 
 
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {

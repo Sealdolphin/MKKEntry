@@ -15,8 +15,10 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.Arrays;
 
+import static control.Application.uh;
 import static java.awt.event.KeyEvent.VK_DELETE;
 import static java.awt.event.KeyEvent.VK_ENTER;
 import static java.awt.event.KeyEvent.VK_SPACE;
@@ -276,13 +278,16 @@ public class MainWindow extends JFrame {
 
             JMenuItem mi = new JMenuItem("Új profil létrehozása");
             mi.addActionListener(e-> {
-                EntryProfile newProfile = EntryProfile.createProfileFromWizard(MainWindow.this, null);
-                System.out.println(newProfile);
-                //TODO: adding new profile to the others
+                try {
+                    EntryProfile newProfile = EntryProfile.createProfileFromWizard(MainWindow.this, null);
+                    controller.addProfile(newProfile);
+                } catch (IOException ex){
+                    JOptionPane.showMessageDialog(null,"HIBA: " + ex.getMessage(),uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+                }
             });
             menuProfiles.add(mi);
             mi = new JMenuItem("Profil szerkesztése");
-            mi.addActionListener(e -> controller.editProfile(MainWindow.this));
+            mi.addActionListener(e -> controller.editProfile(MainWindow.this,labelProfile));
             menuProfiles.add(mi);
 
             mi = new JMenuItem("Profil váltása");

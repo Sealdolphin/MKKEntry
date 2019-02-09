@@ -21,5 +21,5 @@ public interface DataModel<T> {
 
     void removeData(T data);
 
-
+    void replaceData(T oldData, T newData) throws IOException;
 }
