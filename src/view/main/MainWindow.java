@@ -91,7 +91,7 @@ public class MainWindow extends JFrame {
         //Create Entry Table
         entryView = new JTable(model);
         //Render discounts differently
-        entryView.setDefaultRenderer(Discount.class,new DiscountRenderer(16));
+        entryView.setDefaultRenderer(Discount.class,new DiscountRenderer(24));
         //For the icons
         entryView.setRowHeight(48);
         entryView.getTableHeader().setReorderingAllowed(false);
@@ -219,8 +219,8 @@ public class MainWindow extends JFrame {
             //Assembling Menus
             menuBar.add(createFileMenu(handler));
             //menuBar.add(createEditMenu(controller));
-            //menuBar.add(createChartsMenu(controller));
             menuBar.add(createProfileMenu(controller));
+            menuBar.add(createChartsMenu(controller));
 
             return menuBar;
         }
@@ -313,7 +313,11 @@ public class MainWindow extends JFrame {
          * @return the CHARTS menu
          */
         private JMenu createChartsMenu(AppController handler){
-            return new JMenu("Statisztikák");
+            JMenu menuStats = new JMenu("Statisztikák");
+            JMenuItem miStats = new JMenuItem("Statisztikák megtekintése");
+            miStats.addActionListener(e -> handler.createStatistics());
+            menuStats.add(miStats);
+            return menuStats;
         }
 
         /**

@@ -8,6 +8,7 @@ import com.fazecast.jSerialComm.SerialPort;
 import data.DataModel;
 import data.Entry;
 import data.EntryProfile;
+import view.StatisticsWindow;
 import view.main.ReadFlagListener;
 
 import javax.swing.*;
@@ -33,6 +34,7 @@ public class AppController implements ProgramStateListener {
     private List<ReadFlagListener> listenerList = new ArrayList<>();
     private ReadingFlag readingFlag = ReadingFlag.FL_DEFAULT;
     private boolean menuOpen = false;
+    private StatisticsWindow statWindow;
 
     AppController(AppData model, DataModel<EntryProfile> pData){
         this.model = model;
@@ -259,6 +261,12 @@ public class AppController implements ProgramStateListener {
 
     public void addProfile(EntryProfile newProfile) throws IOException {
         profiles.addData(newProfile);
+    }
+
+    public void createStatistics() {
+        if(statWindow == null) statWindow = new StatisticsWindow();
+        if(statWindow.isVisible()) statWindow.dispose();
+        statWindow.setVisible(true);
     }
 
     /**

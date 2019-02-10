@@ -133,7 +133,7 @@ public class Application {
 
     private void start() {
         view.setTitle(uh.getUIStr("UI","WINDOW_TITLE"));
-        view.setMinimumSize(new Dimension(640,480));
+        view.setMinimumSize(new Dimension(800,600));
         setRelativeLocationOnScreen(view, ScreenLocation.CENTER);
         view.pack();
         view.setVisible(true);
