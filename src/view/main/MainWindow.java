@@ -42,8 +42,8 @@ public class MainWindow extends JFrame {
     private boolean discountPanelStatus = false;
 
     private Runnable selectionUpdate = () -> {
-        int index = model.getSelectedIndex();
-        System.out.println("SELECTION: " + model.getSelectedData() + " at index " + index);
+        int index = entryView.convertRowIndexToView(model.getSelectedIndex());
+        System.out.println("SELECTION: " + model.getSelectedData() + " at index " + model.getSelectedIndex() + " ("+index+" in view)");
         if(index >= 0) {
             entryView.changeSelection(index, 0, false, false);
         }
@@ -99,7 +99,7 @@ public class MainWindow extends JFrame {
         //Add selection changer (for live action selecting)
         entryView.getSelectionModel().addListSelectionListener(e -> {
             if((entryView.getSelectedRow() >= 0)){
-                model.setSelection(model.getDataByIndex(entryView.getSelectedRow()));
+                model.setSelection(model.getDataByIndex(entryView.convertRowIndexToModel(entryView.getSelectedRow())));
             }
         });
         //Add right-click popup menu
