@@ -42,8 +42,14 @@ public class MainWindow extends JFrame {
     private boolean discountPanelStatus = false;
 
     private Runnable selectionUpdate = () -> {
-        int index = entryView.convertRowIndexToView(model.getSelectedIndex());
-        System.out.println("SELECTION: " + model.getSelectedData() + " at index " + model.getSelectedIndex() + " ("+index+" in view)");
+        int viewIndex = model.getSelectedIndex();
+        int index;
+        try {
+            index = entryView.convertRowIndexToView(viewIndex);
+        } catch (IndexOutOfBoundsException ex){
+            index = -1;
+        }
+        System.out.println("SELECTION: " + model.getSelectedData() + " at index " + viewIndex + " ("+index+" in view)");
         if(index >= 0) {
             entryView.changeSelection(index, 0, false, false);
         }

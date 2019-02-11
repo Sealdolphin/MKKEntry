@@ -1,6 +1,8 @@
 package control.utility.file;
 
 
+import data.Entry;
+
 public class EntryFilter extends ExtensionFilter {
 
     public EntryFilter() {
@@ -9,8 +11,9 @@ public class EntryFilter extends ExtensionFilter {
 
     private static final String separator = ",";
 
-    public void applyFilter(){
+    public String applyFilter(Entry data){
 
+        return "";
     }
 
     public String[] parseEntry(String line){

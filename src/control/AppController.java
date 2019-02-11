@@ -143,7 +143,7 @@ public class AppController implements ProgramStateListener {
             activeProfile = newProfile;
             profiles.setSelection(activeProfile);
             System.out.println("[INFO]: Profile selected: " + activeProfile);
-            JOptionPane.showMessageDialog(null, "Profil aktiválva:\n" + activeProfile, "Kész", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Profil aktiválva:\n" + activeProfile, uh.getUIStr("MSG","DONE"), JOptionPane.INFORMATION_MESSAGE);
             model.clearData();
         }
         return getProfileName();
@@ -151,22 +151,33 @@ public class AppController implements ProgramStateListener {
 
     @Override
     public void exportList(PrintWriter writer, EntryFilter filter) {
-        //TODO: needs implementation
         System.out.println("[INFO]: Exporting list...");
+        for (int i = 0; i < model.getDataSize(); i++) {
+            Entry data = model.getDataByIndex(i);
+            writer.println(filter.applyFilter(data));
+        }
+        System.out.println("[INFO]: Exporting done!");
     }
 
     @Override
     public void importList(BufferedReader reader, EntryFilter filter) throws IOException{
         System.out.println("[INFO]: Importing list...");
+        int lines = 0;
+        int alllines = 0;
         do {
             String line = reader.readLine();
             if(line == null) break; //Breaks at FIRST EMPTY LINE
+            alllines++;
             try{
                 model.addData(Entry.importEntry(filter.parseEntry(line),activeProfile));
+                lines++;
             } catch (IOException ex){
-                JOptionPane.showMessageDialog(null,ex.getMessage(),"Figyelem",JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null,ex.getMessage(),uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
             }
         } while (true);
+        System.out.println("[INFO]: Imporintg done!");
+        JOptionPane.showMessageDialog(null,uh.getUIStr("MSG","IMPORT_DONE") +
+                "\n" + lines + " rekord a " + alllines + " rekordból importálva!",uh.getUIStr("MSG","DONE"),JOptionPane.INFORMATION_MESSAGE);
 
     }
 
