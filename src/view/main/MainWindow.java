@@ -6,23 +6,19 @@ import control.AppController;
 import control.MenuHandler;
 import control.modifier.Discount;
 import data.AppData;
-import data.Entry;
 import data.EntryProfile;
 import view.DiscountRenderer;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.util.Arrays;
 
 import static control.Application.uh;
 import static java.awt.event.KeyEvent.VK_DELETE;
 import static java.awt.event.KeyEvent.VK_ENTER;
-import static java.awt.event.KeyEvent.VK_SPACE;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
 /**
@@ -164,8 +160,6 @@ public class MainWindow extends JFrame {
         popupEditRecord.add(miDiscounts);
         return popupEditRecord;
     }
-
-
 
     private void initiateView(AppController controller) {
         //Refresh side panel
@@ -386,30 +380,12 @@ public class MainWindow extends JFrame {
             inputPanel.add(checkBoxCode);
             inputPanel.add(btnSendCode);
 
-            JPanel searchBar = new JPanel();
-            searchBar.add(new JLabel("Gyorskeresés: "));
-            JTextField tfSearch = new JTextField(32);
-            searchBar.add(tfSearch);
-            TableRowSorter<AppData> sorter = new TableRowSorter<>(model);
-            entryView.setRowSorter(sorter);
-            tfSearch.addKeyListener(new KeyAdapter() {
-                @Override
-                public void keyTyped(KeyEvent e) {
-                    RowFilter<AppData, Object> rf;
-                    //If current expression doesn't parse, don't update.
-                    try {
-                        rf = RowFilter.regexFilter("(?i)" + tfSearch.getText());
-                    } catch (java.util.regex.PatternSyntaxException ex) {
-                        return;
-                    }
-                    sorter.setRowFilter(rf);
-                }
-            });
+
 
             //Assembling body components
             add(spTable,BorderLayout.CENTER);
             add(inputPanel,BorderLayout.SOUTH);
-            add(searchBar,BorderLayout.NORTH);
+            add(new QuickSearchHeader(model,entryView),BorderLayout.NORTH);
 
 
         }
