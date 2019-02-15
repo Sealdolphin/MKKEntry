@@ -8,26 +8,7 @@ import java.io.*;
 import static control.Application.uh;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
-//
-//import Control.Modifier.TicketType;
-//import Control.Utility.EntryFilter;
-//import Window.ProgramStateListener;
-//
-//import javax.swing.*;
-//import javax.swing.filechooser.FileFilter;
-//
-//import java.awt.*;
-//import java.io.*;
-//import java.text.ParseException;
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//import static Control.Utility.EntryFilter.FilterType.TOMBOLA;
-//import static Control.Utility.EntryFilter.separator;
-//import static javax.swing.JOptionPane.*;
-//import static Window.Main.uh;
-//
-//
+
 public class MenuHandler {
 
     private ProgramStateListener controller;
@@ -44,7 +25,7 @@ public class MenuHandler {
 
 
     public void exportEntries() {
-        Object[] filters = controller.filterTypes;
+        EntryFilter[] filters = controller.filterTypes;
         EntryFilter resultFilter = (EntryFilter)JOptionPane.showInputDialog(
                 new JFrame(),
                 "Válassz az exportálási lehetőségek közül:",
@@ -66,31 +47,26 @@ public class MenuHandler {
             System.out.println("Export has been cancelled by user : No file");
             return;
         }
-        try (PrintWriter exportWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fileDialog.getSelectedFile())))) {
+
+        File expFile = fileDialog.getSelectedFile();
+        if(!expFile.getName().endsWith(".txt")) {
+            String newname = expFile.getPath() + ".txt";
+            expFile = new File(newname);
+        }
+
+
+        try (PrintWriter exportWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(expFile)))) {
             controller.exportList(exportWriter, resultFilter);
+            JOptionPane.showMessageDialog(null,uh.getUIStr("MSG","EXPORT_DONE"),uh.getUIStr("MSG","DONE"),JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, e.getMessage(), uh.getUIStr("ERR", "HEADER"), ERROR_MESSAGE);
         }
 
     }
-//
-//    public void renewState() {
-//        if(!programState) {
-//            String question = "A munkád nincs még elmentve\n" +
-//                    "és ha továbblépsz törlésre kerül.\n" +
-//                    uh.getUIStr("MSG","CONFIRM_ACTION");
-//            if (ConfirmAction(question) != YES_OPTION) return;
-//        }
-//        listener.renewState();
-//    }
-//
-//    public void loadState() {
-//
-//    }
-//
+
     public void importEntries(){
-        EntryFilter importFilter = new EntryFilter();
+        EntryFilter importFilter = new EntryFilter("Dummy",null);
         fileDialog.setDialogTitle("Lista importálása");
         fileDialog.setApproveButtonText("Import");
         fileDialog.resetChoosableFileFilters();

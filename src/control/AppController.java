@@ -22,6 +22,8 @@ import java.util.List;
 
 import static control.Application.uh;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.OK_OPTION;
+import static javax.swing.JOptionPane.WARNING_MESSAGE;
 
 
 public class AppController implements ProgramStateListener {
@@ -154,7 +156,7 @@ public class AppController implements ProgramStateListener {
         System.out.println("[INFO]: Exporting list...");
         for (int i = 0; i < model.getDataSize(); i++) {
             Entry data = model.getDataByIndex(i);
-            writer.println(filter.applyFilter(data));
+            writer.println(data.applyFilter(filter));
         }
         System.out.println("[INFO]: Exporting done!");
     }
@@ -229,7 +231,8 @@ public class AppController implements ProgramStateListener {
                     entry.Enter();
                     break;
                 case FL_IS_DELETE:
-                    model.removeData(model.getDataById(entryID));
+                    if(JOptionPane.showConfirmDialog(null,uh.getUIStr("MSG","CONFIRM"),uh.getUIStr("MSG","DELETE"), JOptionPane.OK_CANCEL_OPTION,WARNING_MESSAGE) == OK_OPTION)
+                        model.removeData(model.getDataById(entryID));
                     break;
                 case FL_IS_LEAVING:
                     Entry leaving = model.getDataById(entryID);
@@ -257,7 +260,7 @@ public class AppController implements ProgramStateListener {
         EntryProfile editedProfile = EntryProfile.createProfileFromWizard(main,new EntryProfile(activeProfile));
         if(editedProfile != null) {
             //Remove active profile
-            if (JOptionPane.showConfirmDialog(null, "Ezzel törölsz minden adatot a rendszerből\n" + uh.getUIStr("MSG","CONFIRM_ACTION"), uh.getUIStr("MSG","WARNING"),
+            if (JOptionPane.showConfirmDialog(null, "Ezzel törölsz minden adatot a rendszerből\n" + uh.getUIStr("MSG","CONFIRM"), uh.getUIStr("MSG","WARNING"),
                     JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
                 try {
                     profiles.replaceData(activeProfile,editedProfile);
@@ -275,8 +278,10 @@ public class AppController implements ProgramStateListener {
     }
 
     public void createStatistics() {
-        if(statWindow == null) statWindow = new StatisticsWindow();
-        if(statWindow.isVisible()) statWindow.dispose();
+        if(statWindow != null)
+            if(statWindow.isVisible())
+                statWindow.dispose();
+        statWindow = new StatisticsWindow(model);
         statWindow.setVisible(true);
     }
 

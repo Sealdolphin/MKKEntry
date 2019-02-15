@@ -134,7 +134,7 @@ public class Application {
     private void start() {
         view.setTitle(uh.getUIStr("UI","WINDOW_TITLE"));
         view.setMinimumSize(new Dimension(800,600));
-        setRelativeLocationOnScreen(view, ScreenLocation.CENTER);
+        view.setLocationRelativeTo(null);
         view.pack();
         view.setVisible(true);
     }
@@ -143,31 +143,5 @@ public class Application {
     	return filePath.replaceAll("/", File.separator);
     }
 
-    private static void setRelativeLocationOnScreen(Component c, ScreenLocation location){
-        int x,y;
-        switch (location){
-            default:
-            case CENTER:
-                x = (int)((Toolkit.getDefaultToolkit().getScreenSize().width - c.getWidth())*.5);
-                y = (int)((Toolkit.getDefaultToolkit().getScreenSize().height - c.getHeight())*.5);
-                break;
-            case TOP:
-                x = (int)((Toolkit.getDefaultToolkit().getScreenSize().width - c.getWidth())*.5);
-                y = 0;
-                break;
-            case BOTTOM:
-                x = (int)((Toolkit.getDefaultToolkit().getScreenSize().width - c.getWidth())*.5);
-                y = Toolkit.getDefaultToolkit().getScreenSize().height - c.getHeight();
-                break;
-            case LEFT:
-                x = 0;
-                y = (int)((Toolkit.getDefaultToolkit().getScreenSize().height - c.getHeight())*.5);
-                break;
-            case RIGHT:
-                x = Toolkit.getDefaultToolkit().getScreenSize().width - c.getWidth();
-                y = (int)((Toolkit.getDefaultToolkit().getScreenSize().height - c.getHeight())*.5);
-                break;
-        }
-        c.setLocation(x,y);
-    }
+
 }

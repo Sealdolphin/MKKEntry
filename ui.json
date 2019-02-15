@@ -23,8 +23,10 @@
       "PROFILE_CHANGED" : "Profil váltás megtörtént.",
       "WARNING" : "Figyelem",
       "CANCEL_ACTION" : "Biztosan megszakítod a műveletet?",
-      "CONFIRM_ACTION" : "Biztosan folytatod a műveletet?",
-      "IMPORT_DONE" : "Az importálás befejeződött."
+      "CONFIRM" : "Biztosan folytatod a műveletet?",
+      "IMPORT_DONE" : "Az importálás befejeződött.",
+      "EXPORT_DONE" : "Az exportálás befejeződött.",
+      "DELETE" : "Rekord törlése"
   },
   "error" : {
       "HEADER" : "Hiba",

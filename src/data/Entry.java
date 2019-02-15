@@ -2,6 +2,7 @@ package data;
 
 import control.modifier.Discount;
 import control.modifier.TicketType;
+import control.utility.file.EntryFilter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -28,6 +29,14 @@ public class Entry extends Vector<String> {
 
     private TicketType ticketType;
     private List<Discount> discountList = new ArrayList<>();
+
+    public int getAllFees() {
+        int f = ticketType.getFees();
+        for(Discount d : discountList){
+            f -= d.getPrice();
+        }
+        return get(ENTER_DATE.ordinal()) != null ? f : 0;
+    }
 
     /**
      * Enum for the vector data
@@ -129,5 +138,11 @@ public class Entry extends Vector<String> {
         set(LEAVE_DATE.column,LocalDateTime.now().format(formatter));
     }
 
-
+    public String applyFilter(EntryFilter filter){
+        StringBuilder w = new StringBuilder();
+        for (int i = 0; i < size(); i++) {
+            w.append(filter.writeData(get(i), i));
+        }
+        return w.toString();
+    }
 }

@@ -78,6 +78,10 @@ public class TicketType implements Serializable, Modifier {
         return new TicketTypeWizard(parent);
     }
 
+    public int getFees() {
+        return hasFee ? price : 0;
+    }
+
     public static class TicketTypeListener extends ModifierWizardEditor<TicketType>{
         public TicketTypeListener(Window parent) {
             super(parent);

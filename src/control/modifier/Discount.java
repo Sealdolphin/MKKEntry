@@ -116,6 +116,10 @@ public class Discount implements Serializable, Modifier {
         return new DiscountWizard(parent);
     }
 
+    public int getPrice() {
+        return discount;
+    }
+
     public static class DiscountListener extends ModifierWizardEditor<Discount>{
 
 
