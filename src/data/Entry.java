@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
+import static control.Application.uh;
 import static data.Entry.DataColumn.*;
 
 /**
@@ -126,7 +127,8 @@ public class Entry extends Vector<String> {
     /**
      * Enters the guest, creating / overwriting the time of entry
      */
-    public void Enter(){
+    public void Enter() throws IOException {
+        if (isEntered()) throw new IOException(uh.getUIStr("ERR","DUPLICATE"));
         set(ENTER_DATE.column,LocalDateTime.now().format(formatter));
         set(LEAVE_DATE.column,null);
     }
@@ -134,7 +136,8 @@ public class Entry extends Vector<String> {
     /**
      * Makes the guest leave, creating / overwriting the time of leave
      */
-    public void Leave(){
+    public void Leave() throws IOException {
+        if(!isEntered()) throw new IOException(uh.getUIStr("ERR","NO_MATCH"));
         set(LEAVE_DATE.column,LocalDateTime.now().format(formatter));
     }
 
@@ -142,6 +145,7 @@ public class Entry extends Vector<String> {
         StringBuilder w = new StringBuilder();
         for (int i = 0; i < size(); i++) {
             w.append(filter.writeData(get(i), i));
+            w.append(EntryFilter.separator);
         }
         return w.toString();
     }
