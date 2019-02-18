@@ -11,7 +11,8 @@ import java.io.PrintWriter;
 public interface ProgramStateListener extends BarcodeListener {
 
     EntryFilter[] filterTypes = {
-            new EntryFilter("Tombola", new int[]{0})
+            new EntryFilter("Tombola", new int[]{0}),
+            new EntryFilter("Alapméretezett", null)
     };
 
     void updateView();

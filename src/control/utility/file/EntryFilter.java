@@ -17,7 +17,7 @@ public class EntryFilter extends ExtensionFilter {
         return name;
     }
 
-    private static final String separator = ",";
+    public static final String separator = ",";
 
     public String[] parseEntry(String line){
         return line.split(separator);
@@ -26,7 +26,7 @@ public class EntryFilter extends ExtensionFilter {
     private int[] indeces;
 
     public String writeData(String s, int index) {
-        if(indeces == null) return "";
+        if(indeces == null) return s;
         for (int indece : indeces) {
             if (indece == index) return s;
         }

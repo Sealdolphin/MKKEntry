@@ -99,8 +99,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     public void addData(Entry data) throws IOException{
         Entry conflict = entryList.stream().filter(entry -> entry.get(0).equals(data.get(ID.ordinal()))).findAny().orElse(null);
         if(conflict != null){
-            if(conflict.isEntered()) throw new IOException(uh.getUIStr("ERR","DUPLICATE"));
-            else conflict.Enter();
+            conflict.Enter();
             lastSelectedEntry = conflict;
         } else {
             if(data.get(NAME.ordinal()) == null) {
