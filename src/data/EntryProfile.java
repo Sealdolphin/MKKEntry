@@ -52,6 +52,12 @@ import control.modifier.TicketType;
  */
 public class EntryProfile implements Serializable {
 
+    private String password = "";
+
+    public String getPassword() {
+        return password;
+    }
+
     public enum EntryLimit {
         ONCE("Egyszeri"),
         NO_LIMIT("Korlátlan"),
@@ -122,6 +128,7 @@ public class EntryProfile implements Serializable {
         autoDataHandling = other.autoDataHandling;
         defaultType = other.defaultType;
         commandCodes = other.commandCodes;
+        password = other.password;
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
         for (Discount discount : other.discounts) { discounts.add(new Discount(discount)); }

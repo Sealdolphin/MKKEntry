@@ -1,7 +1,7 @@
 {
   "profiles" : [
     {
-      "name" : "PárLépés",
+      "name" : "PÃ¡rLÃ©pÃ©s",
       "mask" : "[AB][0-9]{3}[^0-9]",
       "commands" : {
         "default" : "PLT-FE-",
@@ -10,40 +10,40 @@
       },
       "discounts" : [
         {
-          "name" : "Segítõ",
+          "name" : "SegÃ­tÅ‘",
           "imgPath" : "Barcodes\\helpSale.png",
           "icon" : "Icons\\DIS_HELP.png",
-          "label" : "Segített egy órát",
+          "label" : "SegÃ­tett egy Ã³rÃ¡t",
           "meta" : "HELP_SALE",
           "discount" : 1000
         },
         {
-          "name" : "Büfé",
+          "name" : "BÃ¼fÃ©",
           "imgPath" : "Barcodes\\foodSale.png",
           "icon" : "Icons\\DIS_MONEY.png",
-          "label" : "Hozzájárult az agapéhoz",
+          "label" : "HozzÃ¡jÃ¡rult az agapÃ©hoz",
           "meta" : "FOOD_SALE",
           "discount" : -500
         }
       ],
       "tickets" : [
         {
-          "name" : "Elõvételes",
+          "name" : "ElÅ‘vÃ©teles",
           "price" : 1800,
           "fee" : false
         },
         {
-          "name" : "Helyszíni",
+          "name" : "HelyszÃ­ni",
           "price" : 2200,
           "fee" : true
         },
         {
-          "name" : "Szervezõ",
+          "name" : "SzervezÅ‘",
           "price" : 0,
           "fee" : true
         }
       ],
-      "defaultType" : "Helyszíni"
+      "defaultType" : "HelyszÃ­ni"
     },
     {
       "name" : "MKK",
@@ -55,9 +55,9 @@
       },
       "discounts" : [
         {
-          "name" : "Büfé",
+          "name" : "BÃ¼fÃ©",
           "imgPath" : "Barcodes\\foodSale.png",
-          "label" : "Hozott sütit, vagy üdítõt",
+          "label" : "Hozott sÃ¼tit, vagy Ã¼dÃ­tÅ‘t",
           "icon" : "Icons\\DIS_PIE.png",
           "meta" : "FOOD_SALE",
           "discount" : 500
@@ -65,7 +65,7 @@
       ],
       "tickets" : [
         {
-          "name" : "Helyszíni",
+          "name" : "HelyszÃ­ni",
           "price" : 3500,
           "fee" : true
         },
@@ -75,7 +75,7 @@
           "fee" : true
         }
       ],
-      "defaultType" : "Helyszíni"
+      "defaultType" : "HelyszÃ­ni"
     }
   ],
   "active" : "",

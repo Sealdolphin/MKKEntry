@@ -3,6 +3,9 @@ package control;
 import control.modifier.Discount;
 import control.utility.BarcodeReader;
 import control.utility.file.EntryFilter;
+import control.utility.network.BasicNetworkMessenger;
+import control.utility.network.BasicNetworkServer;
+import control.utility.network.NetworkMessenger;
 import data.AppData;
 import com.fazecast.jSerialComm.SerialPort;
 import data.DataModel;
@@ -17,6 +20,7 @@ import java.awt.event.ItemEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +41,8 @@ public class AppController implements ProgramStateListener {
     private ReadingFlag readingFlag = ReadingFlag.FL_DEFAULT;
     private boolean menuOpen = false;
     private StatisticsWindow statWindow;
+    private boolean onlineMode = false;
+    private NetworkMessenger onlineMessenger;
 
     AppController(AppData model, DataModel<EntryProfile> pData){
         this.model = model;
@@ -248,6 +254,14 @@ public class AppController implements ProgramStateListener {
             if(index >= 0)
                 model.fireTableRowsUpdated(index,index);
         }
+        //If everything went well send data thru the web
+        if(onlineMessenger != null) {
+            try {
+                onlineMessenger.sendMessage(barCode);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
@@ -281,8 +295,33 @@ public class AppController implements ProgramStateListener {
         if(statWindow != null)
             if(statWindow.isVisible())
                 statWindow.dispose();
-        statWindow = new StatisticsWindow(model);
+        statWindow = new StatisticsWindow(activeProfile,model);
         statWindow.setVisible(true);
+    }
+
+    public void switchOnlineMode() {
+        onlineMode = !onlineMode;
+        String response;
+        do {
+            response = JOptionPane.showInputDialog(null, "SERVER OR CLIENT", "1: S 2: C", JOptionPane.QUESTION_MESSAGE).toLowerCase();
+        } while (!(response.equals("server") || response.equals("client")));
+        try {
+            if(response.equals("server")){
+                onlineMessenger = new BasicNetworkServer(5504,this);
+            } else {
+                onlineMessenger = new BasicNetworkMessenger(new Socket("localhost",5504),this);
+            }
+            new Thread(() -> {
+                try {
+                    onlineMessenger.receiveMessage();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /**
