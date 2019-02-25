@@ -2,6 +2,7 @@ package control;
 
 import data.AppData;
 import data.ProfileData;
+import view.main.LoadingScreen;
 import view.main.MainWindow;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -30,6 +31,7 @@ public class Application {
      * @param args the program arguments
      */
     public static void main(String[] args) {
+
         //Loading UI HANDLER
         //UI Handler is essential for the program to run.
         //It contains the static string messages.
@@ -38,12 +40,14 @@ public class Application {
             JSONParser parser = new JSONParser();
             BufferedReader optionsReader = new BufferedReader(new InputStreamReader(new FileInputStream("ui.json")));
             JSONObject optionsJSON = (JSONObject) parser.parse(optionsReader);
+
             //Loading options
             uh = new UIHandler();
             uh.refreshOptions(optionsJSON);
 
             // Set System L&F
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+
         }
         catch (ParseException | IOException e) {
             String errorMsg = "Nem tudtam betölteni a beállításokat a 'uh.json' fáljból.\n" +
@@ -67,7 +71,11 @@ public class Application {
     }
 
     private Application() throws Exception {
-
+        //Starting loading screen
+        int progress = 0;
+        LoadingScreen loading = new LoadingScreen(3);
+        loading.setVisible(true);
+        loading.setProgress("Profilok beolvasása...");
         try {
             //Starting application
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(profileFileName));
@@ -81,6 +89,7 @@ public class Application {
                     uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
             profileData = new ProfileData();
         }
+        loading.setProgress("Adatok betöltése...");
         try {
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(configFileName));
             model = (AppData) ois.readObject();
@@ -92,6 +101,7 @@ public class Application {
                     uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
             model = new AppData();
         }
+        loading.setProgress("Kérjük várjon...");
 
         AppController controller = new AppController(model, profileData);
 
