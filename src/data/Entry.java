@@ -3,6 +3,8 @@ package data;
 import control.modifier.Discount;
 import control.modifier.TicketType;
 import control.utility.file.EntryFilter;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -39,6 +41,15 @@ public class Entry extends Vector<String> {
         return get(ENTER_DATE.ordinal()) != null ? f : 0;
     }
 
+    @SuppressWarnings("unchecked")
+    public JSONObject getJsonObject() {
+        JSONObject obj = new JSONObject();
+        obj.put("id",elementData[ID.ordinal()]);
+        obj.put("entry",elementData[ENTER_DATE.ordinal()]);
+        obj.put("leave",elementData[LEAVE_DATE.ordinal()]);
+        return obj;
+    }
+
     /**
      * Enum for the vector data
      */
@@ -57,6 +68,14 @@ public class Entry extends Vector<String> {
         public String getName() { return name; }
     }
 
+    /**
+     * Parses an array of string to an Entry using the current profile for details.
+     * This function assumes that the array of strings are ordered correctly.
+     * @param vector the array of strings
+     * @param profile the current parsing profile
+     * @return a new parsed Entry with the correct attributes
+     * @throws IOException if parsing fails
+     */
     public static Entry importEntry(String[] vector, EntryProfile profile) throws IOException {
         if(vector.length <= TYPE.column) throw new IOException("Kicsi");
         //Parsing string vector fields in order:

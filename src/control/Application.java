@@ -24,14 +24,6 @@ public class Application {
     private AppData model;
     private ProfileData profileData;
 
-    public enum ScreenLocation {
-        CENTER,
-        TOP,
-        BOTTOM,
-        RIGHT,
-        LEFT
-    }
-
     /**
      * Starting point of application
      * It sets up the basic options and starts the program

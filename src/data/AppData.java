@@ -130,8 +130,8 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     @Override
     public void replaceData(Entry oldData, Entry newData) throws IOException {
-        addData(newData);
         removeData(oldData);
+        addData(newData);
     }
 
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {

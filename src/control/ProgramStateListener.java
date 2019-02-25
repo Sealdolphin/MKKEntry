@@ -2,6 +2,7 @@ package control;
 
 import control.utility.BarcodeListener;
 import control.utility.file.EntryFilter;
+import data.Entry;
 import data.EntryProfile;
 
 import java.io.BufferedReader;
@@ -15,8 +16,6 @@ public interface ProgramStateListener extends BarcodeListener {
             new EntryFilter("Alapméretezett", null)
     };
 
-    void updateView();
-
     /**
      * An event for profile change
      * @return the name of the new active profile
@@ -26,4 +25,6 @@ public interface ProgramStateListener extends BarcodeListener {
     void exportList(PrintWriter writer, EntryFilter filter);
 
     void importList(BufferedReader reader, EntryFilter importFilter) throws IOException;
+
+    void updateEntry(String id, Entry newEntry);
 }

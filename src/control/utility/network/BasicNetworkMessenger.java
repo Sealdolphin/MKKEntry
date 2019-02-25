@@ -1,20 +1,14 @@
 package control.utility.network;
 
-
-import control.ProgramStateListener;
-import control.utility.BarcodeListener;
-
 import java.io.*;
 import java.net.Socket;
 
 public class BasicNetworkMessenger implements NetworkMessenger {
 
     private Socket client;
-    private BarcodeListener networkListener;
 
-    public BasicNetworkMessenger(Socket clientSocket, BarcodeListener listener){
+    BasicNetworkMessenger(Socket clientSocket){
         client = clientSocket;
-        networkListener = listener;
     }
 
     @Override
@@ -24,12 +18,9 @@ public class BasicNetworkMessenger implements NetworkMessenger {
     }
 
     @Override
-    public void receiveMessage() throws IOException {
-        String input;
-        BufferedReader netReader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-        while ((input = netReader.readLine()) != null) {
-            System.out.println("INPUT FROM CLIENT: " + input);
-            networkListener.readBarCode(input);
-        }
+    public String receiveMessage() throws IOException {
+        String input = new BufferedReader(new InputStreamReader(client.getInputStream())).readLine();
+        System.out.println("RECEIVED FROM SERVER: " + input);
+        return input;
     }
 }
