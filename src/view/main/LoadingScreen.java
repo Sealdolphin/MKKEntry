@@ -31,4 +31,8 @@ public class LoadingScreen extends JFrame {
         if(progress.getValue() == progress.getMaximum()) dispose();
     }
 
+    public void close(){
+        dispose();
+    }
+
 }

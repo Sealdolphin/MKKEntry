@@ -67,15 +67,12 @@ public class Application {
         } catch (Exception appException) {
             appException.printStackTrace();
             JOptionPane.showMessageDialog(null,appException.getMessage(), uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+
         }
     }
 
     private Application() throws Exception {
-        //Starting loading screen
-        int progress = 0;
-        LoadingScreen loading = new LoadingScreen(3);
-        loading.setVisible(true);
-        loading.setProgress("Profilok beolvasása...");
+
         try {
             //Starting application
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(profileFileName));
@@ -89,7 +86,7 @@ public class Application {
                     uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
             profileData = new ProfileData();
         }
-        loading.setProgress("Adatok betöltése...");
+
         try {
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(configFileName));
             model = (AppData) ois.readObject();
@@ -101,7 +98,6 @@ public class Application {
                     uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
             model = new AppData();
         }
-        loading.setProgress("Kérjük várjon...");
 
         AppController controller = new AppController(model, profileData);
 

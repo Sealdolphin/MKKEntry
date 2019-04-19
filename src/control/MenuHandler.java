@@ -78,6 +78,7 @@ public class MenuHandler {
         if(choice == JFileChooser.APPROVE_OPTION){
             File entryFile = fileDialog.getSelectedFile();
             System.out.println("Opening " + entryFile);
+
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(entryFile)));
                 controller.importList(reader,importFilter);
