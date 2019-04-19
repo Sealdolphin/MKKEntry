@@ -10,6 +10,7 @@ import data.DataModel;
 import data.Entry;
 import data.EntryProfile;
 import view.StatisticsWindow;
+import view.main.LoadingScreen;
 import view.main.ReadFlagListener;
 
 import javax.swing.*;
@@ -69,17 +70,17 @@ public class AppController implements ProgramStateListener {
             String portSelected = event.getItem().toString();
             selectedPort = SerialPort.getCommPort(portSelected);
             if(portSelected.equals(DEFAULT_OPTION)) selectedPort = null;
-            if(selectedPort != null){
+            if(selectedPort != null && selectedPort.openPort()){
                 System.out.println("[INFO]: Device connected at " + portSelected);
                 BarcodeReader reader = new BarcodeReader();
                 reader.addListener(this);
                 selectedPort.addDataListener(reader);
-                selectedPort.openPort();
                 label.setBackground(Color.GREEN);
-                label.setText(uh.getUIStr("UI","PORT_ACTIVE"));
+                label.setText(uh.getUIStr("UI", "PORT_ACTIVE"));
             } else {
+                if(selectedPort != null) System.out.println("Could not connect to selected port!");
                 label.setBackground(Color.RED);
-                label.setText(uh.getUIStr("UI","PORT_INACTIVE"));
+                label.setText(uh.getUIStr("UI", "PORT_INACTIVE"));
             }
         }
     }
