@@ -1,6 +1,6 @@
 package control;
 
-import control.utility.BarcodeListener;
+import control.utility.BarcodeReaderListener;
 import control.utility.file.EntryFilter;
 import data.Entry;
 import data.EntryProfile;
@@ -9,7 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public interface ProgramStateListener extends BarcodeListener {
+public interface ProgramStateListener extends BarcodeReaderListener {
 
     EntryFilter[] filterTypes = {
             new EntryFilter("Tombola", new int[]{0}),

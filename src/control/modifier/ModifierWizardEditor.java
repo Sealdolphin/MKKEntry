@@ -1,7 +1,5 @@
 package control.modifier;
 
-import data.EntryProfile;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -26,13 +24,15 @@ public abstract class ModifierWizardEditor<T extends Modifier> extends MouseAdap
             if (r != null && r.contains(evt.getPoint())) {
                 //noinspection unchecked
                 T selectedType = (T) list.getSelectedValue();
-                JDialog wizard = selectedType.getTypeWizard(parent);
+                JDialog wizard = selectedType.getModifierWizard(parent);
                 wizard.setVisible(true);
             }
         }
     }
 
-    public abstract void removeFrom(List<T> objectList, T selectedValue);
+    public void removeFrom(List<T> objectList, T selectedValue){
+        objectList.remove(selectedValue);
+    }
 
     public abstract void createNew(List<T> objectList);
 }

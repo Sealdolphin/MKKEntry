@@ -1,8 +1,6 @@
 package control.modifier;
 
 import control.Application;
-import control.utility.BarcodeReader;
-import control.utility.DefaultBarcodeListener;
 import control.utility.file.ExtensionFilter;
 import org.json.simple.JSONObject;
 import view.ImagePanel;
@@ -17,12 +15,46 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class Discount implements Serializable, Modifier {
 
+    /**
+     * The default option for icons
+     */
     private static final String basicIcon = "Icons"+ File.separator +"BasicIcon.png";
+
+    /**
+     * The descriptive name of the discount
+     */
     private String name;
+
+    /**
+     * The path of the image
+     */
+    @Deprecated
     private String imagePath;
+
+    /**
+     * The barcode connected to the discount
+     */
+    private Barcode barcode;
+
+    /**
+     * The filepath of the icon's image
+     */
     private String iconPath;
+
+    /**
+     * The descriptive label of the discount
+     */
+    @Deprecated
     private String label;
+
+    /**
+     * The metadata identifying the discount.
+     */
     private String metaData;
+
+    /**
+     * The ammount of discount this discount gives.
+     */
     private int discount;
 
     private Discount(String name, String imagePath, String iconPath, String label, String meta, int price){
@@ -62,11 +94,6 @@ public class Discount implements Serializable, Modifier {
         }
         return new Discount(name,image,icon,label,meta,price);
     }
-
-//    public static JDialog createDiscountFromWizard(Frame parent){
-//        Discount discount = new Discount("",null,basicIcon,"","",0);
-//        return discount.getTypeWizard(parent);
-//    }
 
 
     /**
@@ -111,7 +138,7 @@ public class Discount implements Serializable, Modifier {
     }
 
     @Override
-    public ModifierDialog getTypeWizard(Window parent) {
+    public ModifierDialog getModifierWizard(Window parent) {
         return new DiscountWizard(parent);
     }
 
@@ -121,20 +148,14 @@ public class Discount implements Serializable, Modifier {
 
     public static class DiscountListener extends ModifierWizardEditor<Discount>{
 
-
         public DiscountListener(Window parent) {
             super(parent);
         }
 
         @Override
-        public void removeFrom(List<Discount> objectList, Discount selectedValue) {
-            objectList.remove(selectedValue);
-        }
-
-        @Override
         public void createNew(List<Discount> objectList) {
             Discount newDiscount = new Discount("",null,basicIcon,"","",0);
-            ModifierDialog wizard = newDiscount.getTypeWizard(null);
+            ModifierDialog wizard = newDiscount.getModifierWizard(null);
             int result = wizard.open();
             if(result == 0){
                 objectList.add(newDiscount);
@@ -174,8 +195,8 @@ public class Discount implements Serializable, Modifier {
             btnBrowse.addActionListener(e -> changePicture());
             btnSave.addActionListener(e -> saveDiscount());
             btnReadPic.addActionListener(e -> {
-                DefaultBarcodeListener dbl = new DefaultBarcodeListener(tfMeta::setText);
-                //TODO: Create Barcode Reader from selected port
+//                TODO: Create Barcode Reader from selected port
+//                DefaultBarcodeListener dbl = new DefaultBarcodeListener(tfMeta::setText);
 //                BarcodeReader reader = new BarcodeReader(selectedPort);
 //                reader.addListener(dbl);
             });
