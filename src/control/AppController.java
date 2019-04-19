@@ -156,17 +156,20 @@ public class AppController implements ProgramStateListener {
 
     @Override
     public void exportList(PrintWriter writer, EntryFilter filter) {
-        System.out.println("[INFO]: Exporting list...");
+        LoadingScreen progress = new LoadingScreen();
+        progress.setTasks(model.getDataSize());
         for (int i = 0; i < model.getDataSize(); i++) {
+            progress.setProgress("Rekordok exportálása: 1" + i + "/" + model.getDataSize());
             Entry data = model.getDataByIndex(i);
             writer.println(data.applyFilter(filter));
         }
-        System.out.println("[INFO]: Exporting done!");
+        progress.done("Az Exportálás befejeződött!");
     }
 
     @Override
     public void importList(BufferedReader reader, EntryFilter filter) throws IOException{
-        System.out.println("[INFO]: Importing list...");
+        LoadingScreen progress = new LoadingScreen();
+        progress.setTasks(-1);
         int lines = 0;
         int allLines = 0;
         do {
@@ -180,9 +183,7 @@ public class AppController implements ProgramStateListener {
                 JOptionPane.showMessageDialog(null,ex.getMessage(),uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
             }
         } while (true);
-        System.out.println("[INFO]: Imporintg done!");
-        JOptionPane.showMessageDialog(null,uh.getUIStr("MSG","IMPORT_DONE") +
-                "\n" + lines + " rekord a " + allLines + " rekordból importálva!",uh.getUIStr("MSG","DONE"),JOptionPane.INFORMATION_MESSAGE);
+        progress.done(lines + " rekord a " + allLines + " rekordból importálva!");
 
     }
 

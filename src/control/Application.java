@@ -25,12 +25,18 @@ public class Application {
     private AppData model;
     private ProfileData profileData;
 
+    private static LoadingScreen loadingScreen;
+
     /**
      * Starting point of application
      * It sets up the basic options and starts the program
      * @param args the program arguments
      */
     public static void main(String[] args) {
+
+        Application.loadingScreen = new LoadingScreen();
+        Application.loadingScreen.setTasks(6);
+        Application.loadingScreen.setVisible(true);
 
         //Loading UI HANDLER
         //UI Handler is essential for the program to run.
@@ -41,19 +47,22 @@ public class Application {
             BufferedReader optionsReader = new BufferedReader(new InputStreamReader(new FileInputStream("ui.json")));
             JSONObject optionsJSON = (JSONObject) parser.parse(optionsReader);
 
+            Application.loadingScreen.setProgress("UI betöltése...");
+
             //Loading options
             uh = new UIHandler();
             uh.refreshOptions(optionsJSON);
 
+            Application.loadingScreen.setProgress("L&F betöltése...");
             // Set System L&F
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
         }
         catch (ParseException | IOException e) {
-            String errorMsg = "Nem tudtam betölteni a beállításokat a 'uh.json' fáljból.\n" +
+            Application.loadingScreen.setInterruptMessage("Nem tudtam betölteni a beállításokat a 'uh.json' fáljból.\n" +
                     "Az alkalmazás ezért nem tud elindulni.\n" +
-                    "Részletek:\n" + e.toString();
-            JOptionPane.showMessageDialog(null,errorMsg,"Hiba",JOptionPane.ERROR_MESSAGE);
+                    "Részletek:\n" + e.toString());
+            Application.loadingScreen.interrupt();
             return;
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             String errorMsg = uh.getUIStr("ERR","L&F_ERR");
@@ -66,8 +75,8 @@ public class Application {
             app.start();
         } catch (Exception appException) {
             appException.printStackTrace();
-            JOptionPane.showMessageDialog(null,appException.getMessage(), uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
-
+            Application.loadingScreen.setInterruptMessage(appException.getMessage());
+            Application.loadingScreen.interrupt();
         }
     }
 
@@ -75,6 +84,8 @@ public class Application {
 
         try {
             //Starting application
+            Application.loadingScreen.setProgress("Profilok betöltése...");
+            //Loading profile data
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(profileFileName));
             profileData = (ProfileData) ois.readObject();
             ois.close();
@@ -88,6 +99,7 @@ public class Application {
         }
 
         try {
+            Application.loadingScreen.setProgress("Konfigurációk betöltése...");
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(configFileName));
             model = (AppData) ois.readObject();
             ois.close();
@@ -127,6 +139,7 @@ public class Application {
         });
         view.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         view.setIconImage(icon);
+        Application.loadingScreen.done(null);
     }
 
     private void start() {
@@ -136,7 +149,7 @@ public class Application {
         view.pack();
         view.setVisible(true);
     }
-    
+
     public static String parseFilePath(String filePath) {
     	return filePath.replaceAll("\t", File.separator);
     }

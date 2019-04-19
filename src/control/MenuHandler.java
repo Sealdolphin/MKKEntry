@@ -56,7 +56,6 @@ public class MenuHandler {
 
         try (PrintWriter exportWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(expFile)))) {
             controller.exportList(exportWriter, resultFilter);
-            JOptionPane.showMessageDialog(null,uh.getUIStr("MSG","EXPORT_DONE"),uh.getUIStr("MSG","DONE"),JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, e.getMessage(), uh.getUIStr("ERR", "HEADER"), ERROR_MESSAGE);
