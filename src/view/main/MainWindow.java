@@ -10,6 +10,8 @@ import data.EntryProfile;
 import view.DiscountRenderer;
 
 import javax.swing.*;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
@@ -184,6 +186,8 @@ public class MainWindow extends JFrame {
             //Profile Label
             add(new JLabel("Profil: "));
             add(labelProfile);
+            JButton btnNet = new NetworkButton();
+            add(btnNet);
             add(Box.createHorizontalGlue());
             //Comm. Port chooser
             add(new JLabel("Vonalkód olvasó: "));
@@ -200,6 +204,9 @@ public class MainWindow extends JFrame {
             //Set default selection
             controller.scanPorts(cbPorts);
             cbPorts.setSelectedIndex(0);
+
+            //Setup Online mode
+            btnNet.addActionListener(e -> controller.switchOnlineMode());
         }
     }
 
@@ -222,6 +229,7 @@ public class MainWindow extends JFrame {
             //menuBar.add(createEditMenu(controller));
             menuBar.add(createProfileMenu(controller));
             menuBar.add(createChartsMenu(controller));
+            menuBar.add(new JMenu("Tranzakciók"));
 
             return menuBar;
         }

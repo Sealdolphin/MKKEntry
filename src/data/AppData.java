@@ -18,6 +18,7 @@ import static data.Entry.DataColumn.NAME;
 public class AppData extends DefaultTableModel implements Serializable, DataModel<Entry>{
 
     private List<Entry> entryList = new ArrayList<>();
+    private List<Transaction> transactionList = new ArrayList<>();
     private Entry lastSelectedEntry;
 
     /**
@@ -31,6 +32,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     public void clearData(){
         entryList.clear();
+        transactionList.clear();
         dataVector.clear();
         lastSelectedEntry = null;
         fireTableDataChanged();
@@ -46,14 +48,12 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
         }
     }
 
-
-
     @Override
     public Object getValueAt(int row, int columnIndex) {
         Entry.DataColumn column = Entry.DataColumn.values()[columnIndex];
         switch (column){
             default: return super.getValueAt(row, columnIndex);                                     //Return a string
-            case DISCOUNTS: return entryList.get(row).getDiscounts();                                    //Return discount list
+            case DISCOUNTS: return entryList.get(row).getDiscounts();                               //Return discount list
             case ENTERED: return Boolean.parseBoolean(entryList.get(row).isEntered().toString());   //Return entered state
         }
     }
@@ -102,11 +102,6 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
             conflict.Enter();
             lastSelectedEntry = conflict;
         } else {
-            if(data.get(NAME.ordinal()) == null) {
-                String input = JOptionPane.showInputDialog("Adj meg egy nevet!"); //TODO: insert UI handler here
-                data.set(NAME.ordinal(),input);
-                if(input == null) throw new IOException("Name is null"); //TODO insert UI msg here
-            }
             entryList.add(data);
             addRow(data);
             lastSelectedEntry = data;
@@ -130,22 +125,31 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     @Override
     public void replaceData(Entry oldData, Entry newData) throws IOException {
-        addData(newData);
         removeData(oldData);
+        addData(newData);
     }
 
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         out.writeObject(entryList.toArray());
+        out.writeObject(transactionList.toArray());
         out.writeObject(lastSelectedEntry);
     }
 
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
         setColumnIdentifiers(Arrays.stream(Entry.DataColumn.values()).map(Entry.DataColumn::getName).toArray());
+        //Reading entries
         Object[] objs = (Object[]) in.readObject();
         entryList = new ArrayList<>();
         for (Object entryObj : objs) {
             entryList.add((Entry) entryObj);
         }
+        //Reading transactions
+        objs = (Object[]) in.readObject();
+        transactionList = new ArrayList<>();
+        for (Object entryObj : objs) {
+            transactionList.add((Transaction) entryObj);
+        }
+        //Reading last selection
         lastSelectedEntry = (Entry) in.readObject();
     }
 

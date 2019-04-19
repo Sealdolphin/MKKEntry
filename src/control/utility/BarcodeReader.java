@@ -1,6 +1,5 @@
 package control.utility;
 
-import control.ProgramStateListener;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
@@ -31,7 +30,6 @@ public class BarcodeReader implements SerialPortDataListener {
         controllers.add(l);
     }
 
-
     @SuppressWarnings("unused")
     public void removeListener(BarcodeListener l){
         controllers.remove(l);
@@ -56,11 +54,13 @@ public class BarcodeReader implements SerialPortDataListener {
      */
     @Override
     public void serialEvent(SerialPortEvent serialPortEvent) {
-        byte bytes[] = serialPortEvent.getReceivedData();
-        Byte byteObjs[] = new Byte[bytes.length];
+        byte[] bytes = serialPortEvent.getReceivedData();
+        System.out.println("Read " + bytes.length + " bytes.");
+        Byte[] byteObjs = new Byte[bytes.length];
         int i = 0;
-        for (byte b : bytes)
+        for (byte b : bytes) {
             byteObjs[i++] = b;
+        }
 
         Collections.addAll(raw_data,byteObjs);
 
@@ -79,10 +79,9 @@ public class BarcodeReader implements SerialPortDataListener {
         int LINE_FEED = 10;
         if(raw_data.get(raw_data.size() - 1) == LINE_FEED){
             StringBuilder builder = new StringBuilder();
-            for (Byte b :
-                    raw_data) {
-                byte cb = b;
-                builder.append((char)cb);
+            for (Byte b : raw_data) {
+                byte charbyte = b;
+                builder.append((char)charbyte);
             }
             lastReadData = builder.toString().trim();
 
@@ -90,8 +89,7 @@ public class BarcodeReader implements SerialPortDataListener {
             raw_data.clear();
 
             //Alert all controllers
-            for (BarcodeListener controller :
-                    controllers) {
+            for (BarcodeListener controller : controllers) {
                 controller.readBarCode(lastReadData);
             }
         }

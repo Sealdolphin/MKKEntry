@@ -4,7 +4,6 @@ import control.Application;
 import control.utility.BarcodeReader;
 import control.utility.DefaultBarcodeListener;
 import control.utility.file.ExtensionFilter;
-import data.EntryProfile;
 import org.json.simple.JSONObject;
 import view.ImagePanel;
 
@@ -176,8 +175,9 @@ public class Discount implements Serializable, Modifier {
             btnSave.addActionListener(e -> saveDiscount());
             btnReadPic.addActionListener(e -> {
                 DefaultBarcodeListener dbl = new DefaultBarcodeListener(tfMeta::setText);
-                BarcodeReader reader = new BarcodeReader();
-                reader.addListener(dbl);
+                //TODO: Create Barcode Reader from selected port
+//                BarcodeReader reader = new BarcodeReader(selectedPort);
+//                reader.addListener(dbl);
             });
 
             //Assemble Window

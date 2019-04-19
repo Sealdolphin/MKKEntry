@@ -3,12 +3,14 @@ package control;
 import control.modifier.Discount;
 import control.utility.BarcodeReader;
 import control.utility.file.EntryFilter;
+import control.utility.network.NetworkController;
 import data.AppData;
 import com.fazecast.jSerialComm.SerialPort;
 import data.DataModel;
 import data.Entry;
 import data.EntryProfile;
 import view.StatisticsWindow;
+import view.main.LoadingScreen;
 import view.main.ReadFlagListener;
 
 import javax.swing.*;
@@ -37,6 +39,7 @@ public class AppController implements ProgramStateListener {
     private ReadingFlag readingFlag = ReadingFlag.FL_DEFAULT;
     private boolean menuOpen = false;
     private StatisticsWindow statWindow;
+    private NetworkController netController;
 
     AppController(AppData model, DataModel<EntryProfile> pData){
         this.model = model;
@@ -67,17 +70,17 @@ public class AppController implements ProgramStateListener {
             String portSelected = event.getItem().toString();
             selectedPort = SerialPort.getCommPort(portSelected);
             if(portSelected.equals(DEFAULT_OPTION)) selectedPort = null;
-            if(selectedPort != null){
+            if(selectedPort != null && selectedPort.openPort()){
                 System.out.println("[INFO]: Device connected at " + portSelected);
                 BarcodeReader reader = new BarcodeReader();
                 reader.addListener(this);
                 selectedPort.addDataListener(reader);
-                selectedPort.openPort();
                 label.setBackground(Color.GREEN);
-                label.setText(uh.getUIStr("UI","PORT_ACTIVE"));
+                label.setText(uh.getUIStr("UI", "PORT_ACTIVE"));
             } else {
+                if(selectedPort != null) System.out.println("Could not connect to selected port!");
                 label.setBackground(Color.RED);
-                label.setText(uh.getUIStr("UI","PORT_INACTIVE"));
+                label.setText(uh.getUIStr("UI", "PORT_INACTIVE"));
             }
         }
     }
@@ -153,23 +156,26 @@ public class AppController implements ProgramStateListener {
 
     @Override
     public void exportList(PrintWriter writer, EntryFilter filter) {
-        System.out.println("[INFO]: Exporting list...");
+        LoadingScreen progress = new LoadingScreen();
+        progress.setTasks(model.getDataSize());
         for (int i = 0; i < model.getDataSize(); i++) {
+            progress.setProgress("Rekordok exportálása: 1" + i + "/" + model.getDataSize());
             Entry data = model.getDataByIndex(i);
             writer.println(data.applyFilter(filter));
         }
-        System.out.println("[INFO]: Exporting done!");
+        progress.done("Az Exportálás befejeződött!");
     }
 
     @Override
     public void importList(BufferedReader reader, EntryFilter filter) throws IOException{
-        System.out.println("[INFO]: Importing list...");
+        LoadingScreen progress = new LoadingScreen();
+        progress.setTasks(-1);
         int lines = 0;
-        int alllines = 0;
+        int allLines = 0;
         do {
             String line = reader.readLine();
             if(line == null) break; //Breaks at FIRST EMPTY LINE
-            alllines++;
+            allLines++;
             try{
                 model.addData(Entry.importEntry(filter.parseEntry(line),activeProfile));
                 lines++;
@@ -177,14 +183,17 @@ public class AppController implements ProgramStateListener {
                 JOptionPane.showMessageDialog(null,ex.getMessage(),uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
             }
         } while (true);
-        System.out.println("[INFO]: Imporintg done!");
-        JOptionPane.showMessageDialog(null,uh.getUIStr("MSG","IMPORT_DONE") +
-                "\n" + lines + " rekord a " + alllines + " rekordból importálva!",uh.getUIStr("MSG","DONE"),JOptionPane.INFORMATION_MESSAGE);
+        progress.done(lines + " rekord a " + allLines + " rekordból importálva!");
 
     }
 
     @Override
-    public void updateView() {
+    public void updateEntry(String id, Entry newData) {
+        try {
+            model.replaceData(model.getDataById(id),newData);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setReadingFlag(ReadingFlag newFlag){
@@ -247,6 +256,15 @@ public class AppController implements ProgramStateListener {
             int index = model.getSelectedIndex();
             if(index >= 0)
                 model.fireTableRowsUpdated(index,index);
+            if(netController != null){
+                try {
+                    netController.updateData(model.getSelectedData());
+                } catch (IOException e) {
+                    System.out.println("Networking error happened...");
+                    System.out.println("Details: " + e.getMessage());
+                    netController = null;
+                }
+            }
         }
 
     }
@@ -281,8 +299,16 @@ public class AppController implements ProgramStateListener {
         if(statWindow != null)
             if(statWindow.isVisible())
                 statWindow.dispose();
-        statWindow = new StatisticsWindow(model);
+        statWindow = new StatisticsWindow(activeProfile,model);
         statWindow.setVisible(true);
+    }
+
+    public void switchOnlineMode() {
+        try {
+            netController = new NetworkController(activeProfile,this,"localhost",5503);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

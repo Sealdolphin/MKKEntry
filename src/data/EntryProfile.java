@@ -6,6 +6,7 @@ import static control.AppController.ReadingFlag.FL_IS_DELETE;
 import static control.AppController.ReadingFlag.FL_IS_LEAVING;
 import static control.Application.uh;
 import static control.modifier.ModifierDialog.setConstraints;
+import static data.Entry.DataColumn.NAME;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.SOUTH;
 import static javax.swing.BoxLayout.PAGE_AXIS;
@@ -52,6 +53,12 @@ import control.modifier.TicketType;
  */
 public class EntryProfile implements Serializable {
 
+    private String password = "";
+
+    public String getPassword() {
+        return password;
+    }
+
     public enum EntryLimit {
         ONCE("Egyszeri"),
         NO_LIMIT("Korlátlan"),
@@ -68,6 +75,12 @@ public class EntryProfile implements Serializable {
      * A beléptetési profil neve
      */
     private String name;
+
+    /**
+     * A rekordok automatikus neve
+     */
+    private String defaultName;
+
     /**
      * A profilhoz tartozó belépési kódok maszkja
      */
@@ -101,6 +114,11 @@ public class EntryProfile implements Serializable {
     private List<Discount> discounts;
 
     /**
+     * Kötelező-e a név megadása
+     */
+    private boolean nameRequirement;
+
+    /**
      * A szükséges parancskódok listája
      */
     private HashMap<String, AppController.ReadingFlag> commandCodes;
@@ -112,6 +130,8 @@ public class EntryProfile implements Serializable {
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
         commandCodes = new HashMap<>();
+        nameRequirement = true;
+        defaultName = "Külsős jegy";
     }
 
     public EntryProfile(EntryProfile other){
@@ -122,6 +142,9 @@ public class EntryProfile implements Serializable {
         autoDataHandling = other.autoDataHandling;
         defaultType = other.defaultType;
         commandCodes = other.commandCodes;
+        password = other.password;
+        nameRequirement = other.nameRequirement;
+        defaultName = other.defaultName;
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
         for (Discount discount : other.discounts) { discounts.add(new Discount(discount)); }
@@ -238,7 +261,11 @@ public class EntryProfile implements Serializable {
     }
 
     public Entry generateNewEntry(String id) {
-        return new Entry(id,null,defaultType);
+        String inputName = defaultName;
+        if(nameRequirement) {
+            inputName = JOptionPane.showInputDialog("Adj meg egy nevet!"); //TODO: insert UI handler here
+        }
+        return new Entry(id,inputName,defaultType);
     }
 
     private ProfileWizard getWizardEditor(JFrame main) { return new ProfileWizard(main); }
@@ -253,6 +280,8 @@ public class EntryProfile implements Serializable {
         private JComboBox<EntryLimit> cbLimit;
         private JSpinner spEntryLimit;
         private JComboBox<Object> cbTypes;
+        private JCheckBox checkNames = new JCheckBox("Név megadása kötelező");
+        private JTextField tfDefaultName;
         private int result;
 
         ProfileWizard(JFrame parent){
@@ -340,12 +369,23 @@ public class EntryProfile implements Serializable {
             cbLimit.addItemListener(e -> spEntryLimit.setEnabled(Objects.equals(cbLimit.getSelectedItem(), EntryLimit.CUSTOM)));
             spEntryLimit.setEnabled(Objects.equals(cbLimit.getSelectedItem(), EntryLimit.CUSTOM));
 
+            //Statistics
             panelMain.add(new JLabel("Belépések sázma:"), setConstraints(0,9,1,1));
             panelMain.add(cbLimit, setConstraints(1,9,1,1));
             panelMain.add(spEntryLimit, setConstraints(2,9,1,1));
 
+            //Other
+            tfDefaultName = new JTextField(defaultName);
+            checkNames.setToolTipText("Amennyiben nem kötelező a név megadása, akkor minden rekord automatikusan a megadott szöveggel lesz kitöltve");
+            checkNames.addActionListener(e-> tfDefaultName.setEnabled(!checkNames.isSelected()));
+            checkNames.setSelected(nameRequirement);
+            tfDefaultName.setEnabled(!nameRequirement);
+
             panelMain.add(new JCheckBox("Duplikációk automatikus eldobása"), setConstraints(0,10,2,1));
             panelMain.add(new JCheckBox("Ismeretlen jegytípusok automatikus eldobása"), setConstraints(0,11,2,1));
+            panelMain.add(checkNames,setConstraints(0,12,1,1));
+            panelMain.add(tfDefaultName,setConstraints(1,12,2,1));
+
 
             return panelMain;
         }
@@ -448,6 +488,8 @@ public class EntryProfile implements Serializable {
             commandCodes.put(tfCommandLeave.getText(),FL_IS_LEAVING);
             commandCodes.put(tfCommandDelete.getText(),FL_IS_DELETE);
             defaultType = (TicketType) cbTypes.getSelectedItem();
+            nameRequirement = checkNames.isSelected();
+            defaultName = tfDefaultName.getText();
 
             return !(empty || commandInvalid || noTicket);
         }

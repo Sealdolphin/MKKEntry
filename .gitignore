@@ -7,6 +7,7 @@
 *.mkk
 */temp
 */META-INF
+*JSON/
 
 #need .java and .jar
 !*.java

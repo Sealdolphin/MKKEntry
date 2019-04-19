@@ -1,7 +1,7 @@
 {
   "profiles" : [
     {
-      "name" : "PárLépés",
+      "name" : "PÃ¡rLÃ©pÃ©s",
       "mask" : "[AB][0-9]{3}[^0-9]",
       "commands" : {
         "default" : "PLT-FE-",
@@ -10,40 +10,40 @@
       },
       "discounts" : [
         {
-          "name" : "Segítõ",
-          "imgPath" : "Barcodes\\helpSale.png",
-          "icon" : "Icons\\DIS_HELP.png",
-          "label" : "Segített egy órát",
+          "name" : "SegÃ­tÃµ",
+          "imgPath" : "Barcodes\thelpSale.png",
+          "icon" : "Icons\tDIS_HELP.png",
+          "label" : "SegÃ­tett egy Ã³rÃ¡t",
           "meta" : "HELP_SALE",
           "discount" : 1000
         },
         {
-          "name" : "Büfé",
-          "imgPath" : "Barcodes\\foodSale.png",
-          "icon" : "Icons\\DIS_MONEY.png",
-          "label" : "Hozzájárult az agapéhoz",
+          "name" : "BÃ¼fÃ©",
+          "imgPath" : "Barcodes\tfoodSale.png",
+          "icon" : "Icons\tDIS_MONEY.png",
+          "label" : "HozzÃ¡jÃ¡rult az agapÃ©hoz",
           "meta" : "FOOD_SALE",
           "discount" : -500
         }
       ],
       "tickets" : [
         {
-          "name" : "Elõvételes",
+          "name" : "ElÃµvÃ©teles",
           "price" : 1800,
           "fee" : false
         },
         {
-          "name" : "Helyszíni",
+          "name" : "HelyszÃ­ni",
           "price" : 2200,
           "fee" : true
         },
         {
-          "name" : "Szervezõ",
+          "name" : "SzervezÃµ",
           "price" : 0,
           "fee" : true
         }
       ],
-      "defaultType" : "Helyszíni"
+      "defaultType" : "HelyszÃ­ni"
     },
     {
       "name" : "MKK",
@@ -55,17 +55,17 @@
       },
       "discounts" : [
         {
-          "name" : "Büfé",
-          "imgPath" : "Barcodes\\foodSale.png",
-          "label" : "Hozott sütit, vagy üdítõt",
-          "icon" : "Icons\\DIS_PIE.png",
+          "name" : "BÃ¼fÃ©",
+          "imgPath" : "Barcodes\tfoodSale.png",
+          "label" : "Hozott sÃ¼tit, vagy Ã¼dÃ­tÃµt",
+          "icon" : "Icons\tDIS_PIE.png",
           "meta" : "FOOD_SALE",
           "discount" : 500
         }
       ],
       "tickets" : [
         {
-          "name" : "Helyszíni",
+          "name" : "HelyszÃ­ni",
           "price" : 3500,
           "fee" : true
         },
@@ -75,7 +75,7 @@
           "fee" : true
         }
       ],
-      "defaultType" : "Helyszíni"
+      "defaultType" : "HelyszÃ­ni"
     }
   ],
   "active" : "",
