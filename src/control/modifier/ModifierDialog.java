@@ -1,5 +1,8 @@
 package control.modifier;
 
+import control.utility.file.ExtensionFilter;
+import view.ImagePanel;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -42,6 +45,19 @@ public abstract class ModifierDialog extends JDialog {
         pack();
         setResizable(false);
         setLocationRelativeTo(parent);
+    }
+
+    void selectPicture(ImagePanel panelImg){
+        JFileChooser fc = new JFileChooser();
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"png", "jpg", "jpeg", "bmp", "gif"}, "Minden Képfájl"));
+        fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"png"}, "Portable Network Graphics (.png)"));
+        fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"jpg", "jpeg"}, "Joint Photographic Experts Group (.jpg, .jpeg)"));
+        fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"bmp"}, "Bitmap (.bmp)"));
+        fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"gif"}, "Graphics Interchange Format (.gif)"));
+        if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            panelImg.changePicture(fc.getSelectedFile().getAbsolutePath());
+        }
     }
 
     int open(){

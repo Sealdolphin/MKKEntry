@@ -192,7 +192,7 @@ public class Discount implements Serializable, Modifier {
             //Browse button
             JButton btnBrowse = new JButton("Tallózás");
 
-            btnBrowse.addActionListener(e -> changePicture());
+            btnBrowse.addActionListener(e -> selectPicture(panelImg));
             btnSave.addActionListener(e -> saveDiscount());
             btnReadPic.addActionListener(e -> {
 //                TODO: Create Barcode Reader from selected port
@@ -239,30 +239,6 @@ public class Discount implements Serializable, Modifier {
             } else {
                 JOptionPane.showMessageDialog(this,"Not a valid discount!","ERROR",JOptionPane.ERROR_MESSAGE);
             }
-        }
-
-        private void changePicture() {
-            JFileChooser fc = new JFileChooser();
-            fc.setAcceptAllFileFilterUsed(false);
-            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"png", "jpg", "jpeg", "bmp", "gif"}, "Minden Képfájl"));
-            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"png"}, "Portable Network Graphics (.png)"));
-            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"jpg", "jpeg"}, "Joint Photographic Experts Group (.jpg, .jpeg)"));
-            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"bmp"}, "Bitmap (.bmp)"));
-            fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"gif"}, "Graphics Interchange Format (.gif)"));
-            if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                swapPicture(fc.getSelectedFile().getAbsolutePath());
-            }
-        }
-
-        private void swapPicture(String imagePath){
-            body.remove(panelImg);
-            panelImg = new ImagePanel(imagePath);
-            panelImg.setAlignmentX(Component.LEFT_ALIGNMENT);
-            body.add(panelImg,setConstraints(0,5,4,2));
-            //Resize window (since the user cannot do it)
-            setResizable(true);
-            pack();
-            setResizable(false);
         }
 
     }
