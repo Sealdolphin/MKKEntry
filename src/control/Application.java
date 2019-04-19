@@ -138,7 +138,7 @@ public class Application {
     }
     
     public static String parseFilePath(String filePath) {
-    	return filePath.replaceAll("/", File.separator);
+    	return filePath.replaceAll("\t", File.separator);
     }
 
 
