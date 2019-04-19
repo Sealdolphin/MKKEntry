@@ -54,8 +54,8 @@ public class BarcodeReader implements SerialPortDataListener {
      */
     @Override
     public void serialEvent(SerialPortEvent serialPortEvent) {
+
         byte[] bytes = serialPortEvent.getReceivedData();
-        System.out.println("Read " + bytes.length + " bytes.");
         Byte[] byteObjs = new Byte[bytes.length];
         int i = 0;
         for (byte b : bytes) {
@@ -63,7 +63,6 @@ public class BarcodeReader implements SerialPortDataListener {
         }
 
         Collections.addAll(raw_data,byteObjs);
-
         checkForFlush();
     }
 

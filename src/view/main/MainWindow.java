@@ -187,7 +187,7 @@ public class MainWindow extends JFrame {
             add(new JLabel("Profil: "));
             add(labelProfile);
             JButton btnNet = new NetworkButton();
-            add(btnNet);
+            //add(btnNet);  //TODO: Online mode access
             add(Box.createHorizontalGlue());
             //Comm. Port chooser
             add(new JLabel("Vonalkód olvasó: "));
