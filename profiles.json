@@ -12,7 +12,7 @@
         {
           "name" : "Segítő",
           "imgPath" : "Barcodes\thelpSale.png",
-          "icon" : "Icons DIS_HELP.png",
+          "icon" : "Icons\tDIS_HELP.png",
           "label" : "Segített egy órát",
           "meta" : "HELP_SALE",
           "discount" : 1000
@@ -20,7 +20,7 @@
         {
           "name" : "Büfé",
           "imgPath" : "Barcodes\tfoodSale.png",
-          "icon" : "Icons DIS_MONEY.png",
+          "icon" : "Icons\tDIS_MONEY.png",
           "label" : "Hozzájárult az agapéhoz",
           "meta" : "FOOD_SALE",
           "discount" : -500
@@ -58,7 +58,7 @@
           "name" : "Büfé",
           "imgPath" : "Barcodes\tfoodSale.png",
           "label" : "Hozott sütit, vagy üdítőt",
-          "icon" : "Icons DIS_PIE.png",
+          "icon" : "Icons\tDIS_PIE.png",
           "meta" : "FOOD_SALE",
           "discount" : 500
         }
