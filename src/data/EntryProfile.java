@@ -6,10 +6,8 @@ import static control.AppController.ReadingFlag.FL_IS_DELETE;
 import static control.AppController.ReadingFlag.FL_IS_LEAVING;
 import static control.Application.uh;
 import static control.modifier.ModifierDialog.setConstraints;
-import static data.Entry.DataColumn.NAME;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.SOUTH;
-import static javax.swing.BoxLayout.PAGE_AXIS;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
 import java.awt.BorderLayout;
@@ -215,16 +213,14 @@ public class EntryProfile implements Serializable {
      * Creates a side menu with additional attributes and options
      * @return a JPanel containing the sideBar components
      */
-    public JPanel createDiscountMenu() {
+    public JPanel modifyBarcodeMenu(JPanel sidePanel) {
         //Setting up layout
-        JPanel panelSide = new JPanel();
-        panelSide.setLayout(new BoxLayout(panelSide, PAGE_AXIS));
+        sidePanel.add(new JLabel("Kedvezmények:"));
         for (Discount discount : discounts) {
             //Adding image and image label
-            panelSide.add(discount.getDiscountPanel());
+            sidePanel.add(discount.getBarcodePanel());
         }
-
-        return panelSide;
+        return sidePanel;
     }
 
     public Discount identifyDiscountMeta(String discountMeta){

@@ -1,8 +1,8 @@
 package control.modifier;
 
 import control.Application;
-import control.utility.file.ExtensionFilter;
 import org.json.simple.JSONObject;
+import view.BarcodePanel;
 import view.ImagePanel;
 
 import javax.swing.*;
@@ -34,7 +34,7 @@ public class Discount implements Serializable, Modifier {
     /**
      * The barcode connected to the discount
      */
-    private Barcode barcode;
+    private Barcode barcode = new Barcode("TEMP");  //TODO: temp removal
 
     /**
      * The filepath of the icon's image
@@ -64,6 +64,7 @@ public class Discount implements Serializable, Modifier {
         this.iconPath = iconPath;
         metaData = meta;
         discount = price;
+        //TODO: link barcode
     }
 
     public Discount(Discount other) {
@@ -101,22 +102,8 @@ public class Discount implements Serializable, Modifier {
      * It is used to create the side menu of the application
      * @return a panel containing the Discount information
      */
-    public JPanel getDiscountPanel(){
-        JPanel panelDiscount = new JPanel();
-        panelDiscount.setLayout(new BoxLayout(panelDiscount,BoxLayout.PAGE_AXIS));
-
-        //Creating components
-        JLabel lbTooltip = new JLabel(label);
-        lbTooltip.setFont(new Font(lbTooltip.getFont().getName(),Font.PLAIN,20));
-        lbTooltip.setAlignmentX(Component.CENTER_ALIGNMENT);
-        lbTooltip.setToolTipText(name);
-        //Setting up panel
-        panelDiscount.add(new ImagePanel(imagePath));
-        panelDiscount.add(lbTooltip);
-
-        System.out.println("Loaded discount: " + name);
-
-        return panelDiscount;
+    public BarcodePanel getBarcodePanel(){
+        return barcode.createBarcodePanel();
     }
 
     @Override
@@ -194,12 +181,6 @@ public class Discount implements Serializable, Modifier {
 
             btnBrowse.addActionListener(e -> selectPicture(panelImg));
             btnSave.addActionListener(e -> saveDiscount());
-            btnReadPic.addActionListener(e -> {
-//                TODO: Create Barcode Reader from selected port
-//                DefaultBarcodeListener dbl = new DefaultBarcodeListener(tfMeta::setText);
-//                BarcodeReader reader = new BarcodeReader(selectedPort);
-//                reader.addListener(dbl);
-            });
 
             //Assemble Window
             body.add(new JLabel("Név"),setConstraints(0,0,1,1));

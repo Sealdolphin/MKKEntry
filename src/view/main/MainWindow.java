@@ -34,7 +34,7 @@ public class MainWindow extends JFrame {
 
     private JLabel labelProfile;
     private JLabel labelDevice;
-    private JButton btnDiscounts;
+    private JButton btnBarcodes;
     private JPanel sidePanel;
     private JTable entryView;
 
@@ -64,8 +64,8 @@ public class MainWindow extends JFrame {
         //Setting up default fields
         this.model = model;
         //Discount panel toggle button
-        btnDiscounts = new JButton("Kedvezmények");
-        btnDiscounts.addActionListener(e -> {
+        btnBarcodes = new JButton("Vonalkódok");
+        btnBarcodes.addActionListener(e -> {
             discountPanelStatus = !discountPanelStatus;
             if(discountPanelStatus)
                 add(sidePanel,BorderLayout.EAST);
@@ -80,7 +80,7 @@ public class MainWindow extends JFrame {
         //Device status label
         labelDevice = new JLabel("TEMP");
         labelDevice.setOpaque(true);
-        labelDevice.setMaximumSize(new Dimension(labelDevice.getMaximumSize().width,btnDiscounts.getPreferredSize().height));
+        labelDevice.setMaximumSize(new Dimension(labelDevice.getMaximumSize().width, btnBarcodes.getPreferredSize().height));
 
         //Create components
         setLayout(new BorderLayout());
@@ -196,7 +196,7 @@ public class MainWindow extends JFrame {
             btnSelectPort.addActionListener(e -> controller.scanPorts(cbPorts));
             add(btnSelectPort);
             add(Box.createHorizontalGlue());
-            add(btnDiscounts);
+            add(btnBarcodes);
 
             //Set default selection
             controller.scanPorts(cbPorts);
@@ -312,6 +312,7 @@ public class MainWindow extends JFrame {
             mi = new JMenuItem("Vonalkódok szerkesztése");
             mi.addActionListener(e -> {
                 controller.editBarcodes();
+                initiateView(controller);
             });
             menuProfiles.add(mi);
 

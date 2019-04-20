@@ -1,6 +1,7 @@
 package control.modifier;
 
 
+import view.BarcodePanel;
 import view.ImagePanel;
 
 import javax.swing.*;
@@ -8,22 +9,18 @@ import java.awt.*;
 import java.io.Serializable;
 import java.util.List;
 
-public class Barcode implements Serializable, Modifier{
+public class Barcode implements Serializable, Modifier {
     private String name;
-    private String picturePath;
-    private String description;
+    private String picturePath = null;
+    private String description = "Unknown";
 
 
     public Barcode(String name){
         this.name = name;
     }
 
-    public JPanel getBarcodePanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
-        panel.add(new ImagePanel(picturePath));
-        panel.add(new JLabel(description));
-        return panel;
+    public BarcodePanel createBarcodePanel() {
+        return new BarcodePanel(picturePath,description);
     }
 
     @Override

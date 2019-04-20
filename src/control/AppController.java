@@ -141,11 +141,13 @@ public class AppController implements ProgramStateListener {
     }
 
     public JPanel getSidePanel(){
-        BarcodePanel newPanel = new BarcodePanel();
+        JPanel sidePanel = new JPanel();
+        sidePanel.setLayout(new BoxLayout(sidePanel,BoxLayout.PAGE_AXIS));
+        sidePanel.add(new JLabel("Parancskódok:"));
         for (Barcode barcode : barcodes) {
-            newPanel.add(barcode.getBarcodePanel());
+            sidePanel.add(barcode.createBarcodePanel());
         }
-        return activeProfile.modifyBarcodeMenu(newPanel);
+        return activeProfile.modifyBarcodeMenu(sidePanel);
     }
 
     /**
