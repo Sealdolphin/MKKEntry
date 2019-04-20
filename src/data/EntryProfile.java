@@ -24,15 +24,12 @@ import java.util.*;
 
 import javax.swing.*;
 
-import control.modifier.Modifier;
+import control.modifier.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import control.AppController;
 import control.UIHandler;
-import control.modifier.Discount;
-import control.modifier.ModifierWizardEditor;
-import control.modifier.TicketType;
 
 /**
  * Beléptetési profil.
@@ -112,6 +109,11 @@ public class EntryProfile implements Serializable {
     private List<Discount> discounts;
 
     /**
+     * A vonalkódok listája
+     */
+    private List<Barcode> barCodes;
+
+    /**
      * Kötelező-e a név megadása
      */
     private boolean nameRequirement;
@@ -128,6 +130,7 @@ public class EntryProfile implements Serializable {
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
         commandCodes = new HashMap<>();
+        barCodes = new ArrayList<>();
         nameRequirement = true;
         defaultName = "Külsős jegy";
     }
@@ -145,6 +148,8 @@ public class EntryProfile implements Serializable {
         defaultName = other.defaultName;
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
+        barCodes = new ArrayList<>();
+        for (Barcode barcode : other.barCodes) { barCodes.add(new Barcode(barcode)); }
         for (Discount discount : other.discounts) { discounts.add(new Discount(discount)); }
         for (TicketType type : other.ticketTypes) { ticketTypes.add(new TicketType(type)); }
         System.out.println("Copied discount to: " + discounts.hashCode());
@@ -185,7 +190,7 @@ public class EntryProfile implements Serializable {
         //Loading discounts
         JSONArray jArray = (JSONArray) jsonProfile.get("discounts");
         for (Object discountObject : jArray) {
-            profile.discounts.add(Discount.parseDiscountFromJson((JSONObject) discountObject, profile.name));
+            profile.discounts.add(Discount.parseDiscountFromJson((JSONObject) discountObject, profile));
         }
         //Loading Ticket types
         jArray = (JSONArray) jsonProfile.get("tickets");
@@ -213,22 +218,40 @@ public class EntryProfile implements Serializable {
      * Creates a side menu with additional attributes and options
      * @return a JPanel containing the sideBar components
      */
-    public JPanel modifyBarcodeMenu(JPanel sidePanel) {
+    public JPanel getSidePanel() {
         //Setting up layout
+        for(Barcode barcode : barCodes)
+            barcode.setLink(false);
+
+        JPanel sidePanel = new JPanel();
+        sidePanel.setLayout(new BoxLayout(sidePanel,BoxLayout.PAGE_AXIS));
+
         sidePanel.add(new JLabel("Kedvezmények:"));
         for (Discount discount : discounts) {
             //Adding image and image label
             sidePanel.add(discount.getBarcodePanel());
         }
+
+        sidePanel.add(new JLabel("Parancskódok:"));
+        for (Barcode barcode : barCodes) {
+            if(!barcode.hasLink())
+                sidePanel.add(barcode.createBarcodePanel());
+        }
+
         return sidePanel;
     }
 
     public Discount identifyDiscountMeta(String discountMeta){
+        //TODO: identify by name!!!
         return discounts.stream().filter(discount -> discount.getMeta().equals(discountMeta)).findAny().orElse(null);
     }
 
     TicketType identifyTicketType(String unknownType) {
         return ticketTypes.stream().filter(type -> type.toString().equals(unknownType)).findAny().orElse(defaultType);
+    }
+
+    public Barcode identifyBarcode(String barcodeMeta){
+        return barCodes.stream().filter(barCode -> barCode.getMeta().equals(barcodeMeta)).findAny().orElse(null);
     }
 
     public String validateCode(String code) throws IOException{
@@ -295,11 +318,13 @@ public class EntryProfile implements Serializable {
             //Adding tabs
             JTabbedPane mainPanel = new JTabbedPane();
             mainPanel.addTab("Általános",null, createMainPanel(),"A profil általános beállításai");
+            mainPanel.addTab("Vonalkódok",null, createListTab(barCodes, new Barcode.BarcodeListener(this)),"A profilhoz tartozó vonalkódok");
             mainPanel.addTab("Jegytípusok",null, createListTab(ticketTypes,new TicketType.TicketTypeListener(this)),"A profilhoz tartozó jegytípusok");
             mainPanel.addTab("Kedvezmények",null, createListTab(discounts, new Discount.DiscountListener(this)),"A profilhoz tartozó kedvezmények");
             mainPanel.setMnemonicAt(0, KeyEvent.VK_1);
             mainPanel.setMnemonicAt(1, KeyEvent.VK_2);
             mainPanel.setMnemonicAt(2, KeyEvent.VK_3);
+            mainPanel.setMnemonicAt(3, KeyEvent.VK_4);
             mainPanel.addChangeListener(e -> {
                 cbTypes.removeAllItems();
                 ticketTypes.forEach(t -> cbTypes.addItem(t));

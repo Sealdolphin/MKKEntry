@@ -10,7 +10,6 @@ import com.fazecast.jSerialComm.SerialPort;
 import data.DataModel;
 import data.Entry;
 import data.EntryProfile;
-import view.BarcodePanel;
 import view.ListEditor;
 import view.StatisticsWindow;
 import view.main.LoadingScreen;
@@ -30,7 +29,11 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.OK_OPTION;
 import static javax.swing.JOptionPane.WARNING_MESSAGE;
 
-
+/**
+ * The main manager class of the program.
+ * It soress data and distributes the tasks among other classes
+ * @author Mihalovits Márk
+ */
 public class AppController implements ProgramStateListener {
 
     /**
@@ -42,11 +45,6 @@ public class AppController implements ProgramStateListener {
      * The model for the profiles in the program
      */
     private DataModel<EntryProfile> profiles;
-
-    /**
-     * The model of the stored barcodes
-     */
-    private List<Barcode> barcodes;
 
     /**
      * The currently active profile
@@ -90,10 +88,9 @@ public class AppController implements ProgramStateListener {
      */
     private NetworkController netController;
 
-    AppController(AppData model, DataModel<EntryProfile> pData, List<Barcode> barcodeList){
+    AppController(AppData model, DataModel<EntryProfile> pData){
         this.model = model;
         profiles = pData;
-        barcodes = barcodeList;
         activeProfile = pData.getSelectedData();
         while(activeProfile == null)
             changeProfile(chooseProfile());
@@ -141,13 +138,7 @@ public class AppController implements ProgramStateListener {
     }
 
     public JPanel getSidePanel(){
-        JPanel sidePanel = new JPanel();
-        sidePanel.setLayout(new BoxLayout(sidePanel,BoxLayout.PAGE_AXIS));
-        sidePanel.add(new JLabel("Parancskódok:"));
-        for (Barcode barcode : barcodes) {
-            sidePanel.add(barcode.createBarcodePanel());
-        }
-        return activeProfile.modifyBarcodeMenu(sidePanel);
+        return activeProfile.getSidePanel();
     }
 
     /**
@@ -196,6 +187,86 @@ public class AppController implements ProgramStateListener {
                 "Aktív profil kiválasztása",
                 JOptionPane.QUESTION_MESSAGE, null,
                 profileObjs, profileObjs[0]);
+    }
+
+    public void setReadingFlag(ReadingFlag newFlag){
+        readingFlag = newFlag;
+        for (ReadFlagListener l: listenerList) {
+            l.readingFlagChanged(readingFlag);
+        }
+    }
+
+    public void readEntryCode(String text) {
+        readBarCode(activeProfile.getEntryCode() + text);
+    }
+
+    public void editProfile(JFrame main, JLabel label) {
+        menuOpen = true;
+        EntryProfile editedProfile = EntryProfile.createProfileFromWizard(main,new EntryProfile(activeProfile));
+        if(editedProfile != null) {
+            //Remove active profile
+            if (JOptionPane.showConfirmDialog(null, "Ezzel törölsz minden adatot a rendszerből\n" + uh.getUIStr("MSG","CONFIRM"), uh.getUIStr("MSG","WARNING"),
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+                try {
+                    profiles.replaceData(activeProfile,editedProfile);
+                    label.setText(changeProfile(editedProfile));
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null,"HIBA: " + ex.getMessage(),uh.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
+                }
+            }
+        }
+        menuOpen = false;
+    }
+
+    public void addProfile(EntryProfile newProfile) throws IOException {
+        profiles.addData(newProfile);
+    }
+
+    public void createStatistics() {
+        if(statWindow != null)
+            if(statWindow.isVisible())
+                statWindow.dispose();
+        statWindow = new StatisticsWindow(activeProfile,model);
+        statWindow.setVisible(true);
+    }
+
+    public void switchOnlineMode() {
+        try {
+            netController = new NetworkController(activeProfile,this,"localhost",5503);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+//    public void editBarCodes() {
+//        ListEditor<Barcode> editor = new ListEditor<>(barCodes, "Vonalkódok", new Barcode.BarcodeListener(null));
+//        editor.setVisible(true);
+//    }
+
+    /**
+     *  For the different reading operations
+     */
+    public enum ReadingFlag{
+        FL_IS_LEAVING("leave","Kilépésre vár",new Color(0xffcc00),Color.BLACK),
+        FL_IS_DELETE("delete","Törlésre vár",new Color(0xaa0000),Color.WHITE),
+        FL_DEFAULT("default","Belépésre vár",new Color(0x00aa00),Color.BLACK);
+
+        private final String flagMeta;
+        private final String labelInfo;
+        private final Color labelColor;
+        private final Color fgColor;
+
+        ReadingFlag(String meta, String info, Color color, Color fg){
+            flagMeta = meta;
+            labelInfo = info;
+            labelColor = color;
+            fgColor = fg;
+        }
+
+        public String getInfo(){ return labelInfo; }
+        public String getMeta(){ return flagMeta; }
+        public Color getColor(){ return labelColor; }
+        public Color getTextColor(){ return fgColor; }
     }
 
     @Override
@@ -249,13 +320,6 @@ public class AppController implements ProgramStateListener {
             model.replaceData(model.getDataById(id),newData);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    public void setReadingFlag(ReadingFlag newFlag){
-        readingFlag = newFlag;
-        for (ReadFlagListener l: listenerList) {
-            l.readingFlagChanged(readingFlag);
         }
     }
 
@@ -323,79 +387,6 @@ public class AppController implements ProgramStateListener {
             }
         }
 
-    }
-
-    public void readEntryCode(String text) {
-        readBarCode(activeProfile.getEntryCode() + text);
-    }
-
-    public void editProfile(JFrame main, JLabel label) {
-        menuOpen = true;
-        EntryProfile editedProfile = EntryProfile.createProfileFromWizard(main,new EntryProfile(activeProfile));
-        if(editedProfile != null) {
-            //Remove active profile
-            if (JOptionPane.showConfirmDialog(null, "Ezzel törölsz minden adatot a rendszerből\n" + uh.getUIStr("MSG","CONFIRM"), uh.getUIStr("MSG","WARNING"),
-                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
-                try {
-                    profiles.replaceData(activeProfile,editedProfile);
-                    label.setText(changeProfile(editedProfile));
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(null,"HIBA: " + ex.getMessage(),uh.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
-                }
-            }
-        }
-        menuOpen = false;
-    }
-
-    public void addProfile(EntryProfile newProfile) throws IOException {
-        profiles.addData(newProfile);
-    }
-
-    public void createStatistics() {
-        if(statWindow != null)
-            if(statWindow.isVisible())
-                statWindow.dispose();
-        statWindow = new StatisticsWindow(activeProfile,model);
-        statWindow.setVisible(true);
-    }
-
-    public void switchOnlineMode() {
-        try {
-            netController = new NetworkController(activeProfile,this,"localhost",5503);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void editBarcodes() {
-        ListEditor<Barcode> editor = new ListEditor<>(barcodes, "Vonalkódok", new Barcode.BarcodeListener(null));
-        editor.setVisible(true);
-    }
-
-    /**
-     *  For the different reading operations
-     */
-    public enum ReadingFlag{
-        FL_IS_LEAVING("leave","Kilépésre vár",new Color(0xffcc00),Color.BLACK),
-        FL_IS_DELETE("delete","Törlésre vár",new Color(0xaa0000),Color.WHITE),
-        FL_DEFAULT("default","Belépésre vár",new Color(0x00aa00),Color.BLACK);
-
-        private final String flagMeta;
-        private final String labelInfo;
-        private final Color labelColor;
-        private final Color fgColor;
-
-        ReadingFlag(String meta, String info, Color color, Color fg){
-            flagMeta = meta;
-            labelInfo = info;
-            labelColor = color;
-            fgColor = fg;
-        }
-
-        public String getInfo(){ return labelInfo; }
-        public String getMeta(){ return flagMeta; }
-        public Color getColor(){ return labelColor; }
-        public Color getTextColor(){ return fgColor; }
     }
 
 }

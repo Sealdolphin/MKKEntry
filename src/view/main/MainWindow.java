@@ -307,15 +307,6 @@ public class MainWindow extends JFrame {
             });
             menuProfiles.add(mi);
 
-            menuProfiles.addSeparator();
-
-            mi = new JMenuItem("Vonalkódok szerkesztése");
-            mi.addActionListener(e -> {
-                controller.editBarcodes();
-                initiateView(controller);
-            });
-            menuProfiles.add(mi);
-
             return menuProfiles;
         }
 
