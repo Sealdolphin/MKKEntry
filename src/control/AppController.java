@@ -1,5 +1,6 @@
 package control;
 
+import control.modifier.Barcode;
 import control.modifier.Discount;
 import control.utility.BarcodeReader;
 import control.utility.file.EntryFilter;
@@ -9,6 +10,8 @@ import com.fazecast.jSerialComm.SerialPort;
 import data.DataModel;
 import data.Entry;
 import data.EntryProfile;
+import view.BarcodePanel;
+import view.ListEditor;
 import view.StatisticsWindow;
 import view.main.LoadingScreen;
 import view.main.ReadFlagListener;
@@ -30,20 +33,67 @@ import static javax.swing.JOptionPane.WARNING_MESSAGE;
 
 public class AppController implements ProgramStateListener {
 
+    /**
+     * The model for the entries in the program
+     */
     private AppData model;
+
+    /**
+     * The model for the profiles in the program
+     */
     private DataModel<EntryProfile> profiles;
+
+    /**
+     * The model of the stored barcodes
+     */
+    private List<Barcode> barcodes;
+
+    /**
+     * The currently active profile
+     */
     private EntryProfile activeProfile;
+
+    /**
+     * Default option for choosing
+     */
     private static final String DEFAULT_OPTION = uh.getUIStr("UI","CHOOSE_ONE");
+
+    /**
+     * The selected port for the barcode reader (optional)
+     */
     private SerialPort selectedPort;
+
+    /**
+     * The listeners who are receiving the flag changing signals
+     * Such an event occur every time when reading mode is changed. (Leave or Delete)
+     */
     private List<ReadFlagListener> listenerList = new ArrayList<>();
+
+    /**
+     * The current reading flag
+     */
     private ReadingFlag readingFlag = ReadingFlag.FL_DEFAULT;
+
+    /**
+     * Whether a menu is opened.
+     * This enables / disables operation.
+     */
     private boolean menuOpen = false;
+
+    /**
+     * The statistics window of the program
+     */
     private StatisticsWindow statWindow;
+
+    /**
+     * The net controller for online mode
+     */
     private NetworkController netController;
 
-    AppController(AppData model, DataModel<EntryProfile> pData){
+    AppController(AppData model, DataModel<EntryProfile> pData, List<Barcode> barcodeList){
         this.model = model;
         profiles = pData;
+        barcodes = barcodeList;
         activeProfile = pData.getSelectedData();
         while(activeProfile == null)
             changeProfile(chooseProfile());
@@ -91,7 +141,11 @@ public class AppController implements ProgramStateListener {
     }
 
     public JPanel getSidePanel(){
-        return activeProfile.createDiscountMenu();
+        BarcodePanel newPanel = new BarcodePanel();
+        for (Barcode barcode : barcodes) {
+            newPanel.add(barcode.getBarcodePanel());
+        }
+        return activeProfile.modifyBarcodeMenu(newPanel);
     }
 
     /**
@@ -309,6 +363,11 @@ public class AppController implements ProgramStateListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void editBarcodes() {
+        ListEditor<Barcode> editor = new ListEditor<>(barcodes, "Vonalkódok", new Barcode.BarcodeListener(null));
+        editor.setVisible(true);
     }
 
     /**

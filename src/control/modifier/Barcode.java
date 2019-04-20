@@ -5,9 +5,10 @@ import view.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.List;
 
-public class Barcode implements Modifier{
+public class Barcode implements Serializable, Modifier{
     private String name;
     private String picturePath;
     private String description;
@@ -35,9 +36,9 @@ public class Barcode implements Modifier{
         return new BarcodeWizard(parent);
     }
 
-    public static class BarcodeReaderListener extends ModifierWizardEditor<Barcode> {
+    public static class BarcodeListener extends ModifierWizardEditor<Barcode> {
 
-        public BarcodeReaderListener(Window parent) {
+        public BarcodeListener(Window parent) {
             super(parent);
         }
 
@@ -52,6 +53,9 @@ public class Barcode implements Modifier{
         }
     }
 
+    /**
+     * The Wizard class of the Barcode
+     */
     private class BarcodeWizard extends ModifierDialog {
 
         private ImagePanel panelImg = new ImagePanel(picturePath);
@@ -86,6 +90,7 @@ public class Barcode implements Modifier{
             picturePath = panelImg.getPath();
             name = tfName.getText();
             description = tfTooltip.getText();
+            super.result = 0;
             dispose();
         }
 

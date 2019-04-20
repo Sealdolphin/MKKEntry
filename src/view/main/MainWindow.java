@@ -10,10 +10,7 @@ import data.EntryProfile;
 import view.DiscountRenderer;
 
 import javax.swing.*;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import javax.swing.event.TableModelEvent;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -227,7 +224,7 @@ public class MainWindow extends JFrame {
             //Assembling Menus
             menuBar.add(createFileMenu(handler));
             //menuBar.add(createEditMenu(controller));
-            menuBar.add(createProfileMenu(controller));
+            menuBar.add(createSettingsMenu(controller));
             menuBar.add(createChartsMenu(controller));
             menuBar.add(new JMenu("Tranzakciók"));
 
@@ -283,8 +280,8 @@ public class MainWindow extends JFrame {
          * @param controller the event handler handling the action events
          * @return the PROFILE menu
          */
-        private JMenu createProfileMenu(AppController controller) {
-            JMenu menuProfiles = new JMenu("Profilok");
+        private JMenu createSettingsMenu(AppController controller) {
+            JMenu menuProfiles = new JMenu("Beállítások");
 
             JMenuItem mi = new JMenuItem("Új profil létrehozása");
             mi.addActionListener(e-> {
@@ -310,7 +307,13 @@ public class MainWindow extends JFrame {
             });
             menuProfiles.add(mi);
 
+            menuProfiles.addSeparator();
 
+            mi = new JMenuItem("Vonalkódok szerkesztése");
+            mi.addActionListener(e -> {
+                controller.editBarcodes();
+            });
+            menuProfiles.add(mi);
 
             return menuProfiles;
         }

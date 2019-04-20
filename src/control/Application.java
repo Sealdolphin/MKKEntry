@@ -1,5 +1,6 @@
 package control;
 
+import control.modifier.Barcode;
 import data.AppData;
 import data.ProfileData;
 import view.main.LoadingScreen;
@@ -13,11 +14,14 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Application {
 
     private static final String configFileName = "config.mkk";
     private static final String profileFileName = "profiles.mkk";
+    private static final String barcodeFileName = "barcodes.mkk";
 
     public static UIHandler uh;
 
@@ -35,7 +39,7 @@ public class Application {
     public static void main(String[] args) {
 
         Application.loadingScreen = new LoadingScreen();
-        Application.loadingScreen.setTasks(6);
+        Application.loadingScreen.setTasks(7);
         Application.loadingScreen.setVisible(true);
 
         //Loading UI HANDLER
@@ -111,7 +115,22 @@ public class Application {
             model = new AppData();
         }
 
-        AppController controller = new AppController(model, profileData);
+        List<Barcode> barcodeList = new ArrayList<>();
+        try {
+            Application.loadingScreen.setProgress("Vonalkódok betöltése...");
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(barcodeFileName));
+            Object[] barcodeObjects = (Object[]) ois.readObject();
+            for(Object obj : barcodeObjects)
+                barcodeList.add((Barcode) obj);
+            ois.close();
+        } catch (Exception ex){
+            JOptionPane.showMessageDialog(
+                    null,
+                    uh.getUIStr("ERR","START") + "\n" + ex.getMessage(),
+                    uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
+        }
+
+        AppController controller = new AppController(model, profileData, barcodeList);
 
         Image icon = Toolkit.getDefaultToolkit().getImage("Icons"+File.separator+"mkkMini.png");
 
@@ -128,6 +147,10 @@ public class Application {
                     oos.writeObject(profileData);
                     oos.close();
                     System.out.println("Profiles saved.");
+                    oos = new ObjectOutputStream(new FileOutputStream(barcodeFileName));
+                    oos.writeObject(barcodeList.toArray());
+                    oos.close();
+                    System.out.println("Barcodes saved.");
                 } catch (IOException io) {
                     io.printStackTrace();
                     JOptionPane.showMessageDialog(
