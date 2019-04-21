@@ -242,7 +242,6 @@ public class EntryProfile implements Serializable {
     }
 
     public Discount identifyDiscountMeta(String discountMeta){
-        //TODO: identify by name!!!
         return discounts.stream().filter(discount -> discount.getMeta().equals(discountMeta)).findAny().orElse(null);
     }
 
@@ -275,14 +274,18 @@ public class EntryProfile implements Serializable {
         return name;
     }
 
-    public Object[] getDiscounts(){
-        return discounts.toArray();
+    public Discount[] getDiscounts(){
+        return discounts.toArray(new Discount[0]);
+    }
+
+    public Barcode[] getBarcodes(){
+        return barCodes.toArray(new Barcode[0]);
     }
 
     public Entry generateNewEntry(String id) {
         String inputName = defaultName;
         if(nameRequirement) {
-            inputName = JOptionPane.showInputDialog("Adj meg egy nevet!"); //TODO: insert UI handler here
+            inputName = JOptionPane.showInputDialog("Adj meg egy nevet!");
         }
         return new Entry(id,inputName,defaultType);
     }
@@ -294,11 +297,11 @@ public class EntryProfile implements Serializable {
         private JTextField tfName;
         private JTextField tfMask;
         private JTextField tfCommandDefault;
-        private JTextField tfCommandLeave;
-        private JTextField tfCommandDelete;
+        private JComboBox<Barcode> cbCommandLeave;
+        private JComboBox<Barcode> cbCommandDelete;
         private JComboBox<EntryLimit> cbLimit;
         private JSpinner spEntryLimit;
-        private JComboBox<Object> cbTypes;
+        private JComboBox<TicketType> cbTypes;
         private JCheckBox checkNames = new JCheckBox("Név megadása kötelező");
         private JTextField tfDefaultName;
         private int result;
@@ -320,13 +323,16 @@ public class EntryProfile implements Serializable {
             mainPanel.addTab("Általános",null, createMainPanel(),"A profil általános beállításai");
             mainPanel.addTab("Vonalkódok",null, createListTab(barCodes, new Barcode.BarcodeListener(this)),"A profilhoz tartozó vonalkódok");
             mainPanel.addTab("Jegytípusok",null, createListTab(ticketTypes,new TicketType.TicketTypeListener(this)),"A profilhoz tartozó jegytípusok");
-            mainPanel.addTab("Kedvezmények",null, createListTab(discounts, new Discount.DiscountListener(this)),"A profilhoz tartozó kedvezmények");
+            mainPanel.addTab("Kedvezmények",null, createListTab(discounts, new Discount.DiscountListener(this,EntryProfile.this)),"A profilhoz tartozó kedvezmények");
             mainPanel.setMnemonicAt(0, KeyEvent.VK_1);
             mainPanel.setMnemonicAt(1, KeyEvent.VK_2);
             mainPanel.setMnemonicAt(2, KeyEvent.VK_3);
             mainPanel.setMnemonicAt(3, KeyEvent.VK_4);
             mainPanel.addChangeListener(e -> {
                 cbTypes.removeAllItems();
+                cbCommandDelete.removeAllItems();
+                cbCommandLeave.removeAllItems();
+                barCodes.forEach(b -> {cbCommandLeave.addItem(b); cbCommandDelete.addItem(b);});
                 ticketTypes.forEach(t -> cbTypes.addItem(t));
                 cbTypes.setSelectedItem(defaultType);
             });
@@ -342,21 +348,20 @@ public class EntryProfile implements Serializable {
         private void initComponents(){
             tfName = new JTextField(name,32);
             tfMask = new JTextField(codeMask,32);
+            cbCommandLeave = new JComboBox<>(barCodes.toArray(new Barcode[0]));
+            cbCommandDelete = new JComboBox<>(barCodes.toArray(new Barcode[0]));
+
             if(commandCodes != null) {
                 tfCommandDefault = new JTextField(commandCodes.entrySet().stream().filter(flag -> flag.getValue().equals(FL_DEFAULT)).map(Map.Entry::getKey).findAny().orElse(""));
-                tfCommandLeave = new JTextField(commandCodes.entrySet().stream().filter(flag -> flag.getValue().equals(FL_IS_LEAVING)).map(Map.Entry::getKey).findAny().orElse(""));
-                tfCommandDelete = new JTextField(commandCodes.entrySet().stream().filter(flag -> flag.getValue().equals(FL_IS_DELETE)).map(Map.Entry::getKey).findAny().orElse(""));
             } else {
                 tfCommandDefault = new JTextField();
-                tfCommandLeave = new JTextField();
-                tfCommandDelete = new JTextField();
             }
             cbLimit = new JComboBox<>(EntryLimit.values());
             spEntryLimit = new JSpinner(new SpinnerNumberModel(2,2,100,1));
             spEntryLimit.setEditor(new JSpinner.DefaultEditor(spEntryLimit));
             if (entryLimit >= 2) { spEntryLimit.setValue(entryLimit);
             } else { cbLimit.setSelectedIndex(entryLimit); }
-            cbTypes = new JComboBox<>(ticketTypes.toArray());
+            cbTypes = new JComboBox<>(ticketTypes.toArray(new TicketType[0]));
             cbTypes.addItemListener(e -> defaultType = (TicketType) cbTypes.getSelectedItem());
 
         }
@@ -380,8 +385,8 @@ public class EntryProfile implements Serializable {
             panelMain.add(new JLabel("Kiléptetés (LEAVE): "), setConstraints(0,6,1,1));
             panelMain.add(new JLabel("Törlés (DELETE): "), setConstraints(0,7,1,1));
             panelMain.add(tfCommandDefault, setConstraints(1,5,2,1));
-            panelMain.add(tfCommandLeave, setConstraints(1,6,2,1));
-            panelMain.add(tfCommandDelete, setConstraints(1,7,2,1));
+            panelMain.add(cbCommandLeave, setConstraints(1,6,2,1));
+            panelMain.add(cbCommandDelete, setConstraints(1,7,2,1));
 
             //Settings and behaviours
             panelMain.add(new JLabel("Alapméretezett jegytípus: "), setConstraints(0,8,1,1));
@@ -422,8 +427,8 @@ public class EntryProfile implements Serializable {
             panelList.add(paneListHolder,CENTER);
             
             JPanel panelOperations = new JPanel();
-            JButton btnRemove = new JButton("-");
-            JButton btnAdd = new JButton("+");
+            JButton btnRemove = new JButton("Törlés");
+            JButton btnAdd = new JButton("Hozzáadás");
 
             panelOperations.add(btnAdd);
             panelOperations.add(btnRemove);
@@ -492,8 +497,10 @@ public class EntryProfile implements Serializable {
         }
 
         private boolean validateProfile(){
-            boolean empty = tfName.getText().isEmpty() || tfMask.getText().isEmpty() || tfCommandDefault.getText().isEmpty() || tfCommandLeave.getText().isEmpty() || tfCommandDelete.getText().isEmpty();
-            boolean commandInvalid = Objects.equals(tfCommandDefault.getText(),tfCommandLeave.getText()) || Objects.equals(tfCommandLeave.getText(),tfCommandDelete.getText()) || Objects.equals(tfCommandDefault.getText(),tfCommandDelete.getText());
+            boolean empty = tfName.getText().isEmpty() || tfMask.getText().isEmpty() || tfCommandDefault.getText().isEmpty() || cbCommandLeave.getSelectedItem() == null || cbCommandDelete.getSelectedItem() == null;
+            boolean commandInvalid = (cbCommandDelete.getSelectedIndex() == cbCommandLeave.getSelectedIndex()) ||
+                    ((Barcode) cbCommandLeave.getSelectedItem()).getMeta().equals(tfDefaultName.getText()) ||
+                    ((Barcode) cbCommandDelete.getSelectedItem()).getMeta().equals(tfDefaultName.getText());
             boolean noTicket = ticketTypes.isEmpty();
 
             //ERROR
@@ -506,8 +513,8 @@ public class EntryProfile implements Serializable {
             codeMask = tfMask.getText();
             commandCodes.clear();
             commandCodes.put(tfCommandDefault.getText(),FL_DEFAULT);
-            commandCodes.put(tfCommandLeave.getText(),FL_IS_LEAVING);
-            commandCodes.put(tfCommandDelete.getText(),FL_IS_DELETE);
+            commandCodes.put(((Barcode)(cbCommandLeave.getSelectedItem())).getMeta(),FL_IS_LEAVING);
+            commandCodes.put(((Barcode)(cbCommandDelete.getSelectedItem())).getMeta(),FL_IS_DELETE);
             defaultType = (TicketType) cbTypes.getSelectedItem();
             nameRequirement = checkNames.isSelected();
             defaultName = tfDefaultName.getText();

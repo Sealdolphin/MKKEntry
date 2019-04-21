@@ -86,6 +86,21 @@ public class Application {
 
     private Application() throws Exception {
 
+        List<Barcode> barcodeList = new ArrayList<>();
+        try {
+            Application.loadingScreen.setProgress("Vonalkódok betöltése...");
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(barcodeFileName));
+            Object[] barcodeObjects = (Object[]) ois.readObject();
+            for(Object obj : barcodeObjects)
+                barcodeList.add((Barcode) obj);
+            ois.close();
+        } catch (Exception ex){
+            JOptionPane.showMessageDialog(
+                    null,
+                    uh.getUIStr("ERR","START") + "\n" + ex.getMessage(),
+                    uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
+        }
+
         try {
             //Starting application
             Application.loadingScreen.setProgress("Profilok betöltése...");
@@ -115,22 +130,7 @@ public class Application {
             model = new AppData();
         }
 
-        List<Barcode> barcodeList = new ArrayList<>();
-        try {
-            Application.loadingScreen.setProgress("Vonalkódok betöltése...");
-            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(barcodeFileName));
-            Object[] barcodeObjects = (Object[]) ois.readObject();
-            for(Object obj : barcodeObjects)
-                barcodeList.add((Barcode) obj);
-            ois.close();
-        } catch (Exception ex){
-            JOptionPane.showMessageDialog(
-                    null,
-                    uh.getUIStr("ERR","START") + "\n" + ex.getMessage(),
-                    uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
-        }
-
-        AppController controller = new AppController(model, profileData, barcodeList);
+        AppController controller = new AppController(model, profileData);
 
         Image icon = Toolkit.getDefaultToolkit().getImage("Icons"+File.separator+"mkkMini.png");
 
