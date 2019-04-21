@@ -37,13 +37,13 @@
         },
         {
           "name" : "Kilépés",
-          "description" : "Hozott sütit, vagy üdítőt",
+          "description" : "Vendég kiléptetése",
           "imagePath" : "Barcodes\tleaveGuest.png",
           "meta" : "GL"
         },
         {
           "name" : "Törlés",
-          "description" : "Hozott sütit, vagy üdítőt",
+          "description" : "Vendég törlése",
           "imagePath" : "Barcodes\tdeleteGuest.png",
           "meta" : "MOD"
         }
