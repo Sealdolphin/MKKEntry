@@ -1,6 +1,8 @@
 package control.modifier;
 
 
+import control.Application;
+import org.json.simple.JSONObject;
 import view.BarcodePanel;
 import view.ImagePanel;
 
@@ -17,6 +19,13 @@ public class Barcode implements Serializable, Modifier {
     private String picturePath = null;
     private String description = "Unknown";
     private boolean hasLink = false;
+
+    private Barcode(String name, String meta, String picture, String desc){
+        this.name = name;
+        metaData = meta;
+        picturePath = picture;
+        description = desc;
+    }
 
     public Barcode(String name){
         this.name = name;
@@ -53,6 +62,15 @@ public class Barcode implements Serializable, Modifier {
 
     public String getMeta() {
         return metaData;
+    }
+
+    public static Barcode parseBarcodeFromJSON(JSONObject jsonObject){
+        String name, meta, desc, picture = null;
+        name = jsonObject.get("name").toString();
+        meta = jsonObject.get("meta").toString();
+        desc = jsonObject.get("description").toString();
+        picture = Application.parseFilePath(jsonObject.get("imagePath").toString());
+        return new Barcode(name,meta,picture,desc);
     }
 
     public static class BarcodeListener extends ModifierWizardEditor<Barcode> {

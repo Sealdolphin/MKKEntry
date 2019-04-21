@@ -1,51 +1,6 @@
 {
   "profiles" : [
     {
-      "name" : "PárLépés",
-      "mask" : "[AB][0-9]{3}[^0-9]",
-      "commands" : {
-        "default" : "PLT-FE-",
-        "leave": "LEAVE_GUEST",
-        "delete": "DELETE_GUEST"
-      },
-      "discounts" : [
-        {
-          "name" : "Segítõ",
-          "imgPath" : "Barcodes\thelpSale.png",
-          "icon" : "Icons\tDIS_HELP.png",
-          "label" : "Segített egy órát",
-          "meta" : "HELP_SALE",
-          "discount" : 1000
-        },
-        {
-          "name" : "Büfé",
-          "imgPath" : "Barcodes\tfoodSale.png",
-          "icon" : "Icons\tDIS_MONEY.png",
-          "label" : "Hozzájárult az agapéhoz",
-          "meta" : "FOOD_SALE",
-          "discount" : -500
-        }
-      ],
-      "tickets" : [
-        {
-          "name" : "Elõvételes",
-          "price" : 1800,
-          "fee" : false
-        },
-        {
-          "name" : "Helyszíni",
-          "price" : 2200,
-          "fee" : true
-        },
-        {
-          "name" : "Szervezõ",
-          "price" : 0,
-          "fee" : true
-        }
-      ],
-      "defaultType" : "Helyszíni"
-    },
-    {
       "name" : "MKK",
       "mask" : "[0-9]{4}",
       "commands" : {
@@ -56,10 +11,8 @@
       "discounts" : [
         {
           "name" : "Büfé",
-          "imgPath" : "Barcodes\tfoodSale.png",
-          "label" : "Hozott sütit, vagy üdítõt",
           "icon" : "Icons\tDIS_PIE.png",
-          "meta" : "FOOD_SALE",
+          "barCode" : "FOOD_SALE",
           "discount" : 500
         }
       ],
@@ -75,9 +28,29 @@
           "fee" : true
         }
       ],
+      "barCodes" : [
+        {
+          "name" : "Büfé",
+          "description" : "Hozott sütit, vagy üdítőt",
+          "imagePath" : "Barcodes\tfoodSale.png",
+          "meta" : "FOOD_SALE"
+        },
+        {
+          "name" : "Kilépés",
+          "description" : "Hozott sütit, vagy üdítőt",
+          "imagePath" : "Barcodes\tleaveGuest.png",
+          "meta" : "GL"
+        },
+        {
+          "name" : "Törlés",
+          "description" : "Hozott sütit, vagy üdítőt",
+          "imagePath" : "Barcodes\tdeleteGuest.png",
+          "meta" : "MOD"
+        }
+      ],
       "defaultType" : "Helyszíni"
     }
   ],
   "active" : "MKK",
-  "version" : "v1.2"
+  "version" : "v1.3"
 }

@@ -72,7 +72,7 @@ public class Discount implements Serializable, Modifier {
             name = jsonObject.get("name").toString();
             icon = Application.parseFilePath(jsonObject.get("icon").toString());
             price = Integer.parseInt(jsonObject.get("discount").toString());
-            barcode = profile.identifyBarcode(jsonObject.get("barcode").toString());
+            barcode = profile.identifyBarcode(jsonObject.get("barCode").toString());
         } catch (Exception other){
             //Show warning message
             JOptionPane.showMessageDialog(new JFrame(),profile.toString()+ ":\nA(z) '" + name +

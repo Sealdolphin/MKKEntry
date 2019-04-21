@@ -187,8 +187,14 @@ public class EntryProfile implements Serializable {
         profile.name = jsonProfile.get("name").toString();
         profile.codeMask = jsonProfile.get("mask").toString();
 
+        //Loading Barcodes
+        JSONArray jArray = (JSONArray) jsonProfile.get("barCodes");
+        for (Object barCodeObject : jArray) {
+            profile.barCodes.add(Barcode.parseBarcodeFromJSON((JSONObject) barCodeObject));
+        }
+
         //Loading discounts
-        JSONArray jArray = (JSONArray) jsonProfile.get("discounts");
+        jArray = (JSONArray) jsonProfile.get("discounts");
         for (Object discountObject : jArray) {
             profile.discounts.add(Discount.parseDiscountFromJson((JSONObject) discountObject, profile));
         }
