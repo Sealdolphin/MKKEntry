@@ -35,7 +35,7 @@ public class MainWindow extends JFrame {
     private JLabel labelProfile;
     private JLabel labelDevice;
     private JButton btnBarcodes;
-    private JPanel sidePanel;
+    private JScrollPane sidePanel;
     private JTable entryView;
 
     private boolean discountPanelStatus = false;
@@ -171,7 +171,7 @@ public class MainWindow extends JFrame {
         discountPanelStatus = false;
         //Clear and refresh JTable
         if(sidePanel != null) remove(sidePanel);
-        sidePanel = controller.getSidePanel();
+        sidePanel = new JScrollPane(controller.getSidePanel());
         selectionUpdate.run();
         revalidate();
     }

@@ -11,7 +11,6 @@ public class BarcodePanel extends JPanel {
     public BarcodePanel(String imagePath, String tooltip) {
         setLayout(new BoxLayout(this, PAGE_AXIS));
 
-
         JLabel lbTooltip = new JLabel(tooltip);
 
         lbTooltip.setFont(new Font(lbTooltip.getFont().getName(),Font.PLAIN,20));
