@@ -524,7 +524,6 @@ public class EntryProfile implements Serializable {
                         leaveMeta.equals(tfDefaultName.getText()) ||
                         deleteMeta.equals(tfDefaultName.getText());
                 noTicket = ticketTypes.isEmpty();
-                System.out.println("Profile (in Wizard) : " + EntryProfile.this.hashCode());
                 for (Discount discount : discounts) {
                     hasInvalidDiscount = !discount.validate();
                 }
