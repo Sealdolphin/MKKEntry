@@ -18,13 +18,13 @@
       ],
       "tickets" : [
         {
-          "name" : "Helyszíni",
-          "price" : 3500,
+          "name" : "VIP",
+          "price" : 0,
           "fee" : true
         },
         {
-          "name" : "VIP",
-          "price" : 0,
+          "name" : "Helyszíni",
+          "price" : 3500,
           "fee" : true
         }
       ],

@@ -6,4 +6,5 @@ public interface Modifier {
 
     ModifierDialog getModifierWizard(Window parent);
 
+    boolean validate();
 }

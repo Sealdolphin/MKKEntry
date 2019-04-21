@@ -52,6 +52,11 @@ public class Barcode implements Serializable, Modifier {
         return new BarcodeWizard(parent);
     }
 
+    @Override
+    public boolean validate() {
+        return name != null && !name.isEmpty() && metaData != null && !metaData.isEmpty();
+    }
+
     public void setLink(boolean link) {
         hasLink = link;
     }
@@ -136,11 +141,16 @@ public class Barcode implements Serializable, Modifier {
         }
 
         private void saveBarcode() {
-            picturePath = panelImg.getPath();
-            name = tfName.getText();
-            description = tfTooltip.getText();
-            super.result = 0;
-            dispose();
+            if(!tfMetaData.getText().isEmpty()) {
+                picturePath = panelImg.getPath();
+                name = tfName.getText();
+                description = tfTooltip.getText();
+                super.result = 0;
+                dispose();
+            } else {
+                //ERROR MESSAGE
+                JOptionPane.showMessageDialog(this,"A kitöltés érvénytelen","Hiba",JOptionPane.ERROR_MESSAGE);
+            }
         }
 
 

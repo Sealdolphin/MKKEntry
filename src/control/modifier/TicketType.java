@@ -68,6 +68,15 @@ public class TicketType implements Serializable, Modifier {
     }
 
     @Override
+    public boolean equals(Object other){
+        if(other == null) return false;
+        if(other == this) return true;
+        if(!other.getClass().equals(TicketType.class)) return false;
+        TicketType otherType = (TicketType) other;
+        return otherType.name.equals(name);
+    }
+
+    @Override
     public String toString(){
         return name;
     }
@@ -75,6 +84,11 @@ public class TicketType implements Serializable, Modifier {
     @Override
     public ModifierDialog getModifierWizard(Window parent) {
         return new TicketTypeWizard(parent);
+    }
+
+    @Override
+    public boolean validate() {
+        return name != null && !name.isEmpty();
     }
 
     public int getFees() {
