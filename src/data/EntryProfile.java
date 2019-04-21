@@ -504,27 +504,32 @@ public class EntryProfile implements Serializable {
 
         private boolean validateProfile(){
             boolean empty = tfName.getText().isEmpty() || tfMask.getText().isEmpty() || tfCommandDefault.getText().isEmpty() || cbCommandLeave.getSelectedItem() == null || cbCommandDelete.getSelectedItem() == null;
-            boolean commandInvalid = (cbCommandDelete.getSelectedIndex() == cbCommandLeave.getSelectedIndex()) ||
-                    ((Barcode) cbCommandLeave.getSelectedItem()).getMeta().equals(tfDefaultName.getText()) ||
-                    ((Barcode) cbCommandDelete.getSelectedItem()).getMeta().equals(tfDefaultName.getText());
-            boolean noTicket = ticketTypes.isEmpty();
+            boolean commandInvalid = false, noTicket = false;
+            if(!empty) {
+                commandInvalid = (cbCommandDelete.getSelectedIndex() == cbCommandLeave.getSelectedIndex()) ||
+                        ((Barcode) cbCommandLeave.getSelectedItem()).getMeta().equals(tfDefaultName.getText()) ||
+                        ((Barcode) cbCommandDelete.getSelectedItem()).getMeta().equals(tfDefaultName.getText());
+                noTicket = ticketTypes.isEmpty();
 
-            //ERROR
-            if(empty) JOptionPane.showMessageDialog(null,"Minden mező kitöltése kötelező",uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
-            if(commandInvalid) JOptionPane.showMessageDialog(null,"A parancsok nem lehetnek egyformák",uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
-            if(noTicket) JOptionPane.showMessageDialog(null,"Vegyél fel legalább egy jegytípust!",uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+                //ERROR
+                if (empty)
+                    JOptionPane.showMessageDialog(null, "Minden mező kitöltése kötelező", uh.getUIStr("ERR", "HEADER"), JOptionPane.ERROR_MESSAGE);
+                if (commandInvalid)
+                    JOptionPane.showMessageDialog(null, "A parancsok nem lehetnek egyformák", uh.getUIStr("ERR", "HEADER"), JOptionPane.ERROR_MESSAGE);
+                if (noTicket)
+                    JOptionPane.showMessageDialog(null, "Vegyél fel legalább egy jegytípust!", uh.getUIStr("ERR", "HEADER"), JOptionPane.ERROR_MESSAGE);
 
-            //Setting variables
-            name = tfName.getText();
-            codeMask = tfMask.getText();
-            commandCodes.clear();
-            commandCodes.put(tfCommandDefault.getText(),FL_DEFAULT);
-            commandCodes.put(((Barcode)(cbCommandLeave.getSelectedItem())).getMeta(),FL_IS_LEAVING);
-            commandCodes.put(((Barcode)(cbCommandDelete.getSelectedItem())).getMeta(),FL_IS_DELETE);
-            defaultType = (TicketType) cbTypes.getSelectedItem();
-            nameRequirement = checkNames.isSelected();
-            defaultName = tfDefaultName.getText();
-
+                //Setting variables
+                name = tfName.getText();
+                codeMask = tfMask.getText();
+                commandCodes.clear();
+                commandCodes.put(tfCommandDefault.getText(), FL_DEFAULT);
+                commandCodes.put(((Barcode) (cbCommandLeave.getSelectedItem())).getMeta(), FL_IS_LEAVING);
+                commandCodes.put(((Barcode) (cbCommandDelete.getSelectedItem())).getMeta(), FL_IS_DELETE);
+                defaultType = (TicketType) cbTypes.getSelectedItem();
+                nameRequirement = checkNames.isSelected();
+                defaultName = tfDefaultName.getText();
+            }
             return !(empty || commandInvalid || noTicket);
         }
 
