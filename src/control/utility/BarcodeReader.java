@@ -24,14 +24,14 @@ public class BarcodeReader implements SerialPortDataListener {
      */
     private String lastReadData;
 
-    private List<BarcodeListener> controllers = new ArrayList<>();
+    private List<BarcodeReaderListener> controllers = new ArrayList<>();
 
-    public void addListener(BarcodeListener l){
+    public void addListener(BarcodeReaderListener l){
         controllers.add(l);
     }
 
     @SuppressWarnings("unused")
-    public void removeListener(BarcodeListener l){
+    public void removeListener(BarcodeReaderListener l){
         controllers.remove(l);
     }
 
@@ -54,8 +54,8 @@ public class BarcodeReader implements SerialPortDataListener {
      */
     @Override
     public void serialEvent(SerialPortEvent serialPortEvent) {
+
         byte[] bytes = serialPortEvent.getReceivedData();
-        System.out.println("Read " + bytes.length + " bytes.");
         Byte[] byteObjs = new Byte[bytes.length];
         int i = 0;
         for (byte b : bytes) {
@@ -63,7 +63,6 @@ public class BarcodeReader implements SerialPortDataListener {
         }
 
         Collections.addAll(raw_data,byteObjs);
-
         checkForFlush();
     }
 
@@ -89,7 +88,7 @@ public class BarcodeReader implements SerialPortDataListener {
             raw_data.clear();
 
             //Alert all controllers
-            for (BarcodeListener controller : controllers) {
+            for (BarcodeReaderListener controller : controllers) {
                 controller.readBarCode(lastReadData);
             }
         }

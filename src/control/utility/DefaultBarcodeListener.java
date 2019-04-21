@@ -3,7 +3,8 @@ package control.utility;
 import javax.swing.*;
 import java.util.function.Consumer;
 
-public class DefaultBarcodeListener implements BarcodeListener {
+@Deprecated
+public class DefaultBarcodeListener implements BarcodeReaderListener {
 
     private Consumer<String> action;
     private JDialog msg;

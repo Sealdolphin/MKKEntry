@@ -10,10 +10,7 @@ import data.EntryProfile;
 import view.DiscountRenderer;
 
 import javax.swing.*;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
 import javax.swing.event.TableModelEvent;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -37,8 +34,8 @@ public class MainWindow extends JFrame {
 
     private JLabel labelProfile;
     private JLabel labelDevice;
-    private JButton btnDiscounts;
-    private JPanel sidePanel;
+    private JButton btnBarcodes;
+    private JScrollPane sidePanel;
     private JTable entryView;
 
     private boolean discountPanelStatus = false;
@@ -67,8 +64,8 @@ public class MainWindow extends JFrame {
         //Setting up default fields
         this.model = model;
         //Discount panel toggle button
-        btnDiscounts = new JButton("Kedvezmények");
-        btnDiscounts.addActionListener(e -> {
+        btnBarcodes = new JButton("Vonalkódok");
+        btnBarcodes.addActionListener(e -> {
             discountPanelStatus = !discountPanelStatus;
             if(discountPanelStatus)
                 add(sidePanel,BorderLayout.EAST);
@@ -83,7 +80,7 @@ public class MainWindow extends JFrame {
         //Device status label
         labelDevice = new JLabel("TEMP");
         labelDevice.setOpaque(true);
-        labelDevice.setMaximumSize(new Dimension(labelDevice.getMaximumSize().width,btnDiscounts.getPreferredSize().height));
+        labelDevice.setMaximumSize(new Dimension(labelDevice.getMaximumSize().width, btnBarcodes.getPreferredSize().height));
 
         //Create components
         setLayout(new BorderLayout());
@@ -174,7 +171,7 @@ public class MainWindow extends JFrame {
         discountPanelStatus = false;
         //Clear and refresh JTable
         if(sidePanel != null) remove(sidePanel);
-        sidePanel = controller.getSidePanel();
+        sidePanel = new JScrollPane(controller.getSidePanel());
         selectionUpdate.run();
         revalidate();
     }
@@ -187,7 +184,7 @@ public class MainWindow extends JFrame {
             add(new JLabel("Profil: "));
             add(labelProfile);
             JButton btnNet = new NetworkButton();
-            add(btnNet);
+            //add(btnNet);  //TODO: Online mode access
             add(Box.createHorizontalGlue());
             //Comm. Port chooser
             add(new JLabel("Vonalkód olvasó: "));
@@ -199,7 +196,7 @@ public class MainWindow extends JFrame {
             btnSelectPort.addActionListener(e -> controller.scanPorts(cbPorts));
             add(btnSelectPort);
             add(Box.createHorizontalGlue());
-            add(btnDiscounts);
+            add(btnBarcodes);
 
             //Set default selection
             controller.scanPorts(cbPorts);
@@ -227,7 +224,7 @@ public class MainWindow extends JFrame {
             //Assembling Menus
             menuBar.add(createFileMenu(handler));
             //menuBar.add(createEditMenu(controller));
-            menuBar.add(createProfileMenu(controller));
+            menuBar.add(createSettingsMenu(controller));
             menuBar.add(createChartsMenu(controller));
             menuBar.add(new JMenu("Tranzakciók"));
 
@@ -283,8 +280,8 @@ public class MainWindow extends JFrame {
          * @param controller the event handler handling the action events
          * @return the PROFILE menu
          */
-        private JMenu createProfileMenu(AppController controller) {
-            JMenu menuProfiles = new JMenu("Profilok");
+        private JMenu createSettingsMenu(AppController controller) {
+            JMenu menuProfiles = new JMenu("Beállítások");
 
             JMenuItem mi = new JMenuItem("Új profil létrehozása");
             mi.addActionListener(e-> {
@@ -309,8 +306,6 @@ public class MainWindow extends JFrame {
                 initiateView(controller);
             });
             menuProfiles.add(mi);
-
-
 
             return menuProfiles;
         }

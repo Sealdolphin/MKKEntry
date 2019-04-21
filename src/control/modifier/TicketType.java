@@ -1,7 +1,6 @@
 package control.modifier;
 
 
-import data.EntryProfile;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -74,7 +73,7 @@ public class TicketType implements Serializable, Modifier {
     }
 
     @Override
-    public ModifierDialog getTypeWizard(Window parent) {
+    public ModifierDialog getModifierWizard(Window parent) {
         return new TicketTypeWizard(parent);
     }
 
@@ -88,14 +87,9 @@ public class TicketType implements Serializable, Modifier {
         }
 
         @Override
-        public void removeFrom(List<TicketType> objectList, TicketType selectedValue) {
-            objectList.remove(selectedValue);
-        }
-
-        @Override
         public void createNew(List<TicketType> objectList) {
             TicketType newType = new TicketType("",0,false);
-            ModifierDialog wizard = newType.getTypeWizard(null);
+            ModifierDialog wizard = newType.getModifierWizard(null);
             int result = wizard.open();
             if(result == 0){
                 objectList.add(newType);

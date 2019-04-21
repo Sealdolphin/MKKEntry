@@ -18,13 +18,11 @@ public class ImagePanel extends JPanel  {
     public ImagePanel(String imagePath){
         imgPath = imagePath;
         if(imagePath != null)
-            try {
-                image = ImageIO.read(new File(imagePath));
-            } catch (IOException e) {
-                //Some warning
-                JOptionPane.showMessageDialog(new JFrame(),"Nem találom a képet a panelhez\n" +
-                        imagePath + ":\n" + e.getMessage(),"Hiba",JOptionPane.ERROR_MESSAGE);
-            }
+            changePicture(imagePath);
+        setImageLayout();
+    }
+
+    private void setImageLayout(){
         //Set layout to fill available space
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -36,6 +34,19 @@ public class ImagePanel extends JPanel  {
         add(Box.createRigidArea(imgDimension),BorderLayout.CENTER);
         //Set Maximum Height to fit side panel
         setMaximumSize(new Dimension(getMaximumSize().width,imgDimension.height));
+    }
+
+    public void changePicture(String newPath){
+        try {
+            image = ImageIO.read(new File(newPath));
+            imgPath = newPath;
+            setImageLayout();
+        } catch (IOException e) {
+            //Some warning
+            JOptionPane.showMessageDialog(new JFrame(),"Nem találom a képet a panelhez\n" +
+                    newPath + ":\n" + e.getMessage(),"Hiba",JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 
     public boolean validatePicture(){
