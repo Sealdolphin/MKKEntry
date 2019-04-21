@@ -10,7 +10,7 @@
       },
       "discounts" : [
         {
-          "name" : "Segítő",
+          "name" : "Segítõ",
           "imgPath" : "Barcodes\thelpSale.png",
           "icon" : "Icons\tDIS_HELP.png",
           "label" : "Segített egy órát",
@@ -28,7 +28,7 @@
       ],
       "tickets" : [
         {
-          "name" : "Elővételes",
+          "name" : "Elõvételes",
           "price" : 1800,
           "fee" : false
         },
@@ -38,7 +38,7 @@
           "fee" : true
         },
         {
-          "name" : "Szervező",
+          "name" : "Szervezõ",
           "price" : 0,
           "fee" : true
         }
@@ -57,7 +57,7 @@
         {
           "name" : "Büfé",
           "imgPath" : "Barcodes\tfoodSale.png",
-          "label" : "Hozott sütit, vagy üdítőt",
+          "label" : "Hozott sütit, vagy üdítõt",
           "icon" : "Icons\tDIS_PIE.png",
           "meta" : "FOOD_SALE",
           "discount" : 500
