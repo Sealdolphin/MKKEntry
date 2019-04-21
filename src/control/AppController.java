@@ -158,13 +158,13 @@ public class AppController implements ProgramStateListener {
      */
     public void discountOperationOnEntry(Entry entry){
         //Open the discount menu (JList)
-        Object[] discounts = activeProfile.getDiscounts();
+        Discount[] discounts = activeProfile.getDiscounts();
         if(discounts.length == 0){
             JOptionPane.showMessageDialog(null,uh.getUIStr("ERR","NO_DISCOUNT"),uh.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
             return;
         }
 
-        Discount result = (Discount)JOptionPane.showInputDialog(null,
+        Discount result = (Discount) JOptionPane.showInputDialog(null,
                 "Melyik kedvezményt módosítod?",
                 "Vendég módosítása",
                 JOptionPane.PLAIN_MESSAGE,null,discounts,discounts[0]);
@@ -237,11 +237,6 @@ public class AppController implements ProgramStateListener {
             e.printStackTrace();
         }
     }
-
-//    public void editBarCodes() {
-//        ListEditor<Barcode> editor = new ListEditor<>(barCodes, "Vonalkódok", new Barcode.BarcodeListener(null));
-//        editor.setVisible(true);
-//    }
 
     /**
      *  For the different reading operations
