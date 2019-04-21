@@ -37,11 +37,6 @@ public class Discount implements Serializable, Modifier {
     private String iconPath;
 
     /**
-     * The metadata identifying the discount.
-     */
-    private String metaData;
-
-    /**
      * The ammount of discount this discount gives.
      */
     private int discount;
@@ -51,32 +46,30 @@ public class Discount implements Serializable, Modifier {
      */
     private EntryProfile profile;
 
-    private Discount(String name, Barcode barcode , String iconPath, String meta, int price, EntryProfile profile){
+    private Discount(String name, Barcode barcode , String iconPath, int price, EntryProfile profile){
         this.name = name;
         this.iconPath = iconPath;
-        metaData = meta;
         discount = price;
         this.barcode = barcode;
         this.profile = profile;
     }
 
     public Discount(Discount other) {
-        this(other.name,other.barcode,other.iconPath,other.metaData,other.discount,other.profile);
+        this(other.name,other.barcode,other.iconPath,other.discount,other.profile);
     }
 
     public String getMeta(){
-        return metaData;
+        return barcode.getMeta();
     }
 
     public static Discount parseDiscountFromJson(JSONObject jsonObject, EntryProfile profile) {
-        String name, meta;
-        name = meta = "undefined";
+        String name;
+        name = "undefined";
         String icon = null;
-        Barcode barcode = new Barcode(meta);
+        Barcode barcode = new Barcode(name);
         int price = 0;
         try {
             name = jsonObject.get("name").toString();
-            meta = jsonObject.get("meta").toString();
             icon = Application.parseFilePath(jsonObject.get("icon").toString());
             price = Integer.parseInt(jsonObject.get("discount").toString());
             barcode = profile.identifyBarcode(jsonObject.get("barcode").toString());
@@ -86,7 +79,7 @@ public class Discount implements Serializable, Modifier {
                     "' kedvezmény importálása közben hiba történt.\n" +
                     "Az importálás nem sikerült. Részletek:\n" + other.toString(),"Hiba",ERROR_MESSAGE);
         }
-        return new Discount(name,barcode,icon,meta,price,profile);
+        return new Discount(name,barcode,icon,price,profile);
     }
 
 
@@ -114,7 +107,7 @@ public class Discount implements Serializable, Modifier {
         if(obj == this) return true;
         if(!(obj.getClass().equals(Discount.class))) return false;
         Discount other = (Discount) obj;
-        return other.metaData.equals(metaData);
+        return other.getMeta().equals(getMeta());
     }
 
     public String getIcon(){
@@ -141,7 +134,7 @@ public class Discount implements Serializable, Modifier {
 
         @Override
         public void createNew(List<Discount> objectList) {
-            Discount newDiscount = new Discount("",null,basicIcon,"",0,profile);
+            Discount newDiscount = new Discount("",null,basicIcon,0,profile);
             ModifierDialog wizard = newDiscount.getModifierWizard(null);
             int result = wizard.open();
             if(result == 0){
