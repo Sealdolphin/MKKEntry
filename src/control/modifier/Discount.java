@@ -1,9 +1,10 @@
 package control.modifier;
 
 import control.Application;
+import data.Entry;
+import data.EntryProfile;
 import org.json.simple.JSONObject;
 import view.BarcodePanel;
-import view.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,26 +27,14 @@ public class Discount implements Serializable, Modifier {
     private String name;
 
     /**
-     * The path of the image
-     */
-    @Deprecated
-    private String imagePath;
-
-    /**
      * The barcode connected to the discount
      */
-    private Barcode barcode = new Barcode("TEMP");  //TODO: temp removal
+    private Barcode barcode;
 
     /**
      * The filepath of the icon's image
      */
     private String iconPath;
-
-    /**
-     * The descriptive label of the discount
-     */
-    @Deprecated
-    private String label;
 
     /**
      * The metadata identifying the discount.
@@ -57,43 +46,47 @@ public class Discount implements Serializable, Modifier {
      */
     private int discount;
 
-    private Discount(String name, String imagePath, String iconPath, String label, String meta, int price){
+    /**
+     * The EntryProfile owning the discount
+     */
+    private EntryProfile profile;
+
+    private Discount(String name, Barcode barcode , String iconPath, String meta, int price, EntryProfile profile){
         this.name = name;
-        this.imagePath = imagePath;
-        this.label = label;
         this.iconPath = iconPath;
         metaData = meta;
         discount = price;
-        //TODO: link barcode
+        this.barcode = barcode;
+        this.profile = profile;
     }
 
     public Discount(Discount other) {
-        this(other.name,other.imagePath,other.iconPath,other.label,other.metaData,other.discount);
+        this(other.name,other.barcode,other.iconPath,other.metaData,other.discount,other.profile);
     }
 
     public String getMeta(){
         return metaData;
     }
 
-    public static Discount parseDiscountFromJson(JSONObject jsonObject, String profileName) {
-        String name, label, meta;
-        name = label = meta = "undefined";
-        String image = null, icon = null;
+    public static Discount parseDiscountFromJson(JSONObject jsonObject, EntryProfile profile) {
+        String name, meta;
+        name = meta = "undefined";
+        String icon = null;
+        Barcode barcode = new Barcode(meta);
         int price = 0;
         try {
             name = jsonObject.get("name").toString();
-            image = Application.parseFilePath((jsonObject.get("imgPath").toString()));
-            label = jsonObject.get("label").toString();
             meta = jsonObject.get("meta").toString();
             icon = Application.parseFilePath(jsonObject.get("icon").toString());
             price = Integer.parseInt(jsonObject.get("discount").toString());
+            barcode = profile.identifyBarcode(jsonObject.get("barcode").toString());
         } catch (Exception other){
             //Show warning message
-            JOptionPane.showMessageDialog(new JFrame(),profileName+ ":\nA(z) '" + name +
+            JOptionPane.showMessageDialog(new JFrame(),profile.toString()+ ":\nA(z) '" + name +
                     "' kedvezmény importálása közben hiba történt.\n" +
                     "Az importálás nem sikerült. Részletek:\n" + other.toString(),"Hiba",ERROR_MESSAGE);
         }
-        return new Discount(name,image,icon,label,meta,price);
+        return new Discount(name,barcode,icon,meta,price,profile);
     }
 
 
@@ -103,7 +96,11 @@ public class Discount implements Serializable, Modifier {
      * @return a panel containing the Discount information
      */
     public BarcodePanel getBarcodePanel(){
-        return barcode.createBarcodePanel();
+        if(barcode != null) {
+            barcode.setLink(true);
+            return barcode.createBarcodePanel();
+        } else
+            return new BarcodePanel(null,"No barcode!");
     }
 
     @Override
@@ -135,13 +132,16 @@ public class Discount implements Serializable, Modifier {
 
     public static class DiscountListener extends ModifierWizardEditor<Discount>{
 
-        public DiscountListener(Window parent) {
+        public DiscountListener(Window parent, EntryProfile profile) {
             super(parent);
+            this.profile = profile;
         }
+
+        private EntryProfile profile;
 
         @Override
         public void createNew(List<Discount> objectList) {
-            Discount newDiscount = new Discount("",null,basicIcon,"","",0);
+            Discount newDiscount = new Discount("",null,basicIcon,"",0,profile);
             ModifierDialog wizard = newDiscount.getModifierWizard(null);
             int result = wizard.open();
             if(result == 0){
@@ -156,64 +156,48 @@ public class Discount implements Serializable, Modifier {
      */
     private class DiscountWizard extends ModifierDialog {
 
-        private ImagePanel panelImg = new ImagePanel(imagePath);
         private JLabel labelIcon = new JLabel(new ImageIcon(new ImageIcon(iconPath).getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH)));
         private JTextField tfName = new JTextField(name);
-        private JTextField tfMeta = new JTextField(metaData);
-        private JTextField tfTooltip = new JTextField(label);
+        private JComboBox<Barcode> cbBarcodes;
         private JSpinner spPrice = new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,1));
-        private JButton btnReadPic = new JButton("Olvass!");
 
         /**
          * Default constructor.
          * It creates a separate window for the user to modify the values.
          */
         DiscountWizard(Window parent){
+            //Setup super
             super(parent,"Kedvezmény beállítása");
-
+            btnSave.addActionListener(e -> saveDiscount());
             body.setLayout(new GridBagLayout());
-            //Set textfield value
-            spPrice.setValue(discount);
+            //Setup components
             labelIcon.setVerticalTextPosition(SwingConstants.TOP);
             labelIcon.setHorizontalTextPosition(SwingConstants.RIGHT);
-            //Browse button
-            JButton btnBrowse = new JButton("Tallózás");
-
-            btnBrowse.addActionListener(e -> selectPicture(panelImg));
-            btnSave.addActionListener(e -> saveDiscount());
+            spPrice.setValue(discount);
+            cbBarcodes = new JComboBox<>(profile.getBarcodes());
 
             //Assemble Window
+            //1. row A: Name
             body.add(new JLabel("Név"),setConstraints(0,0,1,1));
-            body.add(new JLabel("Hozzájárulás"),setConstraints(0,1,1,1));
-            body.add(new JLabel("META"),setConstraints(0,2,1,1));
-            body.add(new JLabel("Tooltip"),setConstraints(0,3,1,1));
-            body.add(new JLabel("Vonalkód képe:"),setConstraints(0,4,1,1));
-            body.add(new JLabel(imagePath),setConstraints(2,4,2,1));
-            body.add(new JLabel(iconPath),setConstraints(2,0,1,1));
-
             body.add(tfName,setConstraints(1,0,1,1));
-            body.add(spPrice,setConstraints(1,1,1,1));
-            body.add(tfMeta,setConstraints(1,2,1,1));
-            body.add(tfTooltip,setConstraints(1,3,3,1));
+            //1. row B: icon
+            body.add(new JLabel(iconPath),setConstraints(2,0,1,1));
             body.add(labelIcon,setConstraints(3,0,1,3));
-            body.add(new JButton("..."),setConstraints(2,1,1,1));
-            body.add(btnReadPic,setConstraints(2,2,1,1));
-            body.add(btnBrowse,setConstraints(1,4,1,1));
-            body.add(panelImg,setConstraints(0,5,4,2));
+            //2. row: Discount
+            body.add(new JLabel("Hozzájárulás"),setConstraints(0,1,1,1));
+            body.add(spPrice,setConstraints(1,1,1,1));
+            //3. row: Barcode
+            body.add(new JLabel("Vonalkód"),setConstraints(0,2,1,1));
+            body.add(cbBarcodes,setConstraints(1,2,1,1));
 
             finishDialog(parent);
         }
 
         private void saveDiscount(){
-            if(tfName.getText().length() > 0 &&
-                    tfMeta.getText().length() > 0 &&
-                    tfTooltip.getText().length() > 0 &&
-                    panelImg.validatePicture()){
+            if(tfName.getText().length() > 0){
                 name = tfName.getText();
-                metaData = tfMeta.getText();
-                label = tfTooltip.getText();
+                barcode = (Barcode) cbBarcodes.getSelectedItem();
                 discount = Integer.parseInt(spPrice.getValue().toString());
-                imagePath = panelImg.getPath();
                 result = 0;
                 //Close dialog
                 dispose();
