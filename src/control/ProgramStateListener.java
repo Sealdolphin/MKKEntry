@@ -12,7 +12,7 @@ public interface ProgramStateListener {
 
     EntryFilter[] filterTypes = {
             new EntryFilter("Tombola", new int[]{0}),
-            new EntryFilter("Alapméretezett", null)
+            new EntryFilter("Alapméretezett",null)
     };
 
     /**

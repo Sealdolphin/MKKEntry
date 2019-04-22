@@ -23,13 +23,5 @@ public class EntryFilter extends ExtensionFilter {
         return line.split(separator);
     }
 
-    private int[] indeces;
-
-    public String writeData(String s, int index) {
-        if(indeces == null) return s;
-        for (int indece : indeces) {
-            if (indece == index) return s;
-        }
-        return "";
-    }
+    public int[] indeces;
 }

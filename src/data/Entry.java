@@ -185,9 +185,15 @@ public class Entry extends Vector<String> {
 
     public String applyFilter(EntryFilter filter){
         StringBuilder w = new StringBuilder();
-        for (int i = 0; i < size(); i++) {
-            w.append(filter.writeData(get(i), i));
-            w.append(EntryFilter.separator);
+        if(filter.indeces != null)
+            for (int i = 0; i < filter.indeces.length; i++) {
+                w.append(get(filter.indeces[i])).append(EntryFilter.separator);
+            }
+        else {
+            w.append(get(ID.ordinal())).append(EntryFilter.separator).append(get(NAME.ordinal())).append(EntryFilter.separator).append(get(TYPE.ordinal())).append(EntryFilter.separator)
+                    .append(get(ENTER_DATE.ordinal())).append(EntryFilter.separator).append(get(LEAVE_DATE.ordinal())).append(EntryFilter.separator);
+            for(Discount discount : discountList)
+                w.append(discount.getMeta()).append(EntryFilter.separator);
         }
         return w.toString();
     }
