@@ -62,6 +62,14 @@ public class Entry extends Vector<String> {
         }
     }
 
+    @Deprecated
+    public void Reset() {
+        set(ENTERED.ordinal(),null);
+        set(ENTER_DATE.ordinal(),null);
+        set(LEAVE_DATE.ordinal(),null);
+        discountList.clear();
+    }
+
     /**
      * Enum for the vector data
      */

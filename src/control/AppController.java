@@ -226,11 +226,20 @@ public class AppController implements ProgramStateListener {
         statWindow.setVisible(true);
     }
 
+    @Deprecated
     public void switchOnlineMode() {
         try {
             netController = new NetworkController(activeProfile,this,"localhost",5503);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Deprecated
+    public void resetEntry(Entry selectedData) {
+        if(JOptionPane.showConfirmDialog(null,uh.getUIStr("MSG","CONFIRM"),uh.getUIStr("MSG","DELETE"), JOptionPane.OK_CANCEL_OPTION,WARNING_MESSAGE) == OK_OPTION){
+            selectedData.Reset();
+            receiveBarCode("");
         }
     }
 

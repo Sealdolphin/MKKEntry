@@ -153,16 +153,19 @@ public class MainWindow extends JFrame {
         JMenuItem miLeave = new JMenuItem("Kiléptetés");
         JMenuItem miDelete = new JMenuItem("Törlés");
         JMenuItem miDiscounts = new JMenuItem("Kedvezmények módosítása");
+        JMenuItem miReset = new JMenuItem("Rekord visszaállítása");
 
         miEnter.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_DEFAULT,model.getSelectedData()));
         miLeave.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_IS_LEAVING,model.getSelectedData()));
         miDelete.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_IS_DELETE,model.getSelectedData()));
         miDiscounts.addActionListener(e -> controller.discountOperationOnEntry(model.getSelectedData()));
+        miReset.addActionListener(e -> controller.resetEntry(model.getSelectedData()));
 
         popupEditRecord.add(miEnter);
         popupEditRecord.add(miLeave);
         popupEditRecord.add(miDelete);
         popupEditRecord.add(miDiscounts);
+        popupEditRecord.add(miReset);
         return popupEditRecord;
     }
 
