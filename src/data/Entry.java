@@ -187,13 +187,13 @@ public class Entry extends Vector<String> {
         StringBuilder w = new StringBuilder();
         if(filter.indeces != null)
             for (int i = 0; i < filter.indeces.length; i++) {
-                w.append(get(filter.indeces[i])).append(EntryFilter.separator);
+                w.append(get(filter.indeces[i])).append(filter.separator);
             }
         else {
-            w.append(get(ID.ordinal())).append(EntryFilter.separator).append(get(NAME.ordinal())).append(EntryFilter.separator).append(get(TYPE.ordinal())).append(EntryFilter.separator)
-                    .append(get(ENTER_DATE.ordinal())).append(EntryFilter.separator).append(get(LEAVE_DATE.ordinal())).append(EntryFilter.separator);
+            w.append(get(ID.ordinal())).append(filter.separator).append(get(NAME.ordinal())).append(filter.separator).append(get(TYPE.ordinal())).append(filter.separator)
+                    .append(get(ENTER_DATE.ordinal())).append(filter.separator).append(get(LEAVE_DATE.ordinal())).append(filter.separator);
             for(Discount discount : discountList)
-                w.append(discount.getMeta()).append(EntryFilter.separator);
+                w.append(discount.getMeta()).append(filter.separator);
         }
         return w.toString();
     }
