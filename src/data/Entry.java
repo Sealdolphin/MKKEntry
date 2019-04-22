@@ -129,7 +129,7 @@ public class Entry extends Vector<String> {
         }
         add(ENTER_DATE.column,enter);
         add(LEAVE_DATE.column,leave);
-        
+
         add(PRICE.column,((Integer)getAllFees()).toString());
     }
 
