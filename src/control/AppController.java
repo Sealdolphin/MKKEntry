@@ -34,6 +34,9 @@ import static javax.swing.JOptionPane.WARNING_MESSAGE;
  */
 public class AppController implements ProgramStateListener {
 
+    @Deprecated
+    public final boolean adminMode;
+
     /**
      * The model for the entries in the program
      */
@@ -86,12 +89,13 @@ public class AppController implements ProgramStateListener {
      */
     private NetworkController netController;
 
-    AppController(AppData model, DataModel<EntryProfile> pData){
+    AppController(AppData model, DataModel<EntryProfile> pData, boolean admin){
         this.model = model;
         profiles = pData;
         activeProfile = pData.getSelectedData();
         while(activeProfile == null)
             changeProfile(chooseProfile());
+        adminMode = admin;
     }
 
     public void addListener(ReadFlagListener l){
