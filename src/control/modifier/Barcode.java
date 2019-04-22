@@ -120,8 +120,8 @@ public class Barcode implements Serializable, Modifier {
                 if(selectPicture(panelImg) == APPROVE_OPTION){
                     metaData = null;
                     while (metaData == null) {
-                        //Read new code TODO: insert scanning mode here Issue #30
-                        BarCodeReaderListenerFactory.generateReader(tfMetaData::setText,"Írd be, vagy szkenneld be a kódot",true);
+                        //Read new code
+                        BarCodeReaderListenerFactory.generateReader(tfMetaData::setText,"Szkenneld be a kódot (ESC a kilépéshez)!",true);
                         metaData = tfMetaData.getText();
                     }
                 }

@@ -9,12 +9,12 @@ public abstract class BarCodeReaderListenerFactory {
 
     private static HashMap<SerialPort, BarcodeReader> deviceMap = new HashMap<>();
 
+
     /**
      * Listens on a serial port
      * @param readingPort the specified serial port (not necessarily active)
      */
     public static void connectSerialPort(SerialPort readingPort) {
-//        System.out.println("Added main object to port: " + readingPort.getSystemPortName());
         BarcodeReader reader = new BarcodeReader();
         deviceMap.put(readingPort, reader);
         readingPort.addDataListener(reader);  //Add the reader object to the serial port
@@ -27,8 +27,6 @@ public abstract class BarCodeReaderListenerFactory {
      * @param visible if it's true then a dialog is shown with the message
      */
     public static void generateReader(Consumer<String> action, String message, boolean visible) {
-        ReaderDevice device = new ReaderDevice(action,message,visible);
-        deviceMap.forEach((port, reader) -> reader.addListener(device));
-
+        deviceMap.forEach((port, reader) -> reader.addListener(new ReaderDevice(action,message,visible,port)));
     }
 }

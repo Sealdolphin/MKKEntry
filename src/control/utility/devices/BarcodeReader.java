@@ -1,11 +1,11 @@
 package control.utility.devices;
 
 import com.fazecast.jSerialComm.SerialPort;
-import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
+import com.fazecast.jSerialComm.SerialPortMessageListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -13,30 +13,27 @@ import java.util.List;
  * Listens for different entries
  * Communicates through Serial port
  */
-public class BarcodeReader implements SerialPortDataListener {
-
-    public BarcodeReader(){
-        System.out.println("Created main Object");
-    }
+public class BarcodeReader implements SerialPortMessageListener {
 
     /**
      * The raw lastReadData read through the serial port in bytes
      */
+    @Deprecated
     private ArrayList<Byte> raw_data = new ArrayList<>();
     /**
      * The read lastReadData in a String
      */
     private String lastReadData;
 
-    private List<BarcodeReaderListener> controllers = new ArrayList<>();
+    private List<BarcodeReaderListener> listeners = new ArrayList<>();
 
-    public void addListener(BarcodeReaderListener l){
-        controllers.add(l);
+    void addListener(BarcodeReaderListener l){
+        listeners.add(l);
     }
 
     @SuppressWarnings("unused")
     public void removeListener(BarcodeReaderListener l){
-        controllers.remove(l);
+        listeners.remove(l);
     }
 
     /**
@@ -60,45 +57,19 @@ public class BarcodeReader implements SerialPortDataListener {
     public void serialEvent(SerialPortEvent serialPortEvent) {
 
         byte[] bytes = serialPortEvent.getReceivedData();
-        Byte[] byteObjs = new Byte[bytes.length];
-        int i = 0;
+
+        //Build string from Byte array
+        StringBuilder builder = new StringBuilder();
         for (byte b : bytes) {
-            byteObjs[i++] = b;
+            builder.append((char)b);
+        }
+        lastReadData = builder.toString().trim();
+        //Alert all listeners
+
+        for (BarcodeReaderListener controller : listeners) {
+            controller.readBarCode(lastReadData);
         }
 
-        Collections.addAll(raw_data,byteObjs);
-        checkForFlush();
-    }
-
-    /**
-     * Checks the read lastReadData if it is at the end
-     * If it is, then sets the last lastReadData to the read bytes (as a String)
-     */
-    private void checkForFlush() {
-        //Check for Line Endings (Character Code = 10)
-        /*
-            The ASCII character code for line ending (line feed = LF)
-        */
-        int LINE_FEED = 10;
-        if(raw_data.get(raw_data.size() - 1) == LINE_FEED){
-            StringBuilder builder = new StringBuilder();
-            for (Byte b : raw_data) {
-                byte charbyte = b;
-                builder.append((char)charbyte);
-            }
-            lastReadData = builder.toString().trim();
-
-            //Flush the stream
-            raw_data.clear();
-
-            System.out.println("!!!RECEIVED RAW DATA FROM SERIAL PORT!!!");
-            System.out.println("Sending data to listeners: " + controllers);
-
-            //Alert all controllers
-            for (BarcodeReaderListener controller : controllers) {
-                controller.readBarCode(lastReadData);
-            }
-        }
     }
 
     /**
@@ -108,5 +79,15 @@ public class BarcodeReader implements SerialPortDataListener {
     @Deprecated
     public String getLastReadData(){
         return lastReadData;
+    }
+
+    @Override
+    public byte[] getMessageDelimiter() {
+        return new byte[]{'\n'};
+    }
+
+    @Override
+    public boolean delimiterIndicatesEndOfMessage() {
+        return true;
     }
 }
