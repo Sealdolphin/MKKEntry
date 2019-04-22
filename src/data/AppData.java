@@ -95,6 +95,13 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
         return entryList.size();
     }
 
+    public void importData(Entry data) throws IOException{
+        Entry conflict = entryList.stream().filter(entry -> entry.get(0).equals(data.get(ID.ordinal()))).findAny().orElse(null);
+        if(conflict != null) throw new IOException("A vendég már fenn van a listán!");
+        else
+            addData(data);
+    }
+
     @Override
     public void addData(Entry data) throws IOException{
         //Check if data already exists

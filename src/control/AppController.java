@@ -303,18 +303,22 @@ public class AppController implements ProgramStateListener {
         progress.setTasks(-1);
         int lines = 0;
         int allLines = 0;
+        StringBuilder errorLines = new StringBuilder();
         do {
             String line = reader.readLine();
             if(line == null) break; //Breaks at FIRST EMPTY LINE
             allLines++;
             try{
-                model.addData(Entry.importEntry(filter.parseEntry(line),activeProfile));
+                model.importData(Entry.importEntry(filter.parseEntry(line),activeProfile));
                 lines++;
             } catch (IOException ex){
-                JOptionPane.showMessageDialog(null,ex.getMessage(),uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
+                errorLines.append(allLines).append(".sor: ").append(ex.getMessage()).append("\n");
             }
         } while (true);
         progress.done(lines + " rekord a " + allLines + " rekordból importálva!");
+        if(lines != allLines){
+            JOptionPane.showMessageDialog(null,errorLines.toString(),uh.getUIStr("MSG","HIBA"),JOptionPane.WARNING_MESSAGE);
+        }
 
     }
 
