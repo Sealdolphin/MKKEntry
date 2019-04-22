@@ -223,6 +223,7 @@ public class Discount implements Serializable, Modifier {
     private class DiscountWizard extends ModifierDialog {
 
         private JLabel labelIcon = new JLabel(new ImageIcon(new ImageIcon(iconPath).getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH)));
+        private JLabel lbPath = new JLabel(iconPath);
         private JTextField tfName = new JTextField(name);
         private JComboBox<Barcode> cbBarcodes;
         private JSpinner spPrice = new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,1));
@@ -241,20 +242,29 @@ public class Discount implements Serializable, Modifier {
             labelIcon.setHorizontalTextPosition(SwingConstants.RIGHT);
             spPrice.setValue(discount);
             cbBarcodes = new JComboBox<>(profile.getBarcodes());
+            JButton btnChangeIcon = new JButton("Tallóz");
+            btnChangeIcon.addActionListener(e -> {
+                String newPath = selectPicture(labelIcon);
+                if(newPath != null) {
+                    lbPath.setText(newPath);
+                    refresh(parent);
+                }
+            });
 
             //Assemble Window
             //1. row A: Name
-            body.add(new JLabel("Név"),setConstraints(0,0,1,1));
-            body.add(tfName,setConstraints(1,0,1,1));
+            body.add(new JLabel("Név"),setConstraints(0,0,2,1));
+            body.add(tfName,setConstraints(2,0,2,1));
             //1. row B: icon
-            body.add(new JLabel(iconPath),setConstraints(2,0,1,1));
-            body.add(labelIcon,setConstraints(3,0,1,3));
+            body.add(labelIcon,setConstraints(0,1,2,2));
+            body.add(lbPath,setConstraints(2,1,2,1));
+            body.add(btnChangeIcon,setConstraints(2,2,2,1));
             //2. row: Discount
-            body.add(new JLabel("Hozzájárulás"),setConstraints(0,1,1,1));
-            body.add(spPrice,setConstraints(1,1,1,1));
+            body.add(new JLabel("Hozzájárulás"),setConstraints(0,3,2,1));
+            body.add(spPrice,setConstraints(2,3,2,1));
             //3. row: Barcode
-            body.add(new JLabel("Vonalkód"),setConstraints(0,2,1,1));
-            body.add(cbBarcodes,setConstraints(1,2,1,1));
+            body.add(new JLabel("Vonalkód"),setConstraints(0,4,2,1));
+            body.add(cbBarcodes,setConstraints(2,4,2,1));
 
             finishDialog(parent);
         }

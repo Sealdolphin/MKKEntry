@@ -174,7 +174,7 @@ public class Application {
     }
 
     public static String parseFilePath(String filePath) {
-    	return filePath.replaceAll("\t", File.separator);
+    	return filePath.replaceAll("\t", File.separator).replaceAll(System.getProperty("user.dir")+File.separator,"");
     }
 
 

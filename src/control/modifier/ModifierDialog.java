@@ -1,5 +1,6 @@
 package control.modifier;
 
+import control.Application;
 import control.utility.file.ExtensionFilter;
 import view.ImagePanel;
 
@@ -47,14 +48,38 @@ public abstract class ModifierDialog extends JDialog {
         setLocationRelativeTo(parent);
     }
 
-    int selectPicture(ImagePanel panelImg){
-        JFileChooser fc = new JFileChooser();
+    private JFileChooser getPictureChooser(){
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
         fc.setAcceptAllFileFilterUsed(false);
         fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"png", "jpg", "jpeg", "bmp", "gif"}, "Minden Képfájl"));
         fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"png"}, "Portable Network Graphics (.png)"));
         fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"jpg", "jpeg"}, "Joint Photographic Experts Group (.jpg, .jpeg)"));
         fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"bmp"}, "Bitmap (.bmp)"));
         fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"gif"}, "Graphics Interchange Format (.gif)"));
+        return fc;
+    }
+
+    String selectPicture(JLabel iconLabel){
+        JFileChooser fc = getPictureChooser();
+        int dialogResult = fc.showOpenDialog(this);
+        String iconPath = null;
+        if(fc.getSelectedFile() != null)
+            iconPath = Application.parseFilePath(fc.getSelectedFile().getAbsolutePath());
+        if(dialogResult == JFileChooser.APPROVE_OPTION){
+            iconLabel.setIcon(new ImageIcon(new ImageIcon(iconPath).getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH)));
+        }
+        return iconPath;
+    }
+
+    void refresh(Window parent){
+        setResizable(true);
+        pack();
+        setLocationRelativeTo(parent);
+        setResizable(false);
+    }
+
+    int selectPicture(ImagePanel panelImg){
+        JFileChooser fc = getPictureChooser();
         int dialogResult = fc.showOpenDialog(this);
         if (dialogResult == JFileChooser.APPROVE_OPTION) {
             panelImg.changePicture(fc.getSelectedFile().getAbsolutePath());
