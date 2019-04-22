@@ -306,8 +306,8 @@ public class EntryProfile implements Serializable {
         private JCheckBox checkNames = new JCheckBox("Név megadása kötelező");
         private JTextField tfDefaultName;
         private int result;
-        private String leaveMeta = commandCodes.entrySet().stream().filter(flag -> flag.getValue().equals(FL_IS_LEAVING)).map(Map.Entry::getKey).findAny().orElse(null);
-        private String deleteMeta = commandCodes.entrySet().stream().filter(flag -> flag.getValue().equals(FL_IS_DELETE)).map(Map.Entry::getKey).findAny().orElse(null);
+        private String leaveMeta;
+        private String deleteMeta;
 
         ProfileWizard(JFrame parent){
             super(parent,"Profil szerkesztése",true);
@@ -364,9 +364,22 @@ public class EntryProfile implements Serializable {
             cbTypes = new JComboBox<>(ticketTypes.toArray(new TicketType[0]));
 
             if(commandCodes != null) {
-                tfCommandDefault = new JTextField(commandCodes.entrySet().stream().filter(flag -> flag.getValue().equals(FL_DEFAULT)).map(Map.Entry::getKey).findAny().orElse(""));
+                commandCodes.forEach((command, flag) -> {
+                    switch (flag){
+                        case FL_DEFAULT:
+                            tfCommandDefault = new JTextField(command);
+                            break;
+                        case FL_IS_DELETE:
+                            deleteMeta = command;
+                            break;
+                        case FL_IS_LEAVING:
+                            leaveMeta = command;
+                            break;
+                    }
+                });
             } else {
                 tfCommandDefault = new JTextField();
+                deleteMeta = leaveMeta = null;
             }
             //Setup values
             cbLimit = new JComboBox<>(EntryLimit.values());

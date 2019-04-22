@@ -1,4 +1,4 @@
-package control.utility;
+package control.utility.devices;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
@@ -14,6 +14,10 @@ import java.util.List;
  * Communicates through Serial port
  */
 public class BarcodeReader implements SerialPortDataListener {
+
+    public BarcodeReader(){
+        System.out.println("Created main Object");
+    }
 
     /**
      * The raw lastReadData read through the serial port in bytes
@@ -86,6 +90,9 @@ public class BarcodeReader implements SerialPortDataListener {
 
             //Flush the stream
             raw_data.clear();
+
+            System.out.println("!!!RECEIVED RAW DATA FROM SERIAL PORT!!!");
+            System.out.println("Sending data to listeners: " + controllers);
 
             //Alert all controllers
             for (BarcodeReaderListener controller : controllers) {

@@ -360,7 +360,7 @@ public class MainWindow extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     if(checkBoxCode.isSelected())
                         controller.readEntryCode(tfInputCode.getText());
-                    else controller.readBarCode(tfInputCode.getText());
+                    else controller.receiveBarCode(tfInputCode.getText());
                 }
             };
 

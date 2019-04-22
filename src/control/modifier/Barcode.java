@@ -2,6 +2,7 @@ package control.modifier;
 
 
 import control.Application;
+import control.utility.devices.BarCodeReaderListenerFactory;
 import org.json.simple.JSONObject;
 import view.BarcodePanel;
 import view.ImagePanel;
@@ -19,6 +20,8 @@ public class Barcode implements Serializable, Modifier {
     private String picturePath = null;
     private String description = "Unknown";
     private boolean hasLink = false;
+
+    public static BarCodeReaderListenerFactory readerDevice = null;
 
     private Barcode(String name, String meta, String picture, String desc){
         this.name = name;
@@ -104,7 +107,6 @@ public class Barcode implements Serializable, Modifier {
         private JTextField tfName = new JTextField(name);
         private JTextField tfTooltip = new JTextField(description);
         private JTextField tfMetaData = new JTextField(metaData);
-        private JButton btnSetPic = new JButton("Kép módosítása");
 
         BarcodeWizard(Window parent) {
             //Set super
@@ -113,13 +115,14 @@ public class Barcode implements Serializable, Modifier {
 
             //Setup components
             tfMetaData.setEditable(false);
+            JButton btnSetPic = new JButton("Kép módosítása");
             btnSetPic.addActionListener(e -> {
                 if(selectPicture(panelImg) == APPROVE_OPTION){
                     metaData = null;
                     while (metaData == null) {
-                        //Read new code TODO: insert scanning mode here
-                        metaData = JOptionPane.showInputDialog(null,"Írd be, vagy szkenneld be a kódot","Kódbeolvasás",JOptionPane.INFORMATION_MESSAGE);
-                        tfMetaData.setText(metaData);
+                        //Read new code TODO: insert scanning mode here Issue #30
+                        BarCodeReaderListenerFactory.generateReader(tfMetaData::setText,"Írd be, vagy szkenneld be a kódot",true);
+                        metaData = tfMetaData.getText();
                     }
                 }
             });
