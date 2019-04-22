@@ -2,6 +2,7 @@ package view.main;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class LoadingScreen extends JFrame {
 
@@ -12,6 +13,8 @@ public class LoadingScreen extends JFrame {
         progress = new JProgressBar(0,1);
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setUndecorated(true);
+        setIconImage(Toolkit.getDefaultToolkit().getImage("Icons"+ File.separator+"mkkMini.png"));
         setTitle("Kérem várjon");
 
         setLayout(new BorderLayout());

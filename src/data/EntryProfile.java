@@ -14,10 +14,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
@@ -150,15 +147,13 @@ public class EntryProfile implements Serializable {
         discounts = new ArrayList<>();
         barCodes = new ArrayList<>();
         for (Barcode barcode : other.barCodes) { barCodes.add(new Barcode(barcode)); }
-        for (Discount discount : other.discounts) { discounts.add(new Discount(discount)); }
+        for (Discount discount : other.discounts) { discounts.add(new Discount(discount,this)); }
         for (TicketType type : other.ticketTypes) { ticketTypes.add(new TicketType(type)); }
-        System.out.println("Copied discount to: " + discounts.hashCode());
         exportFilters = other.exportFilters;
     }
 
 
     public static void loadProfilesFromJson(JSONObject object, List<EntryProfile> profileList) throws IOException{
-        System.out.println("Loaded JSON Object: " + object);
         if(!object.get("version").toString().equals(UIHandler.uiVersion))
             throw new IOException(uh.getUIStr("ERR","VERSION_MISMATCH") + UIHandler.uiVersion);
 
@@ -311,6 +306,8 @@ public class EntryProfile implements Serializable {
         private JCheckBox checkNames = new JCheckBox("Név megadása kötelező");
         private JTextField tfDefaultName;
         private int result;
+        private String leaveMeta;
+        private String deleteMeta;
 
         ProfileWizard(JFrame parent){
             super(parent,"Profil szerkesztése",true);
@@ -335,12 +332,20 @@ public class EntryProfile implements Serializable {
             mainPanel.setMnemonicAt(2, KeyEvent.VK_3);
             mainPanel.setMnemonicAt(3, KeyEvent.VK_4);
             mainPanel.addChangeListener(e -> {
+                //Refresh combo boxes
                 cbTypes.removeAllItems();
                 cbCommandDelete.removeAllItems();
                 cbCommandLeave.removeAllItems();
+                //Fill combo boxes with new things
                 barCodes.forEach(b -> {cbCommandLeave.addItem(b); cbCommandDelete.addItem(b);});
                 ticketTypes.forEach(t -> cbTypes.addItem(t));
+                //Set selection to previous
                 cbTypes.setSelectedItem(defaultType);
+                cbCommandLeave.setSelectedItem(identifyBarcode(leaveMeta));
+                cbCommandDelete.setSelectedItem(identifyBarcode(deleteMeta));
+                //Reseting selection
+                leaveMeta = cbCommandLeave.getSelectedItem() == null ? null : ((Barcode) (cbCommandLeave.getSelectedItem())).getMeta();
+                deleteMeta = cbCommandDelete.getSelectedItem() == null ? null : ((Barcode) (cbCommandDelete.getSelectedItem())).getMeta();
             });
             //Assembling wizard panel
             add(mainPanel,CENTER);
@@ -356,20 +361,35 @@ public class EntryProfile implements Serializable {
             tfMask = new JTextField(codeMask,32);
             cbCommandLeave = new JComboBox<>(barCodes.toArray(new Barcode[0]));
             cbCommandDelete = new JComboBox<>(barCodes.toArray(new Barcode[0]));
+            cbTypes = new JComboBox<>(ticketTypes.toArray(new TicketType[0]));
 
             if(commandCodes != null) {
-                tfCommandDefault = new JTextField(commandCodes.entrySet().stream().filter(flag -> flag.getValue().equals(FL_DEFAULT)).map(Map.Entry::getKey).findAny().orElse(""));
+                commandCodes.forEach((command, flag) -> {
+                    switch (flag){
+                        case FL_DEFAULT:
+                            tfCommandDefault = new JTextField(command);
+                            break;
+                        case FL_IS_DELETE:
+                            deleteMeta = command;
+                            break;
+                        case FL_IS_LEAVING:
+                            leaveMeta = command;
+                            break;
+                    }
+                });
             } else {
                 tfCommandDefault = new JTextField();
+                deleteMeta = leaveMeta = null;
             }
+            //Setup values
             cbLimit = new JComboBox<>(EntryLimit.values());
             spEntryLimit = new JSpinner(new SpinnerNumberModel(2,2,100,1));
             spEntryLimit.setEditor(new JSpinner.DefaultEditor(spEntryLimit));
-            if (entryLimit >= 2) { spEntryLimit.setValue(entryLimit);
-            } else { cbLimit.setSelectedIndex(entryLimit); }
-            cbTypes = new JComboBox<>(ticketTypes.toArray(new TicketType[0]));
-            cbTypes.addItemListener(e -> defaultType = (TicketType) cbTypes.getSelectedItem());
+            if (entryLimit >= 2) { spEntryLimit.setValue(entryLimit); } else { cbLimit.setSelectedIndex(entryLimit); }
 
+            cbTypes.setSelectedItem(defaultType);
+            cbCommandLeave.setSelectedItem(identifyBarcode(leaveMeta));
+            cbCommandDelete.setSelectedItem(identifyBarcode(deleteMeta));
         }
 
         private JPanel createMainPanel(){
@@ -496,6 +516,7 @@ public class EntryProfile implements Serializable {
                     break;
                 case "Accept":
                     if(validateProfile()) {
+                        System.out.println("EDITING ACCEPTED (Accept)");
                         result = 0;
                     }
                     break;
@@ -503,28 +524,43 @@ public class EntryProfile implements Serializable {
         }
 
         private boolean validateProfile(){
-            boolean empty = tfName.getText().isEmpty() || tfMask.getText().isEmpty() || tfCommandDefault.getText().isEmpty() || cbCommandLeave.getSelectedItem() == null || cbCommandDelete.getSelectedItem() == null;
-            boolean commandInvalid = (cbCommandDelete.getSelectedIndex() == cbCommandLeave.getSelectedIndex()) ||
-                    ((Barcode) cbCommandLeave.getSelectedItem()).getMeta().equals(tfDefaultName.getText()) ||
-                    ((Barcode) cbCommandDelete.getSelectedItem()).getMeta().equals(tfDefaultName.getText());
-            boolean noTicket = ticketTypes.isEmpty();
+            boolean empty = tfName.getText().isEmpty() ||
+                    tfMask.getText().isEmpty() ||
+                    tfCommandDefault.getText().isEmpty() ||
+                    cbCommandLeave.getSelectedItem() == null ||
+                    cbCommandDelete.getSelectedItem() == null;
+            boolean commandInvalid = false, noTicket = false, hasInvalidDiscount = false;
+            if(!empty) {
+                leaveMeta = ((Barcode) (cbCommandLeave.getSelectedItem())).getMeta();
+                deleteMeta = ((Barcode) (cbCommandDelete.getSelectedItem())).getMeta();
+                commandInvalid = (cbCommandDelete.getSelectedIndex() == cbCommandLeave.getSelectedIndex()) ||
+                        leaveMeta.equals(tfDefaultName.getText()) ||
+                        deleteMeta.equals(tfDefaultName.getText());
+                noTicket = ticketTypes.isEmpty();
+                for (Discount discount : discounts) {
+                    hasInvalidDiscount = !discount.validate();
+                }
 
-            //ERROR
-            if(empty) JOptionPane.showMessageDialog(null,"Minden mező kitöltése kötelező",uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
-            if(commandInvalid) JOptionPane.showMessageDialog(null,"A parancsok nem lehetnek egyformák",uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
-            if(noTicket) JOptionPane.showMessageDialog(null,"Vegyél fel legalább egy jegytípust!",uh.getUIStr("ERR","HEADER"),JOptionPane.ERROR_MESSAGE);
+                //ERROR
+                if (commandInvalid)
+                    JOptionPane.showMessageDialog(null, "A parancsok nem lehetnek egyformák", uh.getUIStr("ERR", "HEADER"), JOptionPane.ERROR_MESSAGE);
+                if (noTicket)
+                    JOptionPane.showMessageDialog(null, "Vegyél fel legalább egy jegytípust!", uh.getUIStr("ERR", "HEADER"), JOptionPane.ERROR_MESSAGE);
+                if(hasInvalidDiscount)
+                    JOptionPane.showMessageDialog(null, "Egy, vagy több kedvezmény nem érvényes!", uh.getUIStr("ERR", "HEADER"), JOptionPane.ERROR_MESSAGE);
 
-            //Setting variables
-            name = tfName.getText();
-            codeMask = tfMask.getText();
-            commandCodes.clear();
-            commandCodes.put(tfCommandDefault.getText(),FL_DEFAULT);
-            commandCodes.put(((Barcode)(cbCommandLeave.getSelectedItem())).getMeta(),FL_IS_LEAVING);
-            commandCodes.put(((Barcode)(cbCommandDelete.getSelectedItem())).getMeta(),FL_IS_DELETE);
-            defaultType = (TicketType) cbTypes.getSelectedItem();
-            nameRequirement = checkNames.isSelected();
-            defaultName = tfDefaultName.getText();
-
+                //Setting variables
+                name = tfName.getText();
+                codeMask = tfMask.getText();
+                commandCodes.clear();
+                commandCodes.put(tfCommandDefault.getText(), FL_DEFAULT);
+                commandCodes.put(leaveMeta, FL_IS_LEAVING);
+                commandCodes.put(deleteMeta, FL_IS_DELETE);
+                defaultType = (TicketType) cbTypes.getSelectedItem();
+                nameRequirement = checkNames.isSelected();
+                defaultName = tfDefaultName.getText();
+            } else
+                JOptionPane.showMessageDialog(null, "Minden mező kitöltése kötelező", uh.getUIStr("ERR", "HEADER"), JOptionPane.ERROR_MESSAGE);
             return !(empty || commandInvalid || noTicket);
         }
 

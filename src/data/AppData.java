@@ -53,6 +53,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
         Entry.DataColumn column = Entry.DataColumn.values()[columnIndex];
         switch (column){
             default: return super.getValueAt(row, columnIndex);                                     //Return a string
+            case PRICE: return entryList.get(row).getAllFees() + " Ft";
             case DISCOUNTS: return entryList.get(row).getDiscounts();                               //Return discount list
             case ENTERED: return Boolean.parseBoolean(entryList.get(row).isEntered().toString());   //Return entered state
         }

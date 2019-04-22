@@ -12,7 +12,7 @@ import java.io.IOException;
  */
 public class ImagePanel extends JPanel  {
     private BufferedImage image = null;
-    private Dimension imgDimension = new Dimension(300,100);
+    private Dimension imgDimension = new Dimension(420,140);
     private String imgPath;
 
     public ImagePanel(String imagePath){
@@ -28,7 +28,7 @@ public class ImagePanel extends JPanel  {
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
         if(validatePicture()) {
             //Adding Empty space to fill out image
-            imgDimension = new Dimension(Math.min(image.getWidth(),imgDimension.width), Math.min(image.getHeight(),imgDimension.height));
+            imgDimension = new Dimension(imgDimension.width, imgDimension.height);
         }
         //Create border for picture
         add(Box.createRigidArea(imgDimension),BorderLayout.CENTER);
@@ -49,7 +49,7 @@ public class ImagePanel extends JPanel  {
 
     }
 
-    public boolean validatePicture(){
+    private boolean validatePicture(){
         return image != null;
     }
 
@@ -60,6 +60,8 @@ public class ImagePanel extends JPanel  {
     @Override
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
-        g.drawImage(image,0,0,imgDimension.width,imgDimension.height,this);
+        g.drawImage(image,0,0,imgDimension.width,imgDimension.height,
+                0,0,image.getWidth(),image.getHeight(),
+                this);
     }
 }

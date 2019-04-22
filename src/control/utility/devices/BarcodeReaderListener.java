@@ -1,4 +1,4 @@
-package control.utility;
+package control.utility.devices;
 
 public interface BarcodeReaderListener {
     /**

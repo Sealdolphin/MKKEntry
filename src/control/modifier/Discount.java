@@ -1,7 +1,6 @@
 package control.modifier;
 
 import control.Application;
-import data.Entry;
 import data.EntryProfile;
 import org.json.simple.JSONObject;
 import view.BarcodePanel;
@@ -10,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
@@ -54,8 +54,8 @@ public class Discount implements Serializable, Modifier {
         this.profile = profile;
     }
 
-    public Discount(Discount other) {
-        this(other.name,other.barcode,other.iconPath,other.discount,other.profile);
+    public Discount(Discount other, EntryProfile profile) {
+        this(other.name,other.barcode,other.iconPath,other.discount,profile);
     }
 
     public String getMeta(){
@@ -117,6 +117,13 @@ public class Discount implements Serializable, Modifier {
     @Override
     public ModifierDialog getModifierWizard(Window parent) {
         return new DiscountWizard(parent);
+    }
+
+    @Override
+    public boolean validate() {
+        //Refresh barcode whether if it still in the list of barCodes...
+        barcode = Arrays.stream(profile.getBarcodes()).filter(b -> b.getMeta().equals(barcode.getMeta())).findAny().orElse(null);
+        return name != null && barcode != null && !name.isEmpty();
     }
 
     public int getPrice() {
@@ -187,7 +194,7 @@ public class Discount implements Serializable, Modifier {
         }
 
         private void saveDiscount(){
-            if(tfName.getText().length() > 0){
+            if(tfName.getText().length() > 0 && cbBarcodes.getSelectedItem() != null){
                 name = tfName.getText();
                 barcode = (Barcode) cbBarcodes.getSelectedItem();
                 discount = Integer.parseInt(spPrice.getValue().toString());

@@ -5,8 +5,8 @@
       "mask" : "[0-9]{4}",
       "commands" : {
         "default" : "MKK",
-        "leave" : "GL",
-        "delete" : "MOD"
+        "leave" : "LEAVE_GUEST",
+        "delete" : "DELETE_GUEST"
       },
       "discounts" : [
         {
@@ -18,13 +18,13 @@
       ],
       "tickets" : [
         {
-          "name" : "Helyszíni",
-          "price" : 3500,
+          "name" : "VIP",
+          "price" : 0,
           "fee" : true
         },
         {
-          "name" : "VIP",
-          "price" : 0,
+          "name" : "Helyszíni",
+          "price" : 3500,
           "fee" : true
         }
       ],
@@ -37,15 +37,15 @@
         },
         {
           "name" : "Kilépés",
-          "description" : "Hozott sütit, vagy üdítőt",
+          "description" : "Vendég kiléptetése",
           "imagePath" : "Barcodes\tleaveGuest.png",
-          "meta" : "GL"
+          "meta" : "LEAVE_GUEST"
         },
         {
           "name" : "Törlés",
-          "description" : "Hozott sütit, vagy üdítőt",
+          "description" : "Vendég törlése",
           "imagePath" : "Barcodes\tdeleteGuest.png",
-          "meta" : "MOD"
+          "meta" : "DELETE_GUEST"
         }
       ],
       "defaultType" : "Helyszíni"

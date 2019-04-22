@@ -1,8 +1,7 @@
 package control;
 
-import control.modifier.Barcode;
 import control.modifier.Discount;
-import control.utility.BarcodeReader;
+import control.utility.devices.BarCodeReaderListenerFactory;
 import control.utility.file.EntryFilter;
 import control.utility.network.NetworkController;
 import data.AppData;
@@ -10,7 +9,6 @@ import com.fazecast.jSerialComm.SerialPort;
 import data.DataModel;
 import data.Entry;
 import data.EntryProfile;
-import view.ListEditor;
 import view.StatisticsWindow;
 import view.main.LoadingScreen;
 import view.main.ReadFlagListener;
@@ -118,10 +116,15 @@ public class AppController implements ProgramStateListener {
             selectedPort = SerialPort.getCommPort(portSelected);
             if(portSelected.equals(DEFAULT_OPTION)) selectedPort = null;
             if(selectedPort != null && selectedPort.openPort()){
-                System.out.println("[INFO]: Device connected at " + portSelected);
-                BarcodeReader reader = new BarcodeReader();
-                reader.addListener(this);
-                selectedPort.addDataListener(reader);
+                BarCodeReaderListenerFactory.connectSerialPort(selectedPort);
+                BarCodeReaderListenerFactory.generateReader(this::receiveBarCode,"",false);
+                //DEPRECATED
+//                System.out.println("[INFO]: Device connected at " + portSelected);
+//                BarcodeReader reader = new BarcodeReader();
+//                reader.addListener(this);
+//                selectedPort.addDataListener(reader);
+
+
                 label.setBackground(Color.GREEN);
                 label.setText(uh.getUIStr("UI", "PORT_ACTIVE"));
             } else {
@@ -171,7 +174,7 @@ public class AppController implements ProgramStateListener {
         //after selection is not null
         if (result != null){
             model.setSelection(entry); //This is thread-safe...
-            readBarCode(result.getMeta());
+            receiveBarCode(result.getMeta());
         }
     }
 
@@ -197,7 +200,7 @@ public class AppController implements ProgramStateListener {
     }
 
     public void readEntryCode(String text) {
-        readBarCode(activeProfile.getEntryCode() + text);
+        receiveBarCode(activeProfile.getEntryCode() + text);
     }
 
     public void editProfile(JFrame main, JLabel label) {
@@ -318,8 +321,7 @@ public class AppController implements ProgramStateListener {
         }
     }
 
-    @Override
-    public void readBarCode(String barCode) {
+    public void receiveBarCode(String barCode) {
         if(menuOpen) return;
         System.out.println("[INFO]: Code received: " + barCode);
         //Checking for command codes
