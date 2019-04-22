@@ -14,6 +14,15 @@ import java.util.List;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
+/**
+ * This class represents a Discount modifier.
+ * It stores special price modification for individual records.
+ * A Discount can modify one Entry's price. It can increase or decrease it's value (below negative)
+ * Every Discount has a representative name and a barcode associated to it.
+ * The associated barcode is the identifier used for the Discounts.
+ * It comes with a wizard class to modify the attributes.
+ * @author Mihalovits Márk
+ */
 public class Discount implements Serializable, Modifier {
 
     /**
@@ -46,6 +55,14 @@ public class Discount implements Serializable, Modifier {
      */
     private EntryProfile profile;
 
+    /**
+     * Private constructor for creating Discounts in parse functions
+     * @param name the name of the discount
+     * @param barcode the associated barcode
+     * @param iconPath the filepath of the icon
+     * @param price the discount
+     * @param profile the associated profile
+     */
     private Discount(String name, Barcode barcode , String iconPath, int price, EntryProfile profile){
         this.name = name;
         this.iconPath = iconPath;
@@ -54,14 +71,33 @@ public class Discount implements Serializable, Modifier {
         this.profile = profile;
     }
 
+    /**
+     * The copy constructor
+     * @param other the Discount you want to copy
+     * @param profile the profile you want to copy to
+     */
     public Discount(Discount other, EntryProfile profile) {
         this(other.name,other.barcode,other.iconPath,other.discount,profile);
     }
 
+    /**
+     * Returns the associated barcode's metadata
+     * @return the barcode's metadata
+     */
     public String getMeta(){
         return barcode.getMeta();
     }
 
+    /**
+     * Parses a JSON object and creates a Discount object.
+     * It searches for all the required fields.
+     * If any of the required field is missing then it fails with a NPE.
+     * For field naming see the JSON documentation
+     * @see Discount(String,Barcode,String,int,EntryProfile)
+     * @param jsonObject the object it parses
+     * @param profile the associated profile
+     * @return the parsed Discount class reference
+     */
     public static Discount parseDiscountFromJson(JSONObject jsonObject, EntryProfile profile) {
         String name;
         name = "undefined";
@@ -84,9 +120,8 @@ public class Discount implements Serializable, Modifier {
 
 
     /**
-     * Creates a panel, where the Discount's data is visualized to the user.
-     * It is used to create the side menu of the application
-     * @return a panel containing the Discount information
+     * Creates a panel with the Discount's barcode picture
+     * @return a panel containing the barcode picture and other info
      */
     public BarcodePanel getBarcodePanel(){
         if(barcode != null) {
@@ -96,11 +131,36 @@ public class Discount implements Serializable, Modifier {
             return new BarcodePanel(null,"No barcode!");
     }
 
+    /**
+     * Returns the filepath of the icon
+     * @return the filepath of the icon
+     */
+    public String getIcon(){
+        return iconPath;
+    }
+
+    /**
+     * Returns the price
+     * @return the amount of the discount
+     */
+    public int getPrice() {
+        return discount;
+    }
+
+    /**
+     * Overrides Object::toString()
+     * @return the Discount's name
+     */
     @Override
     public String toString(){
         return name;
     }
 
+    /**
+     * Overrides Object::equals(Object)
+     * @param obj the other object it compares to
+     * @return true if the two object shares the same name
+     */
     @Override
     public boolean equals(Object obj) {
         if(obj == null) return false;
@@ -110,15 +170,21 @@ public class Discount implements Serializable, Modifier {
         return other.getMeta().equals(getMeta());
     }
 
-    public String getIcon(){
-        return iconPath;
-    }
-
+    /**
+     * Overrides Modifier::getModifierWizard(Window)
+     * @param parent the parent window
+     * @return a wizard dialog to change the attributes
+     */
     @Override
     public ModifierDialog getModifierWizard(Window parent) {
         return new DiscountWizard(parent);
     }
 
+    /**
+     * Overrides Modifier::validate()
+     * All discounts are required to have a @NouNull barcode field.
+     * @return true if the fields are correct
+     */
     @Override
     public boolean validate() {
         //Refresh barcode whether if it still in the list of barCodes...
@@ -126,10 +192,10 @@ public class Discount implements Serializable, Modifier {
         return name != null && barcode != null && !name.isEmpty();
     }
 
-    public int getPrice() {
-        return discount;
-    }
-
+    /**
+     * A required object for Modifier classes.
+     * It handles the safe modification of attributes
+     */
     public static class DiscountListener extends ModifierWizardEditor<Discount>{
 
         public DiscountListener(Window parent, EntryProfile profile) {
@@ -193,6 +259,10 @@ public class Discount implements Serializable, Modifier {
             finishDialog(parent);
         }
 
+        /**
+         * Write changes to the Discount and closes wizard dialog
+         * If any illegal argument is found then alerts the user without changing
+         */
         private void saveDiscount(){
             if(tfName.getText().length() > 0 && cbBarcodes.getSelectedItem() != null){
                 name = tfName.getText();
