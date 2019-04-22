@@ -50,6 +50,18 @@ public class Entry extends Vector<String> {
         return obj;
     }
 
+    @Deprecated
+    public boolean hasInvalidID() {
+        try {
+            int id = Integer.parseInt(get(ID.ordinal()));
+            return (id > 9000);
+        } catch (NumberFormatException ex){
+            System.out.println("ENTRY: ID is invalid: " + get(ID.ordinal()));
+            System.out.println("ENTRY: NumberFormatException: " + ex.getMessage());
+            return true;
+        }
+    }
+
     /**
      * Enum for the vector data
      */

@@ -118,13 +118,6 @@ public class AppController implements ProgramStateListener {
             if(selectedPort != null && selectedPort.openPort()){
                 BarCodeReaderListenerFactory.connectSerialPort(selectedPort);
                 BarCodeReaderListenerFactory.generateReader(this::receiveBarCode,"",false);
-                //DEPRECATED
-//                System.out.println("[INFO]: Device connected at " + portSelected);
-//                BarcodeReader reader = new BarcodeReader();
-//                reader.addListener(this);
-//                selectedPort.addDataListener(reader);
-
-
                 label.setBackground(Color.GREEN);
                 label.setText(uh.getUIStr("UI", "PORT_ACTIVE"));
             } else {
@@ -350,17 +343,18 @@ public class AppController implements ProgramStateListener {
             //Check for reading flag
             switch (readingFlag){
                 default:
-                case FL_DEFAULT:
+                case FL_DEFAULT:    //Normal flag = Enter guest
                     Entry entry = activeProfile.generateNewEntry(entryID);
                     //Add data if correct
+                    //TODO: MKK jegyzet: LISTÁS = ? | HAS_ID = 1
                     model.addData(entry);
                     entry.Enter();
                     break;
-                case FL_IS_DELETE:
+                case FL_IS_DELETE:  //Delete flag = Delete guest from database
                     if(JOptionPane.showConfirmDialog(null,uh.getUIStr("MSG","CONFIRM"),uh.getUIStr("MSG","DELETE"), JOptionPane.OK_CANCEL_OPTION,WARNING_MESSAGE) == OK_OPTION)
                         model.removeData(model.getDataById(entryID));
                     break;
-                case FL_IS_LEAVING:
+                case FL_IS_LEAVING: //Leave flag = Make guest leave
                     Entry leaving = model.getDataById(entryID);
                     if(leaving == null) throw new IOException(uh.getUIStr("ERR","NO_MATCH"));
                     leaving.Leave();
