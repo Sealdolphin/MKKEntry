@@ -57,10 +57,11 @@ public class Entry extends Vector<String> {
         ID(0,"ID"),
         NAME(1,"NÉV"),
         TYPE(2,"TÍPUS"),
-        DISCOUNTS(3,"KEDVEZMÉNYEK"),
-        ENTERED(4,"BELÉPETT"),
-        ENTER_DATE(5,"BELÉPÉS"),
-        LEAVE_DATE(6,"KILÉPÉS");
+        PRICE(3,"HOZZÁJÁRULÁS"),
+        DISCOUNTS(4,"KEDVEZMÉNYEK"),
+        ENTERED(5,"BELÉPETT"),
+        ENTER_DATE(6,"BELÉPÉS"),
+        LEAVE_DATE(7,"KILÉPÉS");
         private final int column;
         private final String name;
         DataColumn(int col, String name){column = col; this.name = name;}
@@ -128,6 +129,8 @@ public class Entry extends Vector<String> {
         }
         add(ENTER_DATE.column,enter);
         add(LEAVE_DATE.column,leave);
+        
+        add(PRICE.column,((Integer)getAllFees()).toString());
     }
 
     /**
