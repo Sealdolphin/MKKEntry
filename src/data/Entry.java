@@ -187,7 +187,8 @@ public class Entry extends Vector<String> {
         StringBuilder w = new StringBuilder();
         if(filter.indeces != null)
             for (int i = 0; i < filter.indeces.length; i++) {
-                w.append(get(filter.indeces[i])).append(filter.separator);
+                if(isEntered())
+                    w.append(get(filter.indeces[i])).append(filter.separator);
             }
         else {
             w.append(get(ID.ordinal())).append(filter.separator).append(get(NAME.ordinal())).append(filter.separator).append(get(TYPE.ordinal())).append(filter.separator)
