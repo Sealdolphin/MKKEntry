@@ -188,6 +188,7 @@ public class Discount implements Serializable, Modifier {
     @Override
     public boolean validate() {
         //Refresh barcode whether if it still in the list of barCodes...
+        if(barcode == null) return false;
         barcode = Arrays.stream(profile.getBarcodes()).filter(b -> b.getMeta().equals(barcode.getMeta())).findAny().orElse(null);
         return name != null && barcode != null && !name.isEmpty();
     }

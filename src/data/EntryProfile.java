@@ -27,6 +27,7 @@ import org.json.simple.JSONObject;
 
 import control.AppController;
 import control.UIHandler;
+import view.ModifierValidationRenderer;
 
 /**
  * Beléptetési profil.
@@ -446,9 +447,10 @@ public class EntryProfile implements Serializable {
             JPanel panelList = new JPanel();
             panelList.setLayout(new BorderLayout());
 
-            JList<Object> list = new JList<>(objectList.toArray());
+            JList<Modifier> list = new JList<>(objectList.toArray(new Modifier[0]));
             list.addMouseListener(editor);
             list.setSelectionMode(SINGLE_SELECTION);
+            list.setCellRenderer(new ModifierValidationRenderer());
             JScrollPane paneListHolder = new JScrollPane(list);
             panelList.add(paneListHolder,CENTER);
             
@@ -461,8 +463,9 @@ public class EntryProfile implements Serializable {
             btnAdd.addActionListener(e ->{
                 //Create respective wizard
                 editor.createNew(objectList);
-                list.setListData(objectList.toArray());
+                list.setListData(objectList.toArray(new Modifier[0]));
             });
+
             btnRemove.addActionListener(e -> {
                 //Ask for removal
                 int res = JOptionPane.showConfirmDialog(null,"Biztos eltávolítod a következőt a listából: " + list.getModel().getElementAt(list.getSelectedIndex()) + "?"
@@ -471,7 +474,7 @@ public class EntryProfile implements Serializable {
                     //They will be called in their respected place no worries :)
                     //noinspection unchecked
                     editor.removeFrom(objectList, (T) list.getModel().getElementAt(list.getSelectedIndex()));
-                    list.setListData(objectList.toArray());
+                    list.setListData(objectList.toArray(new Modifier[0]));
                 }
             });
 
