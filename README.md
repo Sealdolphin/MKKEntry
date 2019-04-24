@@ -11,12 +11,12 @@ A telepítéshez szükséges a JAVA JDK 11 letöltése.
 Fordítás GNU/Linux rendszeren:
 javac -cp ./src:./jSerialComm-2.5.0.jar:./json-simple-1.1.jar -d out ./src/control/Application.java
 Futtatáshoz szükséges parancsok:
-java -cp ./out:./jSerialComm-2.5.0.jat:./json-simple.1.1.jar control.Application
+java -cp ./out/:./jSerialComm-2.5.0.jar:./json-simple-1.1.jar control.Application
 
 Fordítás Windows rendszeren:
 javac -cp .\src;.\jSerialComm-2.5.0.jar;.\json-simple-1.1.jar -d out .\src\control\Application.java
 Futtatáshoz szükséges parancsok:
-java -cp .\out;.\jSerialComm-2.5.0.jat;.\json-simple.1.1.jar control.Application
+java -cp .\out\;.\jSerialComm-2.5.0.jar;.\json-simple-1.1.jar control.Application
 
 # Hogyan működik?
 Indítás után az alapvető beállításokat tölti be, amik eltölthetőek a mappából.
