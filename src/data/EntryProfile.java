@@ -363,6 +363,9 @@ public class EntryProfile implements Serializable {
             cbCommandDelete = new JComboBox<>(barCodes.toArray(new Barcode[0]));
             cbTypes = new JComboBox<>(ticketTypes.toArray(new TicketType[0]));
 
+            tfCommandDefault = new JTextField();
+            deleteMeta = leaveMeta = null;
+
             if(commandCodes != null) {
                 commandCodes.forEach((command, flag) -> {
                     switch (flag){
@@ -377,9 +380,6 @@ public class EntryProfile implements Serializable {
                             break;
                     }
                 });
-            } else {
-                tfCommandDefault = new JTextField();
-                deleteMeta = leaveMeta = null;
             }
             //Setup values
             cbLimit = new JComboBox<>(EntryLimit.values());
