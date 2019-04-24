@@ -94,7 +94,7 @@ public class AppController implements ProgramStateListener {
         profiles = pData;
         activeProfile = pData.getSelectedData();
         while(activeProfile == null)
-            changeProfile(chooseProfile());
+            changeProfile(chooseProfile(),true);
         adminMode = admin;
     }
 
@@ -204,12 +204,16 @@ public class AppController implements ProgramStateListener {
         menuOpen = true;
         EntryProfile editedProfile = EntryProfile.createProfileFromWizard(main,new EntryProfile(activeProfile));
         if(editedProfile != null) {
+            boolean restartNeeded = EntryProfile.isRestartNeeded(activeProfile,editedProfile);
+            boolean confirm = true;
             //Remove active profile
-            if (JOptionPane.showConfirmDialog(null, "Ezzel törölsz minden adatot a rendszerből\n" + uh.getUIStr("MSG","CONFIRM"), uh.getUIStr("MSG","WARNING"),
-                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+            if (restartNeeded)
+                confirm = JOptionPane.showConfirmDialog(null, "Ezzel törölsz minden adatot a rendszerből\n" + uh.getUIStr("MSG","CONFIRM"), uh.getUIStr("MSG","WARNING"),
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
+            if(confirm){
                 try {
                     profiles.replaceData(activeProfile,editedProfile);
-                    label.setText(changeProfile(editedProfile));
+                    label.setText(changeProfile(editedProfile,restartNeeded));
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null,"HIBA: " + ex.getMessage(),uh.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
                 }
@@ -274,13 +278,13 @@ public class AppController implements ProgramStateListener {
     }
 
     @Override
-    public String changeProfile(EntryProfile newProfile){
+    public String changeProfile(EntryProfile newProfile, boolean restart){
         if (newProfile != null && newProfile != activeProfile) {
             activeProfile = newProfile;
             profiles.setSelection(activeProfile);
             System.out.println("[INFO]: Profile selected: " + activeProfile);
             JOptionPane.showMessageDialog(null, "Profil aktiválva:\n" + activeProfile, uh.getUIStr("MSG","DONE"), JOptionPane.INFORMATION_MESSAGE);
-            model.clearData();
+            if(restart) model.clearData();
         }
         return getProfileName();
     }

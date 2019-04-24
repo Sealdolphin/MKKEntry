@@ -27,6 +27,7 @@ import org.json.simple.JSONObject;
 
 import control.AppController;
 import control.UIHandler;
+import view.ModifierValidationRenderer;
 
 /**
  * Beléptetési profil.
@@ -47,6 +48,7 @@ public class EntryProfile implements Serializable {
 
     private String password = "";
 
+    @Deprecated
     public String getPassword() {
         return password;
     }
@@ -173,6 +175,25 @@ public class EntryProfile implements Serializable {
         ProfileWizard wizard = edit.getWizardEditor(main);
         int res = wizard.open();
         return res == 0 ? edit : null;
+    }
+
+    public static boolean isRestartNeeded(EntryProfile oldProfile, EntryProfile newProfile) {
+        //1. code mask comparison
+        if(!oldProfile.codeMask.equals(newProfile.codeMask)) return true;
+        //2. Barcode list comparision
+        for (Barcode barcode : oldProfile.barCodes) {
+            if(!newProfile.barCodes.contains(barcode)) return true;
+        }
+        //3. Discount comparision
+        for (Discount discount : oldProfile.discounts) {
+            if(!newProfile.discounts.contains(discount)) return true;
+        }
+        //4. TicketTypes
+        for (TicketType ticketType : oldProfile.ticketTypes) {
+            if(!newProfile.ticketTypes.contains(ticketType)) return true;
+        }
+
+        return false;
     }
 
     private static EntryProfile parseProfileFromJson(JSONObject jsonProfile) {
@@ -365,7 +386,6 @@ public class EntryProfile implements Serializable {
 
             tfCommandDefault = new JTextField();
             deleteMeta = leaveMeta = null;
-
             if(commandCodes != null) {
                 commandCodes.forEach((command, flag) -> {
                     switch (flag){
@@ -446,9 +466,10 @@ public class EntryProfile implements Serializable {
             JPanel panelList = new JPanel();
             panelList.setLayout(new BorderLayout());
 
-            JList<Object> list = new JList<>(objectList.toArray());
+            JList<Modifier> list = new JList<>(objectList.toArray(new Modifier[0]));
             list.addMouseListener(editor);
             list.setSelectionMode(SINGLE_SELECTION);
+            list.setCellRenderer(new ModifierValidationRenderer());
             JScrollPane paneListHolder = new JScrollPane(list);
             panelList.add(paneListHolder,CENTER);
             
@@ -461,8 +482,9 @@ public class EntryProfile implements Serializable {
             btnAdd.addActionListener(e ->{
                 //Create respective wizard
                 editor.createNew(objectList);
-                list.setListData(objectList.toArray());
+                list.setListData(objectList.toArray(new Modifier[0]));
             });
+
             btnRemove.addActionListener(e -> {
                 //Ask for removal
                 int res = JOptionPane.showConfirmDialog(null,"Biztos eltávolítod a következőt a listából: " + list.getModel().getElementAt(list.getSelectedIndex()) + "?"
@@ -471,7 +493,7 @@ public class EntryProfile implements Serializable {
                     //They will be called in their respected place no worries :)
                     //noinspection unchecked
                     editor.removeFrom(objectList, (T) list.getModel().getElementAt(list.getSelectedIndex()));
-                    list.setListData(objectList.toArray());
+                    list.setListData(objectList.toArray(new Modifier[0]));
                 }
             });
 

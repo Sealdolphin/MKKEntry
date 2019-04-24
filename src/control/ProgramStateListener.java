@@ -19,7 +19,7 @@ public interface ProgramStateListener {
      * An event for profile change
      * @return the name of the new active profile
      */
-    String changeProfile(EntryProfile newProfile);
+    String changeProfile(EntryProfile newProfile, boolean restart);
 
     void exportList(PrintWriter writer, EntryFilter filter);
 

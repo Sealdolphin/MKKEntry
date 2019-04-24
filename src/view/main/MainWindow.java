@@ -309,7 +309,7 @@ public class MainWindow extends JFrame {
 
             mi = new JMenuItem("Profil váltása");
             mi.addActionListener(e-> {
-                labelProfile.setText(controller.changeProfile(controller.chooseProfile()));
+                labelProfile.setText(controller.changeProfile(controller.chooseProfile(),true));
                 initiateView(controller);
             });
             menuProfiles.add(mi);

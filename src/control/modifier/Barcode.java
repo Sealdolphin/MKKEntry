@@ -21,8 +21,6 @@ public class Barcode implements Serializable, Modifier {
     private String description = "Unknown";
     private boolean hasLink = false;
 
-    public static BarCodeReaderListenerFactory readerDevice = null;
-
     private Barcode(String name, String meta, String picture, String desc){
         this.name = name;
         metaData = meta;
@@ -51,6 +49,15 @@ public class Barcode implements Serializable, Modifier {
     }
 
     @Override
+    public boolean equals(Object obj){
+        if(obj == null) return false;
+        if(obj == this) return true;
+        if(!obj.getClass().equals(Barcode.class)) return false;
+        Barcode other = (Barcode) obj;
+        return getMeta().equals(other.getMeta());
+    }
+
+    @Override
     public ModifierDialog getModifierWizard(Window parent) {
         return new BarcodeWizard(parent);
     }
@@ -73,7 +80,7 @@ public class Barcode implements Serializable, Modifier {
     }
 
     public static Barcode parseBarcodeFromJSON(JSONObject jsonObject){
-        String name, meta, desc, picture = null;
+        String name, meta, desc, picture;
         name = jsonObject.get("name").toString();
         meta = jsonObject.get("meta").toString();
         desc = jsonObject.get("description").toString();
