@@ -50,6 +50,26 @@ public class Entry extends Vector<String> {
         return obj;
     }
 
+    @Deprecated
+    public boolean hasInvalidID() {
+        try {
+            int id = Integer.parseInt(get(ID.ordinal()));
+            return (id > 9000);
+        } catch (NumberFormatException ex){
+            System.out.println("ENTRY: ID is invalid: " + get(ID.ordinal()));
+            System.out.println("ENTRY: NumberFormatException: " + ex.getMessage());
+            return true;
+        }
+    }
+
+    @Deprecated
+    public void Reset() {
+        set(ENTERED.ordinal(),null);
+        set(ENTER_DATE.ordinal(),null);
+        set(LEAVE_DATE.ordinal(),null);
+        discountList.clear();
+    }
+
     /**
      * Enum for the vector data
      */
@@ -165,9 +185,16 @@ public class Entry extends Vector<String> {
 
     public String applyFilter(EntryFilter filter){
         StringBuilder w = new StringBuilder();
-        for (int i = 0; i < size(); i++) {
-            w.append(filter.writeData(get(i), i));
-            w.append(EntryFilter.separator);
+        if(filter.indeces != null)
+            for (int i = 0; i < filter.indeces.length; i++) {
+                if(isEntered())
+                    w.append(get(filter.indeces[i])).append(filter.separator);
+            }
+        else {
+            w.append(get(ID.ordinal())).append(filter.separator).append(get(NAME.ordinal())).append(filter.separator).append(get(TYPE.ordinal())).append(filter.separator)
+                    .append(get(ENTER_DATE.ordinal())).append(filter.separator).append(get(LEAVE_DATE.ordinal())).append(filter.separator);
+            for(Discount discount : discountList)
+                w.append(discount.getMeta()).append(filter.separator);
         }
         return w.toString();
     }

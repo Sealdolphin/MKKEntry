@@ -64,7 +64,7 @@ public class MenuHandler {
     }
 
     public void importEntries(){
-        EntryFilter importFilter = new EntryFilter("Dummy",null);
+        EntryFilter importFilter = new EntryFilter("Dummy",null,",");
         fileDialog.setDialogTitle("Lista importálása");
         fileDialog.setApproveButtonText("Import");
         fileDialog.resetChoosableFileFilters();

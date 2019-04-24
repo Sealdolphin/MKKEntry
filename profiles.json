@@ -26,6 +26,16 @@
           "name" : "Helyszíni",
           "price" : 3500,
           "fee" : true
+        },
+        {
+          "name" : "Előrendelt",
+          "price" : 2500,
+          "fee" : true
+        },
+        {
+          "name" : "Elővételes",
+          "price" : 2500,
+          "fee" : false
         }
       ],
       "barCodes" : [

@@ -75,7 +75,7 @@ public class Application {
 
 
         try {
-            Application app = new Application();
+            Application app = new Application(args.length == 2 && args[0].equals("adminMode") && args[1].equals("Sealdolphin"));
             app.start();
         } catch (Exception appException) {
             appException.printStackTrace();
@@ -84,7 +84,7 @@ public class Application {
         }
     }
 
-    private Application() throws Exception {
+    private Application(boolean admin) throws Exception {
 
         List<Barcode> barcodeList = new ArrayList<>();
         try {
@@ -130,11 +130,11 @@ public class Application {
             model = new AppData();
         }
 
-        AppController controller = new AppController(model, profileData);
+        AppController controller = new AppController(model, profileData, admin);
 
         Image icon = Toolkit.getDefaultToolkit().getImage("Icons"+File.separator+"mkkMini.png");
 
-        view = new MainWindow(model, controller);
+        view = new MainWindow(model, controller, admin);
         view.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e){
@@ -166,7 +166,7 @@ public class Application {
     }
 
     private void start() {
-        view.setTitle(uh.getUIStr("UI","WINDOW_TITLE"));
+        view.setTitle(uh.getUIStr("UI","WINDOW_TITLE") + view.getTitle());
         view.setMinimumSize(new Dimension(800,600));
         view.setLocationRelativeTo(null);
         view.pack();

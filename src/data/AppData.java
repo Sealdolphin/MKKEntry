@@ -12,8 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static control.Application.uh;
-import static data.Entry.DataColumn.ID;
-import static data.Entry.DataColumn.NAME;
+import static data.Entry.DataColumn.*;
 
 public class AppData extends DefaultTableModel implements Serializable, DataModel<Entry>{
 
@@ -96,16 +95,37 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
         return entryList.size();
     }
 
+    public void importData(Entry data) throws IOException{
+        Entry conflict = entryList.stream().filter(entry -> entry.get(0).equals(data.get(ID.ordinal()))).findAny().orElse(null);
+        if(conflict != null) throw new IOException("A vendég már fenn van a listán!");
+        else
+            addData(data);
+    }
+
     @Override
     public void addData(Entry data) throws IOException{
+        //Check if data already exists
         Entry conflict = entryList.stream().filter(entry -> entry.get(0).equals(data.get(ID.ordinal()))).findAny().orElse(null);
         if(conflict != null){
+            //Data exists so we just enter the guest:
+            //CASE 4 out of 4
             conflict.Enter();
             lastSelectedEntry = conflict;
         } else {
-            entryList.add(data);
-            addRow(data);
-            lastSelectedEntry = data;
+            if(!data.hasInvalidID() && lastSelectedEntry != null && lastSelectedEntry.hasInvalidID()) {
+                if(lastSelectedEntry.get(TYPE.ordinal()).equals("Előrendelt") && !lastSelectedEntry.isEntered()) {
+                    //CASE 3 out of 4
+                    //IF TRUE => they must be TYPE! so let them in!
+                    //TODO: OMG this is forbidden!!!!! :(
+                    lastSelectedEntry.set(ID.ordinal(), data.get(ID.ordinal()));
+                    lastSelectedEntry.Enter();
+                } else throw new IOException("A vendég már belépett egy másik kóddal, vagy nem megfelelő a jegytípus. (Ez a rekord illegális.)");
+            } else {
+                //CASE 1 out of 4
+                entryList.add(data);
+                addRow(data);
+                lastSelectedEntry = data;
+            }
         }
 
     }

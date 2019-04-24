@@ -34,6 +34,9 @@ import static javax.swing.JOptionPane.WARNING_MESSAGE;
  */
 public class AppController implements ProgramStateListener {
 
+    @Deprecated
+    public final boolean adminMode;
+
     /**
      * The model for the entries in the program
      */
@@ -86,12 +89,13 @@ public class AppController implements ProgramStateListener {
      */
     private NetworkController netController;
 
-    AppController(AppData model, DataModel<EntryProfile> pData){
+    AppController(AppData model, DataModel<EntryProfile> pData, boolean admin){
         this.model = model;
         profiles = pData;
         activeProfile = pData.getSelectedData();
         while(activeProfile == null)
             changeProfile(chooseProfile(),true);
+        adminMode = admin;
     }
 
     public void addListener(ReadFlagListener l){
@@ -118,13 +122,6 @@ public class AppController implements ProgramStateListener {
             if(selectedPort != null && selectedPort.openPort()){
                 BarCodeReaderListenerFactory.connectSerialPort(selectedPort);
                 BarCodeReaderListenerFactory.generateReader(this::receiveBarCode,"",false);
-                //DEPRECATED
-//                System.out.println("[INFO]: Device connected at " + portSelected);
-//                BarcodeReader reader = new BarcodeReader();
-//                reader.addListener(this);
-//                selectedPort.addDataListener(reader);
-
-
                 label.setBackground(Color.GREEN);
                 label.setText(uh.getUIStr("UI", "PORT_ACTIVE"));
             } else {
@@ -237,11 +234,20 @@ public class AppController implements ProgramStateListener {
         statWindow.setVisible(true);
     }
 
+    @Deprecated
     public void switchOnlineMode() {
         try {
             netController = new NetworkController(activeProfile,this,"localhost",5503);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Deprecated
+    public void resetEntry(Entry selectedData) {
+        if(JOptionPane.showConfirmDialog(null,uh.getUIStr("MSG","CONFIRM"),uh.getUIStr("MSG","DELETE"), JOptionPane.OK_CANCEL_OPTION,WARNING_MESSAGE) == OK_OPTION){
+            selectedData.Reset();
+            receiveBarCode("");
         }
     }
 
@@ -301,18 +307,22 @@ public class AppController implements ProgramStateListener {
         progress.setTasks(-1);
         int lines = 0;
         int allLines = 0;
+        StringBuilder errorLines = new StringBuilder();
         do {
             String line = reader.readLine();
             if(line == null) break; //Breaks at FIRST EMPTY LINE
             allLines++;
             try{
-                model.addData(Entry.importEntry(filter.parseEntry(line),activeProfile));
+                model.importData(Entry.importEntry(filter.parseEntry(line),activeProfile));
                 lines++;
             } catch (IOException ex){
-                JOptionPane.showMessageDialog(null,ex.getMessage(),uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
+                errorLines.append(allLines).append(".sor: ").append(ex.getMessage()).append("\n");
             }
         } while (true);
         progress.done(lines + " rekord a " + allLines + " rekordból importálva!");
+        if(lines != allLines){
+            JOptionPane.showMessageDialog(null,errorLines.toString(),uh.getUIStr("MSG","HIBA"),JOptionPane.WARNING_MESSAGE);
+        }
 
     }
 
@@ -354,17 +364,18 @@ public class AppController implements ProgramStateListener {
             //Check for reading flag
             switch (readingFlag){
                 default:
-                case FL_DEFAULT:
+                case FL_DEFAULT:    //Normal flag = Enter guest
                     Entry entry = activeProfile.generateNewEntry(entryID);
                     //Add data if correct
+                    //TODO: MKK jegyzet: LISTÁS = ? | HAS_ID = 1
                     model.addData(entry);
                     entry.Enter();
                     break;
-                case FL_IS_DELETE:
+                case FL_IS_DELETE:  //Delete flag = Delete guest from database
                     if(JOptionPane.showConfirmDialog(null,uh.getUIStr("MSG","CONFIRM"),uh.getUIStr("MSG","DELETE"), JOptionPane.OK_CANCEL_OPTION,WARNING_MESSAGE) == OK_OPTION)
                         model.removeData(model.getDataById(entryID));
                     break;
-                case FL_IS_LEAVING:
+                case FL_IS_LEAVING: //Leave flag = Make guest leave
                     Entry leaving = model.getDataById(entryID);
                     if(leaving == null) throw new IOException(uh.getUIStr("ERR","NO_MATCH"));
                     leaving.Leave();

@@ -60,9 +60,10 @@ public class MainWindow extends JFrame {
      *
      * @param model the model of the Application
      */
-    public MainWindow(AppData model, AppController controller) {
+    public MainWindow(AppData model, AppController controller, boolean admin) {
         //Setting up default fields
         this.model = model;
+        setTitle(admin ? " (ADMIN MÓD)" : "");
         //Discount panel toggle button
         btnBarcodes = new JButton("Vonalkódok");
         btnBarcodes.addActionListener(e -> {
@@ -86,7 +87,7 @@ public class MainWindow extends JFrame {
         setLayout(new BorderLayout());
         InfoPanel infoPanel = new InfoPanel();
         controller.addListener(infoPanel);
-        setJMenuBar(new MainMenu().createMenu(controller));
+        setJMenuBar(new MainMenu().createMenu(controller,admin));
         //Create popup-menu (TEMP)
         JPopupMenu popupEditRecord = createPopUpMenu(controller);
 
@@ -107,23 +108,24 @@ public class MainWindow extends JFrame {
                 model.setSelection(model.getDataByIndex(entryView.convertRowIndexToModel(entryView.getSelectedRow())));
             }
         });
-        //Add right-click popup menu
-        entryView.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                maybeShowPopup(e);
-            }
-
-            public void mouseReleased(MouseEvent e) {
-                maybeShowPopup(e);
-            }
-
-            private void maybeShowPopup(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    popupEditRecord.show(e.getComponent(), e.getX(), e.getY());
-                    entryView.changeSelection(entryView.rowAtPoint(e.getPoint()),0,false,false);
+        if(admin)
+            //Add right-click popup menu
+            entryView.addMouseListener(new MouseAdapter() {
+                public void mousePressed(MouseEvent e) {
+                    maybeShowPopup(e);
                 }
-            }
-        });
+
+                public void mouseReleased(MouseEvent e) {
+                    maybeShowPopup(e);
+                }
+
+                private void maybeShowPopup(MouseEvent e) {
+                    if (e.isPopupTrigger()) {
+                        popupEditRecord.show(e.getComponent(), e.getX(), e.getY());
+                        entryView.changeSelection(entryView.rowAtPoint(e.getPoint()),0,false,false);
+                    }
+                }
+            });
         //Change model selection in consistency with the view's selection model
         model.addTableModelListener(e -> {
             if(e.getType() == TableModelEvent.UPDATE) {
@@ -153,16 +155,19 @@ public class MainWindow extends JFrame {
         JMenuItem miLeave = new JMenuItem("Kiléptetés");
         JMenuItem miDelete = new JMenuItem("Törlés");
         JMenuItem miDiscounts = new JMenuItem("Kedvezmények módosítása");
+        JMenuItem miReset = new JMenuItem("Rekord visszaállítása");
 
         miEnter.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_DEFAULT,model.getSelectedData()));
         miLeave.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_IS_LEAVING,model.getSelectedData()));
         miDelete.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_IS_DELETE,model.getSelectedData()));
         miDiscounts.addActionListener(e -> controller.discountOperationOnEntry(model.getSelectedData()));
+        miReset.addActionListener(e -> controller.resetEntry(model.getSelectedData()));
 
         popupEditRecord.add(miEnter);
         popupEditRecord.add(miLeave);
         popupEditRecord.add(miDelete);
         popupEditRecord.add(miDiscounts);
+        popupEditRecord.add(miReset);
         return popupEditRecord;
     }
 
@@ -216,7 +221,7 @@ public class MainWindow extends JFrame {
          * Creates a default menu bar with an event handler
          * @return a default menu bar
          */
-        JMenuBar createMenu(AppController controller){
+        JMenuBar createMenu(AppController controller, boolean admin){
             JMenuBar menuBar = new JMenuBar();
 
             MenuHandler handler = new MenuHandler(controller);
@@ -224,8 +229,10 @@ public class MainWindow extends JFrame {
             //Assembling Menus
             menuBar.add(createFileMenu(handler));
             //menuBar.add(createEditMenu(controller));
-            menuBar.add(createSettingsMenu(controller));
-            menuBar.add(createChartsMenu(controller));
+            if(admin) {
+                menuBar.add(createSettingsMenu(controller));
+                menuBar.add(createChartsMenu(controller));
+            }
             menuBar.add(new JMenu("Tranzakciók"));
 
             return menuBar;

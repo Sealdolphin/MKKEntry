@@ -6,10 +6,11 @@ public class EntryFilter extends ExtensionFilter {
 
     private String name;
 
-    public EntryFilter(String name, int[] indeces) {
+    public EntryFilter(String name, int[] indeces, String separator) {
         super(new String[]{"csv","txt","log"}, "MKK Beléptetési tábla");
         this.name = name;
         this.indeces = indeces;
+        this.separator = separator;
     }
 
     @Override
@@ -17,19 +18,11 @@ public class EntryFilter extends ExtensionFilter {
         return name;
     }
 
-    public static final String separator = ",";
+    public final String separator;
 
     public String[] parseEntry(String line){
         return line.split(separator);
     }
 
-    private int[] indeces;
-
-    public String writeData(String s, int index) {
-        if(indeces == null) return s;
-        for (int indece : indeces) {
-            if (indece == index) return s;
-        }
-        return "";
-    }
+    public int[] indeces;
 }
