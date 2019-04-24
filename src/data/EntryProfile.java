@@ -48,6 +48,7 @@ public class EntryProfile implements Serializable {
 
     private String password = "";
 
+    @Deprecated
     public String getPassword() {
         return password;
     }
@@ -174,6 +175,25 @@ public class EntryProfile implements Serializable {
         ProfileWizard wizard = edit.getWizardEditor(main);
         int res = wizard.open();
         return res == 0 ? edit : null;
+    }
+
+    public static boolean isRestartNeeded(EntryProfile oldProfile, EntryProfile newProfile) {
+        //1. code mask comparison
+        if(!oldProfile.codeMask.equals(newProfile.codeMask)) return true;
+        //2. Barcode list comparision
+        for (Barcode barcode : oldProfile.barCodes) {
+            if(!newProfile.barCodes.contains(barcode)) return true;
+        }
+        //3. Discount comparision
+        for (Discount discount : oldProfile.discounts) {
+            if(!newProfile.discounts.contains(discount)) return true;
+        }
+        //4. TicketTypes
+        for (TicketType ticketType : oldProfile.ticketTypes) {
+            if(!newProfile.ticketTypes.contains(ticketType)) return true;
+        }
+
+        return false;
     }
 
     private static EntryProfile parseProfileFromJson(JSONObject jsonProfile) {
@@ -364,6 +384,8 @@ public class EntryProfile implements Serializable {
             cbCommandDelete = new JComboBox<>(barCodes.toArray(new Barcode[0]));
             cbTypes = new JComboBox<>(ticketTypes.toArray(new TicketType[0]));
 
+            tfCommandDefault = new JTextField();
+            deleteMeta = leaveMeta = null;
             if(commandCodes != null) {
                 commandCodes.forEach((command, flag) -> {
                     switch (flag){
@@ -378,9 +400,6 @@ public class EntryProfile implements Serializable {
                             break;
                     }
                 });
-            } else {
-                tfCommandDefault = new JTextField();
-                deleteMeta = leaveMeta = null;
             }
             //Setup values
             cbLimit = new JComboBox<>(EntryLimit.values());
