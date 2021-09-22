@@ -15,11 +15,18 @@ Ennek hiányában a működéshez létre kell hozni egy új profilt (lásd lente
 A betöltés után a program üzemképes, folyamatosan fogadja az adatokat.
 Az újonnan leolvasott kódokhoz a vonalkód olvasót kell használni, illetve kézileg is elküldhető egy kód.
 
-Működéssel kapcsolatos tudnivalók
-- Minden újonnan érkező kódot a rendszer egy új vendégként kezel, és azonnal beléptet.
+## Működéssel kapcsolatos tudnivalók
+- Minden újonnan érkező kódot a rendszer egy új vendégként kezel, _**és**_ azonnal beléptet.
 - A kódok a vendégek egyedi azonosítói ezért a rendszer **nem regisztrál kétszer** ugyanolyan kódot.
 - A bevitt kódoknak meg kell felelniük a profilban beállított **maszknak**. Különben a kód érvénytelen.
 - Egyes kódok *parancsként* funkcionálnak, leolvasásuk után az alsó sorban változik a információs panel.
+
+## Általános működés
+1. Telepítsd az alkalmazást
+2. Töltsd be a megfelelő profilt (vagy hozz létre egyet)
+3. Töltsd fel a regisztrált vendégeket (külső CSV fájlból)
+4. Csatlakoztass egy vonalkód olvasót (Soros porton / USB-n) - _Opcionális_
+5. Minden kész! Indulhat a beléptetés.
 
 # Első lépések
 A beléptetés felállításához néhány előkészület szükséges. Ehhez összeírtam néhány típuspéldát, ami alapján könnyedén felépíthető és személyreszabható a saját beléptetőrendszerünk.
@@ -52,9 +59,91 @@ Az esemény folyamán a beléptetés folyamata egyszerű.
 A programban a profilokon keresztül *személyreszabott* beállításokat lehet tárolni. Ezzel nem kell minden indítás előtt foglalkozni az eseményhez tartozó adatok újbóli megadásával. A programban egyszerre több profil is beállítható, de egyszerre **csak egy profil használható**. A profil váltása után a program **minden rekordot töröl**. A profilhoz tartozó adatok:
 - Különböző jegytípusok
 - Különböző kedvezmények
-- Exportálási filterek *(fejlesztés alatt)*
+- ~~Exportálási filterek *(fejlesztés alatt)*~~
 - A Profilt jellemző belépési kód maszkja
 - Az eseményt jellemző beléptetési konvenciók és szabályok (belépési kvóták stb)
+
+### Profil betöltése fájlból
+Abban az esetben, ha nem áll rendelkezésre soros-port olvasó eszköz, lehet külső fájlból is beolvasni profilt.
+Sablon:
+```json
+{
+  "profiles" : [
+    {
+      "name" : "MKK",
+      "mask" : "[0-9]{4}",
+      "commands" : {
+        "default" : "MKK",
+        "leave" : "LEAVE_GUEST",
+        "delete" : "DELETE_GUEST"
+      },
+      "discounts" : [],
+      "tickets" : [],
+      "barCodes" : [],
+      "defaultType" : "Helyszíni"
+    }
+  ],
+  "active" : "MKK",
+  "version" : "v1.3"
+}
+```
+#### Magyarázat:
+- _profiles_: a felsorolt profilok listája
+- _name_ : a profil neve
+- _mask_ : a profilra illeszkedő belépő kód maszkja (Reguláris kifejezés)
+- _commands_ : a profilhoz tartozó alapparancsok
+  - _default_ : a belépőkód maszk eleje
+  - _leave_ : a kiléptetés parancsa
+  - _delete_ : a törlés parancsa
+- _discounts_ : a profilhoz tartozó kedvezmények listája
+- _tickets_ : a profilhoz tartozó jegytípusok listája
+- _barCodes_ : a profilhoz tartozó vonalkódok listája
+- _defaultType_ : az alapértelmezett jegytípus (ismeretlen rekord esetén)
+- _active_ : Aktív profil
+- _version_ : Program verziószáma
+
+#### Kedvezmények
+```json
+{
+  "name" : "Büfé",
+  "icon" : "Icons\tDIS_PIE.png",
+  "barCode" : "FOOD_SALE",
+  "discount" : 500
+}
+```
+- _name_ : A kedvezmény rövid neve (és azonosítója!!)
+- _icon_ : A hozzá tartozó ikon relatív útvonala
+- _barCode_ : A hozzá tartozó vonalkód parancsa
+- _discount_ : A kedvezmény mennyisége (lehet negatív is)
+#### Jegytípusok
+```json
+{
+  "name" : "VIP",
+  "price" : 0,
+  "fee" : true
+}
+```
+- _name_ : A jegytípus rövid neve (és azonosítója!!)
+- _price_ : A jegytípus ára
+- _fee_ : Számít-e a jegytípus a kasszában?
+
+#### Vonalkódok
+```json
+{
+  "name" : "Büfé",
+  "description" : "Hozott sütit, vagy üdítőt",
+  "imagePath" : "Barcodes\tfoodSale.png",
+  "meta" : "FOOD_SALE"
+}
+```
+- _name_ : A vonalkód neve
+- _description_ : A vonalkódhoz tartozó leírás (ez jelenik meg az oldalsávon is)
+- _imagePath_ : A vonalkód képének relatív útvonala
+- _meta_ : A vonalkódhoz tartozó parancs (egyben azonosító is)
+
+
+### Profil létrehozása
+Új profilt is létre lehet hozni akár a program indulása során is. **FONTOS**: ehhez a funkcióhoz soros-port olvasó eszköz szükséges.
 
 **Profil létrehozása**
 Az új profil létrehozásához szükséges megadni a *nevet* és a belépési kód *maszkját*, amik alapján a profil azonosítható, illetve fel kell venni *legalább egy* darab jegytípust, ami az *alapméretezett* jegytípus lesz. Minden más tulajdonságot működés közben is lehet módosítani. Fontos, hogy a program nem tud tárolni két azonos nevű profilt. Profilokat lehet importálni külső adatfájlokból is. (A szükséges JSON-tagekhez lásd: a JSON dokumentációt)
