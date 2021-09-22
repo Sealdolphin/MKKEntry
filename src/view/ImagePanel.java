@@ -60,7 +60,8 @@ public class ImagePanel extends JPanel  {
     @Override
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
-        g.drawImage(image,0,0,imgDimension.width,imgDimension.height,
+        if(image != null)
+            g.drawImage(image,0,0,imgDimension.width,imgDimension.height,
                 0,0,image.getWidth(),image.getHeight(),
                 this);
     }
