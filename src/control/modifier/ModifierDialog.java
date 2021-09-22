@@ -64,11 +64,11 @@ public abstract class ModifierDialog extends JDialog {
         int dialogResult = fc.showOpenDialog(this);
         String iconPath = null;
         if(fc.getSelectedFile() != null)
-            iconPath = Application.parseFilePath(fc.getSelectedFile().getAbsolutePath());
+            iconPath = fc.getSelectedFile().getAbsolutePath();
         if(dialogResult == JFileChooser.APPROVE_OPTION){
             iconLabel.setIcon(new ImageIcon(new ImageIcon(iconPath).getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH)));
         }
-        return iconPath;
+        return Application.parseFilePath(iconPath);
     }
 
     void refresh(Window parent){

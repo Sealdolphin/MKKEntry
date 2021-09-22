@@ -152,6 +152,7 @@ public class Barcode implements Serializable, Modifier {
 
         private void saveBarcode() {
             if(!tfMetaData.getText().isEmpty()) {
+                metaData = tfMetaData.getText();
                 picturePath = panelImg.getPath();
                 name = tfName.getText();
                 description = tfTooltip.getText();

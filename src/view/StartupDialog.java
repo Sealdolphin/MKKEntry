@@ -9,6 +9,8 @@ import org.json.simple.parser.ParseException;
 import javax.swing.*;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static control.Application.uh;
@@ -64,14 +66,14 @@ public class StartupDialog {
                     System.out.println("File selected: " + jsonProfiles);
                     //Load profiles from Json
                     try {
-                        JSONObject profileObj = (JSONObject) new JSONParser().parse(new BufferedReader(new InputStreamReader(new FileInputStream(jsonProfiles))));
+                        JSONObject profileObj = (JSONObject) new JSONParser().parse(new BufferedReader(new InputStreamReader(new FileInputStream(jsonProfiles), StandardCharsets.UTF_8)));
                         EntryProfile.loadProfilesFromJson(profileObj,loadedProfiles);
                         String active = profileObj.get("active").toString();
                         activeProfile = loadedProfiles.stream().filter(profile -> profile.toString().equals(active)).findAny().orElse(null);
                         menu = false;
                     } catch (IOException | ParseException ex){
                         JOptionPane.showMessageDialog(null,
-                                uh.getUIStr("ERR","IO_FAIL")+ "\n" + ex.toString(),
+                                uh.getUIStr("ERR","IO_FAIL")+ "\n" + ex,
                                 uh.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
                     }
                 }

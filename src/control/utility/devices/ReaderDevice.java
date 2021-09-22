@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 public class ReaderDevice implements BarcodeReaderListener {
 
-    private Consumer<String> action;
+    private final Consumer<String> action;
     private JDialog dialog;
     private final Thread actionThread;
     private String lastReadCode;

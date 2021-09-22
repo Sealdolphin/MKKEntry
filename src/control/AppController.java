@@ -101,9 +101,9 @@ public class AppController implements ProgramStateListener {
     public void scanPorts(JComboBox<String> cbSelections){
         System.out.println("[INFO]: Scanning for ports...");
         cbSelections.removeAllItems();
-        for (SerialPort port : SerialPort.getCommPorts()) {
-            cbSelections.addItem(port.getSystemPortName());
-            System.out.println("[INFO]: Scanned " + port.getSystemPortName());
+        for (String portName : BarCodeReaderListenerFactory.refreshSerialPorts()) {
+            cbSelections.addItem(portName);
+            System.out.println("[INFO]: Scanned " + portName);
         }
         if(cbSelections.getItemCount() == 0)
             cbSelections.addItem(DEFAULT_OPTION);
@@ -113,17 +113,9 @@ public class AppController implements ProgramStateListener {
         if(event.getStateChange() == ItemEvent.SELECTED){
             if(selectedPort != null) selectedPort.closePort();
             String portSelected = event.getItem().toString();
-            selectedPort = SerialPort.getCommPort(portSelected);
-            if(portSelected.equals(DEFAULT_OPTION)) selectedPort = null;
-            if(selectedPort != null && selectedPort.openPort()){
-                BarCodeReaderListenerFactory.connectSerialPort(selectedPort);
+            if(!portSelected.equals(DEFAULT_OPTION)){
+                BarCodeReaderListenerFactory.connectSerialPort(portSelected);
                 BarCodeReaderListenerFactory.generateReader(this::receiveBarCode,"",false);
-                //DEPRECATED
-//                System.out.println("[INFO]: Device connected at " + portSelected);
-//                BarcodeReader reader = new BarcodeReader();
-//                reader.addListener(this);
-//                selectedPort.addDataListener(reader);
-
 
                 label.setBackground(Color.GREEN);
                 label.setText(uh.getUIStr("UI", "PORT_ACTIVE"));

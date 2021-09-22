@@ -25,7 +25,7 @@ public class BarcodeReader implements SerialPortMessageListener {
      */
     private String lastReadData;
 
-    private List<BarcodeReaderListener> listeners = new ArrayList<>();
+    private final List<BarcodeReaderListener> listeners = new ArrayList<>();
 
     void addListener(BarcodeReaderListener l){
         listeners.add(l);

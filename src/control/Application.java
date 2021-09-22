@@ -1,6 +1,7 @@
 package control;
 
 import control.modifier.Barcode;
+import control.utility.devices.BarCodeReaderListenerFactory;
 import data.AppData;
 import data.ProfileData;
 import view.main.LoadingScreen;
@@ -65,7 +66,7 @@ public class Application {
         catch (ParseException | IOException e) {
             Application.loadingScreen.setInterruptMessage("Nem tudtam betölteni a beállításokat a 'uh.json' fáljból.\n" +
                     "Az alkalmazás ezért nem tud elindulni.\n" +
-                    "Részletek:\n" + e.toString());
+                    "Részletek:\n" + e);
             Application.loadingScreen.interrupt();
             return;
         } catch (UnsupportedLookAndFeelException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
@@ -85,7 +86,13 @@ public class Application {
     }
 
     private Application() throws Exception {
+        //Read serial ports
+        List<String> ports = BarCodeReaderListenerFactory.refreshSerialPorts();
+        if(!ports.isEmpty()) {
+            BarCodeReaderListenerFactory.connectSerialPort(ports.get(0));
+        }
 
+        //Read data
         List<Barcode> barcodeList = new ArrayList<>();
         try {
             Application.loadingScreen.setProgress("Vonalkódok betöltése...");
@@ -174,7 +181,10 @@ public class Application {
     }
 
     public static String parseFilePath(String filePath) {
-    	return filePath.replaceAll("\t", File.separator).replaceAll(System.getProperty("user.dir")+File.separator,"");
+        if (filePath == null) return "";
+    	String parsed = filePath.replaceAll("\t", File.separator);
+    	String baseDir = System.getProperty("user.dir")+File.separator;
+    	return parsed.substring(baseDir.length());
     }
 
 

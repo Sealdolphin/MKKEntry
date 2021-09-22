@@ -113,7 +113,7 @@ public class Discount implements Serializable, Modifier {
             //Show warning message
             JOptionPane.showMessageDialog(new JFrame(),profile.toString()+ ":\nA(z) '" + name +
                     "' kedvezmény importálása közben hiba történt.\n" +
-                    "Az importálás nem sikerült. Részletek:\n" + other.toString(),"Hiba",ERROR_MESSAGE);
+                    "Az importálás nem sikerült. Részletek:\n" + other,"Hiba",ERROR_MESSAGE);
         }
         return new Discount(name,barcode,icon,price,profile);
     }
@@ -280,6 +280,7 @@ public class Discount implements Serializable, Modifier {
                 barcode = (Barcode) cbBarcodes.getSelectedItem();
                 discount = Integer.parseInt(spPrice.getValue().toString());
                 result = 0;
+                iconPath = lbPath.getText();
                 //Close dialog
                 dispose();
             } else {
