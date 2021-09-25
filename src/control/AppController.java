@@ -289,6 +289,7 @@ public class AppController implements ProgramStateListener {
 
     @Override
     public void importList(BufferedReader reader, EntryFilter filter) throws IOException{
+        StringBuilder stackTrace = new StringBuilder();
         LoadingScreen progress = new LoadingScreen();
         progress.setTasks(-1);
         int lines = 0;
@@ -301,10 +302,18 @@ public class AppController implements ProgramStateListener {
                 model.addData(Entry.importEntry(filter.parseEntry(line),activeProfile));
                 lines++;
             } catch (IOException ex){
-                JOptionPane.showMessageDialog(null,ex.getMessage(),uh.getUIStr("MSG","WARNING"),JOptionPane.WARNING_MESSAGE);
+                stackTrace.append(allLines).append(". sor: ").append(ex.getMessage()).append("\n");
             }
         } while (true);
+        String trace = stackTrace.toString();
         progress.done(lines + " rekord a " + allLines + " rekordból importálva!");
+        if (!trace.equals("")) {
+            JTextArea text = new JTextArea(trace);
+            text.setEditable(false);
+            text.setOpaque(false);
+            text.setPreferredSize(new Dimension(300,400));
+            JOptionPane.showMessageDialog(null, new JScrollPane(text), uh.getUIStr("MSG","WARNING"), JOptionPane.WARNING_MESSAGE);
+        }
 
     }
 

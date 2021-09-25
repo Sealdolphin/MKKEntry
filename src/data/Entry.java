@@ -78,7 +78,7 @@ public class Entry extends Vector<String> {
      * @throws IOException if parsing fails
      */
     public static Entry importEntry(String[] vector, EntryProfile profile) throws IOException {
-        if(vector.length <= TYPE.column) throw new IOException("Kicsi");
+        if(vector.length <= TYPE.column) throw new IOException("Nincs megadva jegytípus");
         //Parsing string vector fields in order:
         Entry imported = new Entry(vector[ID.column], vector[NAME.column],
                 profile.identifyTicketType(vector[TYPE.column]));
@@ -109,10 +109,10 @@ public class Entry extends Vector<String> {
         Discount disCopy = discountList.stream().filter(d -> d.equals(discount)).findAny().orElse(null);
         if(disCopy != null && discountList.contains(disCopy)) {
             discountList.remove(disCopy);
-            System.out.println("[ENTRY "+ get(ID.column) +"]: Discount removed (" + disCopy.toString() + ")");
+            System.out.println("[ENTRY "+ get(ID.column) +"]: Discount removed (" + disCopy + ")");
         } else {
             discountList.add(discount);
-            System.out.println("[ENTRY "+ get(ID.column) +"]: Discount added (" + discount.toString() + ")");
+            System.out.println("[ENTRY "+ get(ID.column) +"]: Discount added (" + discount + ")");
         }
         set(DISCOUNTS.column,discountList.toString());
     }
