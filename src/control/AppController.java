@@ -361,8 +361,10 @@ public class AppController implements ProgramStateListener {
             switch (readingFlag){
                 default:
                 case FL_DEFAULT:
-                    Entry entry = activeProfile.generateNewEntry(entryID);
-                    //Add data if correct
+                    Entry entry = model.getDataById(entryID);
+                    if (entry == null) {
+                        entry = activeProfile.generateNewEntry(entryID);
+                    }
                     model.addData(entry);
                     entry.Enter();
                     break;

@@ -71,9 +71,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     @Override
     public Entry getDataById(String id) {
-        Entry data = entryList.stream().filter(entry -> entry.get(ID.ordinal()).equals(id)).findAny().orElse(null);
-        if(data != null) lastSelectedEntry = data;
-        return data;
+        return entryList.stream().filter(entry -> entry.get(ID.ordinal()).equals(id)).findAny().orElse(null);
     }
 
     @Override
@@ -98,9 +96,8 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     @Override
     public void addData(Entry data) throws IOException{
-        Entry conflict = entryList.stream().filter(entry -> entry.get(0).equals(data.get(ID.ordinal()))).findAny().orElse(null);
+        Entry conflict = getDataById(data.get(ID.ordinal()));
         if(conflict != null){
-            conflict.Enter();
             lastSelectedEntry = conflict;
         } else {
             entryList.add(data);
