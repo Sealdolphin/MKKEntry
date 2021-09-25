@@ -37,12 +37,12 @@ public class AppController implements ProgramStateListener {
     /**
      * The model for the entries in the program
      */
-    private AppData model;
+    private final AppData model;
 
     /**
      * The model for the profiles in the program
      */
-    private DataModel<EntryProfile> profiles;
+    private final DataModel<EntryProfile> profiles;
 
     /**
      * The currently active profile
@@ -63,7 +63,7 @@ public class AppController implements ProgramStateListener {
      * The listeners who are receiving the flag changing signals
      * Such an event occur every time when reading mode is changed. (Leave or Delete)
      */
-    private List<ReadFlagListener> listenerList = new ArrayList<>();
+    private final List<ReadFlagListener> listenerList = new ArrayList<>();
 
     /**
      * The current reading flag
@@ -143,8 +143,7 @@ public class AppController implements ProgramStateListener {
      */
     public void flagOperationOnEntry(ReadingFlag flag, Entry entry){
         readingFlag = flag;
-        //TODO: this is not safe
-        readEntryCode(entry.get(0));
+        readEntryCode(entry.get(0)); //TODO: this is not safe (should use ID.ordinal() instead of magic constant) OR should use the entry itself for the operation
     }
 
     /**

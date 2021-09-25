@@ -5,15 +5,11 @@ import static control.AppController.ReadingFlag.FL_DEFAULT;
 import static control.AppController.ReadingFlag.FL_IS_DELETE;
 import static control.AppController.ReadingFlag.FL_IS_LEAVING;
 import static control.Application.uh;
-import static control.modifier.ModifierDialog.setConstraints;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.SOUTH;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.*;
 import java.io.IOException;
 import java.io.Serializable;
@@ -97,7 +93,7 @@ public class EntryProfile implements Serializable {
     /**
      * A jegytípusok listája
      */
-    private List<TicketType> ticketTypes;
+    private final List<TicketType> ticketTypes;
     /**
      * Az alapméretezett jegytípus
      */
@@ -105,12 +101,12 @@ public class EntryProfile implements Serializable {
     /**
      * A kedvezmények listája
      */
-    private List<Discount> discounts;
+    private final List<Discount> discounts;
 
     /**
      * A vonalkódok listája
      */
-    private List<Barcode> barCodes;
+    private final List<Barcode> barCodes;
 
     /**
      * Kötelező-e a név megadása
@@ -118,11 +114,21 @@ public class EntryProfile implements Serializable {
     private boolean nameRequirement;
 
     /**
+     * Belépéskor új ID-t kap a kijelölt rekord
+     */
+    private boolean entryModifiesID;
+
+    /**
+     * A lecserélendő ID-k maszkja
+     */
+    private String modificationMask;
+
+    /**
      * A szükséges parancskódok listája
      */
     private HashMap<String, AppController.ReadingFlag> commandCodes;
 
-    private static AppController.ReadingFlag[] commandJsonKeys = AppController.ReadingFlag.values();
+    private static final AppController.ReadingFlag[] commandJsonKeys = AppController.ReadingFlag.values();
 
 
     private EntryProfile() {
@@ -131,6 +137,7 @@ public class EntryProfile implements Serializable {
         commandCodes = new HashMap<>();
         barCodes = new ArrayList<>();
         nameRequirement = true;
+        entryModifiesID = false;
         defaultName = "Külsős jegy";
     }
 
@@ -138,12 +145,14 @@ public class EntryProfile implements Serializable {
         //Reference / primitives
         name = other.name;
         codeMask = other.codeMask;
+        modificationMask = other.modificationMask;
         entryLimit = other.entryLimit;
         autoDataHandling = other.autoDataHandling;
         defaultType = other.defaultType;
         commandCodes = other.commandCodes;
         password = other.password;
         nameRequirement = other.nameRequirement;
+        entryModifiesID = other.entryModifiesID;
         defaultName = other.defaultName;
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
@@ -165,7 +174,7 @@ public class EntryProfile implements Serializable {
                 profileList.add(parseProfileFromJson((JSONObject) profileObj));
             }
         } catch (Exception e){
-            throw new IOException(uh.getUIStr("ERR","PROFILE_DATA_PARSE") + "\n" + e.toString());
+            throw new IOException(uh.getUIStr("ERR","PROFILE_DATA_PARSE") + "\n" + e);
         }
     }
 
@@ -314,18 +323,22 @@ public class EntryProfile implements Serializable {
 
     private ProfileWizard getWizardEditor(JFrame main) { return new ProfileWizard(main); }
 
-    class ProfileWizard extends JDialog{
+    class ProfileWizard extends JDialog {
 
         private JTextField tfName;
         private JTextField tfMask;
+        private JTextField tfModifyMask;
         private JTextField tfCommandDefault;
+        private JTextField tfDefaultTicket;
         private JComboBox<Barcode> cbCommandLeave;
         private JComboBox<Barcode> cbCommandDelete;
         private JComboBox<EntryLimit> cbLimit;
         private JSpinner spEntryLimit;
         private JComboBox<TicketType> cbTypes;
-        private JCheckBox checkNames = new JCheckBox("Név megadása kötelező");
-        private JTextField tfDefaultName;
+        private final JCheckBox cbRequiredName = new JCheckBox("Név megadása kötelező");
+        private final JCheckBox cbEntryModification = new JCheckBox("Belépéskor új ID kiosztása");
+        private final JCheckBox cbNoDuplicates = new JCheckBox("Duplikációk eldobása importáláskor");
+        private final JCheckBox cbNoUnknownType = new JCheckBox("Ismeretlen jegytípus eldobása importáláskor");
         private int result;
         private String leaveMeta;
         private String deleteMeta;
@@ -380,6 +393,7 @@ public class EntryProfile implements Serializable {
         private void initComponents(){
             tfName = new JTextField(name,32);
             tfMask = new JTextField(codeMask,32);
+            tfModifyMask = new JTextField(codeMask,32);
             cbCommandLeave = new JComboBox<>(barCodes.toArray(new Barcode[0]));
             cbCommandDelete = new JComboBox<>(barCodes.toArray(new Barcode[0]));
             cbTypes = new JComboBox<>(ticketTypes.toArray(new TicketType[0]));
@@ -413,53 +427,153 @@ public class EntryProfile implements Serializable {
         }
 
         private JPanel createMainPanel(){
-            JPanel panelMain = new JPanel();
-            panelMain.setLayout(new GridBagLayout());
-
-            //Create panels
-            //Main (name)
-            panelMain.add(new JLabel("Profil neve:"), setConstraints(0,0,3,1));
-            panelMain.add(tfName, setConstraints(0,1,3,1));
-            panelMain.add(new JLabel("Belépési kód maszkja:"), setConstraints(0,2,3,1));
-            GridBagConstraints c = setConstraints(0,3,3,1);
-            c.insets = new Insets(0,0,20,0);
-            panelMain.add(tfMask,c);
-
-            //Commands
-            panelMain.add(new JLabel("Alapvető parancsok:"), setConstraints(0,4,1,1));
-            panelMain.add(new JLabel("Beléptetés (DEFAULT): "), setConstraints(0,5,1,1));
-            panelMain.add(new JLabel("Kiléptetés (LEAVE): "), setConstraints(0,6,1,1));
-            panelMain.add(new JLabel("Törlés (DELETE): "), setConstraints(0,7,1,1));
-            panelMain.add(tfCommandDefault, setConstraints(1,5,2,1));
-            panelMain.add(cbCommandLeave, setConstraints(1,6,2,1));
-            panelMain.add(cbCommandDelete, setConstraints(1,7,2,1));
-
-            //Settings and behaviours
-            panelMain.add(new JLabel("Alapméretezett jegytípus: "), setConstraints(0,8,1,1));
-            panelMain.add(cbTypes, setConstraints(1,8,2,1));
-
             cbLimit.addItemListener(e -> spEntryLimit.setEnabled(Objects.equals(cbLimit.getSelectedItem(), EntryLimit.CUSTOM)));
             spEntryLimit.setEnabled(Objects.equals(cbLimit.getSelectedItem(), EntryLimit.CUSTOM));
 
-            //Statistics
-            panelMain.add(new JLabel("Belépések sázma:"), setConstraints(0,9,1,1));
-            panelMain.add(cbLimit, setConstraints(1,9,1,1));
-            panelMain.add(spEntryLimit, setConstraints(2,9,1,1));
+            //Check boxes
+            tfDefaultTicket = new JTextField(defaultName);
+            cbRequiredName.setToolTipText("Amennyiben nem kötelező a név megadása, akkor minden új rekord automatikusan a megadott szöveggel lesz kitöltve");
+            cbRequiredName.addActionListener(e-> tfDefaultTicket.setEnabled(!cbRequiredName.isSelected()));
+            cbRequiredName.setSelected(nameRequirement);
+            tfDefaultTicket.setEnabled(!nameRequirement);
 
-            //Other
-            tfDefaultName = new JTextField(defaultName);
-            checkNames.setToolTipText("Amennyiben nem kötelező a név megadása, akkor minden rekord automatikusan a megadott szöveggel lesz kitöltve");
-            checkNames.addActionListener(e-> tfDefaultName.setEnabled(!checkNames.isSelected()));
-            checkNames.setSelected(nameRequirement);
-            tfDefaultName.setEnabled(!nameRequirement);
+            cbEntryModification.setToolTipText("Beléptetésnél a megadott maszknak megfelelő kódok lecserélődnek az olvasott kódra");
+            cbEntryModification.addActionListener(e -> tfModifyMask.setEnabled(cbEntryModification.isSelected()));
+            cbEntryModification.setSelected(entryModifiesID);
+            tfModifyMask.setEnabled(entryModifiesID);
 
-            panelMain.add(new JCheckBox("Duplikációk automatikus eldobása"), setConstraints(0,10,2,1));
-            panelMain.add(new JCheckBox("Ismeretlen jegytípusok automatikus eldobása"), setConstraints(0,11,2,1));
-            panelMain.add(checkNames,setConstraints(0,12,1,1));
-            panelMain.add(tfDefaultName,setConstraints(1,12,2,1));
-
-
+            JPanel panelMain = new JPanel();
+            panelMain.setLayout(createMainPanelLayout(panelMain));
             return panelMain;
+        }
+
+        private GroupLayout createMainPanelLayout(JPanel panel) {
+            JLabel lbProfileName = new JLabel("Profil neve:");
+            JLabel lbMask = new JLabel("Belépési kód maszkja:");
+            JLabel lbModifyMask = new JLabel("Átírási kód maszkja:");
+            JLabel lbCommandList = new JLabel("Alapvető parancsok:");
+            JLabel lbCommands = new JLabel("Parancs");
+            JLabel lbBarcodes = new JLabel("Vonalkód");
+            JLabel lbEntryCommand = new JLabel("Beléptetés (DEFAULT):");
+            JLabel lbLeaveCommand = new JLabel("Kiléptetés (LEAVE):");
+            JLabel lbDeleteCommand = new JLabel("Törlés (DELETE):");
+            JLabel lbSettings = new JLabel("Profil Beállítások:");
+            JLabel lbDefaultTicketEntry = new JLabel("Külsős jegy:");
+            JLabel lbEntryNumber = new JLabel("Belépések száma");
+            JLabel lbDefaultTicketType = new JLabel("Alapértelmezett jegytípus:");
+
+            GroupLayout gl = new GroupLayout(panel);
+            gl.setAutoCreateGaps(true);
+            gl.setVerticalGroup(gl.createSequentialGroup()
+                    .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(lbProfileName)
+                            .addComponent(tfName)
+                    )
+                    .addGap(25)
+                    .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addGroup(gl.createSequentialGroup()
+                                    .addComponent(lbMask)
+                                    .addComponent(tfMask)
+                            )
+                            .addGroup(gl.createSequentialGroup()
+                                    .addComponent(lbModifyMask)
+                                    .addComponent(tfModifyMask)
+                            )
+                    )
+                    .addComponent(cbEntryModification)
+                    .addGap(25)
+                    .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                    .addGroup(gl.createSequentialGroup()
+                                            .addComponent(lbCommandList)
+                                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                    .addComponent(lbCommands)
+                                                    .addComponent(lbBarcodes)
+                                            )
+                                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                    .addComponent(lbEntryCommand)
+                                                    .addComponent(tfCommandDefault)
+                                            )
+                                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                    .addComponent(lbLeaveCommand)
+                                                    .addComponent(cbCommandLeave)
+                                            )
+                                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                    .addComponent(lbDeleteCommand)
+                                                    .addComponent(cbCommandDelete)
+                                            )
+                                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                                    .addComponent(lbDefaultTicketType)
+                                                    .addComponent(cbTypes)
+                                            )
+                                    )
+                            )
+                            .addGroup(gl.createSequentialGroup()
+                                    .addComponent(lbSettings)
+                                    .addComponent(cbNoDuplicates)
+                                    .addComponent(cbNoUnknownType)
+                                    .addComponent(cbRequiredName)
+                                    .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(lbDefaultTicketEntry)
+                                            .addComponent(tfDefaultTicket)
+                                    )
+                                    .addGroup(gl.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(lbEntryNumber)
+                                            .addComponent(spEntryLimit)
+                                    )
+                            )
+                    )
+            );
+
+            gl.setHorizontalGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(gl.createSequentialGroup()
+                            .addComponent(lbProfileName)
+                            .addComponent(tfName)
+                    )
+                    .addGroup(gl.createSequentialGroup()
+                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                    .addComponent(lbMask)
+                                    .addComponent(tfMask)
+                                    .addComponent(lbCommandList)
+                                    .addGroup(gl.createSequentialGroup()
+                                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                    .addComponent(lbCommands)
+                                                    .addComponent(lbEntryCommand)
+                                                    .addComponent(lbLeaveCommand)
+                                                    .addComponent(lbDeleteCommand)
+                                                    .addComponent(lbDefaultTicketType)
+                                            )
+                                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                    .addComponent(lbBarcodes)
+                                                    .addComponent(tfCommandDefault)
+                                                    .addComponent(cbCommandLeave)
+                                                    .addComponent(cbCommandDelete)
+                                                    .addComponent(cbTypes)
+                                            )
+                                    )
+                            )
+                            .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                    .addComponent(lbModifyMask)
+                                    .addComponent(tfModifyMask)
+                                    .addComponent(cbEntryModification)
+                                    .addGroup(gl.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                            .addComponent(lbSettings)
+                                            .addComponent(cbNoDuplicates)
+                                            .addComponent(cbNoUnknownType)
+                                            .addComponent(cbRequiredName)
+                                            .addGroup(gl.createSequentialGroup()
+                                                    .addComponent(lbDefaultTicketEntry)
+                                                    .addComponent(tfDefaultTicket)
+                                            )
+                                            .addGroup(gl.createSequentialGroup()
+                                                    .addComponent(lbEntryNumber)
+                                                    .addComponent(spEntryLimit)
+                                            )
+                                    )
+                            )
+                    )
+            );
+            return gl;
         }
 
         private <T extends Modifier> JPanel createListTab(List<T> objectList, ModifierWizardEditor<T> editor) {
@@ -496,8 +610,6 @@ public class EntryProfile implements Serializable {
                     list.setListData(objectList.toArray(new Modifier[0]));
                 }
             });
-
-            
             panelList.add(panelOperations,SOUTH);
 
             return panelList;
@@ -556,8 +668,8 @@ public class EntryProfile implements Serializable {
                 leaveMeta = ((Barcode) (cbCommandLeave.getSelectedItem())).getMeta();
                 deleteMeta = ((Barcode) (cbCommandDelete.getSelectedItem())).getMeta();
                 commandInvalid = (cbCommandDelete.getSelectedIndex() == cbCommandLeave.getSelectedIndex()) ||
-                        leaveMeta.equals(tfDefaultName.getText()) ||
-                        deleteMeta.equals(tfDefaultName.getText());
+                        leaveMeta.equals(tfDefaultTicket.getText()) ||
+                        deleteMeta.equals(tfDefaultTicket.getText());
                 noTicket = ticketTypes.isEmpty();
                 for (Discount discount : discounts) {
                     hasInvalidDiscount = !discount.validate();
@@ -579,8 +691,8 @@ public class EntryProfile implements Serializable {
                 commandCodes.put(leaveMeta, FL_IS_LEAVING);
                 commandCodes.put(deleteMeta, FL_IS_DELETE);
                 defaultType = (TicketType) cbTypes.getSelectedItem();
-                nameRequirement = checkNames.isSelected();
-                defaultName = tfDefaultName.getText();
+                nameRequirement = cbRequiredName.isSelected();
+                defaultName = tfDefaultTicket.getText();
             } else
                 JOptionPane.showMessageDialog(null, "Minden mező kitöltése kötelező", uh.getUIStr("ERR", "HEADER"), JOptionPane.ERROR_MESSAGE);
             return !(empty || commandInvalid || noTicket);

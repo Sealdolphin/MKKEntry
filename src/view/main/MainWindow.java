@@ -223,10 +223,9 @@ public class MainWindow extends JFrame {
 
             //Assembling Menus
             menuBar.add(createFileMenu(handler));
-            //menuBar.add(createEditMenu(controller));
             menuBar.add(createSettingsMenu(controller));
             menuBar.add(createChartsMenu(controller));
-            menuBar.add(new JMenu("Tranzakciók"));
+            //menuBar.add(createTransactionsMenu(controller));
 
             return menuBar;
         }
@@ -330,8 +329,8 @@ public class MainWindow extends JFrame {
          * @param handler the event handler handling the action events
          * @return the EDIT menu
          */
-        private JMenu createEditMenu(AppController handler){
-            return new JMenu("Szerkesztés");
+        private JMenu createTransactionsMenu(AppController handler){
+            return new JMenu("Tranzakciók");
         }
     }
 
