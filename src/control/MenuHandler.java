@@ -11,7 +11,7 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class MenuHandler {
 
-    private ProgramStateListener controller;
+    private final ProgramStateListener controller;
     private final JFileChooser fileDialog = new JFileChooser(System.getProperty("user.home"));
 
     public MenuHandler(ProgramStateListener listener){
@@ -21,6 +21,17 @@ public class MenuHandler {
     public void notImplemented(){
         String msg = uh.getUIStr("ERR","NOT_IMPLEMENTED");
         JOptionPane.showMessageDialog(null,msg, uh.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
+    }
+
+    public void makeNewList() {
+        if (JOptionPane.showConfirmDialog(
+                null,
+                "Ezzel törölsz minden adatot a rendszerből\n" + uh.getUIStr("MSG","CONFIRM"),
+                uh.getUIStr("MSG","WARNING"),
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION
+        ) {
+            controller.clearData();
+        }
     }
 
     public void exportEntries() {

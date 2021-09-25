@@ -26,4 +26,6 @@ public interface ProgramStateListener {
     void importList(BufferedReader reader, EntryFilter importFilter) throws IOException;
 
     void updateEntry(String id, Entry newEntry);
+
+    void clearData();
 }

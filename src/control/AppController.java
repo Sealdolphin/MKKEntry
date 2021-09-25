@@ -197,9 +197,9 @@ public class AppController implements ProgramStateListener {
 
     public void editProfile(JFrame main, JLabel label) {
         menuOpen = true;
-        EntryProfile editedProfile = EntryProfile.createProfileFromWizard(main,new EntryProfile(activeProfile));
+        EntryProfile editedProfile = EntryProfile.createProfileFromWizard(main, new EntryProfile(activeProfile));
         if(editedProfile != null) {
-            boolean restartNeeded = EntryProfile.isRestartNeeded(activeProfile,editedProfile);
+            boolean restartNeeded = EntryProfile.isRestartNeeded(activeProfile, editedProfile);
             boolean confirm = true;
             //Remove active profile
             if (restartNeeded)
@@ -207,8 +207,8 @@ public class AppController implements ProgramStateListener {
                         JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
             if(confirm){
                 try {
-                    profiles.replaceData(activeProfile,editedProfile);
-                    label.setText(changeProfile(editedProfile,restartNeeded));
+                    profiles.replaceData(activeProfile, editedProfile);
+                    label.setText(changeProfile(editedProfile, restartNeeded));
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null,"HIBA: " + ex.getMessage(),uh.getUIStr("ERR","HEADER"),ERROR_MESSAGE);
                 }
@@ -225,7 +225,7 @@ public class AppController implements ProgramStateListener {
         if(statWindow != null)
             if(statWindow.isVisible())
                 statWindow.dispose();
-        statWindow = new StatisticsWindow(activeProfile,model);
+        statWindow = new StatisticsWindow(activeProfile, model);
         statWindow.setVisible(true);
     }
 
@@ -270,7 +270,7 @@ public class AppController implements ProgramStateListener {
             profiles.setSelection(activeProfile);
             System.out.println("[INFO]: Profile selected: " + activeProfile);
             JOptionPane.showMessageDialog(null, "Profil aktiválva:\n" + activeProfile, uh.getUIStr("MSG","DONE"), JOptionPane.INFORMATION_MESSAGE);
-            if(restart) model.clearData();
+            if(restart) clearData();
         }
         return getProfileName();
     }
@@ -324,6 +324,11 @@ public class AppController implements ProgramStateListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void clearData() {
+        model.clearData();
     }
 
     public void receiveBarCode(String barCode) {

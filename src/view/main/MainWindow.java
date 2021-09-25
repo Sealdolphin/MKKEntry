@@ -239,7 +239,7 @@ public class MainWindow extends JFrame {
             JMenu fileMenu = new JMenu("Fájl");
 
             JMenuItem mi = new JMenuItem("Új Lista");
-            mi.addActionListener(e -> handler.notImplemented());
+            mi.addActionListener(e -> handler.makeNewList());
             fileMenu.add(mi);
 
             mi = new JMenuItem("Állás betöltése");
