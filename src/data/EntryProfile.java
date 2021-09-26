@@ -321,6 +321,15 @@ public class EntryProfile implements Serializable {
         return new Entry(id,inputName,defaultType);
     }
 
+    public Entry generateFromEntry(Entry entry, String id) {
+        return new Entry(id, entry);
+    }
+
+    public boolean enteringModifiesEntry(String id) {
+        return entryModifiesID && id.matches(modificationMask);
+    }
+
+
     private ProfileWizard getWizardEditor(JFrame main) { return new ProfileWizard(main); }
 
     class ProfileWizard extends JDialog {

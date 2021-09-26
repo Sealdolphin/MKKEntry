@@ -319,7 +319,7 @@ public class AppController implements ProgramStateListener {
     @Override
     public void updateEntry(String id, Entry newData) {
         try {
-            model.replaceData(model.getDataById(id),newData);
+            model.replaceData(model.getDataById(id), newData);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -360,9 +360,14 @@ public class AppController implements ProgramStateListener {
             switch (readingFlag){
                 default:
                 case FL_DEFAULT:
-                    Entry entry = model.getDataById(entryID);
-                    if (entry == null) {
-                        entry = activeProfile.generateNewEntry(entryID);
+                    Entry entry;
+                    if (activeProfile.enteringModifiesEntry(model.getSelectedData().getID())) {
+                        entry = activeProfile.generateFromEntry(model.getSelectedData(), entryID);
+                    } else {
+                        entry = model.getDataById(entryID);
+                        if (entry == null) {
+                            entry = activeProfile.generateNewEntry(entryID);
+                        }
                     }
                     model.addData(entry);
                     entry.Enter();

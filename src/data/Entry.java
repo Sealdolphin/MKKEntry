@@ -41,6 +41,10 @@ public class Entry extends Vector<String> {
         return get(ENTER_DATE.ordinal()) != null ? f : 0;
     }
 
+    public String getID() {
+        return get(ID.ordinal());
+    }
+
     @SuppressWarnings("unchecked")
     public JSONObject getJsonObject() {
         JSONObject obj = new JSONObject();
@@ -140,6 +144,10 @@ public class Entry extends Vector<String> {
 
     public Entry(String id, String name, TicketType type){
         this(id,name,type,null,null,null);
+    }
+
+    public Entry(String id, Entry other) {
+        this(id, other.get(NAME.ordinal()), other.ticketType, other.discountList, other.get(ENTER_DATE.ordinal()), other.get(LEAVE_DATE.ordinal()));
     }
 
     List<Discount> getDiscounts(){
