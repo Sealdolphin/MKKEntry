@@ -180,9 +180,10 @@ public class Application {
         view.setVisible(true);
     }
 
+    @Deprecated
     public static String parseFilePath(String filePath) {
         if (filePath == null) return "";
-    	String parsed = filePath.replaceAll("\t", File.separator);
+    	String parsed = filePath.replaceAll("\\t", File.separator);
     	String baseDir = System.getProperty("user.dir")+File.separator;
     	return parsed.substring(baseDir.length());
     }

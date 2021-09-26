@@ -9,6 +9,7 @@ import view.ImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 
@@ -84,7 +85,7 @@ public class Barcode implements Serializable, Modifier {
         name = jsonObject.get("name").toString();
         meta = jsonObject.get("meta").toString();
         desc = jsonObject.get("description").toString();
-        picture = Application.parseFilePath(jsonObject.get("imagePath").toString());
+        picture = "Barcodes" + File.separator + jsonObject.get("imagePath").toString();
         return new Barcode(name,meta,picture,desc);
     }
 
@@ -128,6 +129,7 @@ public class Barcode implements Serializable, Modifier {
                     metaData = null;
                     while (metaData == null) {
                         //Read new code
+                        this.setAlwaysOnTop(true);
                         BarCodeReaderListenerFactory.generateReader(tfMetaData::setText,"Szkenneld be a kódot (ESC a kilépéshez)!",true);
                         metaData = tfMetaData.getText();
                     }

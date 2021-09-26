@@ -68,7 +68,7 @@ public abstract class ModifierDialog extends JDialog {
         if(dialogResult == JFileChooser.APPROVE_OPTION){
             iconLabel.setIcon(new ImageIcon(new ImageIcon(iconPath).getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH)));
         }
-        return Application.parseFilePath(iconPath);
+        return iconPath;
     }
 
     void refresh(Window parent){

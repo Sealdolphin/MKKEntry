@@ -211,6 +211,8 @@ public class EntryProfile implements Serializable {
 
         profile.name = jsonProfile.get("name").toString();
         profile.codeMask = jsonProfile.get("mask").toString();
+        profile.modificationMask = jsonProfile.get("modificationMask").toString();
+        profile.entryModifiesID = !Objects.equals(profile.modificationMask, "");
 
         //Loading Barcodes
         JSONArray jArray = (JSONArray) jsonProfile.get("barCodes");
@@ -671,7 +673,8 @@ public class EntryProfile implements Serializable {
                     tfMask.getText().isEmpty() ||
                     tfCommandDefault.getText().isEmpty() ||
                     cbCommandLeave.getSelectedItem() == null ||
-                    cbCommandDelete.getSelectedItem() == null;
+                    cbCommandDelete.getSelectedItem() == null ||
+                    tfModifyMask.getText().isEmpty();
             boolean commandInvalid = false, noTicket = false, hasInvalidDiscount = false;
             if(!empty) {
                 leaveMeta = ((Barcode) (cbCommandLeave.getSelectedItem())).getMeta();
@@ -695,6 +698,8 @@ public class EntryProfile implements Serializable {
                 //Setting variables
                 name = tfName.getText();
                 codeMask = tfMask.getText();
+                modificationMask = tfModifyMask.getText();
+                entryModifiesID = cbEntryModification.isSelected();
                 commandCodes.clear();
                 commandCodes.put(tfCommandDefault.getText(), FL_DEFAULT);
                 commandCodes.put(leaveMeta, FL_IS_LEAVING);

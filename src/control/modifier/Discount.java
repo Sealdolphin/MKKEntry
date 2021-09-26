@@ -106,7 +106,7 @@ public class Discount implements Serializable, Modifier {
         int price = 0;
         try {
             name = jsonObject.get("name").toString();
-            icon = Application.parseFilePath(jsonObject.get("icon").toString());
+            icon = "Icons" + File.separator + jsonObject.get("icon").toString();
             price = Integer.parseInt(jsonObject.get("discount").toString());
             barcode = profile.identifyBarcode(jsonObject.get("barCode").toString());
         } catch (Exception other){
@@ -223,11 +223,11 @@ public class Discount implements Serializable, Modifier {
      */
     private class DiscountWizard extends ModifierDialog {
 
-        private JLabel labelIcon = new JLabel(new ImageIcon(new ImageIcon(iconPath).getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH)));
-        private JLabel lbPath = new JLabel(iconPath);
-        private JTextField tfName = new JTextField(name);
-        private JComboBox<Barcode> cbBarcodes;
-        private JSpinner spPrice = new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,1));
+        private final JLabel labelIcon = new JLabel(new ImageIcon(new ImageIcon(iconPath).getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH)));
+        private final JLabel lbPath = new JLabel(iconPath);
+        private final JTextField tfName = new JTextField(name);
+        private final JComboBox<Barcode> cbBarcodes;
+        private final JSpinner spPrice = new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,1));
 
         /**
          * Default constructor.

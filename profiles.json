@@ -3,6 +3,7 @@
     {
       "name" : "MKK",
       "mask" : "[0-9]{4}",
+      "modificationMask" : "[9-9][0-9]{3}",
       "commands" : {
         "default" : "MKK",
         "leave" : "LEAVE_GUEST",
@@ -11,9 +12,21 @@
       "discounts" : [
         {
           "name" : "Büfé",
-          "icon" : "Icons\tDIS_PIE.png",
+          "icon" : "DIS_PIE.png",
           "barCode" : "FOOD_SALE",
           "discount" : 500
+        },
+        {
+          "name" : "Segítő",
+          "icon" : "DIS_HELP.png",
+          "barCode" : "HELP_SALE",
+          "discount" : 500
+        },
+        {
+          "name" : "Segítő 2 után",
+          "icon" : "DIS_MONEY.png",
+          "barCode" : "HELP_SALE_EX",
+          "discount" : 2500
         }
       ],
       "tickets" : [
@@ -26,25 +39,42 @@
           "name" : "Helyszíni",
           "price" : 3500,
           "fee" : true
+        },
+        {
+          "name" : "Feliratkozott",
+          "price" : 2500,
+          "fee" : true
         }
       ],
       "barCodes" : [
         {
           "name" : "Büfé",
           "description" : "Hozott sütit, vagy üdítőt",
-          "imagePath" : "Barcodes\tfoodSale.png",
+          "imagePath" : "foodSale.png",
           "meta" : "FOOD_SALE"
         },
         {
+          "name" : "Segítő",
+          "description" : "Jelentkezett segítőnek",
+          "imagePath" : "helpSale.png",
+          "meta" : "HELP_SALE"
+        },
+        {
+          "name" : "Segítő 2 után",
+          "description" : "2:00 után marad segíteni",
+          "imagePath" : "helpSaleEx.png",
+          "meta" : "HELP_SALE_EX"
+        },
+        {
           "name" : "Kilépés",
-          "description" : "Vendég kiléptetése",
-          "imagePath" : "Barcodes\tleaveGuest.png",
+          "description" : "Olvass Kiléptetéshez",
+          "imagePath" : "leaveGuest.png",
           "meta" : "LEAVE_GUEST"
         },
         {
           "name" : "Törlés",
-          "description" : "Vendég törlése",
-          "imagePath" : "Barcodes\tdeleteGuest.png",
+          "description" : "Olvass törléshez",
+          "imagePath" : "deleteGuest.png",
           "meta" : "DELETE_GUEST"
         }
       ],
