@@ -363,10 +363,12 @@ public class AppController implements ProgramStateListener {
                     Entry entry;
                     if (activeProfile.enteringModifiesEntry(model.getSelectedData().getID())) {
                         entry = activeProfile.generateFromEntry(model.getSelectedData(), entryID);
+                        model.replaceData(model.getSelectedData(), entry);
                     } else {
                         entry = model.getDataById(entryID);
                         if (entry == null) {
                             entry = activeProfile.generateNewEntry(entryID);
+                            if (entry == null) break;
                         }
                     }
                     model.addData(entry);

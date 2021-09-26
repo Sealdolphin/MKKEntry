@@ -319,6 +319,7 @@ public class EntryProfile implements Serializable {
         String inputName = defaultName;
         if(nameRequirement) {
             inputName = JOptionPane.showInputDialog("Adj meg egy nevet!");
+            if (inputName == null || inputName.isEmpty()) return null;
         }
         return new Entry(id,inputName,defaultType);
     }
