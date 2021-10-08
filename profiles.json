@@ -36,13 +36,18 @@
           "fee" : true
         },
         {
-          "name" : "Technikus",
+          "name" : "Exklúzív vendég",
           "price" : 0,
           "fee" : true
         },
         {
+          "name" : "Főtechnikus",
+          "price" : 5000,
+          "fee" : true
+        },
+        {
           "name" : "Helyszíni",
-          "price" : 3500,
+          "price" : 2500,
           "fee" : true
         },
         {
