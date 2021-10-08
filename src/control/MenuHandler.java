@@ -4,6 +4,7 @@ import control.utility.file.EntryFilter;
 
 import javax.swing.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 import static control.Application.uh;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
@@ -90,7 +91,7 @@ public class MenuHandler {
             System.out.println("Opening " + entryFile);
 
             try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(entryFile)));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(entryFile), StandardCharsets.UTF_8));
                 controller.importList(reader,importFilter);
 
             } catch (IOException ex){

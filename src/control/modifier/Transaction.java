@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Transaction implements Serializable, Modifier {
@@ -19,7 +20,7 @@ public class Transaction implements Serializable, Modifier {
 
     @Override
     public String toString() {
-        return timeStamp.toString() + " - " + name + ": " + value;
+        return timeStamp.format(DateTimeFormatter.ofPattern("HH:mm:ss")) + " - " + name + ": " + value;
     }
 
     @Override

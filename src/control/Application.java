@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class Application {
         try {
             // Parsing uh Handler from file
             JSONParser parser = new JSONParser();
-            BufferedReader optionsReader = new BufferedReader(new InputStreamReader(new FileInputStream("ui.json")));
+            BufferedReader optionsReader = new BufferedReader(new InputStreamReader(new FileInputStream("ui.json"), StandardCharsets.UTF_8));
             JSONObject optionsJSON = (JSONObject) parser.parse(optionsReader);
 
             Application.loadingScreen.setProgress("UI betöltése...");
