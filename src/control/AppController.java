@@ -4,14 +4,12 @@ import control.modifier.Discount;
 import control.utility.devices.BarCodeReaderListenerFactory;
 import control.utility.file.EntryFilter;
 import control.utility.network.NetworkController;
-import data.AppData;
+import data.*;
 import com.fazecast.jSerialComm.SerialPort;
-import data.DataModel;
-import data.Entry;
-import data.EntryProfile;
 import view.StatisticsWindow;
 import view.main.LoadingScreen;
 import view.main.ReadFlagListener;
+import view.main.interactive.EnableWatcher;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +17,7 @@ import java.awt.event.ItemEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 import static control.Application.uh;
@@ -65,6 +63,8 @@ public class AppController implements ProgramStateListener {
      */
     private final List<ReadFlagListener> listenerList = new ArrayList<>();
 
+    private final List<EnableWatcher> actionListWatcher = new ArrayList<>();
+
     /**
      * The current reading flag
      */
@@ -86,6 +86,11 @@ public class AppController implements ProgramStateListener {
      */
     private NetworkController netController;
 
+    /**
+     * A queue for user actions
+     */
+    private final Queue<UserAction> actionQueue = new LinkedList<>();
+
     AppController(AppData model, DataModel<EntryProfile> pData){
         this.model = model;
         profiles = pData;
@@ -96,6 +101,10 @@ public class AppController implements ProgramStateListener {
 
     public void addListener(ReadFlagListener l){
         listenerList.add(l);
+    }
+
+    public void addActionWatcher(EnableWatcher watcher) {
+        actionListWatcher.add(watcher);
     }
 
     public void scanPorts(JComboBox<String> cbSelections){
@@ -363,6 +372,7 @@ public class AppController implements ProgramStateListener {
                     Entry entry;
                     if (activeProfile.enteringModifiesEntry(model.getSelectedData().getID())) {
                         entry = activeProfile.generateFromEntry(model.getSelectedData(), entryID);
+                        saveLastAction(model.getSelectedData(), entry);
                         model.replaceData(model.getSelectedData(), entry);
                     } else {
                         entry = model.getDataById(entryID);
@@ -385,7 +395,7 @@ public class AppController implements ProgramStateListener {
                     break;
             }
         } catch (IOException ex){
-            JOptionPane.showMessageDialog(null,ex.getMessage(),"Figyelem",JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, ex.getMessage(),"Figyelem", JOptionPane.WARNING_MESSAGE);
         } finally {
             setReadingFlag(ReadingFlag.FL_DEFAULT);
             int index = model.getSelectedIndex();
@@ -402,6 +412,23 @@ public class AppController implements ProgramStateListener {
             }
         }
 
+    }
+
+    public void saveLastAction(Entry previousEntry, Entry nextEntry) {
+        actionQueue.add(new UserAction(nextEntry, previousEntry));
+        actionListWatcher.forEach(w -> w.updateEnabled(!actionQueue.isEmpty()));
+    }
+
+    public void undoLastAction() {
+        System.out.println("Undo Action");
+        UserAction action = actionQueue.poll();
+        if(action != null) {
+            model.setSelection(action.undo());
+            int index = model.getSelectedIndex();
+            model.fireTableRowsUpdated(index, index);
+        }
+        System.out.println(actionQueue.size() + " actions remaining");
+        actionListWatcher.forEach(w -> w.updateEnabled(!actionQueue.isEmpty()));
     }
 
 }

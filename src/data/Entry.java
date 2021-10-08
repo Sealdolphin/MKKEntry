@@ -76,6 +76,8 @@ public class Entry extends Vector<String> {
     /**
      * Parses an array of string to an Entry using the current profile for details.
      * This function assumes that the array of strings are ordered correctly.
+     * Correct order: ID, NAME, TYPE, [ENTER_DATE, LEAVE_DATE, DISCOUNT_1, DISCOUNT_2, ...]
+     * Example string: "1234, Example Name, Basic, , , FOOD_SALE"
      * @param vector the array of strings
      * @param profile the current parsing profile
      * @return a new parsed Entry with the correct attributes
@@ -140,7 +142,7 @@ public class Entry extends Vector<String> {
     /**
      * A Time formatter for the proper time format
      */
-    static private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss");
+    static private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss");
 
     public Entry(String id, String name, TicketType type){
         this(id,name,type,null,null,null);
@@ -178,5 +180,13 @@ public class Entry extends Vector<String> {
             w.append(EntryFilter.separator);
         }
         return w.toString();
+    }
+
+    public void copyEntry(Entry other) {
+        ticketType = other.ticketType;
+        discountList = new ArrayList<>(other.discountList);
+        for(int i = 0; i < values().length; i++) {
+            set(i, other.get(i));
+        }
     }
 }

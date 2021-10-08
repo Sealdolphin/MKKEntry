@@ -8,6 +8,7 @@ import control.modifier.Discount;
 import data.AppData;
 import data.EntryProfile;
 import view.DiscountRenderer;
+import view.main.interactive.InteractiveJMenuItem;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
@@ -225,9 +226,21 @@ public class MainWindow extends JFrame {
             menuBar.add(createFileMenu(handler));
             menuBar.add(createSettingsMenu(controller));
             menuBar.add(createChartsMenu(controller));
+            menuBar.add(createEditMenu(controller));
             //menuBar.add(createTransactionsMenu(controller));
 
             return menuBar;
+        }
+
+        private JMenu createEditMenu(AppController controller) {
+            JMenu editMenu = new JMenu("Szerkesztés");
+
+            InteractiveJMenuItem mi = new InteractiveJMenuItem("ID módosítás visszavonása");
+            mi.addActionListener(e -> controller.undoLastAction());
+            controller.addActionWatcher(mi);
+            editMenu.add(mi);
+
+            return editMenu;
         }
 
         /**

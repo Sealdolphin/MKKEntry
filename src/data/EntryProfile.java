@@ -128,6 +128,11 @@ public class EntryProfile implements Serializable {
      */
     private HashMap<String, AppController.ReadingFlag> commandCodes;
 
+    /**
+     * Maximum of actions
+     */
+    private final int maxActionCount = 10;
+
     private static final AppController.ReadingFlag[] commandJsonKeys = AppController.ReadingFlag.values();
 
 
@@ -305,6 +310,10 @@ public class EntryProfile implements Serializable {
     @Override
     public String toString(){
         return name;
+    }
+
+    public int getMaxActionCount() {
+        return maxActionCount;
     }
 
     public Discount[] getDiscounts(){
