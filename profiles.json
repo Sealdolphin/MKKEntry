@@ -36,6 +36,11 @@
           "fee" : true
         },
         {
+          "name" : "Technikus",
+          "price" : 0,
+          "fee" : true
+        },
+        {
           "name" : "Helyszíni",
           "price" : 3500,
           "fee" : true

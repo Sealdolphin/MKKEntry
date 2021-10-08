@@ -111,6 +111,14 @@ public class Entry extends Vector<String> {
         return (get(ENTER_DATE.column) != null && get(LEAVE_DATE.column) == null);
     }
 
+    public Boolean hasEntered() {
+        return (get(ENTER_DATE.column) != null);
+    }
+
+    public Boolean hasLeft() {
+        return (get(LEAVE_DATE.column) != null);
+    }
+
     public void applyDiscount(Discount discount){
         if(discount == null) return;
         Discount disCopy = discountList.stream().filter(d -> d.equals(discount)).findAny().orElse(null);

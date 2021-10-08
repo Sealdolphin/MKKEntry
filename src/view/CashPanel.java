@@ -18,6 +18,7 @@ public class CashPanel extends JPanel {
 
     private final JButton btnNewTransaction = new JButton("Új tranzakció");
     private final JButton btnDeleteTransaction = new JButton("Törlés");
+    private final JButton btnDeleteAllTransactions = new JButton("Összes törlése");
     private final JScrollPane transactionPane;
     private final JLabel lbCashTitle = new JLabel("Kassza állapota:");
     private final JLabel lbTransactions = new JLabel("Eddigi tranzakciók:");
@@ -27,7 +28,6 @@ public class CashPanel extends JPanel {
     public CashPanel(EntryProfile profile, DataModel<Entry> data, Window parent) {
         Transaction.TransactionListener editor = new Transaction.TransactionListener(parent);
         transactionPane = new JScrollPane(createList(profile, data, editor));
-        btnDeleteTransaction.setEnabled(false);
         createFonts();
         setupComponents();
     }
@@ -39,12 +39,15 @@ public class CashPanel extends JPanel {
         transactions.setCellRenderer(new TransactionRenderer());
         transactions.addListSelectionListener(e -> btnDeleteTransaction.setEnabled(true));
         recalculateCash(data, transactionModel);
+
         btnNewTransaction.addActionListener(e -> {
             editor.createNew(transactionModel);
             transactions.setListData(transactionModel.toArray(new Transaction[0]));
             btnDeleteTransaction.setEnabled(false);
+            btnDeleteAllTransactions.setEnabled(transactionModel.size() > 0);
             recalculateCash(data, transactionModel);
         });
+
         btnDeleteTransaction.addActionListener(e -> {
             int res = JOptionPane.showConfirmDialog(null,"Biztos eltávolítod a következőt a listából: " + transactions.getModel().getElementAt(transactions.getSelectedIndex()) + "?"
                     ,uh.getUIStr("MSG","WARNING"),JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
@@ -55,6 +58,19 @@ public class CashPanel extends JPanel {
             btnDeleteTransaction.setEnabled(false);
             recalculateCash(data, transactionModel);
         });
+        btnDeleteTransaction.setEnabled(false);
+
+        btnDeleteAllTransactions.addActionListener(e -> {
+            int res = JOptionPane.showConfirmDialog(null,"Biztos törlöd az összes tranzakciót?"
+                    ,uh.getUIStr("MSG","WARNING"),JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
+            if(res == JOptionPane.YES_OPTION) {
+                transactionModel.clear();
+                transactions.setListData(transactionModel.toArray(new Transaction[0]));
+            }
+            btnDeleteAllTransactions.setEnabled(false);
+            recalculateCash(data, transactionModel);
+        });
+        btnDeleteAllTransactions.setEnabled(transactionModel.size() > 0);
 
         return transactions;
     }
@@ -77,6 +93,7 @@ public class CashPanel extends JPanel {
         Font fntCash = new Font(Font.SANS_SERIF, Font.BOLD, 50);
         btnNewTransaction.setFont(fntButton);
         btnDeleteTransaction.setFont(fntButton);
+        btnDeleteAllTransactions.setFont(fntButton);
         btnDeleteTransaction.setForeground(new Color(161, 22, 22));
         lbCash.setForeground(new Color(60, 103, 31));
         lbCash.setFont(fntCash);
@@ -99,6 +116,7 @@ public class CashPanel extends JPanel {
                                                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                         .addComponent(btnNewTransaction, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                         .addComponent(btnDeleteTransaction, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(btnDeleteAllTransactions, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         )
                         )
                         .addGroup(
@@ -117,6 +135,7 @@ public class CashPanel extends JPanel {
                                                 layout.createSequentialGroup()
                                                         .addComponent(btnNewTransaction)
                                                         .addComponent(btnDeleteTransaction)
+                                                        .addComponent(btnDeleteAllTransactions)
                                         )
                         )
                         .addComponent(lbCashTitle)

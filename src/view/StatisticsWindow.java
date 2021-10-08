@@ -45,24 +45,31 @@ public class StatisticsWindow extends JFrame {
 
         panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
 
-        int ppl = data.getDataSize();
-        int entry = 0, leave = 0;
-        for (int i = 0; i < ppl; i++) {
+        int allPeople = data.getDataSize();
+        int peopleEntered = 0, peopleLeft = 0;
+        for (int i = 0; i < allPeople; i++) {
             Entry e = data.getDataByIndex(i);
-            if(e.get(5) != null){
-                entry++;
-                if(e.get(6) != null)
-                    leave++;
+            if(e.hasEntered()){
+                peopleEntered++;
             }
+            if(e.hasLeft())
+                peopleLeft++;
         }
 
-        panel.add(new JLabel("Létszám:"));
-        panel.add(new JLabel("Benn vannak: " + (entry - leave)));
-        panel.add(new JLabel("Beléptek: " + entry));
-        panel.add(new JLabel("Kiléptek: " + leave));
-        panel.add(new JLabel("Összesen: " + ppl));
-        if(ppl == 0) ppl = 1;
-        panel.add(new JLabel("Megjelenési arány: " + (100*entry/ppl) + "%"));
+        JLabel lbTitle = new JLabel("Létszám:");
+        JLabel lbIn = new JLabel("Benn vannak: " + (peopleEntered - peopleLeft));
+        JLabel lbEntered = new JLabel("Beléptek: " + peopleEntered);
+        JLabel lbLeft = new JLabel("Kiléptek: " + peopleLeft);
+        JLabel lbTotal = new JLabel("Összesen: " + allPeople);
+        if(allPeople == 0) allPeople = 1;   //Avoid dividing by Zero
+        JLabel lbEnterRate = new JLabel("Megjelenési arány: " + (100*peopleEntered/allPeople) + "%");
+
+        lbTitle.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 30));
+        panel.add(lbTitle);
+        for (JLabel label: new JLabel[]{lbIn, lbEntered, lbLeft, lbTotal, lbEnterRate}) {
+            label.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+            panel.add(label);
+        }
 
         return panel;
     }
