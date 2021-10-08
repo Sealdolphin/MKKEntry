@@ -370,19 +370,24 @@ public class AppController implements ProgramStateListener {
                 default:
                 case FL_DEFAULT:
                     Entry entry;
-                    if (activeProfile.enteringModifiesEntry(model.getSelectedData().getID())) {
-                        entry = activeProfile.generateFromEntry(model.getSelectedData(), entryID);
-                        saveLastAction(model.getSelectedData(), entry);
-                        model.replaceData(model.getSelectedData(), entry);
-                    } else {
-                        entry = model.getDataById(entryID);
+                    if (activeProfile.enteringModifiesEntry(model.getSelectedData().getID())) {                         // Check if Entry Profile modifies ID upon entering (and selected ID matches the required mask)
+                        Entry existing = model.getDataById(entryID);                                                    // If true, check if the new entry ID exists already!
+                        if(existing != null) {
+                            entry = existing;                                                                           // If it does, continue with the existing record!!
+                        } else {
+                            entry = activeProfile.generateFromEntry(model.getSelectedData(), entryID);                  // If not, the ID is new, so generate a new entry from the selected record and modify it's ID
+                            saveLastAction(model.getSelectedData(), entry);                                             // Save the action to the ActionQueue
+                            model.replaceData(model.getSelectedData(), entry);                                          // Replace the old Entry with the newly generated Entry!
+                        }
+                    } else {                                                                                            // If Entry Profile does NOT modify ID, or selected ID does not match the mask:
+                        entry = model.getDataById(entryID);                                                             // Search for the Entry based on the entered ID
                         if (entry == null) {
-                            entry = activeProfile.generateNewEntry(entryID);
-                            if (entry == null) break;
+                            entry = activeProfile.generateNewEntry(entryID);                                            // If entered ID does not exist, create a new Entry with said ID
+                            if (entry == null) break;                                                                   // If generating fails interrupt execution
                         }
                     }
-                    model.addData(entry);
-                    entry.Enter();
+                    model.addData(entry);                                                                               // Add new Entry to the model (select if already exists)
+                    entry.Enter();                                                                                      // Enter selected Entry
                     break;
                 case FL_IS_DELETE:
                     if(JOptionPane.showConfirmDialog(null,uh.getUIStr("MSG","CONFIRM"),uh.getUIStr("MSG","DELETE"), JOptionPane.OK_CANCEL_OPTION,WARNING_MESSAGE) == OK_OPTION)
