@@ -26,7 +26,7 @@
           "name" : "Segítő 2 után",
           "icon" : "DIS_MONEY.png",
           "barCode" : "HELP_SALE_EX",
-          "discount" : 2500
+          "discount" : 9999
         }
       ],
       "tickets" : [

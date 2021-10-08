@@ -38,6 +38,7 @@ public class Entry extends Vector<String> {
         for(Discount d : discountList){
             f -= d.getPrice();
         }
+        if (f < 0) f = 0;
         return get(ENTER_DATE.ordinal()) != null ? f : 0;
     }
 

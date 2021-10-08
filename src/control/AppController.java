@@ -89,7 +89,7 @@ public class AppController implements ProgramStateListener {
     /**
      * A queue for user actions
      */
-    private final Queue<UserAction> actionQueue = new LinkedList<>();
+    private final Deque<UserAction> actionQueue = new ArrayDeque<>();
 
     AppController(AppData model, DataModel<EntryProfile> pData){
         this.model = model;
@@ -420,13 +420,16 @@ public class AppController implements ProgramStateListener {
     }
 
     public void saveLastAction(Entry previousEntry, Entry nextEntry) {
-        actionQueue.add(new UserAction(nextEntry, previousEntry));
+        actionQueue.push(new UserAction(nextEntry, previousEntry));
+        if (actionQueue.size() > activeProfile.getMaxActionCount()) {
+            actionQueue.removeLast();
+        }
         actionListWatcher.forEach(w -> w.updateEnabled(!actionQueue.isEmpty()));
     }
 
     public void undoLastAction() {
         System.out.println("Undo Action");
-        UserAction action = actionQueue.poll();
+        UserAction action = actionQueue.pop();
         if(action != null) {
             model.setSelection(action.undo());
             int index = model.getSelectedIndex();
