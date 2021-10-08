@@ -23,7 +23,7 @@ import org.json.simple.JSONObject;
 
 import control.AppController;
 import control.UIHandler;
-import view.ModifierValidationRenderer;
+import view.renderer.ModifierValidationRenderer;
 
 /**
  * Beléptetési profil.
@@ -47,6 +47,10 @@ public class EntryProfile implements Serializable {
     @Deprecated
     public String getPassword() {
         return password;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactionList;
     }
 
     public enum EntryLimit {
@@ -109,6 +113,11 @@ public class EntryProfile implements Serializable {
     private final List<Barcode> barCodes;
 
     /**
+     * A tranzakciók listája
+     */
+    private final List<Transaction> transactionList;
+
+    /**
      * Kötelező-e a név megadása
      */
     private boolean nameRequirement;
@@ -141,6 +150,7 @@ public class EntryProfile implements Serializable {
         discounts = new ArrayList<>();
         commandCodes = new HashMap<>();
         barCodes = new ArrayList<>();
+        transactionList = new ArrayList<>();
         nameRequirement = true;
         entryModifiesID = false;
         defaultName = "Külsős jegy";
@@ -162,12 +172,20 @@ public class EntryProfile implements Serializable {
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
         barCodes = new ArrayList<>();
+        transactionList = new ArrayList<>();
         for (Barcode barcode : other.barCodes) { barCodes.add(new Barcode(barcode)); }
         for (Discount discount : other.discounts) { discounts.add(new Discount(discount,this)); }
         for (TicketType type : other.ticketTypes) { ticketTypes.add(new TicketType(type)); }
         exportFilters = other.exportFilters;
     }
 
+    public void addTransaction(Transaction action) {
+        transactionList.add(action);
+    }
+
+    public void removeTransaction(Transaction action) {
+        transactionList.remove(action);
+    }
 
     public static void loadProfilesFromJson(JSONObject object, List<EntryProfile> profileList) throws IOException{
         if(!object.get("version").toString().equals(UIHandler.uiVersion))
@@ -611,6 +629,8 @@ public class EntryProfile implements Serializable {
             JPanel panelOperations = new JPanel();
             JButton btnRemove = new JButton("Törlés");
             JButton btnAdd = new JButton("Hozzáadás");
+            btnRemove.setEnabled(false);
+            list.addListSelectionListener(e -> btnRemove.setEnabled(e.getFirstIndex() >= 0));
 
             panelOperations.add(btnAdd);
             panelOperations.add(btnRemove);
@@ -629,6 +649,7 @@ public class EntryProfile implements Serializable {
                     //noinspection unchecked
                     editor.removeFrom(objectList, (T) list.getModel().getElementAt(list.getSelectedIndex()));
                     list.setListData(objectList.toArray(new Modifier[0]));
+                    btnRemove.setEnabled(false);
                 }
             });
             panelList.add(panelOperations,SOUTH);

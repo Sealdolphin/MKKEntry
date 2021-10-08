@@ -6,7 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-public abstract class ModifierWizardEditor<T extends Modifier> extends MouseAdapter{
+public abstract class ModifierWizardEditor<T extends Modifier> extends MouseAdapter {
 
     private Window parent;
 

@@ -275,7 +275,7 @@ public class Discount implements Serializable, Modifier {
          * If any illegal argument is found then alerts the user without changing
          */
         private void saveDiscount(){
-            if(tfName.getText().length() > 0 && cbBarcodes.getSelectedItem() != null){
+            if(!tfName.getText().isEmpty() && cbBarcodes.getSelectedItem() != null){
                 name = tfName.getText();
                 barcode = (Barcode) cbBarcodes.getSelectedItem();
                 discount = Integer.parseInt(spPrice.getValue().toString());

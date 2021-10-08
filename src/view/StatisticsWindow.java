@@ -5,11 +5,7 @@ import data.Entry;
 import data.EntryProfile;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import static java.awt.BorderLayout.CENTER;
 
@@ -19,10 +15,11 @@ public class StatisticsWindow extends JFrame {
         setTitle("Statisztikák");
 
         setLayout(new BorderLayout());
+        CashPanel cashPanel = new CashPanel(profile, data, this);
 
         JTabbedPane tabPanel = new JTabbedPane();
         tabPanel.addTab("Általános",createMainPanel(data));
-        tabPanel.addTab("Kassza",new JPanel());
+        tabPanel.addTab("Kassza", cashPanel);
         tabPanel.addTab("Grafikonok",new JPanel());
 
         tabPanel.addChangeListener(e -> {
@@ -36,6 +33,7 @@ public class StatisticsWindow extends JFrame {
         });
 
         add(tabPanel,CENTER);
+        setMinimumSize(new Dimension(400, 300));
 
         pack();
         setLocationRelativeTo(null);
@@ -48,7 +46,7 @@ public class StatisticsWindow extends JFrame {
         panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
 
         int ppl = data.getDataSize();
-        int entry = 0, leave = 0, cash = 0;
+        int entry = 0, leave = 0;
         for (int i = 0; i < ppl; i++) {
             Entry e = data.getDataByIndex(i);
             if(e.get(5) != null){
@@ -56,7 +54,6 @@ public class StatisticsWindow extends JFrame {
                 if(e.get(6) != null)
                     leave++;
             }
-            cash += e.getAllFees();
         }
 
         panel.add(new JLabel("Létszám:"));
@@ -66,7 +63,6 @@ public class StatisticsWindow extends JFrame {
         panel.add(new JLabel("Összesen: " + ppl));
         if(ppl == 0) ppl = 1;
         panel.add(new JLabel("Megjelenési arány: " + (100*entry/ppl) + "%"));
-        panel.add(new JLabel("Kassza: "+ cash +" Ft"));
 
         return panel;
     }

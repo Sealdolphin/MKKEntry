@@ -2,8 +2,8 @@ package data;
 
 
 import control.modifier.Discount;
+import control.modifier.Transaction;
 
-import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
 import java.io.Serializable;
@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static control.Application.uh;
 import static data.Entry.DataColumn.ID;
-import static data.Entry.DataColumn.NAME;
 
 public class AppData extends DefaultTableModel implements Serializable, DataModel<Entry>{
 
