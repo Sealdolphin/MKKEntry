@@ -17,8 +17,7 @@ import java.awt.event.*;
 import java.io.IOException;
 
 import static control.Application.uh;
-import static java.awt.event.KeyEvent.VK_DELETE;
-import static java.awt.event.KeyEvent.VK_ENTER;
+import static java.awt.event.KeyEvent.*;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
 
 /**
@@ -379,6 +378,14 @@ public class MainWindow extends JFrame {
                 }
             };
 
+            Action actionClearSelection = new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    model.setSelection(null);
+                    entryView.clearSelection();
+                }
+            };
+
             //Code input
             JButton btnDelete = new JButton("Töröl");
             btnDelete.setForeground(Color.RED);
@@ -388,12 +395,16 @@ public class MainWindow extends JFrame {
             btnLeave.addActionListener(e -> controller.setReadingFlag(AppController.ReadingFlag.FL_IS_LEAVING));
 
             JButton btnSendCode = new JButton("Olvas");
+            JButton btnClearSelection = new JButton("Kiválasztást megszüntet");
 
             btnSendCode.addActionListener(actionSendCode);
+            btnClearSelection.addActionListener(actionClearSelection);
             getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_ENTER,0),"sendCode");
             getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_DELETE,0),"deleteCode");
+            getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_ESCAPE,0),"clearSelection");
             getActionMap().put("sendCode",actionSendCode);
             getActionMap().put("deleteCode",deleteAction);
+            getActionMap().put("clearSelection",actionClearSelection);
 
 
 
@@ -403,7 +414,7 @@ public class MainWindow extends JFrame {
             inputPanel.add(tfInputCode);
             inputPanel.add(checkBoxCode);
             inputPanel.add(btnSendCode);
-
+            inputPanel.add(btnClearSelection);
 
 
             //Assembling body components
@@ -420,9 +431,9 @@ public class MainWindow extends JFrame {
      * It reacts to the barcode reading operations and behaves correctly.
      * Shows the current state of reading, with color codes.
      */
-    private class InfoPanel extends JPanel implements ReadFlagListener{
+    private static class InfoPanel extends JPanel implements ReadFlagListener{
 
-        private JLabel lbInfo;
+        private final JLabel lbInfo;
 
         InfoPanel(){
             setLayout(new BoxLayout(this,BoxLayout.LINE_AXIS));
