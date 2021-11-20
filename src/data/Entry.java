@@ -36,9 +36,9 @@ public class Entry extends Vector<String> {
     public int getAllFees() {
         int f = ticketType.getFees();
         for(Discount d : discountList){
+            if (d.isFree()) return 0;
             f -= d.getPrice();
         }
-        if (f < 0) f = 0;
         return get(ENTER_DATE.ordinal()) != null ? f : 0;
     }
 

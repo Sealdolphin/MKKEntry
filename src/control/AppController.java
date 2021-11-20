@@ -339,6 +339,10 @@ public class AppController implements ProgramStateListener {
         model.clearData();
     }
 
+    /**
+     * Ez a fontos függvény!!!
+     * @param barCode a kód, amit a soros portról kapunk
+     */
     public void receiveBarCode(String barCode) {
         if(menuOpen) return;
         System.out.println("[INFO]: Code received: " + barCode);
@@ -370,7 +374,8 @@ public class AppController implements ProgramStateListener {
                 default:
                 case FL_DEFAULT:
                     Entry entry;
-                    if (activeProfile.enteringModifiesEntry(model.getSelectedData().getID())) {                         // Check if Entry Profile modifies ID upon entering (and selected ID matches the required mask)
+                    if (model.getSelectedData() != null &&
+                            activeProfile.enteringModifiesEntry(model.getSelectedData().getID())) {                     // Check if Entry Profile modifies ID upon entering (and selected ID matches the required mask)
                         Entry existing = model.getDataById(entryID);                                                    // If true, check if the new entry ID exists already!
                         if(existing != null) {
                             entry = existing;                                                                           // If it does, continue with the existing record!!

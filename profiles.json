@@ -2,8 +2,8 @@
   "profiles" : [
     {
       "name" : "MKK",
-      "mask" : "[0-9]{4}",
-      "modificationMask" : "[9-9][0-9]{3}",
+      "mask" : "[0-9]{3}",
+      "modificationMask" : "[9-9][0-9]{2}",
       "commands" : {
         "default" : "MKK",
         "leave" : "LEAVE_GUEST",
@@ -26,7 +26,8 @@
           "name" : "Segítő 2 után",
           "icon" : "DIS_MONEY.png",
           "barCode" : "HELP_SALE_EX",
-          "discount" : 9999
+          "discount" : 0,
+          "isFree" : true
         }
       ],
       "tickets" : [
@@ -36,18 +37,13 @@
           "fee" : true
         },
         {
-          "name" : "Exklúzív vendég",
+          "name" : "Elővételes",
           "price" : 0,
           "fee" : true
         },
         {
-          "name" : "Főtechnikus",
-          "price" : 5000,
-          "fee" : true
-        },
-        {
           "name" : "Helyszíni",
-          "price" : 2500,
+          "price" : 3500,
           "fee" : true
         },
         {

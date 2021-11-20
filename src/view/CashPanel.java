@@ -56,6 +56,7 @@ public class CashPanel extends JPanel {
                 transactions.setListData(transactionModel.toArray(new Transaction[0]));
             }
             btnDeleteTransaction.setEnabled(false);
+            btnDeleteAllTransactions.setEnabled(transactionModel.size() > 0);
             recalculateCash(data, transactionModel);
         });
         btnDeleteTransaction.setEnabled(false);
@@ -67,7 +68,7 @@ public class CashPanel extends JPanel {
                 transactionModel.clear();
                 transactions.setListData(transactionModel.toArray(new Transaction[0]));
             }
-            btnDeleteAllTransactions.setEnabled(false);
+            btnDeleteAllTransactions.setEnabled(transactionModel.size() > 0);
             recalculateCash(data, transactionModel);
         });
         btnDeleteAllTransactions.setEnabled(transactionModel.size() > 0);

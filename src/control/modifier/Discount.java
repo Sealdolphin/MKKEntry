@@ -1,5 +1,6 @@
 package control.modifier;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import control.Application;
 import data.EntryProfile;
 import org.json.simple.JSONObject;
@@ -41,6 +42,11 @@ public class Discount implements Serializable, Modifier {
     private Barcode barcode;
 
     /**
+     * Ingyenes beléptetést biztosít
+     */
+    private Boolean isFree;
+
+    /**
      * The filepath of the icon's image
      */
     private String iconPath;
@@ -63,10 +69,11 @@ public class Discount implements Serializable, Modifier {
      * @param price the discount
      * @param profile the associated profile
      */
-    private Discount(String name, Barcode barcode , String iconPath, int price, EntryProfile profile){
+    private Discount(String name, Barcode barcode , String iconPath, int price, boolean isFree, EntryProfile profile){
         this.name = name;
         this.iconPath = iconPath;
         discount = price;
+        this.isFree = isFree;
         this.barcode = barcode;
         this.profile = profile;
     }
@@ -77,7 +84,7 @@ public class Discount implements Serializable, Modifier {
      * @param profile the profile you want to copy to
      */
     public Discount(Discount other, EntryProfile profile) {
-        this(other.name,other.barcode,other.iconPath,other.discount,profile);
+        this(other.name,other.barcode,other.iconPath,other.discount,other.isFree,profile);
     }
 
     /**
@@ -104,18 +111,20 @@ public class Discount implements Serializable, Modifier {
         String icon = null;
         Barcode barcode = new Barcode(name);
         int price = 0;
+        boolean isFree = false;
         try {
             name = jsonObject.get("name").toString();
             icon = "Icons" + File.separator + jsonObject.get("icon").toString();
             price = Integer.parseInt(jsonObject.get("discount").toString());
             barcode = profile.identifyBarcode(jsonObject.get("barCode").toString());
+            isFree = Boolean.parseBoolean(jsonObject.getOrDefault("isFree", false).toString());
         } catch (Exception other){
             //Show warning message
             JOptionPane.showMessageDialog(new JFrame(),profile.toString()+ ":\nA(z) '" + name +
                     "' kedvezmény importálása közben hiba történt.\n" +
                     "Az importálás nem sikerült. Részletek:\n" + other,"Hiba",ERROR_MESSAGE);
         }
-        return new Discount(name,barcode,icon,price,profile);
+        return new Discount(name,barcode,icon,price,isFree,profile);
     }
 
 
@@ -137,6 +146,13 @@ public class Discount implements Serializable, Modifier {
      */
     public String getIcon(){
         return iconPath;
+    }
+
+    /**
+     * Returns if discount is free
+     */
+    public boolean isFree() {
+        return isFree;
     }
 
     /**
@@ -208,7 +224,7 @@ public class Discount implements Serializable, Modifier {
 
         @Override
         public void createNew(List<Discount> objectList) {
-            Discount newDiscount = new Discount("",null,basicIcon,0,profile);
+            Discount newDiscount = new Discount("",null,basicIcon,0,false,profile);
             ModifierDialog wizard = newDiscount.getModifierWizard(null);
             int result = wizard.open();
             if(result == 0){
@@ -228,6 +244,7 @@ public class Discount implements Serializable, Modifier {
         private final JTextField tfName = new JTextField(name);
         private final JComboBox<Barcode> cbBarcodes;
         private final JSpinner spPrice = new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,1));
+        private final JCheckBox cbIsFree = new JCheckBox("Ingyenes");
 
         /**
          * Default constructor.
@@ -266,6 +283,8 @@ public class Discount implements Serializable, Modifier {
             //3. row: Barcode
             body.add(new JLabel("Vonalkód"),setConstraints(0,4,2,1));
             body.add(cbBarcodes,setConstraints(2,4,2,1));
+            //4. row: Free
+            body.add(cbIsFree,setConstraints(2,5,2,1));
 
             finishDialog(parent);
         }
@@ -279,6 +298,7 @@ public class Discount implements Serializable, Modifier {
                 name = tfName.getText();
                 barcode = (Barcode) cbBarcodes.getSelectedItem();
                 discount = Integer.parseInt(spPrice.getValue().toString());
+                isFree = cbIsFree.isSelected();
                 result = 0;
                 iconPath = lbPath.getText();
                 //Close dialog
