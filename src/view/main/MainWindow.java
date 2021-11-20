@@ -33,15 +33,15 @@ public class MainWindow extends JFrame {
 
     private AppData model;
 
-    private JLabel labelProfile;
-    private JLabel labelDevice;
-    private JButton btnBarcodes;
+    private final JLabel labelProfile;
+    private final JLabel labelDevice;
+    private final JButton btnBarcodes;
     private JScrollPane sidePanel;
     private JTable entryView;
 
     private boolean discountPanelStatus = false;
 
-    private Runnable selectionUpdate = () -> {
+    private final Runnable selectionUpdate = () -> {
         int viewIndex = model.getSelectedIndex();
         int index;
         try {
@@ -104,10 +104,13 @@ public class MainWindow extends JFrame {
         entryView.createDefaultColumnsFromModel();
         //Add selection changer (for live action selecting)
         entryView.getSelectionModel().addListSelectionListener(e -> {
-            if((entryView.getSelectedRow() >= 0)){
-                model.setSelection(model.getDataByIndex(entryView.convertRowIndexToModel(entryView.getSelectedRow())));
+            if (!e.getValueIsAdjusting()) {
+                if((entryView.getSelectedRow() >= 0)){
+                    model.setSelection(model.getDataByIndex(entryView.convertRowIndexToModel(entryView.getSelectedRow())));
+                }
             }
         });
+
         //Add right-click popup menu
         entryView.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {

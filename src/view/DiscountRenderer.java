@@ -20,10 +20,10 @@ public class DiscountRenderer extends JPanel implements TableCellRenderer {
     /**
      * Default constructor
      * Loads settings and icon size
-     * @param size the icon's size
+     * @param iconSize the icon's size
      */
-    public DiscountRenderer(int size) {
-        iconSize = size;
+    public DiscountRenderer(int iconSize) {
+        this.iconSize = iconSize;
         setLayout(new BoxLayout(this,BoxLayout.LINE_AXIS));
         setOpaque(true);
     }
