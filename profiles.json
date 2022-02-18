@@ -1,9 +1,9 @@
 {
   "profiles" : [
     {
-      "name" : "MKK",
-      "mask" : "[0-9]{3}",
-      "modificationMask" : "[9-9][0-9]{2}",
+      "name" : "MKK221",
+      "mask" : "[0-9]{4}",
+      "modificationMask" : "",
       "commands" : {
         "default" : "MKK",
         "leave" : "LEAVE_GUEST",
@@ -34,11 +34,16 @@
         {
           "name" : "VIP",
           "price" : 0,
-          "fee" : true
+          "fee" : false
         },
         {
           "name" : "Elővételes",
           "price" : 0,
+          "fee" : true
+        },
+        {
+          "name" : "Elővételes+",
+          "price" : 500,
           "fee" : true
         },
         {
@@ -48,7 +53,7 @@
         },
         {
           "name" : "Feliratkozott",
-          "price" : 2500,
+          "price" : 3000,
           "fee" : true
         }
       ],

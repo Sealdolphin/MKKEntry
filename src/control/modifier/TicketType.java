@@ -95,6 +95,10 @@ public class TicketType implements Serializable, Modifier {
         return hasFee ? price : 0;
     }
 
+    public boolean hasFee() {
+        return hasFee;
+    }
+
     public static class TicketTypeListener extends ModifierWizardEditor<TicketType>{
         public TicketTypeListener(Window parent) {
             super(parent);

@@ -3,14 +3,14 @@ package data;
 import control.modifier.Discount;
 import control.modifier.TicketType;
 import control.utility.file.EntryFilter;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 import static control.Application.uh;
 import static data.Entry.DataColumn.*;
@@ -35,6 +35,7 @@ public class Entry extends Vector<String> {
 
     public int getAllFees() {
         int f = ticketType.getFees();
+        if (!ticketType.hasFee()) return 0;
         for(Discount d : discountList){
             if (d.isFree()) return 0;
             f -= d.getPrice();

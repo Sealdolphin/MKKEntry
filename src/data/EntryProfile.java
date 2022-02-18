@@ -432,7 +432,7 @@ public class EntryProfile implements Serializable {
         private void initComponents(){
             tfName = new JTextField(name,32);
             tfMask = new JTextField(codeMask,32);
-            tfModifyMask = new JTextField(codeMask,32);
+            tfModifyMask = new JTextField(modificationMask,32);
             cbCommandLeave = new JComboBox<>(barCodes.toArray(new Barcode[0]));
             cbCommandDelete = new JComboBox<>(barCodes.toArray(new Barcode[0]));
             cbTypes = new JComboBox<>(ticketTypes.toArray(new TicketType[0]));

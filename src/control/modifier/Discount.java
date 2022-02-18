@@ -1,7 +1,5 @@
 package control.modifier;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import control.Application;
 import data.EntryProfile;
 import org.json.simple.JSONObject;
 import view.BarcodePanel;
