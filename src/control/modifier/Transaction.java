@@ -56,7 +56,7 @@ public class Transaction implements Serializable, Modifier {
 
     class TransactionWizard extends ModifierDialog {
 
-        private final JSpinner spValue = new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,5));
+        private final JSpinner spValue = new JSpinner(new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE,5));
         private final JTextField tfName = new JTextField();
 
         TransactionWizard(Window parent) {
