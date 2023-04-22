@@ -7,6 +7,7 @@ import view.ImagePanel;
 import javax.swing.*;
 import java.awt.*;
 
+//TODO: should be in package view!
 public abstract class ModifierDialog extends JDialog {
 
     JPanel body;

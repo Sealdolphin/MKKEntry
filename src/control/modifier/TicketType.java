@@ -12,9 +12,12 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class TicketType implements Serializable, Modifier {
 
+    private static Color DEFAULT_COLOR = new Color(255, 255, 255);
     private String name;
     private int price;
     private boolean hasFee;
+
+    private Color bgColor;
 
     /**
      * Private constructor
@@ -24,14 +27,15 @@ public class TicketType implements Serializable, Modifier {
      * @param price the price of the TicketType
      * @param fee whether it matters to the financial statistics
      */
-    private TicketType(String name, int price, boolean fee){
+    private TicketType(String name, int price, boolean fee, Color bgColor){
         this.name = name;
         this.price = price;
         this.hasFee = fee;
+        this.bgColor = bgColor;
     }
 
     public TicketType(TicketType other){
-        this(other.name,other.price,other.hasFee);
+        this(other.name,other.price,other.hasFee, other.bgColor);
     }
 
     /**
@@ -47,10 +51,18 @@ public class TicketType implements Serializable, Modifier {
         String name = "undefined";
         int price = 0;
         boolean fee = false;
+        Color bgColor = DEFAULT_COLOR;
         try {
             name = jsonObject.get("name").toString();
             price = Integer.parseInt(jsonObject.get("price").toString());
             fee = Boolean.parseBoolean(jsonObject.get("fee").toString());
+            JSONObject colorObject = (JSONObject) jsonObject.get("color");
+            if (colorObject != null) {
+                int red = Integer.parseInt(colorObject.get("red").toString());
+                int green = Integer.parseInt(colorObject.get("green").toString());
+                int blue = Integer.parseInt(colorObject.get("blue").toString());
+                bgColor = new Color(red, green, blue);
+            }
         } catch (NumberFormatException num) {
             //Show warning message
             JOptionPane.showMessageDialog(new JFrame(),profileName +
@@ -61,10 +73,10 @@ public class TicketType implements Serializable, Modifier {
             //Show warning message
             JOptionPane.showMessageDialog(new JFrame(),profileName+ ":\nA(z) '" + name +
                     "' jegytípus importálása közben hiba történt.\n" +
-                    "Az importálás nem sikerült. Részletek:\n" + other.toString(),"Hiba",ERROR_MESSAGE);
+                    "Az importálás nem sikerült. Részletek:\n" + other,"Hiba",ERROR_MESSAGE);
         }
 
-        return new TicketType(name,price,fee);
+        return new TicketType(name,price,fee, bgColor);
     }
 
     @Override
@@ -99,6 +111,10 @@ public class TicketType implements Serializable, Modifier {
         return hasFee;
     }
 
+    public Color getBgColor() {
+        return bgColor;
+    }
+
     public static class TicketTypeListener extends ModifierWizardEditor<TicketType>{
         public TicketTypeListener(Window parent) {
             super(parent);
@@ -106,7 +122,7 @@ public class TicketType implements Serializable, Modifier {
 
         @Override
         public void createNew(List<TicketType> objectList) {
-            TicketType newType = new TicketType("",0,false);
+            TicketType newType = new TicketType("",0,false,DEFAULT_COLOR);
             ModifierDialog wizard = newType.getModifierWizard(null);
             int result = wizard.open();
             if(result == 0){

@@ -28,6 +28,16 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
         System.out.println("a new AppData has been constructed");
     }
 
+    public String generateNewID() {
+        String newID;
+        Entry conflict;
+        do {
+            newID = Integer.toString(1000 + (int)(Math.random() * (9999 - 5000) + 1));
+            conflict = getDataById(newID);
+        } while (conflict == null);
+        return newID;
+    }
+
     public void clearData(){
         entryList.clear();
         transactionList.clear();

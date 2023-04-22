@@ -251,7 +251,8 @@ public class AppController implements ProgramStateListener {
     public enum ReadingFlag{
         FL_IS_LEAVING("leave","Kilépésre vár",new Color(0xffcc00),Color.BLACK),
         FL_IS_DELETE("delete","Törlésre vár",new Color(0xaa0000),Color.WHITE),
-        FL_DEFAULT("default","Belépésre vár",new Color(0x00aa00),Color.BLACK);
+        FL_DEFAULT("default","Belépésre vár",new Color(0x00aa00),Color.BLACK),
+        FL_GENERATE_NEW("generate", "Belépőkód generálása", Color.BLACK, Color.BLACK);
 
         private final String flagMeta;
         private final String labelInfo;
@@ -370,14 +371,13 @@ public class AppController implements ProgramStateListener {
             String entryID = activeProfile.validateCode(barCode);
 
             //Check for reading flag
-            switch (readingFlag){
-                default:
-                case FL_DEFAULT:
+            switch (readingFlag) {
+                case FL_DEFAULT -> {
                     Entry entry;
                     if (model.getSelectedData() != null &&
                             activeProfile.enteringModifiesEntry(model.getSelectedData().getID())) {                     // Check if Entry Profile modifies ID upon entering (and selected ID matches the required mask)
                         Entry existing = model.getDataById(entryID);                                                    // If true, check if the new entry ID exists already!
-                        if(existing != null) {
+                        if (existing != null) {
                             entry = existing;                                                                           // If it does, continue with the existing record!!
                         } else {
                             entry = activeProfile.generateFromEntry(model.getSelectedData(), entryID);                  // If not, the ID is new, so generate a new entry from the selected record and modify it's ID
@@ -388,21 +388,23 @@ public class AppController implements ProgramStateListener {
                         entry = model.getDataById(entryID);                                                             // Search for the Entry based on the entered ID
                         if (entry == null) {
                             entry = activeProfile.generateNewEntry(entryID);                                            // If entered ID does not exist, create a new Entry with said ID
-                            if (entry == null) break;                                                                   // If generating fails interrupt execution
+                            if (entry == null)
+                                break;                                                                   // If generating fails interrupt execution
                         }
                     }
                     model.addData(entry);                                                                               // Add new Entry to the model (select if already exists)
                     entry.Enter();                                                                                      // Enter selected Entry
-                    break;
-                case FL_IS_DELETE:
-                    if(JOptionPane.showConfirmDialog(null,uh.getUIStr("MSG","CONFIRM"),uh.getUIStr("MSG","DELETE"), JOptionPane.OK_CANCEL_OPTION,WARNING_MESSAGE) == OK_OPTION)
+                }
+                case FL_IS_DELETE -> {
+                    if (JOptionPane.showConfirmDialog(null, uh.getUIStr("MSG", "CONFIRM"), uh.getUIStr("MSG", "DELETE"), JOptionPane.OK_CANCEL_OPTION, WARNING_MESSAGE) == OK_OPTION)
                         model.removeData(model.getDataById(entryID));
-                    break;
-                case FL_IS_LEAVING:
+                }
+                case FL_IS_LEAVING -> {
                     Entry leaving = model.getDataById(entryID);
-                    if(leaving == null) throw new IOException(uh.getUIStr("ERR","NO_MATCH"));
+                    if (leaving == null) throw new IOException(uh.getUIStr("ERR", "NO_MATCH"));
                     leaving.Leave();
-                    break;
+                }
+                case FL_GENERATE_NEW -> receiveBarCode(model.generateNewID());
             }
         } catch (IOException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage(),"Figyelem", JOptionPane.WARNING_MESSAGE);

@@ -7,7 +7,7 @@ import control.MenuHandler;
 import control.modifier.Discount;
 import data.AppData;
 import data.EntryProfile;
-import view.DiscountRenderer;
+import view.renderer.DiscountRenderer;
 import view.main.interactive.InteractiveJMenuItem;
 
 import javax.swing.*;
@@ -327,13 +327,13 @@ public class MainWindow extends JFrame {
         /**
          * Creates the CHARTS menu for the menu bar
          * TODO: waiting for implementation
-         * @param handler the event handler handling the action events
+         * @param controller the event handler handling the action events
          * @return the CHARTS menu
          */
-        private JMenu createChartsMenu(AppController handler){
+        private JMenu createChartsMenu(AppController controller){
             JMenu menuStats = new JMenu("Statisztikák");
             JMenuItem miStats = new JMenuItem("Statisztikák megtekintése");
-            miStats.addActionListener(e -> handler.createStatistics());
+            miStats.addActionListener(e -> controller.createStatistics());
             menuStats.add(miStats);
             return menuStats;
         }
@@ -341,10 +341,10 @@ public class MainWindow extends JFrame {
         /**
          * Creates the EDIT menu for the menu bar
          * TODO: waiting for implementation
-         * @param handler the event handler handling the action events
+         * @param controller the event handler handling the action events
          * @return the EDIT menu
          */
-        private JMenu createTransactionsMenu(AppController handler){
+        private JMenu createTransactionsMenu(AppController controller){
             return new JMenu("Tranzakciók");
         }
     }
