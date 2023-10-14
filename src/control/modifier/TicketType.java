@@ -79,6 +79,10 @@ public class TicketType implements Serializable, Modifier {
         return new TicketType(name,price,fee, bgColor);
     }
 
+    public static TicketType emptyType() {
+        return new TicketType("", 0, false, Color.BLACK);
+    }
+
     @Override
     public boolean equals(Object other){
         if(other == null) return false;

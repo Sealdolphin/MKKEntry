@@ -1,15 +1,16 @@
 package control;
 
+import com.fazecast.jSerialComm.SerialPort;
 import control.modifier.Discount;
 import control.utility.devices.BarCodeReaderListenerFactory;
 import control.utility.file.EntryFilter;
 import control.utility.network.NetworkController;
 import data.*;
-import com.fazecast.jSerialComm.SerialPort;
+import data.util.ReadingFlag;
 import view.StatisticsWindow;
 import view.main.LoadingScreen;
-import view.main.ReadFlagListener;
 import view.main.interactive.EnableWatcher;
+import view.main.interactive.ReadFlagListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,20 +18,20 @@ import java.awt.event.ItemEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 import static control.Application.uh;
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
-import static javax.swing.JOptionPane.OK_OPTION;
-import static javax.swing.JOptionPane.WARNING_MESSAGE;
+import static javax.swing.JOptionPane.*;
 
 /**
  * The main manager class of the program.
  * It soress data and distributes the tasks among other classes
  * @author Mihalovits Márk
  */
-public class AppController implements ProgramStateListener {
+public class AppController implements ProgramStateListener, EntryCodeReader {
 
     /**
      * The model for the entries in the program
@@ -97,10 +98,6 @@ public class AppController implements ProgramStateListener {
         activeProfile = pData.getSelectedData();
         while(activeProfile == null)
             changeProfile(chooseProfile(),true);
-    }
-
-    public void addListener(ReadFlagListener l){
-        listenerList.add(l);
     }
 
     public void addActionWatcher(EnableWatcher watcher) {
@@ -194,6 +191,7 @@ public class AppController implements ProgramStateListener {
                 profileObjs, profileObjs[0]);
     }
 
+    @Override
     public void setReadingFlag(ReadingFlag newFlag){
         readingFlag = newFlag;
         for (ReadFlagListener l: listenerList) {
@@ -201,6 +199,7 @@ public class AppController implements ProgramStateListener {
         }
     }
 
+    @Override
     public void readEntryCode(String text) {
         receiveBarCode(activeProfile.getEntryCode() + text);
     }
@@ -245,33 +244,6 @@ public class AppController implements ProgramStateListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     *  For the different reading operations
-     */
-    public enum ReadingFlag{
-        FL_IS_LEAVING("leave","Kilépésre vár",new Color(0xffcc00),Color.BLACK),
-        FL_IS_DELETE("delete","Törlésre vár",new Color(0xaa0000),Color.WHITE),
-        FL_DEFAULT("default","Belépésre vár",new Color(0x00aa00),Color.BLACK),
-        FL_GENERATE_NEW("generate", "Belépőkód generálása", Color.BLACK, Color.BLACK);
-
-        private final String flagMeta;
-        private final String labelInfo;
-        private final Color labelColor;
-        private final Color fgColor;
-
-        ReadingFlag(String meta, String info, Color color, Color fg){
-            flagMeta = meta;
-            labelInfo = info;
-            labelColor = color;
-            fgColor = fg;
-        }
-
-        public String getInfo(){ return labelInfo; }
-        public String getMeta(){ return flagMeta; }
-        public Color getColor(){ return labelColor; }
-        public Color getTextColor(){ return fgColor; }
     }
 
     @Override
@@ -426,6 +398,11 @@ public class AppController implements ProgramStateListener {
             }
         }
 
+    }
+
+    @Override
+    public void addReadingFlagListener(ReadFlagListener listener) {
+        listenerList.add(listener);
     }
 
     public void saveLastAction(Entry previousEntry, Entry nextEntry) {

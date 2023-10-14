@@ -1,19 +1,24 @@
 package view.main;
 
 
-
 import control.AppController;
 import control.MenuHandler;
 import control.modifier.Discount;
 import data.AppData;
 import data.EntryProfile;
-import view.renderer.DiscountRenderer;
+import data.util.ReadingFlag;
 import view.main.interactive.InteractiveJMenuItem;
+import view.main.interactive.ReadFlagListener;
+import view.main.panel.QuickSearchPanel;
+import view.main.panel.RecordPanel;
+import view.renderer.DiscountRenderer;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import static control.Application.uh;
@@ -85,7 +90,7 @@ public class MainWindow extends JFrame {
         //Create components
         setLayout(new BorderLayout());
         InfoPanel infoPanel = new InfoPanel();
-        controller.addListener(infoPanel);
+        controller.addReadingFlagListener(infoPanel);
         setJMenuBar(new MainMenu().createMenu(controller));
         //Create popup-menu (TEMP)
         JPopupMenu popupEditRecord = createPopUpMenu(controller);
@@ -157,9 +162,9 @@ public class MainWindow extends JFrame {
         JMenuItem miDelete = new JMenuItem("Törlés");
         JMenuItem miDiscounts = new JMenuItem("Kedvezmények módosítása");
 
-        miEnter.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_DEFAULT,model.getSelectedData()));
-        miLeave.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_IS_LEAVING,model.getSelectedData()));
-        miDelete.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_IS_DELETE,model.getSelectedData()));
+        miEnter.addActionListener(e -> controller.flagOperationOnEntry(ReadingFlag.FL_DEFAULT,model.getSelectedData()));
+        miLeave.addActionListener(e -> controller.flagOperationOnEntry(ReadingFlag.FL_IS_LEAVING,model.getSelectedData()));
+        miDelete.addActionListener(e -> controller.flagOperationOnEntry(ReadingFlag.FL_IS_DELETE,model.getSelectedData()));
         miDiscounts.addActionListener(e -> controller.discountOperationOnEntry(model.getSelectedData()));
 
         popupEditRecord.add(miEnter);
@@ -365,7 +370,7 @@ public class MainWindow extends JFrame {
             Action deleteAction = new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    controller.setReadingFlag(AppController.ReadingFlag.FL_IS_DELETE);
+                    controller.setReadingFlag(ReadingFlag.FL_IS_DELETE);
                 }
             };
 
@@ -392,7 +397,7 @@ public class MainWindow extends JFrame {
             btnDelete.setBackground(new Color(0xff6666));
             btnDelete.addActionListener(deleteAction);
             JButton btnLeave = new JButton("Kiléptet");
-            btnLeave.addActionListener(e -> controller.setReadingFlag(AppController.ReadingFlag.FL_IS_LEAVING));
+            btnLeave.addActionListener(e -> controller.setReadingFlag(ReadingFlag.FL_IS_LEAVING));
 
             JButton btnSendCode = new JButton("Olvas");
             JButton btnClearSelection = new JButton("Kiválasztást megszüntet");
@@ -420,7 +425,7 @@ public class MainWindow extends JFrame {
             //Assembling body components
             add(spTable,BorderLayout.CENTER);
             add(inputPanel,BorderLayout.SOUTH);
-            add(new QuickSearchHeader(model,entryView),BorderLayout.NORTH);
+            add(new QuickSearchPanel(model, new RecordPanel(model)),BorderLayout.NORTH);
 
 
         }
@@ -431,7 +436,7 @@ public class MainWindow extends JFrame {
      * It reacts to the barcode reading operations and behaves correctly.
      * Shows the current state of reading, with color codes.
      */
-    private static class InfoPanel extends JPanel implements ReadFlagListener{
+    private static class InfoPanel extends JPanel implements ReadFlagListener {
 
         private final JLabel lbInfo;
 
@@ -444,11 +449,11 @@ public class MainWindow extends JFrame {
             add(Box.createGlue());
             add(lbInfo);
             add(Box.createGlue());
-            readingFlagChanged(AppController.ReadingFlag.FL_DEFAULT);
+            readingFlagChanged(ReadingFlag.FL_DEFAULT);
         }
 
         @Override
-        public void readingFlagChanged(AppController.ReadingFlag flag){
+        public void readingFlagChanged(ReadingFlag flag){
             System.out.println("FLAG READ: " + flag.toString());
             lbInfo.setText(flag.getInfo());
             setBackground(flag.getColor());

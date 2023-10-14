@@ -1,29 +1,29 @@
 package data;
 
 
-import static control.AppController.ReadingFlag.FL_DEFAULT;
-import static control.AppController.ReadingFlag.FL_IS_DELETE;
-import static control.AppController.ReadingFlag.FL_IS_LEAVING;
+import control.UIHandler;
+import control.modifier.*;
+import data.util.ReadingFlag;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import view.renderer.ModifierValidationRenderer;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.List;
+import java.util.*;
+
 import static control.Application.uh;
+import static data.util.ReadingFlag.*;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.SOUTH;
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
-
-import java.awt.BorderLayout;
-import java.awt.event.*;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.*;
-
-import javax.swing.*;
-
-import control.modifier.*;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
-import control.AppController;
-import control.UIHandler;
-import view.renderer.ModifierValidationRenderer;
 
 /**
  * Beléptetési profil.
@@ -135,14 +135,14 @@ public class EntryProfile implements Serializable {
     /**
      * A szükséges parancskódok listája
      */
-    private HashMap<String, AppController.ReadingFlag> commandCodes;
+    private HashMap<String, ReadingFlag> commandCodes;
 
     /**
      * Maximum of actions
      */
     private final int maxActionCount = 10;
 
-    private static final AppController.ReadingFlag[] commandJsonKeys = AppController.ReadingFlag.values();
+    private static final ReadingFlag[] commandJsonKeys = ReadingFlag.values();
 
 
     private EntryProfile() {
@@ -260,9 +260,11 @@ public class EntryProfile implements Serializable {
                 .findAny().orElse(profile.ticketTypes.get(0));
 
         //Loading default commands
-        HashMap<String, AppController.ReadingFlag> commands = new HashMap<>();
-        for (AppController.ReadingFlag commandFlag : commandJsonKeys) {
-            String key = ((JSONObject) jsonProfile.get("commands")).get(commandFlag.getMeta()).toString();
+        HashMap<String, ReadingFlag> commands = new HashMap<>();
+        for (ReadingFlag commandFlag : commandJsonKeys) {
+            // FIXME: parsing should yield Optional and default values!
+            Object flag = ((JSONObject) jsonProfile.get("commands")).get(commandFlag.getMeta());
+            String key = flag != null ? flag.toString() : "";
             commands.put(key, commandFlag);
         }
         profile.commandCodes = commands;
@@ -317,7 +319,7 @@ public class EntryProfile implements Serializable {
         return validID;
     }
 
-    public AppController.ReadingFlag validateCommand(String code) {
+    public ReadingFlag validateCommand(String code) {
         return commandCodes.get(code.toUpperCase());
     }
 
