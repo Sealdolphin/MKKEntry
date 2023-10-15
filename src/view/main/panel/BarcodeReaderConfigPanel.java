@@ -2,7 +2,6 @@ package view.main.panel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,8 +28,6 @@ public class BarcodeReaderConfigPanel extends AbstractPanel {
         if (!refreshAction.getSource().equals(btnRefresh)) {
             return;
         }
-
-        refreshPanel();
     }
 
     private void setupPortSelector(List<String> choices) {
@@ -64,15 +61,6 @@ public class BarcodeReaderConfigPanel extends AbstractPanel {
                         .addGroup(topLine)
                         .addGroup(bottomLine)
         );
-    }
-
-    /**
-     * Updates the labels
-     */
-    @Override
-    public void refreshPanel() {
-        lbStatus.setText("⚠️");
-        setupPortSelector(Arrays.stream(new String[] {"COM5", "COM6", "COM79", "COM8"}).toList());
     }
 
 }

@@ -13,6 +13,7 @@ public class MainPanel extends AbstractPanel {
     private final InfoPanel infoPanel;
 
     public MainPanel(AppData model, EntryCodeReader reader) {
+        super(false, false);
         recordPanel = new RecordPanel(model);
         topPanel = new TopPanel(model, recordPanel);
         inputPanel = new InputPanel(model, reader);
@@ -48,10 +49,5 @@ public class MainPanel extends AbstractPanel {
         );
 
         layout.linkSize(SwingConstants.VERTICAL, inputPanel, infoPanel);
-    }
-
-    @Override
-    public void refreshPanel() {
-
     }
 }

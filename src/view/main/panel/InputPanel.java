@@ -6,7 +6,6 @@ import data.util.ReadingFlag;
 import view.main.interactive.SelectableComponent;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -75,13 +74,6 @@ public class InputPanel extends AbstractPanel {
                         .addComponent(btnSendCode)
                         .addComponent(btnClearSelection)
         );
-
-        setBorder(new EmptyBorder(0,PADDING_DEFAULT,0,PADDING_DEFAULT));
-    }
-
-    @Override
-    public void refreshPanel() {
-
     }
 
     private void sendCodeAction(ActionEvent event) {

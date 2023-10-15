@@ -51,11 +51,6 @@ public class QuickSearchPanel extends AbstractPanel {
         layout.setVerticalGroup(layout.createParallelGroup().addComponent(lbTitle, GroupLayout.Alignment.CENTER).addComponent(tfSearch).addComponent(btnFilter));
     }
 
-    @Override
-    public void refreshPanel() {
-
-    }
-
     private class InteractiveSortingMenuItem extends JCheckBoxMenuItem {
 
         private InteractiveSortingMenuItem(TableColumn column) {

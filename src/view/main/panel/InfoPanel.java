@@ -16,6 +16,7 @@ public class InfoPanel extends AbstractPanel implements ReadFlagListener {
     private final JLabel lbInfo;
 
     public InfoPanel() {
+        super(false, false);
         lbInfo = new JLabel();
 
         lbInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -46,10 +47,5 @@ public class InfoPanel extends AbstractPanel implements ReadFlagListener {
                         .addComponent(lbInfo)
                         .addGap(0,0,Short.MAX_VALUE)
         );
-    }
-
-    @Override
-    public void refreshPanel() {
-        // Do nothing
     }
 }

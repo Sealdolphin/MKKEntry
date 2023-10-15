@@ -1,7 +1,6 @@
 package view.main.panel;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 
 public class TopPanel extends AbstractPanel {
@@ -46,12 +45,5 @@ public class TopPanel extends AbstractPanel {
                         .addGroup(topLineVertical)
                         .addComponent(searchPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
         );
-
-        setBorder(new EmptyBorder(0,PADDING_DEFAULT,0,PADDING_DEFAULT));
-    }
-
-    @Override
-    public void refreshPanel() {
-
     }
 }

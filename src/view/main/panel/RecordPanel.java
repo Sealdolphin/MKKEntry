@@ -26,6 +26,7 @@ public class RecordPanel extends AbstractPanel implements SelectableComponent {
     private final DataModel<Entry> model;
 
     public RecordPanel(AppData data) {
+        super(false, false);
         this.model = data;
 
         table = new JTable(data);
@@ -65,11 +66,6 @@ public class RecordPanel extends AbstractPanel implements SelectableComponent {
     @Override
     public void initializeLayout() {
         setSingleComponentLayout(scrollView);
-    }
-
-    @Override
-    public void refreshPanel() {
-        revalidate();
     }
 
     private void selectionHasChanged(ListSelectionEvent selectionEvent) {

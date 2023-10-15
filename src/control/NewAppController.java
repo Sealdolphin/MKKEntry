@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NewAppController implements EntryCodeReader {
-    
+
     private ProgramStateListener operationsController;
     private ReadingFlag readingFlag = ReadingFlag.FL_DEFAULT;
 
