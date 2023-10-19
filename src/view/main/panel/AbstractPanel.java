@@ -3,7 +3,7 @@ package view.main.panel;
 import control.modifier.TicketType;
 import data.AppData;
 import data.Entry;
-import view.main.panel.wizard.entryprofile.EntryProfileWizardPanel;
+import view.main.panel.wizard.entryprofile.panel.EntryProfileWizardPanel;
 
 import javax.swing.*;
 import java.io.IOException;

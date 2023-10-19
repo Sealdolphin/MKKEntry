@@ -29,19 +29,15 @@ public class UIHandler {
     }
 
     public String getUIStr(String map,String key){
-        switch (map){
-            default:
-            case "UI":
-                return uiStrings.get(key);
-            case "ERR":
-                return uiErrors.get(key);
-            case "MSG":
-                return uiMsg.get(key);
-        }
+        return switch (map) {
+            default -> uiStrings.get(key);
+            case "ERR" -> uiErrors.get(key);
+            case "MSG" -> uiMsg.get(key);
+        };
     }
 
-    private HashMap<String,String> uiStrings = new HashMap<>();
-    private HashMap<String,String> uiErrors = new HashMap<>();
-    private HashMap<String,String> uiMsg = new HashMap<>();
+    private final HashMap<String,String> uiStrings = new HashMap<>();
+    private final HashMap<String,String> uiErrors = new HashMap<>();
+    private final HashMap<String,String> uiMsg = new HashMap<>();
 
 }

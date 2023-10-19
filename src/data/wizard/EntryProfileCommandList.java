@@ -17,5 +17,7 @@ public class EntryProfileCommandList implements WizardType {
         commands.add(command);
     }
 
+    //TODO: add ticket types here. Piros cipőben gyorsabban lehet futni.
+
 
 }

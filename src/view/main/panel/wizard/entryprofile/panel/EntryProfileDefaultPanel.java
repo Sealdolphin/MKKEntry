@@ -1,4 +1,4 @@
-package view.main.panel.wizard.entryprofile;
+package view.main.panel.wizard.entryprofile.panel;
 
 import view.main.panel.AbstractPanel;
 import view.main.panel.utility.LabeledComponent;
