@@ -308,7 +308,7 @@ public class EntryProfile implements Serializable {
     }
 
     public Barcode identifyBarcode(String barcodeMeta){
-        return barCodes.stream().filter(barCode -> barCode.getMeta().equals(barcodeMeta)).findAny().orElse(null);
+        return barCodes.stream().filter(barCode -> barCode.getMetaData().equals(barcodeMeta)).findAny().orElse(null);
     }
 
     public String validateCode(String code) throws IOException{
@@ -419,8 +419,8 @@ public class EntryProfile implements Serializable {
                 cbCommandLeave.setSelectedItem(identifyBarcode(leaveMeta));
                 cbCommandDelete.setSelectedItem(identifyBarcode(deleteMeta));
                 //Reseting selection
-                leaveMeta = cbCommandLeave.getSelectedItem() == null ? null : ((Barcode) (cbCommandLeave.getSelectedItem())).getMeta();
-                deleteMeta = cbCommandDelete.getSelectedItem() == null ? null : ((Barcode) (cbCommandDelete.getSelectedItem())).getMeta();
+                leaveMeta = cbCommandLeave.getSelectedItem() == null ? null : ((Barcode) (cbCommandLeave.getSelectedItem())).getMetaData();
+                deleteMeta = cbCommandDelete.getSelectedItem() == null ? null : ((Barcode) (cbCommandDelete.getSelectedItem())).getMetaData();
             });
             //Assembling wizard panel
             add(mainPanel,CENTER);
@@ -710,8 +710,8 @@ public class EntryProfile implements Serializable {
                     tfModifyMask.getText().isEmpty();
             boolean commandInvalid = false, noTicket = false, hasInvalidDiscount = false;
             if(!empty) {
-                leaveMeta = ((Barcode) (cbCommandLeave.getSelectedItem())).getMeta();
-                deleteMeta = ((Barcode) (cbCommandDelete.getSelectedItem())).getMeta();
+                leaveMeta = ((Barcode) (cbCommandLeave.getSelectedItem())).getMetaData();
+                deleteMeta = ((Barcode) (cbCommandDelete.getSelectedItem())).getMetaData();
                 commandInvalid = (cbCommandDelete.getSelectedIndex() == cbCommandLeave.getSelectedIndex()) ||
                         leaveMeta.equals(tfDefaultTicket.getText()) ||
                         deleteMeta.equals(tfDefaultTicket.getText());

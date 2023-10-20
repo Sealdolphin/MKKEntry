@@ -90,7 +90,7 @@ public class Discount implements Serializable, Modifier {
      * @return the barcode's metadata
      */
     public String getMeta(){
-        return barcode.getMeta();
+        return barcode.getMetaData();
     }
 
     /**
@@ -107,7 +107,7 @@ public class Discount implements Serializable, Modifier {
         String name;
         name = "undefined";
         String icon = null;
-        Barcode barcode = new Barcode(name);
+        Barcode barcode = new Barcode(name, "", "", "");
         int price = 0;
         boolean isFree = false;
         try {
@@ -203,7 +203,7 @@ public class Discount implements Serializable, Modifier {
     public boolean validate() {
         //Refresh barcode whether if it still in the list of barCodes...
         if(barcode == null) return false;
-        barcode = Arrays.stream(profile.getBarcodes()).filter(b -> b.getMeta().equals(barcode.getMeta())).findAny().orElse(null);
+        barcode = Arrays.stream(profile.getBarcodes()).filter(b -> b.getMetaData().equals(barcode.getMetaData())).findAny().orElse(null);
         return name != null && barcode != null && !name.isEmpty();
     }
 

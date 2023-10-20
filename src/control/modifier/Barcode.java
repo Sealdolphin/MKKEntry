@@ -1,8 +1,8 @@
 package control.modifier;
 
 
-import control.Application;
 import control.utility.devices.BarCodeReaderListenerFactory;
+import data.wizard.WizardType;
 import org.json.simple.JSONObject;
 import view.BarcodePanel;
 import view.ImagePanel;
@@ -15,22 +15,32 @@ import java.util.List;
 
 import static javax.swing.JFileChooser.APPROVE_OPTION;
 
-public class Barcode implements Serializable, Modifier {
+public class Barcode implements Serializable, Modifier, WizardType {
+    /**
+     * The name of the barcode
+     */
     private String name;
+    /**
+     * The data of the barcode
+     */
     private String metaData;
-    private String picturePath = null;
-    private String description = "Unknown";
+    /**
+     * The image path of the picture containing the barcode
+     */
+    private String picturePath;
+    /**
+     * Short description of the barcode
+     */
+    private String description;
+
+    @Deprecated
     private boolean hasLink = false;
 
-    private Barcode(String name, String meta, String picture, String desc){
+    public Barcode(String name, String meta, String picture, String desc){
         this.name = name;
         metaData = meta;
         picturePath = picture;
         description = desc;
-    }
-
-    public Barcode(String name){
-        this.name = name;
     }
 
     public Barcode(Barcode other) {
@@ -55,7 +65,7 @@ public class Barcode implements Serializable, Modifier {
         if(obj == this) return true;
         if(!obj.getClass().equals(Barcode.class)) return false;
         Barcode other = (Barcode) obj;
-        return getMeta().equals(other.getMeta());
+        return getMetaData().equals(other.getMetaData());
     }
 
     @Override
@@ -68,16 +78,26 @@ public class Barcode implements Serializable, Modifier {
         return name != null && !name.isEmpty() && metaData != null && !metaData.isEmpty();
     }
 
+    @Deprecated
     public void setLink(boolean link) {
         hasLink = link;
     }
 
+    @Deprecated
     public boolean hasLink() {
         return hasLink;
     }
 
-    public String getMeta() {
+    public String getMetaData() {
         return metaData;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getPicturePath() {
+        return picturePath;
     }
 
     public static Barcode parseBarcodeFromJSON(JSONObject jsonObject){
@@ -89,6 +109,7 @@ public class Barcode implements Serializable, Modifier {
         return new Barcode(name,meta,picture,desc);
     }
 
+    @Deprecated
     public static class BarcodeListener extends ModifierWizardEditor<Barcode> {
 
         public BarcodeListener(Window parent) {
@@ -97,7 +118,7 @@ public class Barcode implements Serializable, Modifier {
 
         @Override
         public void createNew(List<Barcode> objectList) {
-            Barcode newCode = new Barcode("");
+            Barcode newCode = new Barcode("", "", "", "");
             ModifierDialog wizard = newCode.getModifierWizard(null);
             int result = wizard.open();
             if(result == 0){
@@ -109,6 +130,7 @@ public class Barcode implements Serializable, Modifier {
     /**
      * The Wizard class of the Barcode
      */
+    @Deprecated
     private class BarcodeWizard extends ModifierDialog {
 
         private ImagePanel panelImg = new ImagePanel(picturePath);
