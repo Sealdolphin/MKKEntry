@@ -1,9 +1,11 @@
 package view.main.panel;
 
+import control.modifier.Barcode;
 import control.modifier.TicketType;
 import data.AppData;
 import data.Entry;
-import view.main.panel.wizard.entryprofile.panel.EntryProfileWizardPanel;
+import view.main.panel.wizard.barcode.BarcodeWizard;
+import view.main.panel.wizard.entryprofile.DataListView;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -29,11 +31,15 @@ public abstract class AbstractPanel extends JPanel {
             model.addData(new Entry(String.valueOf(i), "name" + i, TicketType.emptyType()));
         }
 
-        AbstractPanel panel = new EntryProfileWizardPanel(); //new MainPanel(model, new NewAppController());
-        panel.initializeLayout();
+        //JPanel panel = new BarcodeWizard(new Barcode("Test", "TEST", "test/test.jpg", "This is a test")); //new MainPanel(model, new NewAppController());
+        //panel.initializeLayout();
+
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.add(panel);
+        frame.add(new DataListView<>(new Barcode[]{
+                new Barcode("Test", "TEST", "test/test.jpg", "This is a test"),
+                new Barcode("Test 2", "TEST_2", "test/test2.jpg", "This is an another test"),
+        }, new BarcodeWizard()));
         frame.pack();
         frame.setMinimumSize(frame.getSize());
         frame.setVisible(true);

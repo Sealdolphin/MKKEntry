@@ -1,22 +1,28 @@
 package view.main.panel.wizard.barcode;
 
 import control.modifier.Barcode;
-import view.main.panel.AbstractPanel;
+import data.wizard.WizardType;
 import view.main.panel.wizard.AbstractWizard;
 import view.main.panel.wizard.barcode.panel.BarcodeEditPanel;
 
 public class BarcodeWizard extends AbstractWizard<Barcode> {
 
-    public BarcodeWizard(Barcode model) {
-        super(model);
+    public BarcodeWizard() {
+
     }
 
     @Override
-    public AbstractPanel getWizardPage() {
+    public void createWizardPage() {
         if (wizardPage == null) {
-            wizardPage = new BarcodeEditPanel(this);
+            wizardPage = new BarcodeEditPanel(validator);
             wizardPage.refreshPage(model);
         }
-        return (AbstractPanel) wizardPage;
+    }
+
+    @Override
+    public void changeModel(WizardType model) {
+        if (model instanceof Barcode barcodeModel) {
+            wizardPage.refreshPage(barcodeModel);
+        }
     }
 }

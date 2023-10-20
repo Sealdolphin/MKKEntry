@@ -38,15 +38,6 @@ public class EntryProfileCommandPanel extends AbstractPanel implements WizardPag
     }
 
     @Override
-    public boolean validateWizardPage() {
-        // TODO: every combo box must have a value
-        // TODO: every value must be different / unique!
-        // TODO: Also DO VALIDATION COLOURING! (red)
-
-        return false;
-    }
-
-    @Override
     public EntryProfileCommandList generateWizardType() {
         // TODO: idk.
 

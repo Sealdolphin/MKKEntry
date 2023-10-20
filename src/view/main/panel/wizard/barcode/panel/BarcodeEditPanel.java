@@ -4,8 +4,8 @@ import control.modifier.Barcode;
 import view.ImagePanel;
 import view.main.panel.AbstractPanel;
 import view.main.panel.utility.LabeledComponent;
-import view.main.panel.wizard.Wizard;
 import view.main.panel.wizard.WizardPage;
+import view.validation.ComponentValidator;
 
 import javax.swing.*;
 
@@ -17,29 +17,19 @@ public class BarcodeEditPanel extends AbstractPanel implements WizardPage<Barcod
     private final LabeledComponent<JTextField> compName;
     private final LabeledComponent<JTextField> compDescription;
 
-    private final JButton btnSave;
-    private final JButton btnCancel;
-
-    public BarcodeEditPanel(Wizard parent) {
+    public BarcodeEditPanel(ComponentValidator validator) {
         imgBarcodePicture = new ImagePanel(null);
-        compBtnBrowse = new LabeledComponent<>("/vonalkodok/vonalkod.jpg", new JButton("Tallózás"));
+        compBtnBrowse = new LabeledComponent<>("", new JButton("Tallózás"));
 
         compName = new LabeledComponent<>("Név:", new JTextField(TEXT_PANEL_DEFAULT_WIDTH));
         compDescription = new LabeledComponent<>("Leírás:", new JTextField(TEXT_PANEL_DEFAULT_WIDTH));
+
         tfBarcode = new JTextField(TEXT_PANEL_DEFAULT_WIDTH);
-
-        btnSave = new JButton("Mentés");
-        btnCancel = new JButton("Mégsem");
-
         tfBarcode.setEditable(false);
         tfBarcode.setHorizontalAlignment(SwingConstants.CENTER);
-        tfBarcode.setText("BARCODE");
 
-        btnSave.addActionListener(parent::doSaveEntity);
-        btnCancel.addActionListener(parent::cancelEditing);
-
-        validator.addComponent(compName.getComponent(), this::isNameValid, "");
-        validator.addComponent(compDescription.getComponent(), this::isDescriptionValid, "");
+        validator.addComponent(compName.getComponent(), this::isNameValid, "Név nem lehet üres");
+        validator.addComponent(compDescription.getComponent(), this::isDescriptionValid, "Leírás nem lehet üres");
     }
 
     @Override
@@ -52,12 +42,6 @@ public class BarcodeEditPanel extends AbstractPanel implements WizardPage<Barcod
                         .addGroup(compBtnBrowse.createSequentialLayout(layout))
                         .addGroup(compName.createSequentialLayout(layout))
                         .addGroup(compDescription.createSequentialLayout(layout))
-                        .addGroup(
-                                layout.createSequentialGroup()
-                                        .addComponent(btnSave)
-                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btnCancel)
-                        )
         );
 
         // Vertical layout
@@ -68,34 +52,30 @@ public class BarcodeEditPanel extends AbstractPanel implements WizardPage<Barcod
                         .addGroup(compBtnBrowse.createParallelLayout(layout))
                         .addGroup(compName.createParallelLayout(layout))
                         .addGroup(compDescription.createParallelLayout(layout))
-                        .addGroup(
-                                layout.createParallelGroup()
-                                        .addComponent(btnSave)
-                                        .addComponent(btnCancel)
-                        )
         );
 
         layout.linkSize(compName.getComponent(), compDescription.getComponent());
-    }
-
-    @Override
-    public boolean validateWizardPage() {
-        validator.validate();
-
-        return false;
+        layout.linkSize(SwingConstants.VERTICAL, compName.getComponent(), tfBarcode);
     }
 
     @Override
     public Barcode generateWizardType() {
-        return null;
+        return new Barcode(
+                compName.getComponent().getText(),
+                tfBarcode.getText(),
+                compBtnBrowse.getLabel().getText(),
+                compDescription.getComponent().getText()
+        );
     }
 
     @Override
     public void refreshPage(Barcode model) {
-        compName.getComponent().setText(model.toString());
-        compDescription.getComponent().setText(model.getDescription());
-        tfBarcode.setText(model.getMetaData());
-        compBtnBrowse.getLabel().setText(model.getPicturePath());
+        if (model != null) {
+            compName.getComponent().setText(model.toString());
+            compDescription.getComponent().setText(model.getDescription());
+            tfBarcode.setText(model.getMetaData());
+            compBtnBrowse.getLabel().setText(model.getPicturePath());
+        }
     }
 
     private boolean isNameValid() {
