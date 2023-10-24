@@ -7,10 +7,6 @@ import view.main.panel.wizard.barcode.panel.BarcodeEditPanel;
 
 public class BarcodeWizard extends AbstractWizard<Barcode> {
 
-    public BarcodeWizard() {
-
-    }
-
     @Override
     public void createWizardPage() {
         if (wizardPage == null) {
@@ -21,6 +17,7 @@ public class BarcodeWizard extends AbstractWizard<Barcode> {
 
     @Override
     public void changeModel(WizardType model) {
+        setVisible(model != null);
         if (model instanceof Barcode barcodeModel) {
             wizardPage.refreshPage(barcodeModel);
         }

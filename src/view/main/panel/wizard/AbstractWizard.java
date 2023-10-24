@@ -21,7 +21,7 @@ public abstract class AbstractWizard<T extends WizardType> extends JPanel implem
         this.model = null;
         validator = new ComponentValidator();
         createWizardPage();
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+        setLayout(new BorderLayout());
 
         btnSave = new JButton("Mentés");
         btnCancel = new JButton("Mégsem");
@@ -30,17 +30,16 @@ public abstract class AbstractWizard<T extends WizardType> extends JPanel implem
         btnCancel.addActionListener(this::cancelEditing);
 
         if (wizardPage instanceof AbstractPanel wizardPanel) {
-            wizardPanel.setAlignmentX(LEFT_ALIGNMENT);
             wizardPanel.initializeLayout();
-            add(createValidationPanel());
-            add(wizardPanel);
-            add(createBottomButtonPanel());
+
+            add(wizardPanel, BorderLayout.NORTH);
+            add(new JScrollPane(createValidationPanel()), BorderLayout.CENTER);
+            add(createBottomButtonPanel(), BorderLayout.PAGE_END);
         }
     }
 
     private Box createValidationPanel() {
         Box validationPanel = Box.createVerticalBox();
-        validationPanel.setAlignmentX(LEFT_ALIGNMENT);
         validator.getErrors().forEach(error -> {
             decorateErrorLabel(error);
             validationPanel.add(error);
@@ -67,7 +66,6 @@ public abstract class AbstractWizard<T extends WizardType> extends JPanel implem
         panel.add(Box.createGlue());
         panel.add(btnCancel);
         panel.add(Box.createGlue());
-        panel.setAlignmentX(LEFT_ALIGNMENT);
         return panel;
     }
 
