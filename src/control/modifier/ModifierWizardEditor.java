@@ -10,7 +10,7 @@ public abstract class ModifierWizardEditor<T extends Modifier> extends MouseAdap
 
     private Window parent;
 
-    ModifierWizardEditor(Window parent){
+    public ModifierWizardEditor(Window parent){
         this.parent = parent;
     }
 

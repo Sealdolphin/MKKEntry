@@ -1,6 +1,6 @@
 package view.main.panel.wizard.barcode.panel;
 
-import control.modifier.Barcode;
+import data.modifier.Barcode;
 import view.ImagePanel;
 import view.main.panel.AbstractPanel;
 import view.main.panel.utility.LabeledComponent;

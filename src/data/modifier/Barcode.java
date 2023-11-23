@@ -1,6 +1,9 @@
-package control.modifier;
+package data.modifier;
 
 
+import control.modifier.Modifier;
+import control.modifier.ModifierDialog;
+import control.modifier.ModifierWizardEditor;
 import control.utility.devices.BarCodeReaderListenerFactory;
 import data.wizard.WizardType;
 import org.json.simple.JSONObject;

@@ -1,6 +1,7 @@
 package control.modifier;
 
 import data.EntryProfile;
+import data.modifier.Barcode;
 import org.json.simple.JSONObject;
 import view.BarcodePanel;
 

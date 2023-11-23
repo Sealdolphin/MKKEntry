@@ -1,14 +1,14 @@
 package control;
 
-import control.modifier.Barcode;
 import control.utility.devices.BarCodeReaderListenerFactory;
 import data.AppData;
 import data.ProfileData;
-import view.main.LoadingScreen;
-import view.main.MainWindow;
+import data.modifier.Barcode;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import view.main.LoadingScreen;
+import view.main.MainWindow;
 
 import javax.swing.*;
 import java.awt.*;

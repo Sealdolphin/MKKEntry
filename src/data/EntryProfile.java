@@ -3,6 +3,7 @@ package data;
 
 import control.UIHandler;
 import control.modifier.*;
+import data.modifier.Barcode;
 import data.util.ReadingFlag;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

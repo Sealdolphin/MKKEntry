@@ -4,6 +4,7 @@ package data;
 import control.modifier.Discount;
 import control.modifier.Transaction;
 
+import javax.swing.event.ListDataListener;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
 import java.io.Serializable;
@@ -33,7 +34,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
         Entry conflict;
         do {
             newID = Integer.toString(1000 + (int)(Math.random() * (9999 - 5000) + 1));
-            conflict = getDataById(newID);
+            conflict = getElementById(newID);
         } while (conflict == null);
         return newID;
     }
@@ -73,12 +74,22 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     }
 
     @Override
-    public Entry getDataByIndex(int index) {
+    public Entry getElementAt(int index) {
         return entryList.get(index);
     }
 
     @Override
-    public Entry getDataById(String id) {
+    public void addListDataListener(ListDataListener l) {
+
+    }
+
+    @Override
+    public void removeListDataListener(ListDataListener l) {
+
+    }
+
+    @Override
+    public Entry getElementById(String id) {
         return entryList.stream().filter(entry -> entry.get(ID.ordinal()).equals(id)).findAny().orElse(null);
     }
 
@@ -98,13 +109,13 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     }
 
     @Override
-    public int getDataSize() {
+    public int getSize() {
         return entryList.size();
     }
 
     @Override
     public void addData(Entry data) throws IOException{
-        Entry conflict = getDataById(data.get(ID.ordinal()));
+        Entry conflict = getElementById(data.get(ID.ordinal()));
         if(conflict != null){
             lastSelectedEntry = conflict;
         } else {
@@ -127,6 +138,11 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
             lastSelectedEntry = entryList.get(0);
         else
             lastSelectedEntry = null;
+    }
+
+    @Override
+    public void updateSelection(Entry data) {
+        // Not implemented!
     }
 
     @Override

@@ -1,6 +1,5 @@
 package control.modifier;
 
-import control.Application;
 import control.utility.file.ExtensionFilter;
 import view.ImagePanel;
 
@@ -8,11 +7,12 @@ import javax.swing.*;
 import java.awt.*;
 
 //TODO: should be in package view!
+@Deprecated
 public abstract class ModifierDialog extends JDialog {
 
-    JPanel body;
-    JButton btnSave;
-    int result = -1;
+    public JPanel body;
+    public JButton btnSave;
+    public int result = -1;
 
     public static GridBagConstraints setConstraints(int x, int y, int w, int h){
         GridBagConstraints constraints = new GridBagConstraints();
@@ -24,7 +24,7 @@ public abstract class ModifierDialog extends JDialog {
         return constraints;
     }
 
-    ModifierDialog(Window parent, String strTitle){
+    public ModifierDialog(Window parent, String strTitle){
         super(parent,strTitle,ModalityType.APPLICATION_MODAL);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -35,7 +35,7 @@ public abstract class ModifierDialog extends JDialog {
     }
 
 
-    void finishDialog(Window parent){
+    public void finishDialog(Window parent){
         //Accept and Cancel buttons
         JButton btnCancel = new JButton("Mégse");
         btnCancel.addActionListener(e -> dispose());
@@ -79,7 +79,7 @@ public abstract class ModifierDialog extends JDialog {
         setResizable(false);
     }
 
-    int selectPicture(ImagePanel panelImg){
+    public int selectPicture(ImagePanel panelImg){
         JFileChooser fc = getPictureChooser();
         int dialogResult = fc.showOpenDialog(this);
         if (dialogResult == JFileChooser.APPROVE_OPTION) {
@@ -88,7 +88,7 @@ public abstract class ModifierDialog extends JDialog {
         return dialogResult;
     }
 
-    int open(){
+    public int open(){
         setVisible(true);
         while(true)
             if(!isVisible()) break;

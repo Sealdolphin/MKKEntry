@@ -1,6 +1,6 @@
 package view.main.panel.wizard.barcode;
 
-import control.modifier.Barcode;
+import data.modifier.Barcode;
 import data.wizard.WizardType;
 import view.main.panel.wizard.AbstractWizard;
 import view.main.panel.wizard.barcode.panel.BarcodeEditPanel;
