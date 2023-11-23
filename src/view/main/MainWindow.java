@@ -110,7 +110,7 @@ public class MainWindow extends JFrame {
         entryView.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 if((entryView.getSelectedRow() >= 0)){
-                    model.setSelection(model.getDataByIndex(entryView.convertRowIndexToModel(entryView.getSelectedRow())));
+                    model.setSelection(model.getElementAt(entryView.convertRowIndexToModel(entryView.getSelectedRow())));
                 }
             }
         });

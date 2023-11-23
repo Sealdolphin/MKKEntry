@@ -1,14 +1,17 @@
 package view.main.panel;
 
-import control.modifier.Barcode;
 import control.modifier.TicketType;
 import data.AppData;
 import data.Entry;
+import data.modifier.Barcode;
 import view.main.panel.wizard.barcode.BarcodeWizard;
 import view.main.panel.wizard.entryprofile.DataListView;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public abstract class AbstractPanel extends JPanel {
@@ -31,6 +34,12 @@ public abstract class AbstractPanel extends JPanel {
             model.addData(new Entry(String.valueOf(i), "name" + i, TicketType.emptyType()));
         }
 
+        List<Barcode> barcodes = new ArrayList<>();
+
+        for (int i = 0; i < 30; i++) {
+            barcodes.add(new Barcode("Test " + i , "TEST_" + i, "test/test" + i + ".jpg", "This the " + i + "th a test"));
+        }
+
         //JPanel panel = new BarcodeWizard(new Barcode("Test", "TEST", "test/test.jpg", "This is a test")); //new MainPanel(model, new NewAppController());
         //panel.initializeLayout();
 
@@ -41,7 +50,7 @@ public abstract class AbstractPanel extends JPanel {
                 new Barcode("Test 2", "TEST_2", "test/test2.jpg", "This is an another test"),
         }, new BarcodeWizard()));
         frame.pack();
-        frame.setMinimumSize(frame.getSize());
+        frame.setMinimumSize(new Dimension(640,480));
         frame.setVisible(true);
     }
 

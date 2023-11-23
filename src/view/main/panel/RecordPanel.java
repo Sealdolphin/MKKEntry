@@ -72,7 +72,7 @@ public class RecordPanel extends AbstractPanel implements SelectableComponent {
 
         if (!selectionEvent.getValueIsAdjusting()) {
             if((table.getSelectedRow() >= 0)){
-                model.setSelection(model.getDataByIndex(table.convertRowIndexToModel(table.getSelectedRow())));
+                model.setSelection(model.getElementAt(table.convertRowIndexToModel(table.getSelectedRow())));
             }
         }
     }

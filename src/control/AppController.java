@@ -179,9 +179,9 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
 
     public EntryProfile chooseProfile(){
         //Choosing profile
-        Object[] profileObjs = new Object[profiles.getDataSize()];
+        Object[] profileObjs = new Object[profiles.getSize()];
         for (int i = 0; i < profileObjs.length; i++) {
-            profileObjs[i] = profiles.getDataByIndex(i);
+            profileObjs[i] = profiles.getElementAt(i);
         }
         return (EntryProfile) JOptionPane.showInputDialog(
                 null,
@@ -261,10 +261,10 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
     @Override
     public void exportList(PrintWriter writer, EntryFilter filter) {
         LoadingScreen progress = new LoadingScreen();
-        progress.setTasks(model.getDataSize());
-        for (int i = 0; i < model.getDataSize(); i++) {
-            progress.setProgress("Rekordok exportálása: 1" + i + "/" + model.getDataSize());
-            Entry data = model.getDataByIndex(i);
+        progress.setTasks(model.getSize());
+        for (int i = 0; i < model.getSize(); i++) {
+            progress.setProgress("Rekordok exportálása: 1" + i + "/" + model.getSize());
+            Entry data = model.getElementAt(i);
             writer.println(data.applyFilter(filter));
         }
         progress.done("Az Exportálás befejeződött!");
@@ -303,7 +303,7 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
     @Override
     public void updateEntry(String id, Entry newData) {
         try {
-            model.replaceData(model.getDataById(id), newData);
+            model.replaceData(model.getElementById(id), newData);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -350,7 +350,7 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
                     Entry entry;
                     if (model.getSelectedData() != null &&
                             activeProfile.enteringModifiesEntry(model.getSelectedData().getID())) {                     // Check if Entry Profile modifies ID upon entering (and selected ID matches the required mask)
-                        Entry existing = model.getDataById(entryID);                                                    // If true, check if the new entry ID exists already!
+                        Entry existing = model.getElementById(entryID);                                                    // If true, check if the new entry ID exists already!
                         if (existing != null) {
                             entry = existing;                                                                           // If it does, continue with the existing record!!
                         } else {
@@ -359,7 +359,7 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
                             model.replaceData(model.getSelectedData(), entry);                                          // Replace the old Entry with the newly generated Entry!
                         }
                     } else {                                                                                            // If Entry Profile does NOT modify ID, or selected ID does not match the mask:
-                        entry = model.getDataById(entryID);                                                             // Search for the Entry based on the entered ID
+                        entry = model.getElementById(entryID);                                                             // Search for the Entry based on the entered ID
                         if (entry == null) {
                             entry = activeProfile.generateNewEntry(entryID);                                            // If entered ID does not exist, create a new Entry with said ID
                             if (entry == null)
@@ -371,10 +371,10 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
                 }
                 case FL_IS_DELETE -> {
                     if (JOptionPane.showConfirmDialog(null, uh.getUIStr("MSG", "CONFIRM"), uh.getUIStr("MSG", "DELETE"), JOptionPane.OK_CANCEL_OPTION, WARNING_MESSAGE) == OK_OPTION)
-                        model.removeData(model.getDataById(entryID));
+                        model.removeData(model.getElementById(entryID));
                 }
                 case FL_IS_LEAVING -> {
-                    Entry leaving = model.getDataById(entryID);
+                    Entry leaving = model.getElementById(entryID);
                     if (leaving == null) throw new IOException(uh.getUIStr("ERR", "NO_MATCH"));
                     leaving.Leave();
                 }

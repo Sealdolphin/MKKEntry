@@ -2,8 +2,8 @@ package data;
 
 import view.StartupDialog;
 
+import javax.swing.event.ListDataListener;
 import java.io.IOException;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +24,22 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
     @Override
-    public EntryProfile getDataByIndex(int index) {
+    public EntryProfile getElementAt(int index) {
         return profiles.get(index);
     }
 
     @Override
-    public EntryProfile getDataById(String id) {
+    public void addListDataListener(ListDataListener l) {
+
+    }
+
+    @Override
+    public void removeListDataListener(ListDataListener l) {
+
+    }
+
+    @Override
+    public EntryProfile getElementById(String id) {
         return profiles.stream().filter(p -> p.toString().equals(id)).findAny().orElse(null);
     }
 
@@ -49,7 +59,7 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
     @Override
-    public int getDataSize() {
+    public int getSize() {
         return profiles.size();
     }
 
@@ -63,6 +73,11 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     @Override
     public void removeData(EntryProfile data) {
         profiles.remove(data);
+    }
+
+    @Override
+    public void updateSelection(EntryProfile data) {
+        // Not implemented
     }
 
     @Override

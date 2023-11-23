@@ -1,13 +1,12 @@
 package data;
 
 
+import javax.swing.*;
 import java.io.IOException;
 
-public interface DataModel<T> {
+public interface DataModel<T> extends ListModel<T> {
 
-    T getDataByIndex(int index);
-
-    T getDataById(String id);
+    T getElementById(String id);
 
     T getSelectedData();
 
@@ -15,11 +14,12 @@ public interface DataModel<T> {
 
     void setSelection(T data);
 
-    int getDataSize();
-
     void addData(T data) throws IOException;
 
     void removeData(T data);
 
+    void updateSelection(T data);
+
+    @Deprecated
     void replaceData(T oldData, T newData) throws IOException;
 }

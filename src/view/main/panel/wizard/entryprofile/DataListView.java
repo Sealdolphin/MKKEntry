@@ -33,7 +33,7 @@ public class DataListView<T extends WizardType> extends JPanel {
 
         btnAdd.addActionListener(this::addData);
         btnRemove.addActionListener(this::removeData);
-        wizard.changeModel(list.getSelectedValue());
+        //wizard.changeModel(list.getSelectedValue());
     }
 
     public JPanel createListPanel() {
@@ -59,19 +59,22 @@ public class DataListView<T extends WizardType> extends JPanel {
 
     private void addData(ActionEvent event) {
         // TODO: call wizard to create new data and select it too
+
     }
 
     private void removeData(ActionEvent event) {
         // TODO: remove selection from data
+        T selection = list.getSelectedValue();
+
         list.clearSelection();
         wizard.changeModel(null);
     }
 
-    public void update(T[] updatedModel) {
+    public void update(T updatedModel) {
         // TODO: not sure about that...
         // TODO: should get JList or list model as update!
         // TODO: should exist a type for wizard lists... EditableList
-        list.setListData(updatedModel);
+        //list.setListData();
     }
 
 
