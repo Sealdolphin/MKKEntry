@@ -4,8 +4,6 @@ import control.modifier.TicketType;
 import data.AppData;
 import data.Entry;
 import data.modifier.Barcode;
-import view.main.panel.wizard.barcode.BarcodeWizard;
-import view.main.panel.wizard.entryprofile.DataListView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,10 +43,7 @@ public abstract class AbstractPanel extends JPanel {
 
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.add(new DataListView<>(new Barcode[]{
-                new Barcode("Test", "TEST", "test/test.jpg", "This is a test"),
-                new Barcode("Test 2", "TEST_2", "test/test2.jpg", "This is an another test"),
-        }, new BarcodeWizard()));
+        //frame.add(null);
         frame.pack();
         frame.setMinimumSize(new Dimension(640,480));
         frame.setVisible(true);

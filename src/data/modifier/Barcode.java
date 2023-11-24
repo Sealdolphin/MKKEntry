@@ -39,27 +39,25 @@ public class Barcode implements Serializable, Modifier, WizardType {
     @Deprecated
     private boolean hasLink = false;
 
+    public Barcode() {}
+
+    @Deprecated
     public Barcode(String name, String meta, String picture, String desc){
-        this.name = name;
-        metaData = meta;
-        picturePath = picture;
-        description = desc;
+        this.setName(name);
+        setMetaData(meta);
+        setPicturePath(picture);
+        setDescription(desc);
     }
 
     public Barcode(Barcode other) {
-        name = other.name;
-        metaData = other.metaData;
-        picturePath = other.picturePath;
-        description = other.description;
+        setName(other.getName());
+        setMetaData(other.getMetaData());
+        setPicturePath(other.getPicturePath());
+        setDescription(other.getDescription());
     }
 
     public BarcodePanel createBarcodePanel() {
-        return new BarcodePanel(picturePath,description);
-    }
-
-    @Override
-    public String toString(){
-        return name;
+        return new BarcodePanel(getPicturePath(), getDescription());
     }
 
     @Override
@@ -78,7 +76,7 @@ public class Barcode implements Serializable, Modifier, WizardType {
 
     @Override
     public boolean validate() {
-        return name != null && !name.isEmpty() && metaData != null && !metaData.isEmpty();
+        return getName() != null && !getName().isEmpty() && getMetaData() != null && !getMetaData().isEmpty();
     }
 
     @Deprecated
@@ -91,14 +89,23 @@ public class Barcode implements Serializable, Modifier, WizardType {
         return hasLink;
     }
 
+    /**
+     * The data of the barcode
+     */
     public String getMetaData() {
         return metaData;
     }
 
+    /**
+     * Short description of the barcode
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * The image path of the picture containing the barcode
+     */
     public String getPicturePath() {
         return picturePath;
     }
@@ -110,6 +117,29 @@ public class Barcode implements Serializable, Modifier, WizardType {
         desc = jsonObject.get("description").toString();
         picture = "Barcodes" + File.separator + jsonObject.get("imagePath").toString();
         return new Barcode(name,meta,picture,desc);
+    }
+
+    /**
+     * The name of the barcode
+     */
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setMetaData(String metaData) {
+        this.metaData = metaData;
+    }
+
+    public void setPicturePath(String picturePath) {
+        this.picturePath = picturePath;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Deprecated
@@ -136,10 +166,10 @@ public class Barcode implements Serializable, Modifier, WizardType {
     @Deprecated
     private class BarcodeWizard extends ModifierDialog {
 
-        private ImagePanel panelImg = new ImagePanel(picturePath);
+        private ImagePanel panelImg = new ImagePanel(getPicturePath());
         private JTextField tfName = new JTextField(name);
-        private JTextField tfTooltip = new JTextField(description);
-        private JTextField tfMetaData = new JTextField(metaData);
+        private JTextField tfTooltip = new JTextField(getDescription());
+        private JTextField tfMetaData = new JTextField(getMetaData());
 
         BarcodeWizard(Window parent) {
             //Set super
@@ -151,12 +181,12 @@ public class Barcode implements Serializable, Modifier, WizardType {
             JButton btnSetPic = new JButton("Kép módosítása");
             btnSetPic.addActionListener(e -> {
                 if(selectPicture(panelImg) == APPROVE_OPTION){
-                    metaData = null;
-                    while (metaData == null) {
+                    setMetaData(null);
+                    while (getMetaData() == null) {
                         //Read new code
                         this.setAlwaysOnTop(true);
                         BarCodeReaderListenerFactory.generateReader(tfMetaData::setText,"Szkenneld be a kódot (ESC a kilépéshez)!",true);
-                        metaData = tfMetaData.getText();
+                        setMetaData(tfMetaData.getText());
                     }
                 }
             });
@@ -179,10 +209,10 @@ public class Barcode implements Serializable, Modifier, WizardType {
 
         private void saveBarcode() {
             if(!tfMetaData.getText().isEmpty()) {
-                metaData = tfMetaData.getText();
-                picturePath = panelImg.getPath();
+                setMetaData(tfMetaData.getText());
+                setPicturePath(panelImg.getPath());
                 name = tfName.getText();
-                description = tfTooltip.getText();
+                setDescription(tfTooltip.getText());
                 super.result = 0;
                 dispose();
             } else {

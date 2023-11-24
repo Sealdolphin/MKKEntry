@@ -59,16 +59,6 @@ public class BarcodeEditPanel extends AbstractPanel implements WizardPage<Barcod
     }
 
     @Override
-    public Barcode generateWizardType() {
-        return new Barcode(
-                compName.getComponent().getText(),
-                tfBarcode.getText(),
-                compBtnBrowse.getLabel().getText(),
-                compDescription.getComponent().getText()
-        );
-    }
-
-    @Override
     public void refreshPage(Barcode model) {
         if (model != null) {
             compName.getComponent().setText(model.toString());

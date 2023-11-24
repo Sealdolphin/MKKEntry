@@ -146,6 +146,11 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     }
 
     @Override
+    public void deleteSelected() {
+        // Not implemented!
+    }
+
+    @Override
     public void replaceData(Entry oldData, Entry newData) throws IOException {
         removeData(oldData);
         addData(newData);

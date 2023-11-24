@@ -81,6 +81,11 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
     @Override
+    public void deleteSelected() {
+        // Not implemented
+    }
+
+    @Override
     public void replaceData(EntryProfile oldData, EntryProfile newData) throws IOException {
         if(!oldData.toString().equals(newData.toString())){
             addData(newData);

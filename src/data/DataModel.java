@@ -20,6 +20,8 @@ public interface DataModel<T> extends ListModel<T> {
 
     void updateSelection(T data);
 
+    void deleteSelected();
+
     @Deprecated
     void replaceData(T oldData, T newData) throws IOException;
 }

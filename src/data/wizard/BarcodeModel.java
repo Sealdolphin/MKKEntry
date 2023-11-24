@@ -72,6 +72,11 @@ public class BarcodeModel implements DataModel<Barcode> {
     }
 
     @Override
+    public void deleteSelected() {
+        removeData(selection);
+    }
+
+    @Override
     public void replaceData(Barcode oldData, Barcode newData) {
         // Not implemented
     }

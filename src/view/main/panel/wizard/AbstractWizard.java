@@ -1,5 +1,6 @@
 package view.main.panel.wizard;
 
+import control.wizard.WizardEditor;
 import data.wizard.WizardType;
 import view.main.panel.AbstractPanel;
 import view.validation.ComponentValidator;
@@ -11,14 +12,13 @@ import java.awt.event.ActionEvent;
 public abstract class AbstractWizard<T extends WizardType> extends JPanel implements Wizard {
 
     private static final Font FONT_ERROR = new Font("Arial", Font.BOLD, 14);
-    protected T model;
+    private WizardEditor<T> editor;
     protected WizardPage<T> wizardPage;
     protected ComponentValidator validator;
     private final JButton btnSave;
     private final JButton btnCancel;
 
-    protected AbstractWizard() {
-        this.model = null;
+    protected AbstractWizard(WizardEditor<T> editor) {
         validator = new ComponentValidator();
         createWizardPage();
         setLayout(new BorderLayout());
@@ -71,13 +71,13 @@ public abstract class AbstractWizard<T extends WizardType> extends JPanel implem
 
     @Override
     public void cancelEditing(ActionEvent event) {
-        wizardPage.refreshPage(model);
+        wizardPage.refreshPage(editor.getInitialModel());
     }
 
     @Override
     public void doSaveEntity(ActionEvent event) {
         if (validator.validate()) {
-            this.model = wizardPage.generateWizardType();
+            // Generate new entity with editor
             // TODO: alert list of model change!!
         }
     }
