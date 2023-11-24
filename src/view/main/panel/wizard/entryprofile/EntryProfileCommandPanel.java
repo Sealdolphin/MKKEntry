@@ -1,4 +1,4 @@
-package view.main.panel.wizard.entryprofile.panel;
+package view.main.panel.wizard.entryprofile;
 
 import data.entry.EntryCommand;
 import data.wizard.EntryProfileCommandList;

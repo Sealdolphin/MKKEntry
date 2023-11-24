@@ -1,4 +1,4 @@
-package view.main.panel.wizard.barcode.panel;
+package view.main.panel.wizard.barcode;
 
 import data.modifier.Barcode;
 import view.ImagePanel;

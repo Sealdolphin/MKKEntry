@@ -4,7 +4,6 @@ import control.wizard.WizardEditor;
 import data.modifier.Barcode;
 import data.wizard.WizardType;
 import view.main.panel.wizard.AbstractWizard;
-import view.main.panel.wizard.barcode.panel.BarcodeEditPanel;
 
 public class BarcodeWizard extends AbstractWizard<Barcode> {
 
