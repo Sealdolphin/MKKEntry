@@ -1,35 +1,25 @@
 package control.wizard;
 
 import data.wizard.WizardType;
-
-import javax.swing.*;
-import java.util.List;
-import java.util.function.Consumer;
+import view.main.panel.wizard.WizardPage;
 
 public abstract class WizardEditor<T extends WizardType> {
 
     protected T data;
-    private final T initialData;
 
-    private List<Consumer<?>> setters;
+    protected WizardPage<T> view;
 
-    public WizardEditor(T data) {
+    public WizardEditor(T data, WizardPage<T> view) {
         this.data = data;
-        this.initialData = data;
+        this.view = view;
     }
 
-    public abstract JPanel createView();
-
-    public abstract T createNew();
-
-    public void addConsumer(Consumer<?> consumer) {
-        setters.add(consumer);
+    public final WizardPage<T> createView() {
+        return view;
     }
 
-    public T getInitialModel() {
-        return initialData;
+    public void updateView() {
+        view.refreshPage(data);
     }
-
-
 
 }

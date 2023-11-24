@@ -71,7 +71,7 @@ public abstract class AbstractWizard<T extends WizardType> extends JPanel implem
 
     @Override
     public void cancelEditing(ActionEvent event) {
-        wizardPage.refreshPage(editor.getInitialModel());
+
     }
 
     @Override

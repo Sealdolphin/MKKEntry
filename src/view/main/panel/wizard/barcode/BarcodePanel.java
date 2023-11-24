@@ -9,7 +9,7 @@ import view.validation.ComponentValidator;
 
 import javax.swing.*;
 
-public class BarcodeEditPanel extends AbstractPanel implements WizardPage<Barcode> {
+public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
 
     private final ImagePanel imgBarcodePicture;
     private final JTextField tfBarcode;
@@ -17,7 +17,7 @@ public class BarcodeEditPanel extends AbstractPanel implements WizardPage<Barcod
     private final LabeledComponent<JTextField> compName;
     private final LabeledComponent<JTextField> compDescription;
 
-    public BarcodeEditPanel(ComponentValidator validator) {
+    public BarcodePanel(ComponentValidator validator) {
         imgBarcodePicture = new ImagePanel(null);
         compBtnBrowse = new LabeledComponent<>("", new JButton("Tallózás"));
 
@@ -60,12 +60,10 @@ public class BarcodeEditPanel extends AbstractPanel implements WizardPage<Barcod
 
     @Override
     public void refreshPage(Barcode model) {
-        if (model != null) {
-            compName.getComponent().setText(model.toString());
-            compDescription.getComponent().setText(model.getDescription());
-            tfBarcode.setText(model.getMetaData());
-            compBtnBrowse.getLabel().setText(model.getPicturePath());
-        }
+        compName.getComponent().setText(model.getName());
+        compDescription.getComponent().setText(model.getDescription());
+        tfBarcode.setText(model.getMetaData());
+        compBtnBrowse.getLabel().setText(model.getPicturePath());
     }
 
     private boolean isNameValid() {

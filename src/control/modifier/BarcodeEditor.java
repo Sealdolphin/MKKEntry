@@ -2,23 +2,27 @@ package control.modifier;
 
 import control.wizard.WizardEditor;
 import data.modifier.Barcode;
-import view.main.panel.wizard.barcode.BarcodeWizard;
-
-import javax.swing.*;
+import view.main.panel.wizard.barcode.BarcodePanel;
 
 public class BarcodeEditor extends WizardEditor<Barcode> {
 
-    public BarcodeEditor(Barcode data) {
-        super(data);
+    public BarcodeEditor(Barcode data, BarcodePanel view) {
+        super(data, view);
     }
 
-    @Override
-    public JPanel createView() {
-        return new BarcodeWizard(this).getPanel();
+    public void setBarcodeName(String name) {
+        data.setName(name);
     }
 
-    @Override
-    public Barcode createNew() {
-        return new Barcode(data);
+    public void setBarcodeDescription(String description) {
+        data.setDescription(description);
+    }
+
+    public void setBarcodeMetadata(String metadata) {
+        data.setMetaData(metadata);
+    }
+
+    public void setImagePath(String imagePath) {
+        data.setImagePath(imagePath);
     }
 }

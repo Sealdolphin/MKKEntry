@@ -38,13 +38,6 @@ public class EntryProfileCommandPanel extends AbstractPanel implements WizardPag
     }
 
     @Override
-    public EntryProfileCommandList generateWizardType() {
-        // TODO: idk.
-
-        return null;
-    }
-
-    @Override
     public void refreshPage(EntryProfileCommandList model) {
         //TODO: add ticket types
         ComboBoxModel<String> ticketTypes = new DefaultComboBoxModel<>();

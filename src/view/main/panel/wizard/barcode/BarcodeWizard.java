@@ -14,7 +14,7 @@ public class BarcodeWizard extends AbstractWizard<Barcode> {
     @Override
     public void createWizardPage() {
         if (wizardPage == null) {
-            wizardPage = new BarcodeEditPanel(validator);
+            wizardPage = new BarcodePanel(validator);
         }
     }
 
@@ -22,7 +22,7 @@ public class BarcodeWizard extends AbstractWizard<Barcode> {
     public void changeModel(WizardType model) {
         setVisible(model != null);
         if (model instanceof Barcode barcodeModel) {
-            wizardPage.refreshPage(barcodeModel);
+            wizardPage.refreshPage(null);
         }
     }
 }

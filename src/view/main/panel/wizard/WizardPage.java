@@ -5,5 +5,4 @@ import data.wizard.WizardType;
 public interface WizardPage<T extends WizardType> {
 
     void refreshPage(T model);
-
 }

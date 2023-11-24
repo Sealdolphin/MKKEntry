@@ -45,14 +45,14 @@ public class Barcode implements Serializable, Modifier, WizardType {
     public Barcode(String name, String meta, String picture, String desc){
         this.setName(name);
         setMetaData(meta);
-        setPicturePath(picture);
+        setImagePath(picture);
         setDescription(desc);
     }
 
     public Barcode(Barcode other) {
         setName(other.getName());
         setMetaData(other.getMetaData());
-        setPicturePath(other.getPicturePath());
+        setImagePath(other.getPicturePath());
         setDescription(other.getDescription());
     }
 
@@ -134,7 +134,7 @@ public class Barcode implements Serializable, Modifier, WizardType {
         this.metaData = metaData;
     }
 
-    public void setPicturePath(String picturePath) {
+    public void setImagePath(String picturePath) {
         this.picturePath = picturePath;
     }
 
@@ -210,7 +210,7 @@ public class Barcode implements Serializable, Modifier, WizardType {
         private void saveBarcode() {
             if(!tfMetaData.getText().isEmpty()) {
                 setMetaData(tfMetaData.getText());
-                setPicturePath(panelImg.getPath());
+                setImagePath(panelImg.getPath());
                 name = tfName.getText();
                 setDescription(tfTooltip.getText());
                 super.result = 0;
