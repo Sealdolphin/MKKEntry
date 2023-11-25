@@ -1,5 +1,7 @@
 package view.main.panel.wizard.barcode;
 
+import control.modifier.BarcodeEditor;
+import control.wizard.WizardEditor;
 import data.modifier.Barcode;
 import view.ImagePanel;
 import view.main.panel.AbstractPanel;
@@ -65,6 +67,17 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
         tfBarcode.setText(model.getMetaData());
         compBtnBrowse.getLabel().setText(model.getPicturePath());
     }
+
+    @Override
+    public void saveData(WizardEditor<Barcode> controller) {
+        if (controller instanceof BarcodeEditor editor) {
+            editor.setBarcodeName(compName.getComponent().getText());
+            editor.setBarcodeDescription(compDescription.getComponent().getText());
+            editor.setBarcodeMetadata(tfBarcode.getText());
+            editor.setBarcodeImagePath(compBtnBrowse.getLabel().getText());
+        }
+    }
+
 
     private boolean isNameValid() {
         return !compName.getComponent().getText().isBlank();

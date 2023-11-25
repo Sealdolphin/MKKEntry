@@ -12,15 +12,17 @@ import java.awt.event.ActionEvent;
 public abstract class AbstractWizard<T extends WizardType> extends JPanel implements Wizard {
 
     private static final Font FONT_ERROR = new Font("Arial", Font.BOLD, 14);
-    private WizardEditor<T> editor;
-    protected WizardPage<T> wizardPage;
+    private final WizardEditor<T> editor;
+    private final WizardPage<T> wizardPage;
     protected ComponentValidator validator;
     private final JButton btnSave;
     private final JButton btnCancel;
 
     protected AbstractWizard(WizardEditor<T> editor) {
+        this.editor = editor;
+        wizardPage = editor.createView();
         validator = new ComponentValidator();
-        createWizardPage();
+
         setLayout(new BorderLayout());
 
         btnSave = new JButton("Mentés");
@@ -71,18 +73,15 @@ public abstract class AbstractWizard<T extends WizardType> extends JPanel implem
 
     @Override
     public void cancelEditing(ActionEvent event) {
-
+        editor.updateView();
     }
 
     @Override
     public void doSaveEntity(ActionEvent event) {
         if (validator.validate()) {
-            // Generate new entity with editor
-            // TODO: alert list of model change!!
+            wizardPage.saveData(editor);
         }
     }
-
-    public abstract void createWizardPage();
 
     @Override
     public JPanel getPanel() {

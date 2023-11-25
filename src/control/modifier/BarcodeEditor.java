@@ -22,7 +22,7 @@ public class BarcodeEditor extends WizardEditor<Barcode> {
         data.setMetaData(metadata);
     }
 
-    public void setImagePath(String imagePath) {
+    public void setBarcodeImagePath(String imagePath) {
         data.setImagePath(imagePath);
     }
 }

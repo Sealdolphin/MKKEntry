@@ -1,5 +1,6 @@
 package view.main.panel.wizard.entryprofile;
 
+import control.wizard.WizardEditor;
 import data.entry.EntryCommand;
 import data.wizard.EntryProfileCommandList;
 import view.main.panel.AbstractPanel;
@@ -42,5 +43,10 @@ public class EntryProfileCommandPanel extends AbstractPanel implements WizardPag
         //TODO: add ticket types
         ComboBoxModel<String> ticketTypes = new DefaultComboBoxModel<>();
         components.forEach(labeledCommand -> labeledCommand.getComponent().setModel(ticketTypes));
+    }
+
+    @Override
+    public void saveData(WizardEditor<EntryProfileCommandList> controller) {
+
     }
 }
