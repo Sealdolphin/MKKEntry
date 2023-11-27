@@ -2,7 +2,6 @@ package control.wizard;
 
 import data.DataModel;
 import data.wizard.WizardType;
-import view.main.panel.wizard.Wizard;
 import view.main.panel.wizard.entryprofile.DataListView;
 
 import java.awt.event.ActionEvent;

@@ -6,6 +6,7 @@ import data.wizard.EntryProfileCommandList;
 import view.main.panel.AbstractPanel;
 import view.main.panel.utility.LabeledComponent;
 import view.main.panel.wizard.WizardPage;
+import view.validation.ComponentValidator;
 
 import javax.swing.*;
 import java.util.List;
@@ -47,6 +48,11 @@ public class EntryProfileCommandPanel extends AbstractPanel implements WizardPag
 
     @Override
     public void saveData(WizardEditor<EntryProfileCommandList> controller) {
+
+    }
+
+    @Override
+    public void setupValidation(ComponentValidator validator) {
 
     }
 }

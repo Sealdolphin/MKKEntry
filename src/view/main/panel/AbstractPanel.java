@@ -1,15 +1,16 @@
 package view.main.panel;
 
 import control.modifier.TicketType;
+import control.wizard.BarcodeWizard;
+import control.wizard.WizardController;
 import data.AppData;
 import data.Entry;
 import data.modifier.Barcode;
+import data.wizard.BarcodeModel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public abstract class AbstractPanel extends JPanel {
@@ -32,18 +33,15 @@ public abstract class AbstractPanel extends JPanel {
             model.addData(new Entry(String.valueOf(i), "name" + i, TicketType.emptyType()));
         }
 
-        List<Barcode> barcodes = new ArrayList<>();
+        BarcodeModel barcodes = new BarcodeModel();
 
         for (int i = 0; i < 30; i++) {
-            barcodes.add(new Barcode("Test " + i , "TEST_" + i, "test/test" + i + ".jpg", "This the " + i + "th a test"));
+            barcodes.addData(new Barcode("Test " + i , "TEST_" + i, "test/test" + i + ".jpg", "This the " + i + "th a test"));
         }
-
-        //JPanel panel = new BarcodeWizard(new Barcode("Test", "TEST", "test/test.jpg", "This is a test")); //new MainPanel(model, new NewAppController());
-        //panel.initializeLayout();
 
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        //frame.add(null);
+        frame.add(new WizardController<>(barcodes, new BarcodeWizard()).createView());
         frame.pack();
         frame.setMinimumSize(new Dimension(640,480));
         frame.setVisible(true);

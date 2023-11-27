@@ -1,10 +1,12 @@
 package data.modifier;
 
 
+import control.modifier.BarcodeEditor;
 import control.modifier.Modifier;
 import control.modifier.ModifierDialog;
 import control.modifier.ModifierWizardEditor;
 import control.utility.devices.BarCodeReaderListenerFactory;
+import control.wizard.WizardEditor;
 import data.wizard.WizardType;
 import org.json.simple.JSONObject;
 import view.BarcodePanel;
@@ -140,6 +142,11 @@ public class Barcode implements Serializable, Modifier, WizardType {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public WizardEditor<Barcode> createWizard() {
+        return new BarcodeEditor(this, new view.main.panel.wizard.barcode.BarcodePanel());
     }
 
     @Deprecated

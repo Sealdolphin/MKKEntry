@@ -45,10 +45,10 @@ public class StatisticsWindow extends JFrame {
 
         panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
 
-        int allPeople = data.getDataSize();
+        int allPeople = data.getSize();
         int peopleEntered = 0, peopleLeft = 0;
         for (int i = 0; i < allPeople; i++) {
-            Entry e = data.getDataByIndex(i);
+            Entry e = data.getElementAt(i);
             if(e.hasEntered()){
                 peopleEntered++;
             }

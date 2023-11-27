@@ -1,5 +1,6 @@
 package view.main.panel.wizard;
 
+import control.wizard.Wizard;
 import control.wizard.WizardEditor;
 import data.wizard.WizardType;
 import view.main.panel.AbstractPanel;
@@ -7,29 +8,25 @@ import view.validation.ComponentValidator;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
-public abstract class AbstractWizard<T extends WizardType> extends JPanel implements Wizard {
+public class WizardPanel<T extends WizardType> extends JPanel {
 
     private static final Font FONT_ERROR = new Font("Arial", Font.BOLD, 14);
-    private final WizardEditor<T> editor;
-    private final WizardPage<T> wizardPage;
-    protected ComponentValidator validator;
+    private final ComponentValidator validator = new ComponentValidator();
     private final JButton btnSave;
     private final JButton btnCancel;
 
-    protected AbstractWizard(WizardEditor<T> editor) {
-        this.editor = editor;
-        wizardPage = editor.createView();
-        validator = new ComponentValidator();
+    public WizardPanel(Wizard wizard, WizardEditor<T> editor) {
+        WizardPage<T> wizardPage = editor.getView();
+        wizardPage.setupValidation(validator);
 
         setLayout(new BorderLayout());
 
         btnSave = new JButton("Mentés");
         btnCancel = new JButton("Mégsem");
 
-        btnSave.addActionListener(this::doSaveEntity);
-        btnCancel.addActionListener(this::cancelEditing);
+        btnSave.addActionListener(wizard::doSaveEntity);
+        btnCancel.addActionListener(wizard::cancelEditing);
 
         if (wizardPage instanceof AbstractPanel wizardPanel) {
             wizardPanel.initializeLayout();
@@ -69,22 +66,5 @@ public abstract class AbstractWizard<T extends WizardType> extends JPanel implem
         panel.add(btnCancel);
         panel.add(Box.createGlue());
         return panel;
-    }
-
-    @Override
-    public void cancelEditing(ActionEvent event) {
-        editor.updateView();
-    }
-
-    @Override
-    public void doSaveEntity(ActionEvent event) {
-        if (validator.validate()) {
-            wizardPage.saveData(editor);
-        }
-    }
-
-    @Override
-    public JPanel getPanel() {
-        return this;
     }
 }

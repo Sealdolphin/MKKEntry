@@ -1,5 +1,6 @@
 package data.wizard;
 
+import control.wizard.WizardEditor;
 import data.entry.EntryCommand;
 
 import java.util.ArrayList;
@@ -15,6 +16,11 @@ public class EntryProfileCommandList implements WizardType {
 
     public void addEntryCommand(EntryCommand command) {
         commands.add(command);
+    }
+
+    @Override
+    public WizardEditor<?> createWizard() {
+        return null;
     }
 
     //TODO: add ticket types here. Piros cipőben gyorsabban lehet futni.

@@ -1,11 +1,11 @@
 package view;
 
 import javax.swing.*;
-
 import java.awt.*;
 
 import static javax.swing.BoxLayout.PAGE_AXIS;
 
+@Deprecated
 public class BarcodePanel extends JPanel {
 
     public BarcodePanel(String imagePath, String tooltip) {

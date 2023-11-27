@@ -19,7 +19,7 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
     private final LabeledComponent<JTextField> compName;
     private final LabeledComponent<JTextField> compDescription;
 
-    public BarcodePanel(ComponentValidator validator) {
+    public BarcodePanel() {
         imgBarcodePicture = new ImagePanel(null);
         compBtnBrowse = new LabeledComponent<>("", new JButton("Tallózás"));
 
@@ -29,9 +29,6 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
         tfBarcode = new JTextField(TEXT_PANEL_DEFAULT_WIDTH);
         tfBarcode.setEditable(false);
         tfBarcode.setHorizontalAlignment(SwingConstants.CENTER);
-
-        validator.addComponent(compName.getComponent(), this::isNameValid, "Név nem lehet üres");
-        validator.addComponent(compDescription.getComponent(), this::isDescriptionValid, "Leírás nem lehet üres");
     }
 
     @Override
@@ -76,6 +73,12 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
             editor.setBarcodeMetadata(tfBarcode.getText());
             editor.setBarcodeImagePath(compBtnBrowse.getLabel().getText());
         }
+    }
+
+    @Override
+    public void setupValidation(ComponentValidator validator) {
+        validator.addComponent(compName.getComponent(), this::isNameValid, "Név nem lehet üres");
+        validator.addComponent(compDescription.getComponent(), this::isDescriptionValid, "Leírás nem lehet üres");
     }
 
 

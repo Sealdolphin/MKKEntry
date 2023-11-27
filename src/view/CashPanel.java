@@ -1,6 +1,5 @@
 package view;
 
-import control.modifier.Modifier;
 import control.modifier.Transaction;
 import data.DataModel;
 import data.Entry;
@@ -83,8 +82,8 @@ public class CashPanel extends JPanel {
             total += transaction.getValue();
         }
         //Calculate tickets
-        for (int i = 0; i < data.getDataSize(); i++) {
-            total += data.getDataByIndex(i).getAllFees();
+        for (int i = 0; i < data.getSize(); i++) {
+            total += data.getElementAt(i).getAllFees();
         }
         setCashValue(total);
     }
