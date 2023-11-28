@@ -21,11 +21,13 @@ public class WizardController<T extends WizardType> {
     }
 
     public void createNew(ActionEvent event) {
-
+        // TODO: implement this
     }
 
     public void removeData(ActionEvent event) {
-        wizardData.deleteSelected();
+        if (event instanceof DataModel<?>) {
+            wizardData.deleteSelected();
+        }
     }
 
 }

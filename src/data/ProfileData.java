@@ -2,6 +2,7 @@ package data;
 
 import view.StartupDialog;
 
+import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import java.io.IOException;
 import java.io.Serializable;
@@ -83,6 +84,11 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     @Override
     public void deleteSelected() {
         // Not implemented
+    }
+
+    @Override
+    public ListCellRenderer<EntryProfile> createRenderer() {
+        return null;
     }
 
     @Override

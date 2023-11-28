@@ -2,7 +2,9 @@ package data.wizard;
 
 import data.DataModel;
 import data.modifier.Barcode;
+import view.main.panel.wizard.barcode.BarcodeRenderer;
 
+import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.util.ArrayList;
@@ -74,6 +76,11 @@ public class BarcodeModel implements DataModel<Barcode> {
     @Override
     public void deleteSelected() {
         removeData(selection);
+    }
+
+    @Override
+    public ListCellRenderer<Barcode> createRenderer() {
+        return new BarcodeRenderer();
     }
 
     @Override

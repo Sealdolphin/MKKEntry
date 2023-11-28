@@ -35,9 +35,13 @@ public abstract class AbstractPanel extends JPanel {
 
         BarcodeModel barcodes = new BarcodeModel();
 
-        for (int i = 0; i < 30; i++) {
-            barcodes.addData(new Barcode("Test " + i , "TEST_" + i, "test/test" + i + ".jpg", "This the " + i + "th a test"));
-        }
+//        for (int i = 0; i < 30; i++) {
+//            barcodes.addData(new Barcode("Test " + i , "TEST_" + i, "test/test" + i + ".jpg", "This the " + i + "th a test"));
+//        }
+        barcodes.addData(new Barcode("Büfé", "FOOD_SALE", "Barcodes\\foodSale.png", "Hozott sütit, vagy üdítőt"));
+        barcodes.addData(new Barcode("Segítő", "HELP_SALE", "Barcodes\\helpSale.png", "Jelentkezett segítőnek"));
+        barcodes.addData(new Barcode("Kilépés", "LEAVE_GUEST", "Barcodes\\leaveGuest.png", "Olvass kiléptetéshez!"));
+        barcodes.addData(new Barcode("Törlés", "DELETE_GUEST", "Barcodes\\deleteGuest.png", "Olvass törléshez!"));
 
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

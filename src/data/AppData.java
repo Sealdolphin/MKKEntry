@@ -4,6 +4,7 @@ package data;
 import control.modifier.Discount;
 import control.modifier.Transaction;
 
+import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
@@ -148,6 +149,11 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     @Override
     public void deleteSelected() {
         // Not implemented!
+    }
+
+    @Override
+    public ListCellRenderer<Entry> createRenderer() {
+        return null;
     }
 
     @Override
