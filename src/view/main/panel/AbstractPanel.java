@@ -2,7 +2,6 @@ package view.main.panel;
 
 import control.modifier.TicketType;
 import control.wizard.BarcodeWizard;
-import control.wizard.WizardController;
 import data.AppData;
 import data.Entry;
 import data.modifier.Barcode;
@@ -45,7 +44,7 @@ public abstract class AbstractPanel extends JPanel {
 
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.add(new WizardController<>(barcodes, new BarcodeWizard()).createView());
+        frame.add(new BarcodeWizard(barcodes).getView());
         frame.pack();
         frame.setMinimumSize(new Dimension(640,480));
         frame.setVisible(true);

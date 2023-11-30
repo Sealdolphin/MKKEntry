@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,22 +52,22 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         Entry.DataColumn column = Entry.DataColumn.values()[columnIndex];
-        switch (column){
-            default: return String.class;   //Use default rendering (String)
-            case DISCOUNTS: return Discount.class;  //Use custom rendering (DiscountRenderer)
-            case ENTERED: return Boolean.class;   //Use checkbox (Boolean)
-        }
+        return switch (column) {
+            default -> String.class;   //Use default rendering (String)
+            case DISCOUNTS -> Discount.class;  //Use custom rendering (DiscountRenderer)
+            case ENTERED -> Boolean.class;   //Use checkbox (Boolean)
+        };
     }
 
     @Override
     public Object getValueAt(int row, int columnIndex) {
         Entry.DataColumn column = Entry.DataColumn.values()[columnIndex];
-        switch (column){
-            default: return super.getValueAt(row, columnIndex);                                     //Return a string
-            case PRICE: return entryList.get(row).getAllFees() + " Ft";
-            case DISCOUNTS: return entryList.get(row).getDiscounts();                               //Return discount list
-            case ENTERED: return Boolean.parseBoolean(entryList.get(row).isEntered().toString());   //Return entered state
-        }
+        return switch (column) {
+            default -> super.getValueAt(row, columnIndex);                                     //Return a string
+            case PRICE -> entryList.get(row).getAllFees() + " Ft";
+            case DISCOUNTS -> entryList.get(row).getDiscounts();                               //Return discount list
+            case ENTERED -> Boolean.parseBoolean(entryList.get(row).isEntered().toString());   //Return entered state
+        };
     }
 
     @Override
@@ -115,7 +116,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     }
 
     @Override
-    public void addData(Entry data) throws IOException{
+    public void addData(Entry data){
         Entry conflict = getElementById(data.get(ID.ordinal()));
         if(conflict != null){
             lastSelectedEntry = conflict;
@@ -142,7 +143,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     }
 
     @Override
-    public void updateSelection(Entry data) {
+    public void updateSelected(Entry data) {
         // Not implemented!
     }
 
@@ -162,12 +163,14 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
         addData(newData);
     }
 
+    @Serial
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         out.writeObject(entryList.toArray());
         out.writeObject(transactionList.toArray());
         out.writeObject(lastSelectedEntry);
     }
 
+    @Serial
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
         setColumnIdentifiers(Arrays.stream(Entry.DataColumn.values()).map(Entry.DataColumn::getName).toArray());
         //Reading entries

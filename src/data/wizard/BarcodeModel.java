@@ -57,13 +57,14 @@ public class BarcodeModel implements DataModel<Barcode> {
 
     @Override
     public void removeData(Barcode data) {
+        System.out.println(data);
         int removeIdx = barcodes.indexOf(data);
         barcodes.remove(data);
         listeners.forEach(l -> l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, removeIdx, removeIdx)));
     }
 
     @Override
-    public void updateSelection(Barcode data) {
+    public void updateSelected(Barcode data) {
         if (selection != null) {
             int selectedIdx = getSelectedIndex();
             barcodes.remove(selection);
@@ -75,7 +76,9 @@ public class BarcodeModel implements DataModel<Barcode> {
 
     @Override
     public void deleteSelected() {
-        removeData(selection);
+        if (selection != null) {
+            removeData(selection);
+        }
     }
 
     @Override

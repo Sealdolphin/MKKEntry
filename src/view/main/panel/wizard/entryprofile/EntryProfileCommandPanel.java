@@ -55,4 +55,9 @@ public class EntryProfileCommandPanel extends AbstractPanel implements WizardPag
     public void setupValidation(ComponentValidator validator) {
 
     }
+
+    @Override
+    public AbstractPanel getWizardEditPanel() {
+        return this;
+    }
 }

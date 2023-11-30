@@ -1,12 +1,13 @@
-package view.main.panel.wizard.entryprofile;
+package view.main.panel.wizard;
 
-import control.wizard.Wizard;
-import control.wizard.WizardController;
+import control.wizard.AbstractWizard;
 import data.DataModel;
 import data.wizard.WizardType;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class DataListView<T extends WizardType> extends JPanel {
 
@@ -16,22 +17,20 @@ public class DataListView<T extends WizardType> extends JPanel {
 
     private final JButton btnRemove;
 
-    public DataListView(DataModel<T> model, Wizard wizard, WizardController<T> controller) {
+    public DataListView(DataModel<T> model, WizardEditPanel<T> wizardEditPanel) {
         list = new JList<>(model);
         btnAdd = new JButton("Hozzáadás");
+        btnAdd.setActionCommand(AbstractWizard.WizardCommands.ADD.name());
+
         btnRemove = new JButton("Törlés");
+        btnRemove.setActionCommand(AbstractWizard.WizardCommands.DELETE.name());
 
         setLayout(new BorderLayout());
         add(createListPanel(), BorderLayout.CENTER);
-        add(wizard.getView(), BorderLayout.EAST);
+        add(wizardEditPanel, BorderLayout.EAST);
 
         list.setCellRenderer(model.createRenderer());
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        list.addListSelectionListener(wizard::selectElement);
-        list.addListSelectionListener(event -> model.setSelection(list.getSelectedValue()));
-
-        btnAdd.addActionListener(controller::createNew);
-        btnRemove.addActionListener(controller::removeData);
     }
 
     public JPanel createListPanel() {
@@ -48,5 +47,14 @@ public class DataListView<T extends WizardType> extends JPanel {
         editPanel.add(btnRemove);
         editPanel.add(Box.createGlue());
         return editPanel;
+    }
+
+    public void setListSelectionListener(ListSelectionListener listener) {
+        list.addListSelectionListener(listener);
+    }
+
+    public void setButtonActions(ActionListener listener) {
+        btnAdd.addActionListener(listener);
+        btnRemove.addActionListener(listener);
     }
 }

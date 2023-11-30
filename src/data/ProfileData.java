@@ -5,6 +5,7 @@ import view.StartupDialog;
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,9 +66,13 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
     @Override
-    public void addData(EntryProfile data) throws IOException
+    public void addData(EntryProfile data)
     {
-        if(profiles.stream().filter(p -> p.toString().equals(data.toString())).findAny().orElse(null) != null) throw new IOException(uh.getUIStr("ERR","PROFILE_CONFLICT"));
+        if(profiles.stream().filter(p -> p.toString().equals(data.toString())).findAny().orElse(null) != null) try {
+            throw new IOException(uh.getUIStr("ERR","PROFILE_CONFLICT"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         profiles.add(data);
     }
 
@@ -77,7 +82,7 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
     @Override
-    public void updateSelection(EntryProfile data) {
+    public void updateSelected(EntryProfile data) {
         // Not implemented
     }
 
@@ -92,7 +97,7 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
     @Override
-    public void replaceData(EntryProfile oldData, EntryProfile newData) throws IOException {
+    public void replaceData(EntryProfile oldData, EntryProfile newData) {
         if(!oldData.toString().equals(newData.toString())){
             addData(newData);
             removeData(oldData);
@@ -103,11 +108,13 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
 
+    @Serial
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         out.writeObject(profiles.toArray());
         out.writeObject(activeProfile);
     }
 
+    @Serial
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
         Object[] objs = (Object[]) in.readObject();
         profiles = new ArrayList<>();

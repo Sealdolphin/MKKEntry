@@ -1,7 +1,7 @@
 package view.main.panel.wizard.barcode;
 
 import data.modifier.Barcode;
-import view.util.MKKIcon;
+import view.main.panel.utility.LoadedIcon;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -19,7 +19,7 @@ public class BarcodeRenderer extends JPanel implements ListCellRenderer<Barcode>
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setBorder(new EmptyBorder(2, 2, 2, 2));
 
-        lbName.setIcon(new MKKIcon("Icons\\barcode-solid.png").getIcon());
+        lbName.setIcon(new LoadedIcon("Icons\\barcode-solid.png").getIcon());
         lbName.setFont(new Font("Arial", Font.BOLD, 22));
         lbDescription.setFont(new Font("Arial", Font.PLAIN, 12));
 

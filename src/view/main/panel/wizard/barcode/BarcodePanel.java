@@ -81,6 +81,11 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
         validator.addComponent(compDescription.getComponent(), this::isDescriptionValid, "Leírás nem lehet üres");
     }
 
+    @Override
+    public AbstractPanel getWizardEditPanel() {
+        return this;
+    }
+
 
     private boolean isNameValid() {
         return !compName.getComponent().getText().isBlank();

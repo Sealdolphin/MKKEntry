@@ -14,11 +14,11 @@ public interface DataModel<T> extends ListModel<T> {
 
     void setSelection(T data);
 
-    void addData(T data) throws IOException;
+    void addData(T data);
 
     void removeData(T data);
 
-    void updateSelection(T data);
+    void updateSelected(T data);
 
     void deleteSelected();
 

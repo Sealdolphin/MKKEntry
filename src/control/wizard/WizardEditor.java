@@ -19,12 +19,20 @@ public abstract class WizardEditor<T extends WizardType> {
     }
 
     public void updateView() {
-        view.refreshPage(data);
+        view.getWizardEditPanel().setVisible(data != null);
+        if (data != null) {
+            view.refreshPage(data);
+        }
     }
 
     public void updateSelection(T data) {
         this.data = data;
         updateView();
-    };
+    }
+
+    public T getSavedData() {
+        view.saveData(this);
+        return data;
+    }
 
 }

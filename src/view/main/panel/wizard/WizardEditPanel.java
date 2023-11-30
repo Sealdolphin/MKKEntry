@@ -1,7 +1,7 @@
 package view.main.panel.wizard;
 
+import control.wizard.AbstractWizard;
 import control.wizard.Wizard;
-import control.wizard.WizardEditor;
 import data.wizard.WizardType;
 import view.main.panel.AbstractPanel;
 import view.validation.ComponentValidator;
@@ -9,26 +9,27 @@ import view.validation.ComponentValidator;
 import javax.swing.*;
 import java.awt.*;
 
-public class WizardPanel<T extends WizardType> extends JPanel {
+public class WizardEditPanel<T extends WizardType> extends JPanel {
 
     private static final Font FONT_ERROR = new Font("Arial", Font.BOLD, 14);
     private final ComponentValidator validator = new ComponentValidator();
     private final JButton btnSave;
     private final JButton btnCancel;
 
-    public WizardPanel(Wizard wizard, WizardEditor<T> editor) {
-        WizardPage<T> wizardPage = editor.getView();
-        wizardPage.setupValidation(validator);
+    public WizardEditPanel(Wizard wizard, WizardPage<T> editPage) {
+        editPage.setupValidation(validator);
 
         setLayout(new BorderLayout());
 
         btnSave = new JButton("Mentés");
+        btnSave.setActionCommand(String.valueOf(AbstractWizard.WizardCommands.UPDATE));
+        btnSave.addActionListener(wizard::handleUserAction);
+
         btnCancel = new JButton("Mégsem");
+        btnCancel.setActionCommand(String.valueOf(AbstractWizard.WizardCommands.CANCEL));
+        btnCancel.addActionListener(wizard::handleUserAction);
 
-        btnSave.addActionListener(wizard::doSaveEntity);
-        btnCancel.addActionListener(wizard::cancelEditing);
-
-        if (wizardPage instanceof AbstractPanel wizardPanel) {
+        if (editPage instanceof AbstractPanel wizardPanel) {
             wizardPanel.initializeLayout();
 
             add(wizardPanel, BorderLayout.NORTH);
