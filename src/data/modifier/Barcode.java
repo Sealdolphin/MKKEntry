@@ -56,6 +56,7 @@ public class Barcode implements Serializable, Modifier, WizardType {
         setMetaData(other.getMetaData());
         setImagePath(other.getPicturePath());
         setDescription(other.getDescription());
+        setLink(other.hasLink());
     }
 
     public BarcodePanel createBarcodePanel() {
@@ -68,6 +69,9 @@ public class Barcode implements Serializable, Modifier, WizardType {
         if(obj == this) return true;
         if(!obj.getClass().equals(Barcode.class)) return false;
         Barcode other = (Barcode) obj;
+        if (metaData == null) {
+            return other.getMetaData() == null;
+        }
         return getMetaData().equals(other.getMetaData());
     }
 
@@ -173,10 +177,10 @@ public class Barcode implements Serializable, Modifier, WizardType {
     @Deprecated
     private class BarcodeWizard extends ModifierDialog {
 
-        private ImagePanel panelImg = new ImagePanel(getPicturePath());
-        private JTextField tfName = new JTextField(name);
-        private JTextField tfTooltip = new JTextField(getDescription());
-        private JTextField tfMetaData = new JTextField(getMetaData());
+        private final ImagePanel panelImg = new ImagePanel(getPicturePath());
+        private final JTextField tfName = new JTextField(name);
+        private final JTextField tfTooltip = new JTextField(getDescription());
+        private final JTextField tfMetaData = new JTextField(getMetaData());
 
         BarcodeWizard(Window parent) {
             //Set super

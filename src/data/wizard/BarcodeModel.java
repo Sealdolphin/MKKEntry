@@ -2,7 +2,7 @@ package data.wizard;
 
 import data.DataModel;
 import data.modifier.Barcode;
-import view.main.panel.wizard.barcode.BarcodeRenderer;
+import view.renderer.BarcodeRenderer;
 
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
@@ -13,8 +13,11 @@ import java.util.List;
 public class BarcodeModel implements DataModel<Barcode> {
 
     private final List<Barcode> barcodes;
+    private Barcode newDataUnderEdit = null;
     private Barcode selection = null;
     private final List<ListDataListener> listeners;
+
+    private final BarcodeRenderer renderer;
 
     public BarcodeModel() {
         this(new ArrayList<>());
@@ -23,6 +26,7 @@ public class BarcodeModel implements DataModel<Barcode> {
     public BarcodeModel(List<Barcode> barcodes) {
         this.barcodes = barcodes;
         listeners = new ArrayList<>();
+        this.renderer = new BarcodeRenderer();
     }
 
     @Override
@@ -45,27 +49,39 @@ public class BarcodeModel implements DataModel<Barcode> {
 
     @Override
     public void setSelection(Barcode data) {
+        if (newDataUnderEdit != null && !newDataUnderEdit.equals(data)) {
+            removeData(newDataUnderEdit);
+            clearDataEdit();
+        }
         this.selection = data;
     }
 
     @Override
     public void addData(Barcode data) {
         barcodes.add(data);
-        int addedIdx = barcodes.indexOf(data);
+        newDataUnderEdit = data;
+        int addedIdx = barcodes.size() - 1;
+        renderer.setEditIndex(addedIdx);
         listeners.forEach(l -> l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, addedIdx, addedIdx)));
     }
 
     @Override
     public void removeData(Barcode data) {
-        System.out.println(data);
+        System.out.println("Deleting " + data + " at " + barcodes.indexOf(data));
         int removeIdx = barcodes.indexOf(data);
         barcodes.remove(data);
+        if (data.equals(newDataUnderEdit)) {
+            clearDataEdit();
+        }
         listeners.forEach(l -> l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, removeIdx, removeIdx)));
     }
 
     @Override
     public void updateSelected(Barcode data) {
         if (selection != null) {
+            if (data.equals(newDataUnderEdit)) {
+                clearDataEdit();
+            }
             int selectedIdx = getSelectedIndex();
             barcodes.remove(selection);
             barcodes.add(selectedIdx, data);
@@ -83,7 +99,7 @@ public class BarcodeModel implements DataModel<Barcode> {
 
     @Override
     public ListCellRenderer<Barcode> createRenderer() {
-        return new BarcodeRenderer();
+        return renderer;
     }
 
     @Override
@@ -109,5 +125,10 @@ public class BarcodeModel implements DataModel<Barcode> {
     @Override
     public void removeListDataListener(ListDataListener l) {
         listeners.remove(l);
+    }
+
+    private void clearDataEdit() {
+        newDataUnderEdit = null;
+        renderer.setEditIndex(-1);
     }
 }

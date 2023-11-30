@@ -1,16 +1,19 @@
-package view.main.panel.wizard.barcode;
+package view.renderer;
 
 import data.modifier.Barcode;
-import view.main.panel.utility.LoadedIcon;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+import static view.renderer.RenderedIcon.BARCODE;
+import static view.renderer.RenderedIcon.UNDER_EDIT;
+
 public class BarcodeRenderer extends JPanel implements ListCellRenderer<Barcode> {
 
     private final JLabel lbName;
     private final JLabel lbDescription;
+    private int editIndex = -1;
 
     public BarcodeRenderer() {
         setOpaque(true);
@@ -19,12 +22,16 @@ public class BarcodeRenderer extends JPanel implements ListCellRenderer<Barcode>
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setBorder(new EmptyBorder(2, 2, 2, 2));
 
-        lbName.setIcon(new LoadedIcon("Icons\\barcode-solid.png").getIcon());
+        lbName.setIcon(BARCODE.getImage());
         lbName.setFont(new Font("Arial", Font.BOLD, 22));
         lbDescription.setFont(new Font("Arial", Font.PLAIN, 12));
 
         add(lbName);
         add(lbDescription);
+    }
+
+    public void setEditIndex(int index) {
+        this.editIndex = index;
     }
 
     @Override
@@ -33,9 +40,17 @@ public class BarcodeRenderer extends JPanel implements ListCellRenderer<Barcode>
         lbDescription.setText(barcode.getDescription());
 
         if (isSelected) {
-            setBackground(list.getSelectionBackground());
-            setForeground(list.getSelectionForeground());
+            if (index == editIndex) {
+                lbName.setIcon(UNDER_EDIT.getImage());
+                setBackground(Color.ORANGE);
+                setForeground(list.getSelectionForeground());
+            } else {
+                lbName.setIcon(BARCODE.getImage());
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+            }
         } else {
+            lbName.setIcon(BARCODE.getImage());
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }

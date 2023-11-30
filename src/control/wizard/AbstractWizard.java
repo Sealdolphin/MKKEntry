@@ -28,6 +28,7 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
         this.view = new DataListView<>(dataList, new WizardEditPanel<>(this, selectionEditor.getView()));
         this.dataList = dataList;
 
+        selectionEditor.updateSelection(null);
         view.setListSelectionListener(this::selectElement);
         view.setButtonActions(this::handleUserAction);
     }
@@ -63,6 +64,7 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
     @Override
     public void deleteElement() {
         dataList.deleteSelected();
+        setSelection(null);
     }
 
     @Override

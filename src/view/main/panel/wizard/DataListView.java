@@ -7,6 +7,7 @@ import data.wizard.WizardType;
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class DataListView<T extends WizardType> extends JPanel {
@@ -21,6 +22,7 @@ public class DataListView<T extends WizardType> extends JPanel {
         list = new JList<>(model);
         btnAdd = new JButton("Hozzáadás");
         btnAdd.setActionCommand(AbstractWizard.WizardCommands.ADD.name());
+        btnAdd.addActionListener(this::selectNewData);
 
         btnRemove = new JButton("Törlés");
         btnRemove.setActionCommand(AbstractWizard.WizardCommands.DELETE.name());
@@ -56,5 +58,13 @@ public class DataListView<T extends WizardType> extends JPanel {
     public void setButtonActions(ActionListener listener) {
         btnAdd.addActionListener(listener);
         btnRemove.addActionListener(listener);
+    }
+
+    private void selectNewData(ActionEvent event) {
+        if (event.getActionCommand().equals(AbstractWizard.WizardCommands.ADD.name())) {
+            ListModel<T> model = list.getModel();
+            int selectionIndex = model.getSize() - 1;
+            list.setSelectedValue(model.getElementAt(selectionIndex), true);
+        }
     }
 }

@@ -8,22 +8,26 @@ import view.validation.ComponentValidator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class WizardEditPanel<T extends WizardType> extends JPanel {
 
     private static final Font FONT_ERROR = new Font("Arial", Font.BOLD, 14);
     private final ComponentValidator validator = new ComponentValidator();
+
+    private final Wizard wizard;
     private final JButton btnSave;
     private final JButton btnCancel;
 
     public WizardEditPanel(Wizard wizard, WizardPage<T> editPage) {
-        editPage.setupValidation(validator);
+        this.wizard = wizard;
 
+        editPage.setupValidation(validator);
         setLayout(new BorderLayout());
 
         btnSave = new JButton("Mentés");
         btnSave.setActionCommand(String.valueOf(AbstractWizard.WizardCommands.UPDATE));
-        btnSave.addActionListener(wizard::handleUserAction);
+        btnSave.addActionListener(this::validateAndSave);
 
         btnCancel = new JButton("Mégsem");
         btnCancel.setActionCommand(String.valueOf(AbstractWizard.WizardCommands.CANCEL));
@@ -67,5 +71,11 @@ public class WizardEditPanel<T extends WizardType> extends JPanel {
         panel.add(btnCancel);
         panel.add(Box.createGlue());
         return panel;
+    }
+
+    private void validateAndSave(ActionEvent event) {
+        if (validator.validate()) {
+            wizard.handleUserAction(event);
+        }
     }
 }
