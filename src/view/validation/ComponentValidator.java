@@ -33,14 +33,27 @@ public class ComponentValidator {
     }
 
     public boolean validateComponent(ValidatedComponent component) {
-        JComponent innerComponent = component.getComponent();
         boolean valid = component.doValidate();
-        if (valid) {
+        setComponentBorder(component, valid);
+        return valid;
+    }
+
+    private void setComponentBorder(ValidatedComponent component, boolean isValid) {
+        JComponent innerComponent = component.getComponent();
+        if (isValid) {
             innerComponent.setBorder(getDefaultBorder(innerComponent.getClass()));
         } else {
             innerComponent.setBorder(invalidBorder);
         }
-        return valid;
+
+    }
+
+    public void resetAll() {
+        components.forEach(component -> {
+            component.reset();
+            setComponentBorder(component, !component.isInvalid());
+        });
+
     }
 
     private Border getDefaultBorder(Class<?> clazz) {

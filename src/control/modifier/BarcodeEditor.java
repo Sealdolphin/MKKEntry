@@ -11,7 +11,9 @@ public class BarcodeEditor extends WizardEditor<Barcode> {
     }
 
     public void setBarcodeName(String name) {
-        data.setName(name);
+        if (data != null) {
+            data.setName(name);
+        }
     }
 
     public void setBarcodeDescription(String description) {

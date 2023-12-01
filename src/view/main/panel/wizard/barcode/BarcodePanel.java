@@ -86,7 +86,6 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
         return this;
     }
 
-
     private boolean isNameValid() {
         return !compName.getComponent().getText().isBlank();
     }

@@ -10,6 +10,8 @@ import data.wizard.BarcodeModel;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public abstract class AbstractPanel extends JPanel {
@@ -32,21 +34,23 @@ public abstract class AbstractPanel extends JPanel {
             model.addData(new Entry(String.valueOf(i), "name" + i, TicketType.emptyType()));
         }
 
-        BarcodeModel barcodes = new BarcodeModel();
-
+        List<Barcode> barcodeList = new ArrayList<>();
 //        for (int i = 0; i < 30; i++) {
 //            barcodes.addData(new Barcode("Test " + i , "TEST_" + i, "test/test" + i + ".jpg", "This the " + i + "th a test"));
 //        }
-        barcodes.addData(new Barcode("Büfé", "FOOD_SALE", "Barcodes\\foodSale.png", "Hozott sütit, vagy üdítőt"));
-        barcodes.addData(new Barcode("Segítő", "HELP_SALE", "Barcodes\\helpSale.png", "Jelentkezett segítőnek"));
-        barcodes.addData(new Barcode("Kilépés", "LEAVE_GUEST", "Barcodes\\leaveGuest.png", "Olvass kiléptetéshez!"));
-        barcodes.addData(new Barcode("Törlés", "DELETE_GUEST", "Barcodes\\deleteGuest.png", "Olvass törléshez!"));
+        barcodeList.add(new Barcode("Büfé", "FOOD_SALE", "Barcodes\\foodSale.png", "Hozott sütit, vagy üdítőt"));
+        barcodeList.add(new Barcode("Segítő", "HELP_SALE", "Barcodes\\helpSale.png", "Jelentkezett segítőnek"));
+        barcodeList.add(new Barcode("Kilépés", "LEAVE_GUEST", "Barcodes\\leaveGuest.png", "Olvass kiléptetéshez!"));
+        barcodeList.add(new Barcode("Törlés", "DELETE_GUEST", "Barcodes\\deleteGuest.png", "Olvass törléshez!"));
+
+        BarcodeModel barcodes = new BarcodeModel(barcodeList);
 
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.add(new BarcodeWizard(barcodes).getView());
         frame.pack();
         frame.setMinimumSize(new Dimension(640,480));
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 

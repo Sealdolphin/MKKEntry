@@ -3,46 +3,36 @@ package view.main.panel.wizard;
 import control.wizard.AbstractWizard;
 import control.wizard.Wizard;
 import data.wizard.WizardType;
-import view.main.panel.AbstractPanel;
 import view.validation.ComponentValidator;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class WizardEditPanel<T extends WizardType> extends JPanel {
 
     private static final Font FONT_ERROR = new Font("Arial", Font.BOLD, 14);
-    private final ComponentValidator validator = new ComponentValidator();
-
-    private final Wizard wizard;
     private final JButton btnSave;
     private final JButton btnCancel;
 
-    public WizardEditPanel(Wizard wizard, WizardPage<T> editPage) {
-        this.wizard = wizard;
-
-        editPage.setupValidation(validator);
+    public WizardEditPanel(Wizard wizard, WizardPage<T> editPage, ComponentValidator validator) {
         setLayout(new BorderLayout());
 
         btnSave = new JButton("Mentés");
         btnSave.setActionCommand(String.valueOf(AbstractWizard.WizardCommands.UPDATE));
-        btnSave.addActionListener(this::validateAndSave);
+        btnSave.addActionListener(wizard::handleUserAction);
 
         btnCancel = new JButton("Mégsem");
         btnCancel.setActionCommand(String.valueOf(AbstractWizard.WizardCommands.CANCEL));
         btnCancel.addActionListener(wizard::handleUserAction);
 
-        if (editPage instanceof AbstractPanel wizardPanel) {
-            wizardPanel.initializeLayout();
+        editPage.getWizardEditPanel().initializeLayout();
 
-            add(wizardPanel, BorderLayout.NORTH);
-            add(new JScrollPane(createValidationPanel()), BorderLayout.CENTER);
-            add(createBottomButtonPanel(), BorderLayout.PAGE_END);
-        }
+        add(editPage.getWizardEditPanel(), BorderLayout.NORTH);
+        add(new JScrollPane(createValidationPanel(validator)), BorderLayout.CENTER);
+        add(createBottomButtonPanel(), BorderLayout.PAGE_END);
     }
 
-    private Box createValidationPanel() {
+    private Box createValidationPanel(ComponentValidator validator) {
         Box validationPanel = Box.createVerticalBox();
         validator.getErrors().forEach(error -> {
             decorateErrorLabel(error);
@@ -71,11 +61,5 @@ public class WizardEditPanel<T extends WizardType> extends JPanel {
         panel.add(btnCancel);
         panel.add(Box.createGlue());
         return panel;
-    }
-
-    private void validateAndSave(ActionEvent event) {
-        if (validator.validate()) {
-            wizard.handleUserAction(event);
-        }
     }
 }

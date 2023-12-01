@@ -13,10 +13,9 @@ import java.util.List;
 public class BarcodeModel implements DataModel<Barcode> {
 
     private final List<Barcode> barcodes;
-    private Barcode newDataUnderEdit = null;
     private Barcode selection = null;
+    private Barcode editCache = null;
     private final List<ListDataListener> listeners;
-
     private final BarcodeRenderer renderer;
 
     public BarcodeModel() {
@@ -25,13 +24,16 @@ public class BarcodeModel implements DataModel<Barcode> {
 
     public BarcodeModel(List<Barcode> barcodes) {
         this.barcodes = barcodes;
-        listeners = new ArrayList<>();
         this.renderer = new BarcodeRenderer();
+        this.listeners = new ArrayList<>();
     }
 
     @Override
     public Barcode getElementById(String id) {
-        return barcodes.stream().filter(barcode -> barcode.getMetaData().equals(id)).findFirst().orElse(null);
+        return barcodes.stream()
+                .filter(barcode -> barcode.getMetaData().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -49,39 +51,30 @@ public class BarcodeModel implements DataModel<Barcode> {
 
     @Override
     public void setSelection(Barcode data) {
-        if (newDataUnderEdit != null && !newDataUnderEdit.equals(data)) {
-            removeData(newDataUnderEdit);
-            clearDataEdit();
-        }
-        this.selection = data;
+        selection = data;
+        refreshEditCache(data, false);
     }
 
     @Override
     public void addData(Barcode data) {
         barcodes.add(data);
-        newDataUnderEdit = data;
         int addedIdx = barcodes.size() - 1;
-        renderer.setEditIndex(addedIdx);
+        refreshEditCache(data, true);
         listeners.forEach(l -> l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_ADDED, addedIdx, addedIdx)));
     }
 
     @Override
     public void removeData(Barcode data) {
-        System.out.println("Deleting " + data + " at " + barcodes.indexOf(data));
         int removeIdx = barcodes.indexOf(data);
         barcodes.remove(data);
-        if (data.equals(newDataUnderEdit)) {
-            clearDataEdit();
-        }
+        refreshEditCache(data, true);
         listeners.forEach(l -> l.intervalRemoved(new ListDataEvent(this, ListDataEvent.INTERVAL_REMOVED, removeIdx, removeIdx)));
     }
 
     @Override
     public void updateSelected(Barcode data) {
         if (selection != null) {
-            if (data.equals(newDataUnderEdit)) {
-                clearDataEdit();
-            }
+            refreshEditCache(null, false);
             int selectedIdx = getSelectedIndex();
             barcodes.remove(selection);
             barcodes.add(selectedIdx, data);
@@ -127,8 +120,27 @@ public class BarcodeModel implements DataModel<Barcode> {
         listeners.remove(l);
     }
 
-    private void clearDataEdit() {
-        newDataUnderEdit = null;
-        renderer.setEditIndex(-1);
+    /**
+     * Updates the Edit cache. This is a value that changes based on the signaling data
+     * If the model have been changed, the cache must be updated (if it's a new data then it's updated, if the
+     * data has been deleted, it's cleared). If the selection has been changed, the cached data must be deleted.
+     * If the cached data has been saved, the cache must be cleared.
+     * @param data the value that sent the cache signal
+     * @param dataChanged if the model has been changed
+     */
+    private void refreshEditCache(Barcode data, boolean dataChanged) {
+        if (editCache == null) {
+            if (dataChanged) {
+                editCache = data;
+            }
+        } else if (data == null) {
+            editCache = null;
+        } else if (editCache != data) {
+            removeData(editCache);
+        } else if (dataChanged) {
+            editCache = null;
+        }
+
+        renderer.setBarcodeUnderEdit(editCache);
     }
 }

@@ -13,7 +13,7 @@ public class BarcodeRenderer extends JPanel implements ListCellRenderer<Barcode>
 
     private final JLabel lbName;
     private final JLabel lbDescription;
-    private int editIndex = -1;
+    private Barcode barcodeUnderEdit = null;
 
     public BarcodeRenderer() {
         setOpaque(true);
@@ -30,8 +30,8 @@ public class BarcodeRenderer extends JPanel implements ListCellRenderer<Barcode>
         add(lbDescription);
     }
 
-    public void setEditIndex(int index) {
-        this.editIndex = index;
+    public void setBarcodeUnderEdit(Barcode barcode) {
+        barcodeUnderEdit = barcode;
     }
 
     @Override
@@ -40,8 +40,10 @@ public class BarcodeRenderer extends JPanel implements ListCellRenderer<Barcode>
         lbDescription.setText(barcode.getDescription());
 
         if (isSelected) {
-            if (index == editIndex) {
+            if (barcode.equals(barcodeUnderEdit)) {
                 lbName.setIcon(UNDER_EDIT.getImage());
+                lbName.setText("<Üres>");
+                lbDescription.setText("Szerkesztés alatt...");
                 setBackground(Color.ORANGE);
                 setForeground(list.getSelectionForeground());
             } else {
