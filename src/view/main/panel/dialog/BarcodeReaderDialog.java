@@ -13,7 +13,7 @@ public class BarcodeReaderDialog extends JDialog {
 
     private final List<BarcodeReaderListener> barcodeReaderListeners = new ArrayList<>();
 
-    public BarcodeReaderDialog(Window parent, String message) {
+    public BarcodeReaderDialog(Window parent, JPanel appWindow, String message) {
         super(parent);
         setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 
@@ -26,7 +26,8 @@ public class BarcodeReaderDialog extends JDialog {
         setUndecorated(true);
         pack();
         setResizable(false);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(appWindow);
+        setLocation(getX(),getY() + 50);
 
         addKeyListener(new WindowCloseAdapter());
     }

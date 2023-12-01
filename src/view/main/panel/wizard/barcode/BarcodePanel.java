@@ -54,8 +54,7 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
             tfBarcode.setText(null);
 
             String message = "Szkenneld be a kódot (ESC a kilépéshez)!";
-            //BarCodeReaderListenerFactory.generateReader(tfBarcode::setText,"Szkenneld be a kódot (ESC a kilépéshez)!",true);
-            BasicSerialPortReader reader = new BasicSerialPortReader(new BarcodeReaderDialog(null, message));
+            BasicSerialPortReader reader = new BasicSerialPortReader(new BarcodeReaderDialog(null, this, message));
             reader.addReceiver(tfBarcode::setText);
             reader.readSerialPort();
         }

@@ -41,9 +41,6 @@ public class BasicSerialPortReader implements BarcodeReaderListener, SerialPortD
     public void readBarCode(String barCode) {
         System.out.println("Read barcode " + barCode);
         view.dispose();
-        if (serialPort.isOpen()) {
-            serialPort.closePort();
-        }
         barcodeReceivers.forEach(receiver -> receiver.accept(barCode));
     }
 
@@ -54,7 +51,6 @@ public class BasicSerialPortReader implements BarcodeReaderListener, SerialPortD
 
     @Override
     public void serialEvent(SerialPortEvent serialPortEvent) {
-        System.out.println("New event " + serialPortEvent);
         if (serialPortEvent.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
             return;
         }
