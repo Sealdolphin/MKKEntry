@@ -8,6 +8,7 @@ import data.modifier.Barcode;
 import data.wizard.BarcodeModel;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,12 +23,16 @@ public abstract class AbstractPanel extends JPanel {
     public static int ICON_SIZE_DEFAULT = 24;
     public static String DEFAULT_FONT = "Arial";
 
+    public static final Border DEFAULT_BORDER = BorderFactory.createLineBorder(Color.BLACK);
+
     /**
      * TEMP
      * TODO: delete this!!
      */
     public static void main(String[] args) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        UIManager.getLookAndFeelDefaults().put("ImagePanel.border", DEFAULT_BORDER);
+
         AppData model = new AppData();
 
         for (int i = 1000; i < 2000; i++) {

@@ -16,7 +16,7 @@ public class BarcodePanel extends JPanel {
         lbTooltip.setFont(new Font(lbTooltip.getFont().getName(),Font.PLAIN,20));
         lbTooltip.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        add(new ImagePanel(imagePath));
+        add(new JImagePanel(imagePath));
         add(lbTooltip);
 
     }

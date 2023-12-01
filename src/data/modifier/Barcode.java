@@ -10,7 +10,7 @@ import control.wizard.WizardEditor;
 import data.wizard.WizardType;
 import org.json.simple.JSONObject;
 import view.BarcodePanel;
-import view.ImagePanel;
+import view.JImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -177,7 +177,7 @@ public class Barcode implements Serializable, Modifier, WizardType {
     @Deprecated
     private class BarcodeWizard extends ModifierDialog {
 
-        private final ImagePanel panelImg = new ImagePanel(getPicturePath());
+        private final JImagePanel panelImg = new JImagePanel(getPicturePath());
         private final JTextField tfName = new JTextField(name);
         private final JTextField tfTooltip = new JTextField(getDescription());
         private final JTextField tfMetaData = new JTextField(getMetaData());

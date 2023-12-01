@@ -3,7 +3,7 @@ package view.main.panel.wizard.barcode;
 import control.modifier.BarcodeEditor;
 import control.wizard.WizardEditor;
 import data.modifier.Barcode;
-import view.ImagePanel;
+import view.JImagePanel;
 import view.main.panel.AbstractPanel;
 import view.main.panel.utility.LabeledComponent;
 import view.main.panel.wizard.WizardPage;
@@ -13,14 +13,14 @@ import javax.swing.*;
 
 public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
 
-    private final ImagePanel imgBarcodePicture;
+    private final JImagePanel imgBarcodePicture;
     private final JTextField tfBarcode;
     private final LabeledComponent<JButton> compBtnBrowse;
     private final LabeledComponent<JTextField> compName;
     private final LabeledComponent<JTextField> compDescription;
 
     public BarcodePanel() {
-        imgBarcodePicture = new ImagePanel(null);
+        imgBarcodePicture = new JImagePanel(null);
         compBtnBrowse = new LabeledComponent<>("", new JButton("Tallózás"));
 
         compName = new LabeledComponent<>("Név:", new JTextField(TEXT_PANEL_DEFAULT_WIDTH));
@@ -63,6 +63,7 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
         compDescription.getComponent().setText(model.getDescription());
         tfBarcode.setText(model.getMetaData());
         compBtnBrowse.getLabel().setText(model.getPicturePath());
+        imgBarcodePicture.changePicture(model.getPicturePath());
     }
 
     @Override
@@ -79,6 +80,7 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
     public void setupValidation(ComponentValidator validator) {
         validator.addComponent(compName.getComponent(), this::isNameValid, "Név nem lehet üres");
         validator.addComponent(compDescription.getComponent(), this::isDescriptionValid, "Leírás nem lehet üres");
+        validator.addComponent(imgBarcodePicture, imgBarcodePicture::validatePicture, "Válassz egy képet a vonalkódhoz");
     }
 
     @Override

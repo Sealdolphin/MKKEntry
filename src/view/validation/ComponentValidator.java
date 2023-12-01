@@ -58,7 +58,7 @@ public class ComponentValidator {
 
     private Border getDefaultBorder(Class<?> clazz) {
         String type = clazz.getSimpleName().substring(1);
-        return UIManager.getLookAndFeel().getDefaults().getBorder(type + ".border");
+        return UIManager.getLookAndFeelDefaults().getBorder(type + ".border");
     }
 
     public List<JLabel> getErrors() {

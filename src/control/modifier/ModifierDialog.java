@@ -1,7 +1,7 @@
 package control.modifier;
 
 import control.utility.file.ExtensionFilter;
-import view.ImagePanel;
+import view.JImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -79,7 +79,7 @@ public abstract class ModifierDialog extends JDialog {
         setResizable(false);
     }
 
-    public int selectPicture(ImagePanel panelImg){
+    public int selectPicture(JImagePanel panelImg){
         JFileChooser fc = getPictureChooser();
         int dialogResult = fc.showOpenDialog(this);
         if (dialogResult == JFileChooser.APPROVE_OPTION) {

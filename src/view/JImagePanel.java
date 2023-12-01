@@ -10,12 +10,12 @@ import java.io.IOException;
 /**
  * An empty JPanel containing a custom image
  */
-public class ImagePanel extends JPanel  {
+public class JImagePanel extends JPanel  {
     private BufferedImage image = null;
     private Dimension imgDimension = new Dimension(420,140);
     private String imgPath;
 
-    public ImagePanel(String imagePath){
+    public JImagePanel(String imagePath){
         imgPath = imagePath;
         if(imagePath != null)
             changePicture(imagePath);
@@ -25,7 +25,6 @@ public class ImagePanel extends JPanel  {
     private void setImageLayout(){
         //Set layout to fill available space
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createLineBorder(Color.BLACK));
         if(validatePicture()) {
             //Adding Empty space to fill out image
             imgDimension = new Dimension(imgDimension.width, imgDimension.height);
@@ -37,6 +36,10 @@ public class ImagePanel extends JPanel  {
     }
 
     public void changePicture(String newPath){
+        if (newPath == null) {
+            image = null;
+            return;
+        }
         try {
             image = ImageIO.read(new File(newPath));
             imgPath = newPath;
@@ -49,7 +52,7 @@ public class ImagePanel extends JPanel  {
 
     }
 
-    private boolean validatePicture(){
+    public boolean validatePicture(){
         return image != null;
     }
 
