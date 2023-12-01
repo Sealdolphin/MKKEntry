@@ -5,9 +5,9 @@ import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortMessageListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+@Deprecated
 /**
  * The Reader device
  * Listens for different entries

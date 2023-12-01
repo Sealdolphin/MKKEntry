@@ -1,10 +1,11 @@
 package view.main.panel.wizard.barcode;
 
 import control.modifier.BarcodeEditor;
-import control.utility.devices.BarCodeReaderListenerFactory;
+import control.utility.devices.BasicSerialPortReader;
 import control.wizard.WizardEditor;
 import data.modifier.Barcode;
 import view.main.panel.AbstractPanel;
+import view.main.panel.dialog.BarcodeReaderDialog;
 import view.main.panel.utility.JImagePanel;
 import view.main.panel.utility.LabeledComponent;
 import view.main.panel.wizard.WizardPage;
@@ -51,10 +52,12 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
         if(choosePictureFromDialog() == APPROVE_OPTION) {
             compBtnBrowse.getLabel().setText(imgBarcodePicture.getPath());
             tfBarcode.setText(null);
-            while (tfBarcode.getText() == null) {
-                //Read new code
-                BarCodeReaderListenerFactory.generateReader(tfBarcode::setText,"Szkenneld be a kódot (ESC a kilépéshez)!",true);
-            }
+
+            String message = "Szkenneld be a kódot (ESC a kilépéshez)!";
+            //BarCodeReaderListenerFactory.generateReader(tfBarcode::setText,"Szkenneld be a kódot (ESC a kilépéshez)!",true);
+            BasicSerialPortReader reader = new BasicSerialPortReader(new BarcodeReaderDialog(null, message));
+            reader.addReceiver(tfBarcode::setText);
+            reader.readSerialPort();
         }
     }
 
