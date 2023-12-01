@@ -10,7 +10,7 @@ import control.wizard.WizardEditor;
 import data.wizard.WizardType;
 import org.json.simple.JSONObject;
 import view.BarcodePanel;
-import view.JImagePanel;
+import view.main.panel.utility.JImagePanel;
 
 import javax.swing.*;
 import java.awt.*;

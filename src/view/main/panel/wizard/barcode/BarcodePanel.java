@@ -1,15 +1,20 @@
 package view.main.panel.wizard.barcode;
 
 import control.modifier.BarcodeEditor;
+import control.utility.devices.BarCodeReaderListenerFactory;
 import control.wizard.WizardEditor;
 import data.modifier.Barcode;
-import view.JImagePanel;
 import view.main.panel.AbstractPanel;
+import view.main.panel.utility.JImagePanel;
 import view.main.panel.utility.LabeledComponent;
 import view.main.panel.wizard.WizardPage;
 import view.validation.ComponentValidator;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+
+import static javax.swing.JFileChooser.APPROVE_OPTION;
+import static view.helper.DialogCreator.getPictureChooser;
 
 public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
 
@@ -22,6 +27,7 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
     public BarcodePanel() {
         imgBarcodePicture = new JImagePanel(null);
         compBtnBrowse = new LabeledComponent<>("", new JButton("Tallózás"));
+        compBtnBrowse.getComponent().addActionListener(this::selectBarcodePicture);
 
         compName = new LabeledComponent<>("Név:", new JTextField(TEXT_PANEL_DEFAULT_WIDTH));
         compDescription = new LabeledComponent<>("Leírás:", new JTextField(TEXT_PANEL_DEFAULT_WIDTH));
@@ -29,6 +35,27 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
         tfBarcode = new JTextField(TEXT_PANEL_DEFAULT_WIDTH);
         tfBarcode.setEditable(false);
         tfBarcode.setHorizontalAlignment(SwingConstants.CENTER);
+    }
+
+    private int choosePictureFromDialog() {
+        JFileChooser fc = getPictureChooser();
+        int dialogResult = fc.showOpenDialog(this);
+        if (dialogResult == JFileChooser.APPROVE_OPTION) {
+            imgBarcodePicture.changePicture(fc.getSelectedFile().getAbsolutePath());
+        }
+        return dialogResult;
+    }
+
+    private void selectBarcodePicture(ActionEvent event) {
+
+        if(choosePictureFromDialog() == APPROVE_OPTION) {
+            compBtnBrowse.getLabel().setText(imgBarcodePicture.getPath());
+            tfBarcode.setText(null);
+            while (tfBarcode.getText() == null) {
+                //Read new code
+                BarCodeReaderListenerFactory.generateReader(tfBarcode::setText,"Szkenneld be a kódot (ESC a kilépéshez)!",true);
+            }
+        }
     }
 
     @Override

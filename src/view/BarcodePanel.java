@@ -1,5 +1,7 @@
 package view;
 
+import view.main.panel.utility.JImagePanel;
+
 import javax.swing.*;
 import java.awt.*;
 

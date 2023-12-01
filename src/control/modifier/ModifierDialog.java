@@ -1,7 +1,7 @@
 package control.modifier;
 
 import control.utility.file.ExtensionFilter;
-import view.JImagePanel;
+import view.main.panel.utility.JImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
