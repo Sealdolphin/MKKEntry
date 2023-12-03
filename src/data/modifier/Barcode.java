@@ -59,6 +59,7 @@ public class Barcode implements Serializable, Modifier, WizardType {
         setLink(other.hasLink());
     }
 
+    @Deprecated
     public BarcodePanel createBarcodePanel() {
         return new BarcodePanel(getPicturePath(), getDescription());
     }
@@ -75,11 +76,13 @@ public class Barcode implements Serializable, Modifier, WizardType {
         return getMetaData().equals(other.getMetaData());
     }
 
+    @Deprecated
     @Override
     public ModifierDialog getModifierWizard(Window parent) {
         return new BarcodeWizard(parent);
     }
 
+    @Deprecated
     @Override
     public boolean validate() {
         return getName() != null && !getName().isEmpty() && getMetaData() != null && !getMetaData().isEmpty();
