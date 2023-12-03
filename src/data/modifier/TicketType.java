@@ -1,6 +1,11 @@
-package control.modifier;
+package data.modifier;
 
 
+import control.modifier.Modifier;
+import control.modifier.ModifierDialog;
+import control.modifier.ModifierWizardEditor;
+import control.wizard.WizardEditor;
+import data.wizard.WizardType;
 import org.json.simple.JSONObject;
 
 import javax.swing.*;
@@ -10,14 +15,18 @@ import java.util.List;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
-public class TicketType implements Serializable, Modifier {
+public class TicketType implements Serializable, Modifier, WizardType {
 
-    private static Color DEFAULT_COLOR = new Color(255, 255, 255);
+    public static final Color DEFAULT_COLOR = new Color(255, 255, 255);
     private String name;
     private int price;
-    private boolean hasFee;
+    private boolean statisticsEnabled;
 
-    private Color bgColor;
+    private Color backgroundColor;
+
+    public TicketType() {
+
+    }
 
     /**
      * Private constructor
@@ -27,15 +36,48 @@ public class TicketType implements Serializable, Modifier {
      * @param price the price of the TicketType
      * @param fee whether it matters to the financial statistics
      */
+    @Deprecated
     private TicketType(String name, int price, boolean fee, Color bgColor){
         this.name = name;
         this.price = price;
-        this.hasFee = fee;
-        this.bgColor = bgColor;
+        this.statisticsEnabled = fee;
+        this.backgroundColor = bgColor;
     }
 
     public TicketType(TicketType other){
-        this(other.name,other.price,other.hasFee, other.bgColor);
+        this(other.name,other.price,other.statisticsEnabled, other.backgroundColor);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public boolean isStatisticsEnabled() {
+        return statisticsEnabled;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public void setStatisticsEnabled(boolean statisticsEnabled) {
+        this.statisticsEnabled = statisticsEnabled;
+    }
+
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 
     /**
@@ -97,29 +139,35 @@ public class TicketType implements Serializable, Modifier {
         return name;
     }
 
+    @Deprecated
     @Override
     public ModifierDialog getModifierWizard(Window parent) {
         return new TicketTypeWizard(parent);
     }
 
+    @Deprecated
     @Override
     public boolean validate() {
         return name != null && !name.isEmpty();
     }
 
+    @Deprecated
     public int getFees() {
-        return hasFee ? price : 0;
+        return statisticsEnabled ? price : 0;
     }
 
+    @Deprecated
     public boolean hasFee() {
-        return hasFee;
+        return statisticsEnabled;
     }
 
-    public Color getBgColor() {
-        return bgColor;
+    @Override
+    public WizardEditor<?> createWizard() {
+        return null;
     }
 
-    public static class TicketTypeListener extends ModifierWizardEditor<TicketType>{
+    @Deprecated
+    public static class TicketTypeListener extends ModifierWizardEditor<TicketType> {
         public TicketTypeListener(Window parent) {
             super(parent);
         }
@@ -136,6 +184,7 @@ public class TicketType implements Serializable, Modifier {
 
     }
 
+    @Deprecated
     private class TicketTypeWizard extends ModifierDialog {
 
         private JTextField tfName = new JTextField(name);
@@ -148,7 +197,7 @@ public class TicketType implements Serializable, Modifier {
 
             //Set values
             spPrice.setValue(price);
-            cbHasFee.setSelected(hasFee);
+            cbHasFee.setSelected(statisticsEnabled);
 
             body.add(new JLabel("Név: "),setConstraints(0,0,1,1));
             body.add(new JLabel("Ár: "),setConstraints(0,1,1,1));
@@ -166,7 +215,7 @@ public class TicketType implements Serializable, Modifier {
             if(tfName.getText().length() > 0){
                 name = tfName.getText();
                 price = Integer.parseInt(spPrice.getValue().toString());
-                hasFee = cbHasFee.isSelected();
+                statisticsEnabled = cbHasFee.isSelected();
                 result = 0;
                 //Close dialog
                 dispose();

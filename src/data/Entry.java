@@ -1,9 +1,10 @@
 package data;
 
 import control.modifier.Discount;
-import control.modifier.TicketType;
 import control.utility.file.EntryFilter;
+import data.modifier.TicketType;
 import org.json.simple.JSONObject;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

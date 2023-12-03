@@ -1,6 +1,6 @@
 package view.renderer;
 
-import control.modifier.TicketType;
+import data.modifier.TicketType;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -20,7 +20,7 @@ public class TicketTypeRenderer extends DefaultTableCellRenderer {
 
         Component origin = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         if (!isSelected) {
-            origin.setBackground(ticketType.getBgColor());
+            origin.setBackground(ticketType.getBackgroundColor());
         }
         return origin;
     }
