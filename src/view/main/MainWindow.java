@@ -9,8 +9,8 @@ import data.EntryProfile;
 import data.util.ReadingFlag;
 import view.main.interactive.InteractiveJMenuItem;
 import view.main.interactive.ReadFlagListener;
-import view.main.panel.QuickSearchPanel;
-import view.main.panel.RecordPanel;
+import view.main.panel.mainwindow.QuickSearchPanel;
+import view.main.panel.mainwindow.RecordPanel;
 import view.renderer.DiscountRenderer;
 
 import javax.swing.*;

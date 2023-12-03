@@ -1,7 +1,8 @@
-package view.main.panel;
+package view.main.panel.mainwindow;
 
 import control.EntryCodeReader;
 import data.AppData;
+import view.main.panel.AbstractPanel;
 
 import javax.swing.*;
 

@@ -1,9 +1,10 @@
-package view.main.panel;
+package view.main.panel.mainwindow;
 
 import control.EntryCodeReader;
 import data.DataModel;
 import data.util.ReadingFlag;
 import view.main.interactive.SelectableComponent;
+import view.main.panel.AbstractPanel;
 
 import javax.swing.*;
 import java.awt.*;

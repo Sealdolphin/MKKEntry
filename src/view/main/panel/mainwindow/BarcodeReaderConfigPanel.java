@@ -1,4 +1,6 @@
-package view.main.panel;
+package view.main.panel.mainwindow;
+
+import view.main.panel.AbstractPanel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
