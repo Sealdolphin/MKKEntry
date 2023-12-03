@@ -1,14 +1,17 @@
 package view.main.panel;
 
+import control.wizard.TicketTypeWizard;
 import data.AppData;
 import data.Entry;
 import data.modifier.TicketType;
-import view.main.panel.wizard.tickettype.TicketTypePanel;
+import data.wizard.TicketTypeModel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public abstract class AbstractPanel extends JPanel {
@@ -46,12 +49,19 @@ public abstract class AbstractPanel extends JPanel {
 
 //        BarcodeModel barcodes = new BarcodeModel(barcodeList);
 
-        TicketTypePanel panel = new TicketTypePanel();
-        panel.initializeLayout();
+        List<TicketType> ticketTypeList = new ArrayList<>();
+
+        ticketTypeList.add(new TicketType("Normál", 3000, true, TicketType.DEFAULT_COLOR));
+        ticketTypeList.add(new TicketType("Elővételes", 0, true, TicketType.DEFAULT_COLOR));
+        ticketTypeList.add(new TicketType("VIP", 0, false, TicketType.DEFAULT_COLOR));
+        ticketTypeList.add(new TicketType("Támogatói", 5000, true, TicketType.DEFAULT_COLOR));
+
+        TicketTypeModel ticketTypes = new TicketTypeModel(ticketTypeList);
+
 
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.add(panel);
+        frame.add(new TicketTypeWizard(ticketTypes).getView());
         frame.pack();
         frame.setMinimumSize(new Dimension(640,480));
         frame.setLocationRelativeTo(null);

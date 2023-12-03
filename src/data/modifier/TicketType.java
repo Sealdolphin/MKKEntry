@@ -4,9 +4,11 @@ package data.modifier;
 import control.modifier.Modifier;
 import control.modifier.ModifierDialog;
 import control.modifier.ModifierWizardEditor;
+import control.modifier.TicketTypeEditor;
 import control.wizard.WizardEditor;
 import data.wizard.WizardType;
 import org.json.simple.JSONObject;
+import view.main.panel.wizard.tickettype.TicketTypePanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,7 +39,7 @@ public class TicketType implements Serializable, Modifier, WizardType {
      * @param fee whether it matters to the financial statistics
      */
     @Deprecated
-    private TicketType(String name, int price, boolean fee, Color bgColor){
+    public TicketType(String name, int price, boolean fee, Color bgColor){
         this.name = name;
         this.price = price;
         this.statisticsEnabled = fee;
@@ -162,8 +164,8 @@ public class TicketType implements Serializable, Modifier, WizardType {
     }
 
     @Override
-    public WizardEditor<?> createWizard() {
-        return null;
+    public WizardEditor<TicketType> createWizard() {
+        return new TicketTypeEditor(this, new TicketTypePanel());
     }
 
     @Deprecated

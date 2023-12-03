@@ -7,7 +7,6 @@ import view.main.panel.wizard.WizardEditPanel;
 import view.validation.ComponentValidator;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
 import java.awt.event.ActionEvent;
 
 public abstract class AbstractWizard<T extends WizardType> implements Wizard {
@@ -58,13 +57,6 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
         T newData = getNewElement();
         dataList.addData(newData);
         setSelection(newData);
-    }
-
-    @Override
-    public void selectElement(ListSelectionEvent event) {
-        if (event.getSource() instanceof JList<?> list) {
-            setSelection(castSelectedElement(list.getSelectedValue()));
-        }
     }
 
     @Override
