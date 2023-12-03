@@ -3,7 +3,6 @@ package control.utility.devices;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
-import view.main.panel.dialog.BarcodeReaderDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,18 +12,11 @@ public class BasicSerialPortReader implements BarcodeReaderListener, SerialPortD
 
     private final SerialPort serialPort;
 
-    private final Thread readAction;
-
-    private final BarcodeReaderDialog view;
-
     private final List<Consumer<String>> barcodeReceivers = new ArrayList<>();
 
-    public BasicSerialPortReader(BarcodeReaderDialog view) {
+    public BasicSerialPortReader() {
         serialPort = SerialPort.getCommPorts()[1];
         serialPort.addDataListener(this);
-        readAction = new Thread(view::waitIdle);
-        this.view = view;
-        view.addBarcodeListener(this);
     }
 
     public void addReceiver(Consumer<String> receiver) {
@@ -33,14 +25,10 @@ public class BasicSerialPortReader implements BarcodeReaderListener, SerialPortD
 
     public void readSerialPort() {
         serialPort.openPort();
-        readAction.start();
     }
-
 
     @Override
     public void readBarCode(String barCode) {
-        System.out.println("Read barcode " + barCode);
-        view.dispose();
         barcodeReceivers.forEach(receiver -> receiver.accept(barCode));
     }
 

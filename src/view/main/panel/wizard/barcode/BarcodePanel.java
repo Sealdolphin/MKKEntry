@@ -5,7 +5,6 @@ import control.utility.devices.BasicSerialPortReader;
 import control.wizard.WizardEditor;
 import data.modifier.Barcode;
 import view.main.panel.AbstractPanel;
-import view.main.panel.dialog.BarcodeReaderDialog;
 import view.main.panel.utility.JImagePanel;
 import view.main.panel.utility.LabeledComponent;
 import view.main.panel.wizard.WizardPage;
@@ -52,9 +51,8 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
         if(choosePictureFromDialog() == APPROVE_OPTION) {
             compBtnBrowse.getLabel().setText(imgBarcodePicture.getPath());
             tfBarcode.setText(null);
-
-            String message = "Szkenneld be a kódot (ESC a kilépéshez)!";
-            BasicSerialPortReader reader = new BasicSerialPortReader(new BarcodeReaderDialog(null, this, message));
+            
+            BasicSerialPortReader reader = new BasicSerialPortReader();
             reader.addReceiver(tfBarcode::setText);
             reader.readSerialPort();
         }
@@ -110,6 +108,7 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
         validator.addComponent(compName.getComponent(), this::isNameValid, "Név nem lehet üres");
         validator.addComponent(compDescription.getComponent(), this::isDescriptionValid, "Leírás nem lehet üres");
         validator.addComponent(imgBarcodePicture, imgBarcodePicture::validatePicture, "Válassz egy képet a vonalkódhoz");
+        validator.addComponent(tfBarcode, this::isMetaValid, "Nem regisztrálhatsz nem beolvasott vonalkódot!");
     }
 
     @Override
@@ -119,6 +118,10 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
 
     private boolean isNameValid() {
         return !compName.getComponent().getText().isBlank();
+    }
+
+    private boolean isMetaValid() {
+        return !tfBarcode.getText().isBlank();
     }
 
     private boolean isDescriptionValid() {
