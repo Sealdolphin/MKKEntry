@@ -22,7 +22,7 @@ public interface DataModel<T> extends ListModel<T> {
 
     void deleteSelected();
 
-    ListCellRenderer<T> createRenderer();
+    ListCellRenderer<T> createListRenderer();
 
     @Deprecated
     void replaceData(T oldData, T newData) throws IOException;

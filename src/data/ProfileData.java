@@ -92,7 +92,7 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
     @Override
-    public ListCellRenderer<EntryProfile> createRenderer() {
+    public ListCellRenderer<EntryProfile> createListRenderer() {
         return null;
     }
 

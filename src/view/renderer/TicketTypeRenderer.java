@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
+@Deprecated
 public class TicketTypeRenderer extends DefaultTableCellRenderer {
 
     private TicketType ticketType;

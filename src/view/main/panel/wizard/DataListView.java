@@ -31,7 +31,7 @@ public class DataListView<T extends WizardType> extends JPanel {
         add(createListPanel(), BorderLayout.CENTER);
         add(wizardEditPanel, BorderLayout.EAST);
 
-        list.setCellRenderer(model.createRenderer());
+        list.setCellRenderer(model.createListRenderer());
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 

@@ -1,28 +1,32 @@
-package view.renderer;
+package view.renderer.list;
 
-import data.modifier.Barcode;
+import data.wizard.WizardType;
+import view.renderer.RenderedIcon;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-import static view.renderer.RenderedIcon.BARCODE;
 import static view.renderer.RenderedIcon.UNDER_EDIT;
 
-public class BarcodeRenderer extends JPanel implements ListCellRenderer<Barcode> {
+public abstract class DefaultWizardTypeListRenderer<T extends WizardType> extends JPanel implements ListCellRenderer<T> {
 
-    private final JLabel lbName;
-    private final JLabel lbDescription;
-    private Barcode barcodeUnderEdit = null;
+    protected final JLabel lbName;
+    protected final JLabel lbDescription;
+    private T typeUnderEdit = null;
 
-    public BarcodeRenderer() {
+    private final RenderedIcon defaultIcon;
+
+    public DefaultWizardTypeListRenderer(RenderedIcon icon) {
+        this.defaultIcon = icon;
+
         setOpaque(true);
         lbName = new JLabel();
         lbDescription = new JLabel();
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setBorder(new EmptyBorder(2, 2, 2, 2));
 
-        lbName.setIcon(BARCODE.getImage());
+        lbName.setIcon(defaultIcon.getImage());
         lbName.setFont(new Font("Arial", Font.BOLD, 22));
         lbDescription.setFont(new Font("Arial", Font.PLAIN, 12));
 
@@ -30,29 +34,26 @@ public class BarcodeRenderer extends JPanel implements ListCellRenderer<Barcode>
         add(lbDescription);
     }
 
-    public void setBarcodeUnderEdit(Barcode barcode) {
-        barcodeUnderEdit = barcode;
+    public void updateRenderer(T typeUnderEdit) {
+        this.typeUnderEdit = typeUnderEdit;
     }
 
     @Override
-    public Component getListCellRendererComponent(JList<? extends Barcode> list, Barcode barcode, int index, boolean isSelected, boolean cellHasFocus) {
-        lbName.setText(barcode.getName());
-        lbDescription.setText(barcode.getDescription());
-
+    public Component getListCellRendererComponent(JList<? extends T> list, T value, int index, boolean isSelected, boolean cellHasFocus) {
         if (isSelected) {
-            if (barcode.equals(barcodeUnderEdit)) {
+            if (value.equals(typeUnderEdit)) {
                 lbName.setIcon(UNDER_EDIT.getImage());
                 lbName.setText("<Üres>");
                 lbDescription.setText("Szerkesztés alatt...");
                 setBackground(Color.ORANGE);
                 setForeground(list.getSelectionForeground());
             } else {
-                lbName.setIcon(BARCODE.getImage());
+                lbName.setIcon(defaultIcon.getImage());
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
             }
         } else {
-            lbName.setIcon(BARCODE.getImage());
+            lbName.setIcon(defaultIcon.getImage());
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }

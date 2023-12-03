@@ -6,6 +6,8 @@ import javax.swing.*;
 
 public enum RenderedIcon {
     BARCODE("Icons\\barcode-solid.png"),
+
+    TICKET_TYPE("Icons\\ticket-solid.png"),
     UNDER_EDIT("Icons\\wrench-solid.png");
 
     private final String imagePath;
@@ -14,7 +16,7 @@ public enum RenderedIcon {
         this.imagePath = imagePath;
     }
 
-    ImageIcon getImage() {
+    public ImageIcon getImage() {
         return new LoadedIcon(imagePath).getIcon();
     }
 

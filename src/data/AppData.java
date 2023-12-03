@@ -153,7 +153,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     }
 
     @Override
-    public ListCellRenderer<Entry> createRenderer() {
+    public ListCellRenderer<Entry> createListRenderer() {
         return null;
     }
 
