@@ -1,8 +1,9 @@
 package view.main.panel;
 
-import control.modifier.TicketType;
 import data.AppData;
 import data.Entry;
+import data.modifier.TicketType;
+import view.main.panel.wizard.tickettype.TicketTypePanel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -45,9 +46,12 @@ public abstract class AbstractPanel extends JPanel {
 
 //        BarcodeModel barcodes = new BarcodeModel(barcodeList);
 
+        TicketTypePanel panel = new TicketTypePanel();
+        panel.initializeLayout();
+
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//        frame.add();
+        frame.add(panel);
         frame.pack();
         frame.setMinimumSize(new Dimension(640,480));
         frame.setLocationRelativeTo(null);
