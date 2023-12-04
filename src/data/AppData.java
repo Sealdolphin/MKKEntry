@@ -1,8 +1,8 @@
 package data;
 
 
-import control.modifier.Discount;
 import control.modifier.Transaction;
+import data.modifier.Discount;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;

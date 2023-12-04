@@ -3,9 +3,9 @@ package view.main;
 
 import control.AppController;
 import control.MenuHandler;
-import control.modifier.Discount;
 import data.AppData;
 import data.EntryProfile;
+import data.modifier.Discount;
 import data.util.ReadingFlag;
 import view.main.interactive.InteractiveJMenuItem;
 import view.main.interactive.ReadFlagListener;

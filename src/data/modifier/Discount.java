@@ -1,9 +1,15 @@
-package control.modifier;
+package data.modifier;
 
+import control.modifier.DiscountEditor;
+import control.modifier.Modifier;
+import control.modifier.ModifierDialog;
+import control.modifier.ModifierWizardEditor;
+import control.wizard.WizardEditor;
 import data.EntryProfile;
-import data.modifier.Barcode;
+import data.wizard.WizardType;
 import org.json.simple.JSONObject;
 import view.BarcodePanel;
+import view.main.panel.wizard.discount.DiscountPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,11 +29,12 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
  * It comes with a wizard class to modify the attributes.
  * @author Mihalovits Márk
  */
-public class Discount implements Serializable, Modifier {
+public class Discount implements Serializable, Modifier, WizardType {
 
     /**
      * The default option for icons
      */
+    @Deprecated
     private static final String basicIcon = "Icons"+ File.separator +"BasicIcon.png";
 
     /**
@@ -43,7 +50,7 @@ public class Discount implements Serializable, Modifier {
     /**
      * Ingyenes beléptetést biztosít
      */
-    private Boolean isFree;
+    private Boolean free;
 
     /**
      * The filepath of the icon's image
@@ -68,13 +75,20 @@ public class Discount implements Serializable, Modifier {
      * @param price the discount
      * @param profile the associated profile
      */
+    @Deprecated
     private Discount(String name, Barcode barcode , String iconPath, int price, boolean isFree, EntryProfile profile){
         this.name = name;
         this.iconPath = iconPath;
-        discount = price;
-        this.isFree = isFree;
+        this.discount = price;
+        this.free = isFree;
         this.barcode = barcode;
         this.profile = profile;
+    }
+
+    public Discount() {}
+
+    public Discount(String name, Barcode barcode , String iconPath, int price, boolean isFree) {
+        this(name, barcode, iconPath, price, isFree, null);
     }
 
     /**
@@ -83,7 +97,11 @@ public class Discount implements Serializable, Modifier {
      * @param profile the profile you want to copy to
      */
     public Discount(Discount other, EntryProfile profile) {
-        this(other.name,other.barcode,other.iconPath,other.discount,other.isFree,profile);
+        this(other.name,other.barcode,other.iconPath,other.discount,other.free,profile);
+    }
+
+    public String getName() {
+        return name;
     }
 
     /**
@@ -143,7 +161,7 @@ public class Discount implements Serializable, Modifier {
      * Returns the filepath of the icon
      * @return the filepath of the icon
      */
-    public String getIcon(){
+    public String getIconPath(){
         return iconPath;
     }
 
@@ -151,14 +169,14 @@ public class Discount implements Serializable, Modifier {
      * Returns if discount is free
      */
     public boolean isFree() {
-        return isFree;
+        return free;
     }
 
     /**
      * Returns the price
      * @return the amount of the discount
      */
-    public int getPrice() {
+    public int getDiscount() {
         return discount;
     }
 
@@ -190,6 +208,7 @@ public class Discount implements Serializable, Modifier {
      * @param parent the parent window
      * @return a wizard dialog to change the attributes
      */
+    @Deprecated
     @Override
     public ModifierDialog getModifierWizard(Window parent) {
         return new DiscountWizard(parent);
@@ -200,6 +219,7 @@ public class Discount implements Serializable, Modifier {
      * All discounts are required to have a @NouNull barcode field.
      * @return true if the fields are correct
      */
+    @Deprecated
     @Override
     public boolean validate() {
         //Refresh barcode whether if it still in the list of barCodes...
@@ -208,11 +228,37 @@ public class Discount implements Serializable, Modifier {
         return name != null && barcode != null && !name.isEmpty();
     }
 
+    @Override
+    public WizardEditor<Discount> createWizard() {
+        return new DiscountEditor(this, new DiscountPanel());
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setIconPath(String iconPath) {
+        this.iconPath = iconPath;
+    }
+
+    public void setFree(boolean free) {
+        this.free = free;
+    }
+
+    public void setBarcode(Barcode barcode) {
+        this.barcode = barcode;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
+
     /**
      * A required object for Modifier classes.
      * It handles the safe modification of attributes
      */
-    public static class DiscountListener extends ModifierWizardEditor<Discount>{
+    @Deprecated
+    public static class DiscountListener extends ModifierWizardEditor<Discount> {
 
         public DiscountListener(Window parent, EntryProfile profile) {
             super(parent);
@@ -236,6 +282,7 @@ public class Discount implements Serializable, Modifier {
      * An inner class of the Discount.
      * It is responsible for creating or modifying Discounts.
      */
+    @Deprecated
     private class DiscountWizard extends ModifierDialog {
 
         private final JLabel labelIcon = new JLabel(new ImageIcon(new ImageIcon(iconPath).getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH)));
@@ -297,7 +344,7 @@ public class Discount implements Serializable, Modifier {
                 name = tfName.getText();
                 barcode = (Barcode) cbBarcodes.getSelectedItem();
                 discount = Integer.parseInt(spPrice.getValue().toString());
-                isFree = cbIsFree.isSelected();
+                free = cbIsFree.isSelected();
                 result = 0;
                 iconPath = lbPath.getText();
                 //Close dialog

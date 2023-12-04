@@ -60,7 +60,7 @@ public abstract class ModifierDialog extends JDialog {
         return fc;
     }
 
-    String selectPicture(JLabel iconLabel){
+    protected String selectPicture(JLabel iconLabel){
         JFileChooser fc = getPictureChooser();
         int dialogResult = fc.showOpenDialog(this);
         String iconPath = null;
@@ -72,7 +72,7 @@ public abstract class ModifierDialog extends JDialog {
         return iconPath;
     }
 
-    void refresh(Window parent){
+    public void refresh(Window parent){
         setResizable(true);
         pack();
         setLocationRelativeTo(parent);

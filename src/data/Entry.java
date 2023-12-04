@@ -1,7 +1,7 @@
 package data;
 
-import control.modifier.Discount;
 import control.utility.file.EntryFilter;
+import data.modifier.Discount;
 import data.modifier.TicketType;
 import org.json.simple.JSONObject;
 
@@ -39,7 +39,7 @@ public class Entry extends Vector<String> {
         if (!ticketType.hasFee()) return 0;
         for(Discount d : discountList){
             if (d.isFree()) return 0;
-            f -= d.getPrice();
+            f -= d.getDiscount();
         }
         return get(ENTER_DATE.ordinal()) != null ? f : 0;
     }

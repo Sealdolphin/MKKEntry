@@ -1,11 +1,11 @@
 package control;
 
 import com.fazecast.jSerialComm.SerialPort;
-import control.modifier.Discount;
 import control.utility.devices.BarCodeReaderListenerFactory;
 import control.utility.file.EntryFilter;
 import control.utility.network.NetworkController;
 import data.*;
+import data.modifier.Discount;
 import data.util.ReadingFlag;
 import view.StatisticsWindow;
 import view.main.LoadingScreen;

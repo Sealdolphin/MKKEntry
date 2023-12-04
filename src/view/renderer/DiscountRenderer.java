@@ -1,6 +1,6 @@
 package view.renderer;
 
-import control.modifier.Discount;
+import data.modifier.Discount;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * A renderer class for displaying the Discounts on a record
  */
+@Deprecated
 public class DiscountRenderer extends JPanel implements TableCellRenderer {
 
     /**
@@ -46,7 +47,7 @@ public class DiscountRenderer extends JPanel implements TableCellRenderer {
         removeAll();
         for (Object disObj: discounts) {
             Discount discount = (Discount) disObj;
-            add(new DiscountLabel(discount.toString(),discount.getIcon(),isSelected));
+            add(new DiscountLabel(discount.toString(),discount.getIconPath(),isSelected));
             add(Box.createRigidArea(new Dimension(10,0)));
         }
         //Rendering selection

@@ -1,9 +1,9 @@
 package view.main.panel.mainwindow;
 
-import control.modifier.Discount;
 import data.AppData;
 import data.DataModel;
 import data.Entry;
+import data.modifier.Discount;
 import view.main.interactive.SelectableComponent;
 import view.main.panel.AbstractPanel;
 import view.renderer.DiscountRenderer;

@@ -2,11 +2,11 @@ package data;
 
 
 import control.UIHandler;
-import control.modifier.Discount;
 import control.modifier.Modifier;
 import control.modifier.ModifierWizardEditor;
 import control.modifier.Transaction;
 import data.modifier.Barcode;
+import data.modifier.Discount;
 import data.modifier.TicketType;
 import data.util.ReadingFlag;
 import org.json.simple.JSONArray;
