@@ -15,8 +15,16 @@ public abstract class DefaultWizardModel<T extends WizardType> implements DataMo
     private final List<ListDataListener> listeners;
 
     public DefaultWizardModel(List<T> dataList) {
-        this.dataList = dataList;
+        this.dataList = removeDuplicates(dataList);
         this.listeners = new ArrayList<>();
+    }
+
+    @Override
+    public T getElementById(String id) {
+        return dataList.stream()
+                .filter(item -> item.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -125,5 +133,19 @@ public abstract class DefaultWizardModel<T extends WizardType> implements DataMo
         }
 
         updateRenderers(editCache);
+    }
+
+    private static <L extends WizardType> List<L> removeDuplicates(List<L> list) {
+        List<L> purgedList = new ArrayList<>();
+
+        for (L listItem : list) {
+            if (!purgedList.contains(listItem)) {
+                purgedList.add(listItem);
+            } else {
+                System.out.printf("WARNING: (%s - %s) duplicate list item has been removed!%n", listItem.getClass().getSimpleName(), listItem.getId());
+            }
+        }
+
+        return purgedList;
     }
 }

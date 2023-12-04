@@ -21,11 +21,6 @@ public class TicketTypeModel extends DefaultWizardModel<TicketType> {
     }
 
     @Override
-    public TicketType getElementById(String id) {
-        return null;
-    }
-
-    @Override
     public ListCellRenderer<TicketType> createListRenderer() {
         return listRenderer;
     }

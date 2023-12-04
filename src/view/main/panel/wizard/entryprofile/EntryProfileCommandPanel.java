@@ -57,6 +57,11 @@ public class EntryProfileCommandPanel extends AbstractPanel implements WizardPag
     }
 
     @Override
+    public JComponent getObjectValidationComponent() {
+        return null;
+    }
+
+    @Override
     public AbstractPanel getWizardEditPanel() {
         return this;
     }

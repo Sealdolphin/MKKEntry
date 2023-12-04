@@ -27,6 +27,7 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
     protected AbstractWizard(DataModel<T> dataList, WizardEditor<T> selectionEditor) {
         selectionEditor.getView().setupValidation(validator);
         selectionEditor.updateSelection(null);
+        validator.addComponent(selectionEditor.getView().getObjectValidationComponent(), this::itemIsNoDuplicate, "Ez az elem már létezik!");
 
         WizardEditPanel<T> editPanel = new WizardEditPanel<>(this, selectionEditor.getView(), validator);
 
@@ -36,6 +37,12 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
 
         view.setListSelectionListener(this::selectElement);
         view.setButtonActions(this::handleUserAction);
+    }
+
+    private boolean itemIsNoDuplicate() {
+        if (selectionEditor.getSavedData() != null) {
+            return dataList.getElementById(selectionEditor.getSavedData().getId()) == dataList.getSelectedData();
+        } return true;
     }
 
     @Override

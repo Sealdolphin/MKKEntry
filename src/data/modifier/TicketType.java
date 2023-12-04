@@ -158,6 +158,11 @@ public class TicketType implements Serializable, Modifier, WizardType {
     }
 
     @Override
+    public String getId() {
+        return name;
+    }
+
+    @Override
     public WizardEditor<TicketType> createWizard() {
         return new TicketTypeEditor(this, new TicketTypePanel());
     }

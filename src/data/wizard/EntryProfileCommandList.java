@@ -19,6 +19,11 @@ public class EntryProfileCommandList implements WizardType {
     }
 
     @Override
+    public String getId() {
+        return null;
+    }
+
+    @Override
     public WizardEditor<?> createWizard() {
         return null;
     }

@@ -16,14 +16,6 @@ public class DiscountModel extends DefaultWizardModel<Discount> {
     }
 
     @Override
-    public Discount getElementById(String id) {
-        return dataList.stream()
-                .filter(discount -> discount.getMeta().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Override
     public ListCellRenderer<Discount> createListRenderer() {
         return listRenderer;
     }

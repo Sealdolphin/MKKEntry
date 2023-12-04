@@ -109,7 +109,11 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
         validator.addComponent(compDescription.getComponent(), this::isDescriptionValid, "Leírás nem lehet üres");
         validator.addComponent(imgBarcodePicture, imgBarcodePicture::validatePicture, "Válassz egy képet a vonalkódhoz");
         validator.addComponent(tfBarcode, this::isMetaValid, "Nem regisztrálhatsz nem beolvasott vonalkódot!");
-//        validator.addComponent(compName.getComponent(), null, "");
+    }
+
+    @Override
+    public JComponent getObjectValidationComponent() {
+        return tfBarcode;
     }
 
     @Override

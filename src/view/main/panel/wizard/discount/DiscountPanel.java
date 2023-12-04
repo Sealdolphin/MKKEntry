@@ -76,6 +76,11 @@ public class DiscountPanel extends AbstractPanel implements WizardPage<Discount>
     }
 
     @Override
+    public JComponent getObjectValidationComponent() {
+        return compBarcodes.getComponent();
+    }
+
+    @Override
     public AbstractPanel getWizardEditPanel() {
         return this;
     }

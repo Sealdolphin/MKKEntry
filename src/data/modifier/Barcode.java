@@ -152,6 +152,11 @@ public class Barcode implements Serializable, Modifier, WizardType {
     }
 
     @Override
+    public String getId() {
+        return metaData;
+    }
+
+    @Override
     public WizardEditor<Barcode> createWizard() {
         return new BarcodeEditor(this, new view.main.panel.wizard.barcode.BarcodePanel());
     }

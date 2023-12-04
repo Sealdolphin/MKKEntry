@@ -46,7 +46,7 @@ public class TicketTypePanel extends AbstractPanel implements WizardPage<TicketT
     public void saveData(WizardEditor<TicketType> controller) {
         if (controller instanceof TicketTypeEditor editor) {
             editor.setTicketTypeName(compName.getComponent().getText());
-            editor.setTicketTypePrice(((Integer)compPrice.getComponent().getValue()));
+            editor.setTicketTypePrice(((Number) compPrice.getComponent().getValue()).intValue());
             editor.setTicketTypeStatisticsEnabled(cbStatisticsEnabled.isSelected());
             editor.setTicketTypeColor(bgColorPanel.getBackgroundColor());
         }
@@ -55,6 +55,11 @@ public class TicketTypePanel extends AbstractPanel implements WizardPage<TicketT
     @Override
     public void setupValidation(ComponentValidator validator) {
         validator.addComponent(compName.getComponent(), this::isNameValid, "Név nem lehet üres");
+    }
+
+    @Override
+    public JComponent getObjectValidationComponent() {
+        return compName.getComponent();
     }
 
     @Override

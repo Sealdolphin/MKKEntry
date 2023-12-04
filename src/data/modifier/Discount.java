@@ -239,6 +239,11 @@ public class Discount implements Serializable, Modifier, WizardType {
     }
 
     @Override
+    public String getId() {
+        return barcode.getId();
+    }
+
+    @Override
     public WizardEditor<Discount> createWizard() {
         return new DiscountEditor(this, new DiscountPanel());
     }

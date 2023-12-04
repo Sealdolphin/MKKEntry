@@ -20,14 +20,6 @@ public class BarcodeModel extends DefaultWizardModel<Barcode> implements ComboBo
         this.listRenderer = new BarcodeListRenderer();
     }
 
-    @Override
-    public Barcode getElementById(String id) {
-        return dataList.stream()
-                .filter(barcode -> barcode.getMetaData().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
     public ListCellRenderer<Barcode> createListRenderer() {
         return listRenderer;
     }
