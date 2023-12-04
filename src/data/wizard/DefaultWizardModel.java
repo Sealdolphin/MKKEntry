@@ -73,6 +73,7 @@ public abstract class DefaultWizardModel<T extends WizardType> implements DataMo
         if (selection != null) {
             removeData(selection);
         }
+        setSelection(null);
     }
 
     @Override

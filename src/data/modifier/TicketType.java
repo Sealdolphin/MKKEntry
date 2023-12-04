@@ -52,7 +52,7 @@ public class TicketType implements Serializable, Modifier, WizardType {
         return name;
     }
 
-    public int getPrice() {
+    public long getPrice() {
         return price;
     }
 

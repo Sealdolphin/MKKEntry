@@ -26,7 +26,7 @@ public class TicketTypePanel extends AbstractPanel implements WizardPage<TicketT
 
     public TicketTypePanel() {
         compName = new LabeledComponent<>("Név:", new JTextField(TEXT_PANEL_DEFAULT_WIDTH));
-        compPrice = new LabeledComponent<>("Ár:", new JSpinner(new SpinnerNumberModel(0,0,Short.MAX_VALUE,1)));
+        compPrice = new LabeledComponent<>("Ár:", new JSpinner(new SpinnerNumberModel(0,0,Integer.MAX_VALUE,1)));
         cbStatisticsEnabled = new JCheckBox("A jegytípus beleszámít a kassza statisztikába");
         btnChooseColor = new JButton("Módosítás");
         bgColorPanel = new JColoredPanel(DEFAULT_COLOR, 50);
@@ -46,8 +46,8 @@ public class TicketTypePanel extends AbstractPanel implements WizardPage<TicketT
     public void saveData(WizardEditor<TicketType> controller) {
         if (controller instanceof TicketTypeEditor editor) {
             editor.setTicketTypeName(compName.getComponent().getText());
-            editor.setTicketTypePrice((Integer) compPrice.getComponent().getValue());
-            editor.setTicketTypeStatisticsEnabled(cbStatisticsEnabled.isEnabled());
+            editor.setTicketTypePrice(((Integer)compPrice.getComponent().getValue()));
+            editor.setTicketTypeStatisticsEnabled(cbStatisticsEnabled.isSelected());
             editor.setTicketTypeColor(bgColorPanel.getBackgroundColor());
         }
     }

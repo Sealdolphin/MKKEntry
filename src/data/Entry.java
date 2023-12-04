@@ -34,8 +34,8 @@ public class Entry extends Vector<String> {
     private TicketType ticketType;
     private List<Discount> discountList = new ArrayList<>();
 
-    public int getAllFees() {
-        int f = ticketType.getFees();
+    public long getAllFees() {
+        long f = ticketType.getFees();
         if (!ticketType.hasFee()) return 0;
         for(Discount d : discountList){
             if (d.isFree()) return 0;
@@ -147,7 +147,7 @@ public class Entry extends Vector<String> {
         add(ENTER_DATE.column,enter);
         add(LEAVE_DATE.column,leave);
 
-        add(PRICE.column,((Integer)getAllFees()).toString());
+        add(PRICE.column, String.valueOf(getAllFees()));
     }
 
     /**
