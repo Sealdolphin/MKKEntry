@@ -2,11 +2,16 @@ package control.wizard;
 
 import data.DataModel;
 import data.modifier.TicketType;
+import data.wizard.TicketTypeModel;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 
 public class TicketTypeWizard extends AbstractWizard<TicketType> {
+
+    public TicketTypeWizard() {
+        this(new TicketTypeModel());
+    }
 
     public TicketTypeWizard(DataModel<TicketType> ticketTypes) {
         super(ticketTypes, new TicketType().createWizard());

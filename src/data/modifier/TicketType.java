@@ -26,9 +26,7 @@ public class TicketType implements Serializable, Modifier, WizardType {
 
     private Color backgroundColor;
 
-    public TicketType() {
-
-    }
+    public TicketType() {}
 
     /**
      * Private constructor
@@ -123,10 +121,6 @@ public class TicketType implements Serializable, Modifier, WizardType {
         return new TicketType(name,price,fee, bgColor);
     }
 
-    public static TicketType emptyType() {
-        return new TicketType("", 0, false, Color.BLACK);
-    }
-
     @Override
     public boolean equals(Object other){
         if(other == null) return false;
@@ -189,9 +183,9 @@ public class TicketType implements Serializable, Modifier, WizardType {
     @Deprecated
     private class TicketTypeWizard extends ModifierDialog {
 
-        private JTextField tfName = new JTextField(name);
-        private JSpinner spPrice = new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,1));
-        private JCheckBox cbHasFee = new JCheckBox("A jegytípust számon tartódik a kasszában is");
+        private final JTextField tfName = new JTextField(name);
+        private final JSpinner spPrice = new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,1));
+        private final JCheckBox cbHasFee = new JCheckBox("A jegytípust számon tartódik a kasszában is");
 
         TicketTypeWizard(Window parent) {
             super(parent,"Jegytípus szerkesztése");

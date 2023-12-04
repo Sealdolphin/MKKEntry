@@ -4,10 +4,12 @@ import control.modifier.DiscountEditor;
 import control.wizard.WizardEditor;
 import data.modifier.Barcode;
 import data.modifier.Discount;
+import data.wizard.BarcodeModel;
 import view.main.panel.AbstractPanel;
 import view.main.panel.utility.LabeledComponent;
 import view.main.panel.utility.LoadedIcon;
 import view.main.panel.wizard.WizardPage;
+import view.renderer.list.BarcodeListRenderer;
 import view.validation.ComponentValidator;
 
 import javax.swing.*;
@@ -37,6 +39,8 @@ public class DiscountPanel extends AbstractPanel implements WizardPage<Discount>
         compDiscount = new LabeledComponent<>("Kedvezmény:", new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,1)));
         cbFree = new JCheckBox("Ingyenes");
         btnChangeIcon = new JButton("Módosítás");
+
+        compBarcodes.getComponent().setRenderer(new BarcodeListRenderer());
     }
 
     @Override
@@ -44,9 +48,12 @@ public class DiscountPanel extends AbstractPanel implements WizardPage<Discount>
         compName.getComponent().setText(model.getName());
         cbFree.setSelected(model.isFree());
         compDiscount.getComponent().setValue(model.getDiscount());
-        compBarcodes.getComponent().setSelectedItem(model.getMeta());
+        compBarcodes.getComponent().setSelectedItem(model.getBarcode());
 
         String iconPath = model.getIconPath();
+        if (iconPath == null) {
+            iconPath = basicIcon;
+        }
         lbPath.setText(iconPath);
         lbIcon.setIcon(new LoadedIcon(iconPath, DEFAULT_ICON_SIZE).getIcon());
     }
@@ -64,7 +71,8 @@ public class DiscountPanel extends AbstractPanel implements WizardPage<Discount>
 
     @Override
     public void setupValidation(ComponentValidator validator) {
-
+        validator.addComponent(compName.getComponent(), this::isNameValid, "Név nem lehet üres");
+        validator.addComponent(compBarcodes.getComponent(), this::isBarcodeSelected, "Válassz egy vonalkódot!");
     }
 
     @Override
@@ -107,7 +115,18 @@ public class DiscountPanel extends AbstractPanel implements WizardPage<Discount>
 
         layout.linkSize(compName.getComponent(), compDiscount.getComponent());
         layout.linkSize(SwingConstants.HORIZONTAL, lbPath, compName.getLabel());
-        layout.linkSize(SwingConstants.VERTICAL, compName.getComponent(), compBarcodes.getComponent());
 
+    }
+
+    public void updateBarcodeOptions(BarcodeModel options) {
+        compBarcodes.getComponent().setModel(options);
+    }
+
+    private boolean isNameValid() {
+        return !compName.getComponent().getText().isBlank();
+    }
+
+    private boolean isBarcodeSelected() {
+        return compBarcodes.getComponent().getSelectedItem() != null;
     }
 }

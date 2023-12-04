@@ -50,7 +50,7 @@ public class Discount implements Serializable, Modifier, WizardType {
     /**
      * Ingyenes beléptetést biztosít
      */
-    private Boolean free;
+    private boolean free;
 
     /**
      * The filepath of the icon's image
@@ -109,6 +109,9 @@ public class Discount implements Serializable, Modifier, WizardType {
      * @return the barcode's metadata
      */
     public String getMeta(){
+        if (barcode == null) {
+            return null;
+        }
         return barcode.getMetaData();
     }
 
@@ -165,6 +168,10 @@ public class Discount implements Serializable, Modifier, WizardType {
         return iconPath;
     }
 
+    public Barcode getBarcode() {
+        return barcode;
+    }
+
     /**
      * Returns if discount is free
      */
@@ -200,6 +207,9 @@ public class Discount implements Serializable, Modifier, WizardType {
         if(obj == this) return true;
         if(!(obj.getClass().equals(Discount.class))) return false;
         Discount other = (Discount) obj;
+        if (barcode == null) {
+            return other.barcode == null;
+        }
         return other.getMeta().equals(getMeta());
     }
 
@@ -265,7 +275,7 @@ public class Discount implements Serializable, Modifier, WizardType {
             this.profile = profile;
         }
 
-        private EntryProfile profile;
+        private final EntryProfile profile;
 
         @Override
         public void createNew(List<Discount> objectList) {

@@ -3,7 +3,9 @@ package control.modifier;
 import control.wizard.WizardEditor;
 import data.modifier.Barcode;
 import data.modifier.Discount;
+import data.wizard.BarcodeModel;
 import view.main.panel.wizard.WizardPage;
+import view.main.panel.wizard.discount.DiscountPanel;
 
 public class DiscountEditor extends WizardEditor<Discount> {
 
@@ -29,5 +31,11 @@ public class DiscountEditor extends WizardEditor<Discount> {
 
     public void setDiscountValue(int discount) {
         data.setDiscount(discount);
+    }
+
+    public void setBarcodeOptions(BarcodeModel options) {
+        if (getView() instanceof DiscountPanel discountPanel) {
+            discountPanel.updateBarcodeOptions(options);
+        }
     }
 }

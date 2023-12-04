@@ -4,11 +4,16 @@ import data.modifier.TicketType;
 import view.renderer.list.TicketTypeListRenderer;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TicketTypeModel extends DefaultWizardModel<TicketType> {
 
     private final TicketTypeListRenderer listRenderer;
+
+    public TicketTypeModel() {
+        this(new ArrayList<>());
+    }
 
     public TicketTypeModel(List<TicketType> dataList) {
         super(dataList);

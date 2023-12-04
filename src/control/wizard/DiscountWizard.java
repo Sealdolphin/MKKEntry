@@ -1,7 +1,9 @@
 package control.wizard;
 
+import control.modifier.DiscountEditor;
 import data.DataModel;
 import data.modifier.Discount;
+import data.wizard.BarcodeModel;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -33,5 +35,11 @@ public class DiscountWizard extends AbstractWizard<Discount> {
     @Override
     protected Discount getNewElement() {
         return new Discount();
+    }
+
+    public void updateBarcodeOptions(BarcodeModel options) {
+        if (selectionEditor instanceof DiscountEditor editor) {
+            editor.setBarcodeOptions(options);
+        }
     }
 }

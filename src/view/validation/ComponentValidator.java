@@ -2,6 +2,7 @@ package view.validation;
 
 import view.validation.listener.DocumentChangeValidationChecker;
 import view.validation.listener.KeyTypeValidationChecker;
+import view.validation.listener.SelectionValidationChecker;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -25,6 +26,11 @@ public class ComponentValidator {
         components.add(vComponent);
         component.addKeyListener(new KeyTypeValidationChecker(vComponent));
         component.addPropertyChangeListener(new DocumentChangeValidationChecker(vComponent));
+        if (component instanceof ItemSelectable selectable) {
+            selectable.addItemListener(new SelectionValidationChecker(vComponent));
+        }
+
+
     }
     public boolean validate() {
         return components.stream().map(this::validateComponent).reduce(true, this::evaluateValidation);

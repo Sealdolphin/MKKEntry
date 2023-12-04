@@ -6,6 +6,7 @@ import data.Entry;
 import data.modifier.Barcode;
 import data.modifier.Discount;
 import data.modifier.TicketType;
+import data.wizard.BarcodeModel;
 import data.wizard.DiscountModel;
 
 import javax.swing.*;
@@ -37,7 +38,7 @@ public abstract class AbstractPanel extends JPanel {
         AppData model = new AppData();
 
         for (int i = 1000; i < 2000; i++) {
-            model.addData(new Entry(String.valueOf(i), "name" + i, TicketType.emptyType()));
+            model.addData(new Entry(String.valueOf(i), "name" + i, new TicketType()));
         }
 
         List<Barcode> barcodeList = new ArrayList<>();
@@ -45,9 +46,12 @@ public abstract class AbstractPanel extends JPanel {
         Barcode codeHelper = new Barcode("Segítő", "HELPER", "Barcodes\\helpSale.png", "Jelentkezett segítőnek");
         Barcode codeFood = new Barcode("Büfé", "FOOD", "Barcodes\\foodSale.png", "Hozott sütit / üdítőt");
         Barcode codeSupport = new Barcode("Támogató", "SUPPORT", "Barcodes\\vipTicket.png", "Támogató <3");
+        Barcode codeRandom = new Barcode("Random", "RANDOM", "Barcodes\\vipTicket.png", "Valami...");
+
         barcodeList.add(codeHelper);
         barcodeList.add(codeFood);
         barcodeList.add(codeSupport);
+        barcodeList.add(codeRandom);
 
         List<Discount> discountList = new ArrayList<>();
 
@@ -57,9 +61,12 @@ public abstract class AbstractPanel extends JPanel {
 
         DiscountModel discounts = new DiscountModel(discountList);
 
+        DiscountWizard dWizard = new DiscountWizard(discounts);
+        dWizard.updateBarcodeOptions(new BarcodeModel(barcodeList));
+
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.add(new DiscountWizard(discounts).getView());
+        frame.add(dWizard.getView());
         frame.pack();
         frame.setMinimumSize(new Dimension(640,480));
         frame.setLocationRelativeTo(null);

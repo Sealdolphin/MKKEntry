@@ -20,7 +20,7 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
     }
 
     private final DataListView<T> view;
-    private final WizardEditor<T> selectionEditor;
+    protected final WizardEditor<T> selectionEditor;
     protected final DataModel<T> dataList;
     private final ComponentValidator validator = new ComponentValidator();
 

@@ -15,8 +15,13 @@ public class BarcodeListRenderer extends DefaultWizardTypeListRenderer<Barcode> 
 
     @Override
     public Component getListCellRendererComponent(JList<? extends Barcode> list, Barcode barcode, int index, boolean isSelected, boolean cellHasFocus) {
-        lbName.setText(barcode.getName());
-        lbDescription.setText(barcode.getDescription());
+        if (barcode == null) {
+            lbName.setText("Válassz egyet...");
+            lbDescription.setText(null);
+        } else {
+            lbName.setText(barcode.getName());
+            lbDescription.setText(barcode.getDescription());
+        }
 
         return super.getListCellRendererComponent(list, barcode, index, isSelected, cellHasFocus);
     }
