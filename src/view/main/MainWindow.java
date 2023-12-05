@@ -3,14 +3,13 @@ package view.main;
 
 import control.AppController;
 import control.MenuHandler;
-import data.AppData;
 import data.EntryProfile;
+import data.entry.AppData;
 import data.modifier.Discount;
 import data.util.ReadingFlag;
 import view.main.interactive.InteractiveJMenuItem;
 import view.main.interactive.ReadFlagListener;
 import view.main.panel.mainwindow.QuickSearchPanel;
-import view.main.panel.mainwindow.RecordPanel;
 import view.renderer.DiscountRenderer;
 
 import javax.swing.*;
@@ -404,9 +403,11 @@ public class MainWindow extends JFrame {
 
             btnSendCode.addActionListener(actionSendCode);
             btnClearSelection.addActionListener(actionClearSelection);
+
             getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_ENTER,0),"sendCode");
             getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_DELETE,0),"deleteCode");
             getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_ESCAPE,0),"clearSelection");
+
             getActionMap().put("sendCode",actionSendCode);
             getActionMap().put("deleteCode",deleteAction);
             getActionMap().put("clearSelection",actionClearSelection);
@@ -425,7 +426,7 @@ public class MainWindow extends JFrame {
             //Assembling body components
             add(spTable,BorderLayout.CENTER);
             add(inputPanel,BorderLayout.SOUTH);
-            add(new QuickSearchPanel(model, new RecordPanel(model)),BorderLayout.NORTH);
+            add(new QuickSearchPanel(),BorderLayout.NORTH);
 
 
         }

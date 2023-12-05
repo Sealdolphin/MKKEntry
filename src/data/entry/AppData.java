@@ -1,7 +1,6 @@
-package data;
+package data.entry;
 
-
-import control.modifier.Transaction;
+import data.DataModel;
 import data.modifier.Discount;
 
 import javax.swing.*;
@@ -14,21 +13,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static data.Entry.DataColumn.ID;
-
-public class AppData extends DefaultTableModel implements Serializable, DataModel<Entry>{
+public class AppData extends DefaultTableModel implements Serializable, DataModel<Entry> {
 
     private List<Entry> entryList = new ArrayList<>();
-    private List<Transaction> transactionList = new ArrayList<>();
     private Entry lastSelectedEntry;
 
     /**
      * New option file creation with default settings
      */
     public AppData() {
-        super(0,Entry.DataColumn.values().length);
-        setColumnIdentifiers(Arrays.stream(Entry.DataColumn.values()).map(Entry.DataColumn::getName).toArray());
-        System.out.println("a new AppData has been constructed");
+        super(0, DataColumn.values().length);
+        setColumnIdentifiers(Arrays.stream(DataColumn.values()).map(DataColumn::getName).toArray());
     }
 
     public String generateNewID() {
@@ -43,7 +38,6 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     public void clearData(){
         entryList.clear();
-        transactionList.clear();
         dataVector.clear();
         lastSelectedEntry = null;
         fireTableDataChanged();
@@ -51,7 +45,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        Entry.DataColumn column = Entry.DataColumn.values()[columnIndex];
+        DataColumn column = DataColumn.values()[columnIndex];
         return switch (column) {
             default -> String.class;   //Use default rendering (String)
             case DISCOUNTS -> Discount.class;  //Use custom rendering (DiscountRenderer)
@@ -61,7 +55,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     @Override
     public Object getValueAt(int row, int columnIndex) {
-        Entry.DataColumn column = Entry.DataColumn.values()[columnIndex];
+        DataColumn column = DataColumn.values()[columnIndex];
         return switch (column) {
             default -> super.getValueAt(row, columnIndex);                                     //Return a string
             case PRICE -> entryList.get(row).getAllFees() + " Ft";
@@ -92,7 +86,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     @Override
     public Entry getElementById(String id) {
-        return entryList.stream().filter(entry -> entry.get(ID.ordinal()).equals(id)).findAny().orElse(null);
+        return entryList.stream().filter(entry -> entry.get(DataColumn.ID.ordinal()).equals(id)).findAny().orElse(null);
     }
 
     @Override
@@ -117,7 +111,7 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
 
     @Override
     public void addData(Entry data){
-        Entry conflict = getElementById(data.get(ID.ordinal()));
+        Entry conflict = getElementById(data.get(DataColumn.ID.ordinal()));
         if(conflict != null){
             lastSelectedEntry = conflict;
         } else {
@@ -166,13 +160,12 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     @Serial
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         out.writeObject(entryList.toArray());
-        out.writeObject(transactionList.toArray());
         out.writeObject(lastSelectedEntry);
     }
 
     @Serial
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
-        setColumnIdentifiers(Arrays.stream(Entry.DataColumn.values()).map(Entry.DataColumn::getName).toArray());
+        setColumnIdentifiers(Arrays.stream(DataColumn.values()).map(DataColumn::getName).toArray());
         //Reading entries
         Object[] objs = (Object[]) in.readObject();
         entryList = new ArrayList<>();
@@ -181,10 +174,6 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
         }
         //Reading transactions
         objs = (Object[]) in.readObject();
-        transactionList = new ArrayList<>();
-        for (Object entryObj : objs) {
-            transactionList.add((Transaction) entryObj);
-        }
         //Reading last selection
         lastSelectedEntry = (Entry) in.readObject();
     }

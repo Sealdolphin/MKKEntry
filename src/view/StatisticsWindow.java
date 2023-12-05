@@ -1,8 +1,8 @@
 package view;
 
 import data.DataModel;
-import data.Entry;
 import data.EntryProfile;
+import data.entry.Entry;
 
 import javax.swing.*;
 import java.awt.*;

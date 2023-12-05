@@ -1,8 +1,8 @@
 package control.utility.network;
 
 import control.AppController;
-import data.Entry;
 import data.EntryProfile;
+import data.entry.Entry;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

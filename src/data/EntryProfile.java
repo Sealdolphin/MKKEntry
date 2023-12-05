@@ -5,10 +5,15 @@ import control.UIHandler;
 import control.modifier.Modifier;
 import control.modifier.ModifierWizardEditor;
 import control.modifier.Transaction;
+import control.wizard.WizardEditor;
+import data.entry.Entry;
+import data.entry.EntryCommand;
+import data.entry.EntryLimit;
 import data.modifier.Barcode;
 import data.modifier.Discount;
 import data.modifier.TicketType;
 import data.util.ReadingFlag;
+import data.wizard.WizardType;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import view.renderer.ModifierValidationRenderer;
@@ -45,7 +50,7 @@ import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
  * -- A szükséges parancskódok listája
  * A beléptetési profil létrehozása csak varázsló segítségével lehetséges
  */
-public class EntryProfile implements Serializable {
+public class EntryProfile implements Serializable, WizardType {
 
     private String password = "";
 
@@ -58,16 +63,14 @@ public class EntryProfile implements Serializable {
         return transactionList;
     }
 
-    public enum EntryLimit {
-        ONCE("Egyszeri"),
-        NO_LIMIT("Korlátlan"),
-        CUSTOM("Egyéni");
+    @Override
+    public String getId() {
+        return null;
+    }
 
-        private final String name;
-
-        EntryLimit(String name){this.name = name;}
-        @Override
-        public String toString(){ return name; }
+    @Override
+    public WizardEditor<?> createWizard() {
+        return null;
     }
 
     /**
@@ -102,6 +105,7 @@ public class EntryProfile implements Serializable {
     /**
      * A jegytípusok listája
      */
+    @Deprecated
     private final List<TicketType> ticketTypes;
     /**
      * Az alapméretezett jegytípus
@@ -110,11 +114,13 @@ public class EntryProfile implements Serializable {
     /**
      * A kedvezmények listája
      */
+    @Deprecated
     private final List<Discount> discounts;
 
     /**
      * A vonalkódok listája
      */
+    @Deprecated
     private final List<Barcode> barCodes;
 
     /**
@@ -140,17 +146,21 @@ public class EntryProfile implements Serializable {
     /**
      * A szükséges parancskódok listája
      */
+    @Deprecated
     private HashMap<String, ReadingFlag> commandCodes;
+
+    private List<EntryCommand> commands;
 
     /**
      * Maximum of actions
      */
+    @Deprecated
     private final int maxActionCount = 10;
 
     private static final ReadingFlag[] commandJsonKeys = ReadingFlag.values();
 
 
-    private EntryProfile() {
+    public EntryProfile() {
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
         commandCodes = new HashMap<>();
@@ -206,6 +216,7 @@ public class EntryProfile implements Serializable {
         }
     }
 
+    @Deprecated
     public static EntryProfile createProfileFromWizard(JFrame main, EntryProfile edit){
         if(edit == null)
             edit = new EntryProfile();
@@ -214,6 +225,7 @@ public class EntryProfile implements Serializable {
         return res == 0 ? edit : null;
     }
 
+    @Deprecated
     public static boolean isRestartNeeded(EntryProfile oldProfile, EntryProfile newProfile) {
         //1. code mask comparison
         if(!oldProfile.codeMask.equals(newProfile.codeMask)) return true;
@@ -308,7 +320,7 @@ public class EntryProfile implements Serializable {
         return discounts.stream().filter(discount -> discount.getMeta().equals(discountMeta)).findAny().orElse(null);
     }
 
-    TicketType identifyTicketType(String unknownType) {
+    public TicketType identifyTicketType(String unknownType) {
         return ticketTypes.stream().filter(type -> type.toString().equals(unknownType)).findAny().orElse(defaultType);
     }
 
@@ -366,9 +378,10 @@ public class EntryProfile implements Serializable {
         return entryModifiesID && id.matches(modificationMask);
     }
 
-
+    @Deprecated
     private ProfileWizard getWizardEditor(JFrame main) { return new ProfileWizard(main); }
 
+    @Deprecated
     class ProfileWizard extends JDialog {
 
         private JTextField tfName;

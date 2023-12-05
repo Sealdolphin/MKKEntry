@@ -1,8 +1,8 @@
 package control;
 
 import control.utility.file.EntryFilter;
-import data.Entry;
 import data.EntryProfile;
+import data.entry.Entry;
 
 import java.io.BufferedReader;
 import java.io.IOException;

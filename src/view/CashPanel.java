@@ -2,8 +2,8 @@ package view;
 
 import control.modifier.Transaction;
 import data.DataModel;
-import data.Entry;
 import data.EntryProfile;
+import data.entry.Entry;
 import view.renderer.TransactionRenderer;
 
 import javax.swing.*;

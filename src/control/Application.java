@@ -1,8 +1,8 @@
 package control;
 
 import control.utility.devices.BarCodeReaderListenerFactory;
-import data.AppData;
 import data.ProfileData;
+import data.entry.AppData;
 import data.modifier.Barcode;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

@@ -1,5 +1,7 @@
 package data;
 
+import data.entry.Entry;
+
 public class UserAction {
 
     private final Entry actualState;
