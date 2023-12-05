@@ -19,6 +19,7 @@ public class EntryProfileCommandPanel extends AbstractPanel implements WizardPag
         components = commands.stream().map(this::createLabeledComponent).toList();
     }
 
+    // Fixme: insert a barcode model here
     private LabeledComponent<JComboBox<String>> createLabeledComponent(EntryCommand command) {
         return new LabeledComponent<>(command.toString(), new JComboBox<>(new String[]{"Test 1", "Test 2", "Test 3"}));
     }
@@ -53,7 +54,7 @@ public class EntryProfileCommandPanel extends AbstractPanel implements WizardPag
 
     @Override
     public void setupValidation(ComponentValidator validator) {
-
+        // TODO: do not allow two commands that are the same
     }
 
     @Override

@@ -1,21 +1,20 @@
 package view.main.panel.wizard.entryprofile;
 
 import control.wizard.WizardEditor;
-import data.EntryProfile;
-import data.entry.EntryCommand;
+import data.entryprofile.EntryProfile;
 import view.main.panel.AbstractPanel;
 import view.main.panel.wizard.WizardPage;
 import view.validation.ComponentValidator;
 
 import javax.swing.*;
-import java.util.List;
+
+import static data.entry.EntryCommand.getDefaultCommands;
 
 public class EntryProfileMainPanel extends AbstractPanel implements WizardPage<EntryProfile> {
 
     private final EntryProfileDefaultPanel topPanel;
     private final EntryProfileCommandPanel commandPanel;
     private final EntryProfileSettingsPanel settingsPanel;
-
     private final JScrollPane scrollWheel;
 
     public EntryProfileMainPanel() {
@@ -23,11 +22,7 @@ public class EntryProfileMainPanel extends AbstractPanel implements WizardPage<E
 
         topPanel = new EntryProfileDefaultPanel();
         // TODO: get default commands from somewhere (schema or have default commands)
-        commandPanel = new EntryProfileCommandPanel(List.of(
-                new EntryCommand("FL_ENTRY", "Alapértelmezett", "MKK"),
-                new EntryCommand("FL_LEAVE", "Kilépés", "LEAVE"),
-                new EntryCommand("FL_DELETE", "Törlés", "DELETE")
-        ));
+        commandPanel = new EntryProfileCommandPanel(getDefaultCommands());
         settingsPanel = new EntryProfileSettingsPanel();
 
         JPanel contentPane = new JPanel();

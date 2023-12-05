@@ -8,7 +8,7 @@ import data.modifier.Discount;
 import data.modifier.TicketType;
 import data.wizard.BarcodeModel;
 import data.wizard.DiscountModel;
-import view.main.panel.mainwindow.QuickSearchPanel;
+import view.main.panel.wizard.entryprofile.EntryProfileMainPanel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -71,7 +71,7 @@ public abstract class AbstractPanel extends JPanel {
         ticketTypes.add(new TicketType("TT3", 3000, false, TicketType.DEFAULT_COLOR));
         ticketTypes.add(new TicketType("TT4", 4000, false, TicketType.DEFAULT_COLOR));
 
-        QuickSearchPanel panel = new QuickSearchPanel();
+        EntryProfileMainPanel panel = new EntryProfileMainPanel();
         panel.initializeLayout();
 
         JFrame frame = new JFrame();
