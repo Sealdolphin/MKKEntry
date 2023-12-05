@@ -1,10 +1,10 @@
-package data;
+package data.entryprofile;
 
 
 import control.UIHandler;
+import control.modifier.EntryProfileEditor;
 import control.modifier.Modifier;
 import control.modifier.ModifierWizardEditor;
-import control.modifier.Transaction;
 import control.wizard.WizardEditor;
 import data.entry.Entry;
 import data.entry.EntryCommand;
@@ -16,6 +16,7 @@ import data.util.ReadingFlag;
 import data.wizard.WizardType;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import view.main.panel.wizard.entryprofile.EntryProfileMainPanel;
 import view.renderer.ModifierValidationRenderer;
 
 import javax.swing.*;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.*;
 
 import static control.Application.uh;
+import static data.entry.EntryCommand.getDefaultCommands;
 import static data.util.ReadingFlag.*;
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.SOUTH;
@@ -52,6 +54,75 @@ import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
  */
 public class EntryProfile implements Serializable, WizardType {
 
+    private final UUID profileID = UUID.randomUUID();
+
+    private ProfileSettings profileSettings;
+
+    private String profileName;
+
+    private String profileMask;
+
+    private String profileMaskForEntry;
+
+    private String defaultName;
+
+    private TicketType defaultTicketType;
+
+    private List<EntryCommand> commandList;
+
+    private int entryLimit;
+
+    public EntryProfile() {
+        commandList = getDefaultCommands();
+    }
+
+    public TicketType getDefaultTicketType() {
+        return defaultTicketType;
+    }
+
+    public void setDefaultTicketType(TicketType defaultTicketType) {
+        this.defaultTicketType = defaultTicketType;
+    }
+
+    public String getProfileName() {
+        return profileName;
+    }
+
+    public void setProfileName(String profileName) {
+        this.profileName = profileName;
+    }
+
+    public String getProfileMask() {
+        return profileMask;
+    }
+
+    public void setProfileMask(String profileMask) {
+        this.profileMask = profileMask;
+    }
+
+    public String getProfileMaskForEntry() {
+        return profileMaskForEntry;
+    }
+
+    public void setProfileMaskForEntry(String profileMaskForEntry) {
+        this.profileMaskForEntry = profileMaskForEntry;
+    }
+
+    @Override
+    public String getId() {
+        return profileID.toString();
+    }
+
+    @Override
+    public WizardEditor<EntryProfile> createWizard() {
+        return new EntryProfileEditor(this, new EntryProfileMainPanel());
+    }
+
+
+    /**
+     * #################################### OLD STUFF BELOW ##################################
+     */
+
     private String password = "";
 
     @Deprecated
@@ -59,39 +130,18 @@ public class EntryProfile implements Serializable, WizardType {
         return password;
     }
 
-    public List<Transaction> getTransactions() {
-        return transactionList;
-    }
-
-    @Override
-    public String getId() {
-        return null;
-    }
-
-    @Override
-    public WizardEditor<?> createWizard() {
-        return null;
-    }
-
     /**
      * A beléptetési profil neve
      */
+    @Deprecated
     private String name;
-
-    /**
-     * A rekordok automatikus neve
-     */
-    private String defaultName;
 
     /**
      * A profilhoz tartozó belépési kódok maszkja
      */
+    @Deprecated
     private String codeMask;
-    /**
-     * A belépési kvóta.
-     * 0 = nincs kvóta
-     */
-    private int entryLimit;
+
     /**
      * Ismeretlen adat kezelésének megoldása.
      * true = Automatikus kezelés. Az adatot figyelmen kívül hagyja, vagy az alapméretezett beállításokkal dolgozik.
@@ -106,7 +156,7 @@ public class EntryProfile implements Serializable, WizardType {
      * A jegytípusok listája
      */
     @Deprecated
-    private final List<TicketType> ticketTypes;
+    private List<TicketType> ticketTypes;
     /**
      * Az alapméretezett jegytípus
      */
@@ -115,18 +165,13 @@ public class EntryProfile implements Serializable, WizardType {
      * A kedvezmények listája
      */
     @Deprecated
-    private final List<Discount> discounts;
+    private List<Discount> discounts;
 
     /**
      * A vonalkódok listája
      */
     @Deprecated
-    private final List<Barcode> barCodes;
-
-    /**
-     * A tranzakciók listája
-     */
-    private final List<Transaction> transactionList;
+    private List<Barcode> barCodes;
 
     /**
      * Kötelező-e a név megadása
@@ -159,18 +204,6 @@ public class EntryProfile implements Serializable, WizardType {
 
     private static final ReadingFlag[] commandJsonKeys = ReadingFlag.values();
 
-
-    public EntryProfile() {
-        ticketTypes = new ArrayList<>();
-        discounts = new ArrayList<>();
-        commandCodes = new HashMap<>();
-        barCodes = new ArrayList<>();
-        transactionList = new ArrayList<>();
-        nameRequirement = true;
-        entryModifiesID = false;
-        defaultName = "Külsős jegy";
-    }
-
     public EntryProfile(EntryProfile other){
         //Reference / primitives
         name = other.name;
@@ -187,19 +220,10 @@ public class EntryProfile implements Serializable, WizardType {
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
         barCodes = new ArrayList<>();
-        transactionList = new ArrayList<>();
         for (Barcode barcode : other.barCodes) { barCodes.add(new Barcode(barcode)); }
         for (Discount discount : other.discounts) { discounts.add(new Discount(discount,this)); }
         for (TicketType type : other.ticketTypes) { ticketTypes.add(new TicketType(type)); }
         exportFilters = other.exportFilters;
-    }
-
-    public void addTransaction(Transaction action) {
-        transactionList.add(action);
-    }
-
-    public void removeTransaction(Transaction action) {
-        transactionList.remove(action);
     }
 
     public static void loadProfilesFromJson(JSONObject object, List<EntryProfile> profileList) throws IOException{

@@ -57,10 +57,10 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     public Object getValueAt(int row, int columnIndex) {
         DataColumn column = DataColumn.values()[columnIndex];
         return switch (column) {
-            default -> super.getValueAt(row, columnIndex);                                     //Return a string
+            default -> super.getValueAt(row, columnIndex);
             case PRICE -> entryList.get(row).getAllFees() + " Ft";
-            case DISCOUNTS -> entryList.get(row).getDiscounts();                               //Return discount list
-            case ENTERED -> Boolean.parseBoolean(entryList.get(row).isEntered().toString());   //Return entered state
+            case DISCOUNTS -> entryList.get(row).getDiscounts();
+            case ENTERED -> entryList.get(row).isEntered();
         };
     }
 

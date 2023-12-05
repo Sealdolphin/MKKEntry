@@ -3,8 +3,8 @@ package view.main;
 
 import control.AppController;
 import control.MenuHandler;
-import data.EntryProfile;
 import data.entry.AppData;
+import data.entryprofile.EntryProfile;
 import data.modifier.Discount;
 import data.util.ReadingFlag;
 import view.main.interactive.InteractiveJMenuItem;

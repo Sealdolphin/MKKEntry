@@ -1,15 +1,13 @@
 package view;
 
-import data.EntryProfile;
 import control.utility.file.ExtensionFilter;
+import data.entryprofile.EntryProfile;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
-
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 

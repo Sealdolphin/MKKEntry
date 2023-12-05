@@ -1,5 +1,6 @@
 package data;
 
+import data.entryprofile.EntryProfile;
 import view.StartupDialog;
 
 import javax.swing.*;

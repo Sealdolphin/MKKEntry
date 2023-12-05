@@ -5,7 +5,7 @@ import control.modifier.Modifier;
 import control.modifier.ModifierDialog;
 import control.modifier.ModifierWizardEditor;
 import control.wizard.WizardEditor;
-import data.EntryProfile;
+import data.entryprofile.EntryProfile;
 import data.wizard.WizardType;
 import org.json.simple.JSONObject;
 import view.BarcodePanel;

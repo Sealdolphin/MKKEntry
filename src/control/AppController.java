@@ -5,10 +5,10 @@ import control.utility.devices.BarCodeReaderListenerFactory;
 import control.utility.file.EntryFilter;
 import control.utility.network.NetworkController;
 import data.DataModel;
-import data.EntryProfile;
 import data.UserAction;
 import data.entry.AppData;
 import data.entry.Entry;
+import data.entryprofile.EntryProfile;
 import data.modifier.Discount;
 import data.util.ReadingFlag;
 import view.StatisticsWindow;
@@ -371,7 +371,7 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
                         }
                     }
                     model.addData(entry);                                                                               // Add new Entry to the model (select if already exists)
-                    entry.Enter();                                                                                      // Enter selected Entry
+                    entry.doEnter();                                                                                      // Enter selected Entry
                 }
                 case FL_IS_DELETE -> {
                     if (JOptionPane.showConfirmDialog(null, uh.getUIStr("MSG", "CONFIRM"), uh.getUIStr("MSG", "DELETE"), JOptionPane.OK_CANCEL_OPTION, WARNING_MESSAGE) == OK_OPTION)
@@ -380,7 +380,7 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
                 case FL_IS_LEAVING -> {
                     Entry leaving = model.getElementById(entryID);
                     if (leaving == null) throw new IOException(uh.getUIStr("ERR", "NO_MATCH"));
-                    leaving.Leave();
+                    leaving.doLeave();
                 }
                 case FL_GENERATE_NEW -> receiveBarCode(model.generateNewID());
             }

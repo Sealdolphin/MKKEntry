@@ -1,5 +1,7 @@
 package data.entry;
 
+import java.util.List;
+
 public class EntryCommand {
 
     private final String name;
@@ -27,5 +29,13 @@ public class EntryCommand {
     @Override
     public String toString() {
         return humanReadableName + " (" + name + "): ";
+    }
+
+    public static List<EntryCommand> getDefaultCommands() {
+        return List.of(
+            new EntryCommand("FL_ENTRY", "Alapértelmezett", "MKK"),
+            new EntryCommand("FL_LEAVE", "Kilépés", "LEAVE"),
+            new EntryCommand("FL_DELETE", "Törlés", "DELETE")
+        );
     }
 }
