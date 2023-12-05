@@ -1,7 +1,5 @@
 package view.main.panel.mainwindow;
 
-import control.EntryCodeReader;
-import data.AppData;
 import view.main.panel.AbstractPanel;
 
 import javax.swing.*;
@@ -13,15 +11,15 @@ public class MainPanel extends AbstractPanel {
     private final InputPanel inputPanel;
     private final InfoPanel infoPanel;
 
-    public MainPanel(AppData model, EntryCodeReader reader) {
+    public MainPanel() {
         super(false, false);
-        recordPanel = new RecordPanel(model);
-        topPanel = new TopPanel(model, recordPanel);
-        inputPanel = new InputPanel(model, reader);
+        recordPanel = new RecordPanel();
+        topPanel = new TopPanel();
+        inputPanel = new InputPanel();
         infoPanel = new InfoPanel();
 
         inputPanel.addSelectableComponent(recordPanel);
-        reader.addReadingFlagListener(infoPanel);
+//        reader.addReadingFlagListener(infoPanel);
     }
 
     @Override

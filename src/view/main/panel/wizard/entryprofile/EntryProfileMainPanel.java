@@ -1,12 +1,16 @@
 package view.main.panel.wizard.entryprofile;
 
+import control.wizard.WizardEditor;
+import data.EntryProfile;
 import data.entry.EntryCommand;
 import view.main.panel.AbstractPanel;
+import view.main.panel.wizard.WizardPage;
+import view.validation.ComponentValidator;
 
 import javax.swing.*;
 import java.util.List;
 
-public class EntryProfileWizardPanel extends AbstractPanel {
+public class EntryProfileMainPanel extends AbstractPanel implements WizardPage<EntryProfile> {
 
     private final EntryProfileDefaultPanel topPanel;
     private final EntryProfileCommandPanel commandPanel;
@@ -14,7 +18,7 @@ public class EntryProfileWizardPanel extends AbstractPanel {
 
     private final JScrollPane scrollWheel;
 
-    public EntryProfileWizardPanel() {
+    public EntryProfileMainPanel() {
         super(true, false);
 
         topPanel = new EntryProfileDefaultPanel();
@@ -58,4 +62,28 @@ public class EntryProfileWizardPanel extends AbstractPanel {
         setSingleComponentLayout(scrollWheel);
     }
 
+    @Override
+    public void refreshPage(EntryProfile model) {
+
+    }
+
+    @Override
+    public void saveData(WizardEditor<EntryProfile> controller) {
+
+    }
+
+    @Override
+    public void setupValidation(ComponentValidator validator) {
+
+    }
+
+    @Override
+    public JComponent getObjectValidationComponent() {
+        return null;
+    }
+
+    @Override
+    public AbstractPanel getWizardEditPanel() {
+        return null;
+    }
 }

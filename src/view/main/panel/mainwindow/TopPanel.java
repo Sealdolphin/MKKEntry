@@ -3,7 +3,6 @@ package view.main.panel.mainwindow;
 import view.main.panel.AbstractPanel;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
 
 public class TopPanel extends AbstractPanel {
 
@@ -12,11 +11,11 @@ public class TopPanel extends AbstractPanel {
     private final BarcodeReaderConfigPanel barcodeConfigPanel;
     private final QuickSearchPanel searchPanel;
 
-    public TopPanel(TableModel model, RecordPanel entryView) {
+    public TopPanel() {
         lbProfile = new JLabel("Profil: MKK Szüreti Bál 2032");
         barcodeConfigPanel = new BarcodeReaderConfigPanel();
         btnBarcodePanel = new JButton("Vonalkódok");
-        searchPanel = new QuickSearchPanel(model, entryView);
+        searchPanel = new QuickSearchPanel();
     }
 
     @Override

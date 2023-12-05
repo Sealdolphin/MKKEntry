@@ -1,8 +1,5 @@
 package view.main.panel.mainwindow;
 
-import data.AppData;
-import data.DataModel;
-import data.Entry;
 import data.modifier.Discount;
 import view.main.interactive.SelectableComponent;
 import view.main.panel.AbstractPanel;
@@ -24,13 +21,11 @@ public class RecordPanel extends AbstractPanel implements SelectableComponent {
 
     private final JTable table;
     private final JScrollPane scrollView;
-    private final DataModel<Entry> model;
 
-    public RecordPanel(AppData data) {
+    public RecordPanel() {
         super(false, false);
-        this.model = data;
 
-        table = new JTable(data);
+        table = new JTable();
         scrollView = new JScrollPane(table);
 
         // Scrolling
@@ -46,7 +41,7 @@ public class RecordPanel extends AbstractPanel implements SelectableComponent {
         table.setColumnSelectionAllowed(false); //Selecting a column does not make sense anyway
         table.createDefaultColumnsFromModel();
         table.getSelectionModel().addListSelectionListener(this::selectionHasChanged);
-        data.addTableModelListener(this::adaptSelectionToModelChange);
+//        data.addTableModelListener(this::adaptSelectionToModelChange);
         // FIXME: implement popup menu through something... controller??
         table.addMouseListener(new PopupMenuAdapter(new JPopupMenu()));
     }
@@ -73,18 +68,18 @@ public class RecordPanel extends AbstractPanel implements SelectableComponent {
 
         if (!selectionEvent.getValueIsAdjusting()) {
             if((table.getSelectedRow() >= 0)){
-                model.setSelection(model.getElementAt(table.convertRowIndexToModel(table.getSelectedRow())));
+//                model.setSelection(model.getElementAt(table.convertRowIndexToModel(table.getSelectedRow())));
             }
         }
     }
 
     private void adaptSelectionToModelChange(TableModelEvent tableModelEvent) {
         if(tableModelEvent.getType() == TableModelEvent.UPDATE) {
-            int selectedIndex = model.getSelectedIndex();
+//            int selectedIndex = model.getSelectedIndex();
             try {
-                int index = table.convertRowIndexToView(selectedIndex);
-                System.out.println("SELECTION: " + model.getSelectedData() + " at index " + selectedIndex + " ("+ index +" in view)");
-                table.changeSelection(index, 0, false, false);
+//                int index = table.convertRowIndexToView(selectedIndex);
+//                System.out.println("SELECTION: " + model.getSelectedData() + " at index " + selectedIndex + " ("+ index +" in view)");
+//                table.changeSelection(index, 0, false, false);
             } catch (IndexOutOfBoundsException ex){
                 System.out.println("SELECTION cleared (out of bounds)");
             }

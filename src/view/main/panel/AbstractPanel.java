@@ -1,10 +1,14 @@
 package view.main.panel;
 
-import control.wizard.TicketTypeWizard;
-import data.AppData;
-import data.Entry;
+import control.wizard.DiscountWizard;
+import data.entry.AppData;
+import data.entry.Entry;
+import data.modifier.Barcode;
+import data.modifier.Discount;
 import data.modifier.TicketType;
-import data.wizard.TicketTypeModel;
+import data.wizard.BarcodeModel;
+import data.wizard.DiscountModel;
+import view.main.panel.mainwindow.QuickSearchPanel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -38,28 +42,28 @@ public abstract class AbstractPanel extends JPanel {
             model.addData(new Entry(String.valueOf(i), "name" + i, new TicketType()));
         }
 
-//        List<Barcode> barcodeList = new ArrayList<>();
+        List<Barcode> barcodeList = new ArrayList<>();
 
-//        Barcode codeHelper = new Barcode("Segítő", "HELPER", "Barcodes\\helpSale.png", "Jelentkezett segítőnek");
-//        Barcode codeFood = new Barcode("Büfé", "FOOD", "Barcodes\\foodSale.png", "Hozott sütit / üdítőt");
-//        Barcode codeSupport = new Barcode("Támogató", "SUPPORT", "Barcodes\\vipTicket.png", "Támogató <3");
-//        Barcode codeRandom = new Barcode("Random", "FOOD", "Barcodes\\vipTicket.png", "Valami...");
-//
-//        barcodeList.add(codeHelper);
-//        barcodeList.add(codeFood);
-//        barcodeList.add(codeSupport);
-//        barcodeList.add(codeRandom);
-//
-//        List<Discount> discountList = new ArrayList<>();
-//
-//        discountList.add(new Discount("Segítő",codeHelper,"Icons\\DIS_HELP.png",500,false));
-//        discountList.add(new Discount("Büfé",codeFood,"Icons\\DIS_PIE.png",500,false));
-//        discountList.add(new Discount("Támogató",codeSupport,"Icons\\DIS_MONEY.png",0,false));
-//
-//        DiscountModel discounts = new DiscountModel(discountList);
-//
-//        DiscountWizard dWizard = new DiscountWizard(discounts);
-//        dWizard.updateBarcodeOptions(new BarcodeModel(barcodeList));
+        Barcode codeHelper = new Barcode("Segítő", "HELPER", "Barcodes\\helpSale.png", "Jelentkezett segítőnek");
+        Barcode codeFood = new Barcode("Büfé", "FOOD", "Barcodes\\foodSale.png", "Hozott sütit / üdítőt");
+        Barcode codeSupport = new Barcode("Támogató", "SUPPORT", "Barcodes\\vipTicket.png", "Támogató <3");
+        Barcode codeRandom = new Barcode("Random", "FOOD", "Barcodes\\vipTicket.png", "Valami...");
+
+        barcodeList.add(codeHelper);
+        barcodeList.add(codeFood);
+        barcodeList.add(codeSupport);
+        barcodeList.add(codeRandom);
+
+        List<Discount> discountList = new ArrayList<>();
+
+        discountList.add(new Discount("Segítő",codeHelper,"Icons\\DIS_HELP.png",500,false));
+        discountList.add(new Discount("Büfé",codeFood,"Icons\\DIS_PIE.png",500,false));
+        discountList.add(new Discount("Támogató",codeSupport,"Icons\\DIS_MONEY.png",0,false));
+
+        DiscountModel discounts = new DiscountModel(discountList);
+
+        DiscountWizard dWizard = new DiscountWizard(discounts);
+        dWizard.updateBarcodeOptions(new BarcodeModel(barcodeList));
 
         List<TicketType> ticketTypes = new ArrayList<>();
         ticketTypes.add(new TicketType("TT1", 1000, false, TicketType.DEFAULT_COLOR));
@@ -67,9 +71,12 @@ public abstract class AbstractPanel extends JPanel {
         ticketTypes.add(new TicketType("TT3", 3000, false, TicketType.DEFAULT_COLOR));
         ticketTypes.add(new TicketType("TT4", 4000, false, TicketType.DEFAULT_COLOR));
 
+        QuickSearchPanel panel = new QuickSearchPanel();
+        panel.initializeLayout();
+
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.add(new TicketTypeWizard(new TicketTypeModel(ticketTypes)).getView());
+        frame.add(panel);
         frame.pack();
         frame.setMinimumSize(new Dimension(640,480));
         frame.setLocationRelativeTo(null);
