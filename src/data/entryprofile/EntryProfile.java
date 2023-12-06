@@ -76,6 +76,10 @@ public class EntryProfile implements Serializable, WizardType {
         commandList = getDefaultCommands();
     }
 
+    public EntryProfile(String name) {
+        this.profileName = name;
+    }
+
     public TicketType getDefaultTicketType() {
         return defaultTicketType;
     }

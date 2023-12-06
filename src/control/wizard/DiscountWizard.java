@@ -8,7 +8,7 @@ import data.wizard.BarcodeModel;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 
-public class DiscountWizard extends AbstractWizard<Discount> {
+public class DiscountWizard extends DefaultDataListWizard<Discount> {
 
     public DiscountWizard(DataModel<Discount> discounts) {
         super(discounts, new Discount().createWizard());
@@ -20,15 +20,9 @@ public class DiscountWizard extends AbstractWizard<Discount> {
             if (list.getSelectedValue() instanceof Discount selection) {
                 setSelection(selection);
             }
-        }
-    }
-
-    @Override
-    protected Discount castSelectedElement(Object selection) {
-        if (selection instanceof Discount selectedDiscount) {
-            return selectedDiscount;
-        } else {
-            return null;
+            if (list.getSelectedValue() == null) {
+                setSelection(null);
+            }
         }
     }
 

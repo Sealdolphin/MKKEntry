@@ -2,16 +2,11 @@ package control.wizard;
 
 import data.DataModel;
 import data.modifier.TicketType;
-import data.wizard.TicketTypeModel;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 
-public class TicketTypeWizard extends AbstractWizard<TicketType> {
-
-    public TicketTypeWizard() {
-        this(new TicketTypeModel());
-    }
+public class TicketTypeWizard extends DefaultDataListWizard<TicketType> {
 
     public TicketTypeWizard(DataModel<TicketType> ticketTypes) {
         super(ticketTypes, new TicketType().createWizard());
@@ -23,15 +18,9 @@ public class TicketTypeWizard extends AbstractWizard<TicketType> {
             if (list.getSelectedValue() instanceof TicketType selection) {
                 setSelection(selection);
             }
-        }
-    }
-
-    @Override
-    protected TicketType castSelectedElement(Object selection) {
-        if (selection instanceof TicketType selectedTicketType) {
-            return selectedTicketType;
-        } else {
-            return null;
+            if (list.getSelectedValue() == null) {
+                setSelection(null);
+            }
         }
     }
 

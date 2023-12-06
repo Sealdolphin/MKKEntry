@@ -1,14 +1,16 @@
 package view.main.panel;
 
 import control.wizard.DiscountWizard;
+import control.wizard.EntryProfileWizard;
 import data.entry.AppData;
 import data.entry.Entry;
+import data.entryprofile.EntryProfile;
 import data.modifier.Barcode;
 import data.modifier.Discount;
 import data.modifier.TicketType;
 import data.wizard.BarcodeModel;
 import data.wizard.DiscountModel;
-import view.main.panel.wizard.entryprofile.EntryProfileMainPanel;
+import data.wizard.EntryProfileModel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -71,12 +73,16 @@ public abstract class AbstractPanel extends JPanel {
         ticketTypes.add(new TicketType("TT3", 3000, false, TicketType.DEFAULT_COLOR));
         ticketTypes.add(new TicketType("TT4", 4000, false, TicketType.DEFAULT_COLOR));
 
-        EntryProfileMainPanel panel = new EntryProfileMainPanel();
-        panel.initializeLayout();
+        List<EntryProfile> profiles = List.of(
+                new EntryProfile("MKK Szüreti bál 2023"),
+                new EntryProfile("MKK Katalin bál 2023"),
+                new EntryProfile("MKK Farsangi bál 2024")
+        );
+
 
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.add(panel);
+        frame.add(new EntryProfileWizard(new EntryProfileModel(profiles)).getView());
         frame.pack();
         frame.setMinimumSize(new Dimension(640,480));
         frame.setLocationRelativeTo(null);

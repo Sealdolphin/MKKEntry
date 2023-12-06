@@ -6,7 +6,7 @@ import data.modifier.Barcode;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 
-public class BarcodeWizard extends AbstractWizard<Barcode> {
+public class BarcodeWizard extends DefaultDataListWizard<Barcode> {
 
     public BarcodeWizard(DataModel<Barcode> barcodes) {
         super(barcodes, new Barcode().createWizard());
@@ -18,15 +18,9 @@ public class BarcodeWizard extends AbstractWizard<Barcode> {
             if (list.getSelectedValue() instanceof Barcode selection) {
                 setSelection(selection);
             }
-        }
-    }
-
-    @Override
-    protected Barcode castSelectedElement(Object selection) {
-        if (selection instanceof Barcode selectedBarcode) {
-            return selectedBarcode;
-        } else {
-            return null;
+            if (list.getSelectedValue() == null) {
+                setSelection(null);
+            }
         }
     }
 

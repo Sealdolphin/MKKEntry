@@ -9,5 +9,7 @@ public class EntryProfileEditor extends WizardEditor<EntryProfile> {
         super(data, view);
     }
 
-
+    /**
+     * TODO: create setters for EntryProfile (including Entryprofile.ProfileSettings)
+     */
 }

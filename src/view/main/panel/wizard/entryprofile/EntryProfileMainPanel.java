@@ -74,11 +74,16 @@ public class EntryProfileMainPanel extends AbstractPanel implements WizardPage<E
 
     @Override
     public JComponent getObjectValidationComponent() {
-        return null;
+        return new JPanel();
     }
 
     @Override
     public AbstractPanel getWizardEditPanel() {
-        return null;
+        return new AbstractPanel() {
+            @Override
+            public void initializeLayout() {
+
+            }
+        };
     }
 }

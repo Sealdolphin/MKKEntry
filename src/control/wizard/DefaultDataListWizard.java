@@ -9,7 +9,7 @@ import view.validation.ComponentValidator;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public abstract class AbstractWizard<T extends WizardType> implements Wizard {
+public abstract class DefaultDataListWizard<T extends WizardType> implements Wizard {
 
     public enum WizardCommands {
         ADD,
@@ -24,7 +24,7 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
     protected final DataModel<T> dataList;
     private final ComponentValidator validator = new ComponentValidator();
 
-    protected AbstractWizard(DataModel<T> dataList, WizardEditor<T> selectionEditor) {
+    protected DefaultDataListWizard(DataModel<T> dataList, WizardEditor<T> selectionEditor) {
         selectionEditor.getView().setupValidation(validator);
         selectionEditor.updateSelection(null);
         validator.addComponent(selectionEditor.getView().getObjectValidationComponent(), this::itemIsNoDuplicate, "Ez az elem már létezik!");
@@ -86,8 +86,6 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
         dataList.setSelection(element);
         selectionEditor.updateSelection(element);
     }
-
-    protected abstract T castSelectedElement(Object selection);
 
     protected abstract T getNewElement();
 

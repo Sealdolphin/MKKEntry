@@ -1,6 +1,6 @@
 package view.main.panel.wizard;
 
-import control.wizard.AbstractWizard;
+import control.wizard.DefaultDataListWizard;
 import data.DataModel;
 import data.wizard.WizardType;
 
@@ -21,11 +21,11 @@ public class DataListView<T extends WizardType> extends JPanel {
     public DataListView(DataModel<T> model, WizardEditPanel<T> wizardEditPanel) {
         list = new JList<>(model);
         btnAdd = new JButton("Hozzáadás");
-        btnAdd.setActionCommand(AbstractWizard.WizardCommands.ADD.name());
+        btnAdd.setActionCommand(DefaultDataListWizard.WizardCommands.ADD.name());
         btnAdd.addActionListener(this::selectNewData);
 
         btnRemove = new JButton("Törlés");
-        btnRemove.setActionCommand(AbstractWizard.WizardCommands.DELETE.name());
+        btnRemove.setActionCommand(DefaultDataListWizard.WizardCommands.DELETE.name());
 
         setLayout(new BorderLayout());
         add(createListPanel(), BorderLayout.CENTER);
@@ -61,7 +61,7 @@ public class DataListView<T extends WizardType> extends JPanel {
     }
 
     private void selectNewData(ActionEvent event) {
-        if (event.getActionCommand().equals(AbstractWizard.WizardCommands.ADD.name())) {
+        if (event.getActionCommand().equals(DefaultDataListWizard.WizardCommands.ADD.name())) {
             ListModel<T> model = list.getModel();
             int selectionIndex = model.getSize() - 1;
             list.setSelectedValue(model.getElementAt(selectionIndex), true);
