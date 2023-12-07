@@ -89,8 +89,8 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
         compName.getComponent().setText(model.getName());
         compDescription.getComponent().setText(model.getDescription());
         tfBarcode.setText(model.getMetaData());
-        compBtnBrowse.getLabel().setText(model.getPicturePath());
-        imgBarcodePicture.changePicture(model.getPicturePath());
+        compBtnBrowse.getLabel().setText(model.getImagePath());
+        imgBarcodePicture.changePicture(model.getImagePath());
     }
 
     @Override
@@ -112,7 +112,7 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
     }
 
     @Override
-    public JComponent getObjectValidationComponent() {
+    public JComponent getIdentifyingComponent() {
         return tfBarcode;
     }
 

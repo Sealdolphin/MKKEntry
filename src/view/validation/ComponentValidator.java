@@ -7,23 +7,25 @@ import view.validation.listener.SelectionValidationChecker;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
 
 public class ComponentValidator {
 
-    private final List<ValidatedComponent> components;
+    private final HashMap<JComponent, ValidatedComponent> components;
 
     private static final Border invalidBorder = BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.RED), BorderFactory.createEmptyBorder(0,2,0,2));
 
     public ComponentValidator() {
-        components = new ArrayList<>();
+        components = new HashMap<>();
     }
 
     public void addComponent(JComponent component, Supplier<Boolean> validationMethod, String errorMsg) {
-        ValidatedComponent vComponent = new ValidatedComponent(component, validationMethod, errorMsg);
-        components.add(vComponent);
+        components.putIfAbsent(component, new ValidatedComponent(component));
+        ValidatedComponent vComponent = components.get(component);
+        vComponent.addValidation(validationMethod, errorMsg);
         component.addKeyListener(new KeyTypeValidationChecker(vComponent));
         component.addPropertyChangeListener(new DocumentChangeValidationChecker(vComponent));
         if (component instanceof ItemSelectable selectable) {
@@ -33,7 +35,7 @@ public class ComponentValidator {
 
     }
     public boolean validate() {
-        return components.stream().map(this::validateComponent).reduce(true, this::evaluateValidation);
+        return components.values().stream().map(this::validateComponent).reduce(true, this::evaluateValidation);
     }
 
     private boolean evaluateValidation(boolean prev, boolean next) {
@@ -57,7 +59,7 @@ public class ComponentValidator {
     }
 
     public void resetAll() {
-        components.forEach(component -> {
+        components.values().forEach(component -> {
             component.reset();
             setComponentBorder(component, !component.isInvalid());
         });
@@ -70,7 +72,7 @@ public class ComponentValidator {
     }
 
     public List<JLabel> getErrors() {
-        return components.stream().map(ValidatedComponent::getErrorLabel).toList();
+        return components.values().stream().map(ValidatedComponent::getErrorLabels).flatMap(Collection::stream).toList();
     }
 
 }

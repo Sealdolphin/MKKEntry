@@ -13,28 +13,43 @@ public class DiscountEditor extends WizardEditor<Discount> {
         super(data, view);
     }
 
+    @Override
+    protected Discount cacheEditData() {
+        return new Discount(data);
+    }
+
+    @Override
+    protected Discount loadBackEditCache() {
+        data.setName(cachedEdit.getName());
+        data.setBarcode(cachedEdit.getBarcode());
+        data.setDiscount(cachedEdit.getDiscount());
+        data.setIconPath(cachedEdit.getIconPath());
+        data.setFree(cachedEdit.isFree());
+        return data;
+    }
+
     public void setDiscountName(String name) {
-        data.setName(name);
+        cachedEdit.setName(name);
     }
 
     public void setDiscountIconPath(String iconPath) {
-        data.setIconPath(iconPath);
+        cachedEdit.setIconPath(iconPath);
     }
 
     public void setDiscountIsFree(boolean free) {
-        data.setFree(free);
+        cachedEdit.setFree(free);
     }
 
     public void setDiscountBarcode(Barcode barcode) {
-        data.setBarcode(barcode);
+        cachedEdit.setBarcode(barcode);
     }
 
     public void setDiscountValue(int discount) {
-        data.setDiscount(discount);
+        cachedEdit.setDiscount(discount);
     }
 
     public void setBarcodeOptions(BarcodeModel options) {
-        if (getView() instanceof DiscountPanel discountPanel) {
+        if (getWizardPage() instanceof DiscountPanel discountPanel) {
             discountPanel.updateBarcodeOptions(options);
         }
     }

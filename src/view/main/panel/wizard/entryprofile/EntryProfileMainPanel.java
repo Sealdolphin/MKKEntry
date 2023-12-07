@@ -73,7 +73,7 @@ public class EntryProfileMainPanel extends AbstractPanel implements WizardPage<E
     }
 
     @Override
-    public JComponent getObjectValidationComponent() {
+    public JComponent getIdentifyingComponent() {
         return new JPanel();
     }
 

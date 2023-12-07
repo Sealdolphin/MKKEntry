@@ -12,6 +12,6 @@ public interface WizardPage<T extends WizardType> {
     void refreshPage(T model);
     void saveData(WizardEditor<T> controller);
     void setupValidation(ComponentValidator validator);
-    JComponent getObjectValidationComponent();
+    JComponent getIdentifyingComponent();
     AbstractPanel getWizardEditPanel();
 }

@@ -6,7 +6,7 @@ import data.modifier.TicketType;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 
-public class TicketTypeWizard extends DefaultDataListWizard<TicketType> {
+public class TicketTypeWizard extends AbstractWizard<TicketType> {
 
     public TicketTypeWizard(DataModel<TicketType> ticketTypes) {
         super(ticketTypes, new TicketType().createWizard());

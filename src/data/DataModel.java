@@ -26,4 +26,6 @@ public interface DataModel<T> extends ListModel<T> {
 
     @Deprecated
     void replaceData(T oldData, T newData) throws IOException;
+
+    boolean isUnique(T other, T self);
 }

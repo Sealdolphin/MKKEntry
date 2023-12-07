@@ -100,6 +100,13 @@ public abstract class DefaultWizardModel<T extends WizardType> implements DataMo
     }
 
     @Override
+    public boolean isUnique(T other, T self) {
+        return dataList.stream()
+                .filter(data -> !data.getId().equals(self.getId()))
+                .noneMatch(data -> data.equals(other));
+    }
+
+    @Override
     public void addListDataListener(ListDataListener l) {
         listeners.add(l);
     }

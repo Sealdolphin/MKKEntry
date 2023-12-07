@@ -11,19 +11,33 @@ public class TicketTypeEditor extends WizardEditor<TicketType> {
         super(data, view);
     }
 
+    @Override
+    protected TicketType cacheEditData() {
+        return new TicketType(data);
+    }
+
+    @Override
+    protected TicketType loadBackEditCache() {
+        data.setName(cachedEdit.getName());
+        data.setPrice(cachedEdit.getPrice());
+        data.setBackgroundColor(cachedEdit.getBackgroundColor());
+        data.setStatisticsEnabled(cachedEdit.isStatisticsEnabled());
+        return data;
+    }
+
     public void setTicketTypeName(String name) {
-        data.setName(name);
+        cachedEdit.setName(name);
     }
 
     public void setTicketTypePrice(int price) {
-        data.setPrice(price);
+        cachedEdit.setPrice(price);
     }
 
     public void setTicketTypeStatisticsEnabled(boolean statisticsEnabled) {
-        data.setStatisticsEnabled(statisticsEnabled);
+        cachedEdit.setStatisticsEnabled(statisticsEnabled);
     }
 
     public void setTicketTypeColor(Color backgroundColor) {
-        data.setBackgroundColor(backgroundColor);
+        cachedEdit.setBackgroundColor(backgroundColor);
     }
 }

@@ -4,12 +4,13 @@ import control.modifier.TicketTypeEditor;
 import control.wizard.WizardEditor;
 import data.modifier.TicketType;
 import view.main.panel.AbstractPanel;
-import view.main.panel.utility.JColoredPanel;
+import view.main.panel.utility.ColoredIcon;
 import view.main.panel.utility.LabeledComponent;
 import view.main.panel.wizard.WizardPage;
 import view.validation.ComponentValidator;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -22,14 +23,18 @@ public class TicketTypePanel extends AbstractPanel implements WizardPage<TicketT
     private final JCheckBox cbStatisticsEnabled;
     private final JButton btnChooseColor;
 
-    private final JColoredPanel bgColorPanel;
+    private static final int BTN_BORDER = 5;
+
+    private final ColoredIcon bgColorIcon;
 
     public TicketTypePanel() {
         compName = new LabeledComponent<>("Név:", new JTextField(TEXT_PANEL_DEFAULT_WIDTH));
         compPrice = new LabeledComponent<>("Ár:", new JSpinner(new SpinnerNumberModel(0,0,Integer.MAX_VALUE,1)));
         cbStatisticsEnabled = new JCheckBox("A jegytípus beleszámít a kassza statisztikába");
-        btnChooseColor = new JButton("Módosítás");
-        bgColorPanel = new JColoredPanel(DEFAULT_COLOR, 50);
+        bgColorIcon = new ColoredIcon(DEFAULT_COLOR, 25);
+
+        btnChooseColor = new JButton(bgColorIcon);
+        btnChooseColor.setBorder(new EmptyBorder(BTN_BORDER,BTN_BORDER,BTN_BORDER,BTN_BORDER));
 
         btnChooseColor.addActionListener(this::openColorChooser);
     }
@@ -39,7 +44,8 @@ public class TicketTypePanel extends AbstractPanel implements WizardPage<TicketT
         compName.getComponent().setText(model.getName());
         compPrice.getComponent().setValue(model.getPrice());
         cbStatisticsEnabled.setSelected(model.isStatisticsEnabled());
-        bgColorPanel.setBackgroundColor(model.getBackgroundColor());
+        bgColorIcon.setColor(model.getBackgroundColor());
+        repaint();
     }
 
     @Override
@@ -48,7 +54,7 @@ public class TicketTypePanel extends AbstractPanel implements WizardPage<TicketT
             editor.setTicketTypeName(compName.getComponent().getText());
             editor.setTicketTypePrice(((Number) compPrice.getComponent().getValue()).intValue());
             editor.setTicketTypeStatisticsEnabled(cbStatisticsEnabled.isSelected());
-            editor.setTicketTypeColor(bgColorPanel.getBackgroundColor());
+            editor.setTicketTypeColor(bgColorIcon.getColor());
         }
     }
 
@@ -58,7 +64,7 @@ public class TicketTypePanel extends AbstractPanel implements WizardPage<TicketT
     }
 
     @Override
-    public JComponent getObjectValidationComponent() {
+    public JComponent getIdentifyingComponent() {
         return compName.getComponent();
     }
 
@@ -72,11 +78,11 @@ public class TicketTypePanel extends AbstractPanel implements WizardPage<TicketT
             Color newColor = JColorChooser.showDialog(
                     this,
                     "Válassz egy színt",
-                    bgColorPanel.getBackgroundColor(),
+                    bgColorIcon.getColor(),
                     false
             );
             if (newColor != null) {
-                bgColorPanel.setBackgroundColor(newColor);
+                bgColorIcon.setColor(newColor);
             }
         }
     }
@@ -88,12 +94,11 @@ public class TicketTypePanel extends AbstractPanel implements WizardPage<TicketT
                 layout.createParallelGroup()
                         .addGroup(compName.createSequentialLayout(layout))
                         .addGroup(compPrice.createSequentialLayout(layout))
-                        .addComponent(cbStatisticsEnabled)
                         .addGroup(
                                 layout.createSequentialGroup()
-                                        .addComponent(btnChooseColor)
+                                        .addComponent(cbStatisticsEnabled)
                                         .addGap(0,0,Short.MAX_VALUE)
-                                        .addComponent(bgColorPanel)
+                                        .addComponent(btnChooseColor)
                         )
         );
 
@@ -102,11 +107,10 @@ public class TicketTypePanel extends AbstractPanel implements WizardPage<TicketT
                 layout.createSequentialGroup()
                         .addGroup(compName.createParallelLayout(layout))
                         .addGroup(compPrice.createParallelLayout(layout))
-                        .addComponent(cbStatisticsEnabled)
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(cbStatisticsEnabled)
                                         .addComponent(btnChooseColor)
-                                        .addComponent(bgColorPanel)
                         )
         );
 

@@ -8,7 +8,7 @@ import data.wizard.BarcodeModel;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 
-public class DiscountWizard extends DefaultDataListWizard<Discount> {
+public class DiscountWizard extends AbstractWizard<Discount> {
 
     public DiscountWizard(DataModel<Discount> discounts) {
         super(discounts, new Discount().createWizard());

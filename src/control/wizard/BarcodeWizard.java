@@ -6,7 +6,7 @@ import data.modifier.Barcode;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 
-public class BarcodeWizard extends DefaultDataListWizard<Barcode> {
+public class BarcodeWizard extends AbstractWizard<Barcode> {
 
     public BarcodeWizard(DataModel<Barcode> barcodes) {
         super(barcodes, new Barcode().createWizard());

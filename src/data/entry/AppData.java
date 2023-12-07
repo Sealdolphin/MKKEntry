@@ -157,6 +157,11 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
         addData(newData);
     }
 
+    @Override
+    public boolean isUnique(Entry other, Entry self) {
+        return false;
+    }
+
     @Serial
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         out.writeObject(entryList.toArray());

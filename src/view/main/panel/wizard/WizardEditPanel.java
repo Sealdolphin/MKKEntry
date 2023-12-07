@@ -1,6 +1,6 @@
 package view.main.panel.wizard;
 
-import control.wizard.DefaultDataListWizard;
+import control.wizard.AbstractWizard;
 import control.wizard.Wizard;
 import data.wizard.WizardType;
 import view.validation.ComponentValidator;
@@ -18,11 +18,11 @@ public class WizardEditPanel<T extends WizardType> extends JPanel {
         setLayout(new BorderLayout());
 
         btnSave = new JButton("Mentés");
-        btnSave.setActionCommand(String.valueOf(DefaultDataListWizard.WizardCommands.UPDATE));
+        btnSave.setActionCommand(String.valueOf(AbstractWizard.WizardCommands.UPDATE));
         btnSave.addActionListener(wizard::handleUserAction);
 
         btnCancel = new JButton("Mégsem");
-        btnCancel.setActionCommand(String.valueOf(DefaultDataListWizard.WizardCommands.CANCEL));
+        btnCancel.setActionCommand(String.valueOf(AbstractWizard.WizardCommands.CANCEL));
         btnCancel.addActionListener(wizard::handleUserAction);
 
         editPage.getWizardEditPanel().initializeLayout();

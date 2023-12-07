@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
@@ -30,6 +31,8 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
  * @author Mihalovits Márk
  */
 public class Discount implements Serializable, Modifier, WizardType {
+
+    private final UUID id = UUID.randomUUID();
 
     /**
      * The default option for icons
@@ -91,13 +94,22 @@ public class Discount implements Serializable, Modifier, WizardType {
         this(name, barcode, iconPath, price, isFree, null);
     }
 
+    public Discount(Discount other) {
+        this(other, null);
+    }
+
     /**
      * The copy constructor
      * @param other the Discount you want to copy
      * @param profile the profile you want to copy to
      */
     public Discount(Discount other, EntryProfile profile) {
-        this(other.name,other.barcode,other.iconPath,other.discount,other.free,profile);
+        this(other.name,other.barcode,other.iconPath,other.discount,other.free, profile);
+    }
+
+    @Override
+    public String getId() {
+        return id.toString();
     }
 
     public String getName() {
@@ -210,7 +222,7 @@ public class Discount implements Serializable, Modifier, WizardType {
         if (barcode == null) {
             return other.barcode == null;
         }
-        return other.getMeta().equals(getMeta());
+        return other.barcode.equals(barcode);
     }
 
     /**
@@ -236,11 +248,6 @@ public class Discount implements Serializable, Modifier, WizardType {
         if(barcode == null) return false;
         barcode = Arrays.stream(profile.getBarcodes()).filter(b -> b.getMetaData().equals(barcode.getMetaData())).findAny().orElse(null);
         return name != null && barcode != null && !name.isEmpty();
-    }
-
-    @Override
-    public String getId() {
-        return barcode.getId();
     }
 
     @Override

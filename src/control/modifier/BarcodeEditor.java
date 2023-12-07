@@ -11,20 +11,32 @@ public class BarcodeEditor extends WizardEditor<Barcode> {
     }
 
     public void setBarcodeName(String name) {
-        if (data != null) {
-            data.setName(name);
-        }
+        cachedEdit.setName(name);
     }
 
     public void setBarcodeDescription(String description) {
-        data.setDescription(description);
+        cachedEdit.setDescription(description);
     }
 
     public void setBarcodeMetadata(String metadata) {
-        data.setMetaData(metadata);
+        cachedEdit.setMetaData(metadata);
     }
 
     public void setBarcodeImagePath(String imagePath) {
-        data.setImagePath(imagePath);
+        cachedEdit.setImagePath(imagePath);
+    }
+
+    @Override
+    protected Barcode cacheEditData() {
+        return new Barcode(data);
+    }
+
+    @Override
+    protected Barcode loadBackEditCache() {
+        data.setName(cachedEdit.getName());
+        data.setDescription(cachedEdit.getDescription());
+        data.setMetaData(cachedEdit.getMetaData());
+        data.setImagePath(cachedEdit.getImagePath());
+        return data;
     }
 }

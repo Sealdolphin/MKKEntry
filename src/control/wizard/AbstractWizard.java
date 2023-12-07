@@ -2,6 +2,7 @@ package control.wizard;
 
 import data.DataModel;
 import data.wizard.WizardType;
+import view.main.panel.wizard.AbstractWizardView;
 import view.main.panel.wizard.DataListView;
 import view.main.panel.wizard.WizardEditPanel;
 import view.validation.ComponentValidator;
@@ -9,7 +10,7 @@ import view.validation.ComponentValidator;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public abstract class DefaultDataListWizard<T extends WizardType> implements Wizard {
+public abstract class AbstractWizard<T extends WizardType> implements Wizard {
 
     public enum WizardCommands {
         ADD,
@@ -19,30 +20,36 @@ public abstract class DefaultDataListWizard<T extends WizardType> implements Wiz
         CANCEL
     }
 
-    private final DataListView<T> view;
+    protected final DataListView<T> view;
     protected final WizardEditor<T> selectionEditor;
     protected final DataModel<T> dataList;
     private final ComponentValidator validator = new ComponentValidator();
 
-    protected DefaultDataListWizard(DataModel<T> dataList, WizardEditor<T> selectionEditor) {
-        selectionEditor.getView().setupValidation(validator);
+    protected AbstractWizard(DataModel<T> dataList, WizardEditor<T> selectionEditor) {
+        selectionEditor.getWizardPage().setupValidation(validator);
         selectionEditor.updateSelection(null);
-        validator.addComponent(selectionEditor.getView().getObjectValidationComponent(), this::itemIsNoDuplicate, "Ez az elem már létezik!");
-
-        WizardEditPanel<T> editPanel = new WizardEditPanel<>(this, selectionEditor.getView(), validator);
 
         this.selectionEditor = selectionEditor;
-        this.view = new DataListView<>(dataList, editPanel);
+        this.view = new DataListView<>(dataList);
         this.dataList = dataList;
 
+        setupUniqueValidation();
         view.setListSelectionListener(this::selectElement);
         view.setButtonActions(this::handleUserAction);
     }
 
-    private boolean itemIsNoDuplicate() {
-        if (selectionEditor.getSavedData() != null) {
-            return dataList.getElementById(selectionEditor.getSavedData().getId()) == dataList.getSelectedData();
-        } return true;
+    private void setupUniqueValidation() {
+        validator.addComponent(
+                selectionEditor.getWizardPage().getIdentifyingComponent(),
+                this::isEditedDataUnique,
+                "Ez az elem már létezik!"
+        );
+    }
+
+    private boolean isEditedDataUnique() {
+        T cachedEdit = selectionEditor.doSaveData();
+        T data = selectionEditor.data;
+        return dataList.isUnique(cachedEdit, data);
     }
 
     @Override
@@ -75,7 +82,7 @@ public abstract class DefaultDataListWizard<T extends WizardType> implements Wiz
     @Override
     public void updateElement() {
         if (selectionEditor.data != null  && validator.validate()) {
-            T updatedData = selectionEditor.getSavedData();
+            T updatedData = selectionEditor.loadBackEditCache();
             dataList.updateSelected(updatedData);
             view.invalidate();
         }
@@ -90,6 +97,7 @@ public abstract class DefaultDataListWizard<T extends WizardType> implements Wiz
     protected abstract T getNewElement();
 
     public JPanel getView() {
-        return view;
+        WizardEditPanel<T> editPanel = new WizardEditPanel<>(this, selectionEditor.getWizardPage(), validator);
+        return new AbstractWizardView(view, editPanel);
     }
 }

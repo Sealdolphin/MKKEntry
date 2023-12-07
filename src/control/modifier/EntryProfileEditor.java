@@ -9,6 +9,17 @@ public class EntryProfileEditor extends WizardEditor<EntryProfile> {
         super(data, view);
     }
 
+    @Override
+    protected EntryProfile cacheEditData() {
+        return data;
+    }
+
+    @Override
+    protected EntryProfile loadBackEditCache() {
+        // Do nothing
+        return data;
+    }
+
     /**
      * TODO: create setters for EntryProfile (including Entryprofile.ProfileSettings)
      */

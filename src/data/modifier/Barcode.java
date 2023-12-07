@@ -17,10 +17,14 @@ import java.awt.*;
 import java.io.File;
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import static javax.swing.JFileChooser.APPROVE_OPTION;
 
 public class Barcode implements Serializable, Modifier, WizardType {
+
+    private final UUID id = UUID.randomUUID();
+
     /**
      * The name of the barcode
      */
@@ -45,7 +49,7 @@ public class Barcode implements Serializable, Modifier, WizardType {
 
     @Deprecated
     public Barcode(String name, String meta, String picture, String desc){
-        this.setName(name);
+        setName(name);
         setMetaData(meta);
         setImagePath(picture);
         setDescription(desc);
@@ -54,14 +58,14 @@ public class Barcode implements Serializable, Modifier, WizardType {
     public Barcode(Barcode other) {
         setName(other.getName());
         setMetaData(other.getMetaData());
-        setImagePath(other.getPicturePath());
+        setImagePath(other.getImagePath());
         setDescription(other.getDescription());
         setLink(other.hasLink());
     }
 
     @Deprecated
     public BarcodePanel createBarcodePanel() {
-        return new BarcodePanel(getPicturePath(), getDescription());
+        return new BarcodePanel(getImagePath(), getDescription());
     }
 
     @Override
@@ -115,7 +119,7 @@ public class Barcode implements Serializable, Modifier, WizardType {
     /**
      * The image path of the picture containing the barcode
      */
-    public String getPicturePath() {
+    public String getImagePath() {
         return picturePath;
     }
 
@@ -153,7 +157,7 @@ public class Barcode implements Serializable, Modifier, WizardType {
 
     @Override
     public String getId() {
-        return metaData;
+        return id.toString();
     }
 
     @Override
@@ -185,7 +189,7 @@ public class Barcode implements Serializable, Modifier, WizardType {
     @Deprecated
     private class BarcodeWizard extends ModifierDialog {
 
-        private final JImagePanel panelImg = new JImagePanel(getPicturePath());
+        private final JImagePanel panelImg = new JImagePanel(getImagePath());
         private final JTextField tfName = new JTextField(name);
         private final JTextField tfTooltip = new JTextField(getDescription());
         private final JTextField tfMetaData = new JTextField(getMetaData());

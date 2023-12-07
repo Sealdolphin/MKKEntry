@@ -14,11 +14,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class TicketType implements Serializable, Modifier, WizardType {
 
+    private final UUID id = UUID.randomUUID();
     public static final Color DEFAULT_COLOR = new Color(255, 255, 255);
     private String name;
     private int price;
@@ -159,7 +161,7 @@ public class TicketType implements Serializable, Modifier, WizardType {
 
     @Override
     public String getId() {
-        return name;
+        return id.toString();
     }
 
     @Override

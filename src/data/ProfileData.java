@@ -108,6 +108,11 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
         }
     }
 
+    @Override
+    public boolean isUnique(EntryProfile other, EntryProfile self) {
+        return false;
+    }
+
 
     @Serial
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {

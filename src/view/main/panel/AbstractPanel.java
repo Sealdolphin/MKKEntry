@@ -1,7 +1,7 @@
 package view.main.panel;
 
 import control.wizard.DiscountWizard;
-import control.wizard.EntryProfileWizard;
+import control.wizard.TicketTypeWizard;
 import data.entry.AppData;
 import data.entry.Entry;
 import data.entryprofile.EntryProfile;
@@ -10,7 +10,7 @@ import data.modifier.Discount;
 import data.modifier.TicketType;
 import data.wizard.BarcodeModel;
 import data.wizard.DiscountModel;
-import data.wizard.EntryProfileModel;
+import data.wizard.TicketTypeModel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -36,6 +36,7 @@ public abstract class AbstractPanel extends JPanel {
      */
     public static void main(String[] args) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//        UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
         UIManager.getLookAndFeelDefaults().put("ImagePanel.border", DEFAULT_BORDER);
 
         AppData model = new AppData();
@@ -82,9 +83,11 @@ public abstract class AbstractPanel extends JPanel {
 
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.add(new EntryProfileWizard(new EntryProfileModel(profiles)).getView());
-        frame.pack();
+//        frame.add(new EntryProfileWizard(new EntryProfileModel(profiles)).getView());
+        frame.add(new TicketTypeWizard(new TicketTypeModel(ticketTypes)).getView());
+//        frame.add(dWizard.getView());
         frame.setMinimumSize(new Dimension(640,480));
+        frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
