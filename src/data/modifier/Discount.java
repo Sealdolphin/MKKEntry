@@ -222,7 +222,7 @@ public class Discount implements Serializable, Modifier, WizardType {
         if (barcode == null) {
             return other.barcode == null;
         }
-        return other.barcode.equals(barcode);
+        return barcode.equals(other.barcode);
     }
 
     /**
