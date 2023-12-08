@@ -79,11 +79,7 @@ public class EntryProfileMainPanel extends AbstractPanel implements WizardPage<E
 
     @Override
     public AbstractPanel getWizardEditPanel() {
-        return new AbstractPanel() {
-            @Override
-            public void initializeLayout() {
-
-            }
-        };
+        // FIXME: create multipanel cardlayout mega wizard here
+        return this;
     }
 }

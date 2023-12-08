@@ -23,7 +23,7 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
     protected final DataListView<T> view;
     protected final WizardEditor<T> selectionEditor;
     protected final DataModel<T> dataList;
-    private final ComponentValidator validator = new ComponentValidator();
+    protected final ComponentValidator validator = new ComponentValidator();
 
     protected AbstractWizard(DataModel<T> dataList, WizardEditor<T> selectionEditor) {
         selectionEditor.getWizardPage().setupValidation(validator);

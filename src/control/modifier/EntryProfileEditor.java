@@ -11,6 +11,7 @@ public class EntryProfileEditor extends WizardEditor<EntryProfile> {
 
     @Override
     protected EntryProfile cacheEditData() {
+//        return new EntryProfile(data);
         return data;
     }
 

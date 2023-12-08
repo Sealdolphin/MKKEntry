@@ -1,7 +1,7 @@
 package view.main.panel;
 
 import control.wizard.DiscountWizard;
-import control.wizard.TicketTypeWizard;
+import control.wizard.EntryProfileWizard;
 import data.entry.AppData;
 import data.entry.Entry;
 import data.entryprofile.EntryProfile;
@@ -10,7 +10,7 @@ import data.modifier.Discount;
 import data.modifier.TicketType;
 import data.wizard.BarcodeModel;
 import data.wizard.DiscountModel;
-import data.wizard.TicketTypeModel;
+import data.wizard.EntryProfileModel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -83,8 +83,8 @@ public abstract class AbstractPanel extends JPanel {
 
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//        frame.add(new EntryProfileWizard(new EntryProfileModel(profiles)).getView());
-        frame.add(new TicketTypeWizard(new TicketTypeModel(ticketTypes)).getView());
+        frame.add(new EntryProfileWizard(new EntryProfileModel(profiles)).getView());
+//        frame.add(new TicketTypeWizard(new TicketTypeModel(ticketTypes)).getView());
 //        frame.add(dWizard.getView());
         frame.setMinimumSize(new Dimension(640,480));
         frame.pack();

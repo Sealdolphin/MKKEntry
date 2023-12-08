@@ -9,6 +9,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 
 public class DataListView<T extends WizardType> extends JPanel {
 
@@ -62,5 +63,9 @@ public class DataListView<T extends WizardType> extends JPanel {
             int selectionIndex = model.getSize() - 1;
             list.setSelectedValue(model.getElementAt(selectionIndex), true);
         }
+    }
+
+    public void setListDoubleClickListener(MouseListener doubleClickListener) {
+        list.addMouseListener(doubleClickListener);
     }
 }
