@@ -3,6 +3,8 @@ package view.helper;
 import control.utility.file.ExtensionFilter;
 
 import javax.swing.*;
+import java.awt.*;
+import java.util.function.Consumer;
 
 public abstract class DialogCreator {
 
@@ -15,6 +17,15 @@ public abstract class DialogCreator {
         fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"bmp"}, "Bitmap (.bmp)"));
         fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"gif"}, "Graphics Interchange Format (.gif)"));
         return fc;
+    }
+
+    public static int choosePictureFromDialog(Component parent, Consumer<JFileChooser> action) {
+        JFileChooser fc = getPictureChooser();
+        int dialogResult = fc.showOpenDialog(parent);
+        if (dialogResult == JFileChooser.APPROVE_OPTION) {
+            action.accept(fc);
+        }
+        return dialogResult;
     }
 
 }

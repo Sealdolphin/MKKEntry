@@ -14,7 +14,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 import static javax.swing.JFileChooser.APPROVE_OPTION;
-import static view.helper.DialogCreator.getPictureChooser;
+import static view.helper.DialogCreator.choosePictureFromDialog;
 
 public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
 
@@ -37,18 +37,11 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
         tfBarcode.setHorizontalAlignment(SwingConstants.CENTER);
     }
 
-    private int choosePictureFromDialog() {
-        JFileChooser fc = getPictureChooser();
-        int dialogResult = fc.showOpenDialog(this);
-        if (dialogResult == JFileChooser.APPROVE_OPTION) {
-            imgBarcodePicture.changePicture(fc.getSelectedFile().getAbsolutePath());
-        }
-        return dialogResult;
-    }
-
     private void selectBarcodePicture(ActionEvent event) {
 
-        if(choosePictureFromDialog() == APPROVE_OPTION) {
+        int result = choosePictureFromDialog(this, (fileChooser) -> imgBarcodePicture.changePicture(fileChooser.getSelectedFile().getAbsolutePath()));
+
+        if(result == APPROVE_OPTION) {
             compBtnBrowse.getLabel().setText(imgBarcodePicture.getPath());
             tfBarcode.setText(null);
             

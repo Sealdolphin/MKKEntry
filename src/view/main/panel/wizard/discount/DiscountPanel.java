@@ -13,7 +13,11 @@ import view.renderer.list.BarcodeListRenderer;
 import view.validation.ComponentValidator;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.event.ActionEvent;
 import java.io.File;
+
+import static view.helper.DialogCreator.choosePictureFromDialog;
 
 public class DiscountPanel extends AbstractPanel implements WizardPage<Discount> {
 
@@ -21,7 +25,6 @@ public class DiscountPanel extends AbstractPanel implements WizardPage<Discount>
      * The default option for icons
      */
     private static final String basicIcon = "Icons"+ File.separator +"BasicIcon.png";
-    private final JLabel lbIcon;
     private final JLabel lbPath;
     private final LabeledComponent<JTextField> compName;
     private final LabeledComponent<JComboBox<Barcode>> compBarcodes;
@@ -32,15 +35,17 @@ public class DiscountPanel extends AbstractPanel implements WizardPage<Discount>
     public static final int DEFAULT_ICON_SIZE = 50;
 
     public DiscountPanel() {
-        lbIcon = new JLabel(new LoadedIcon(basicIcon, DEFAULT_ICON_SIZE).getIcon());
         lbPath = new JLabel(basicIcon);
         compName = new LabeledComponent<>("Név:", new JTextField(TEXT_PANEL_DEFAULT_WIDTH));
         compBarcodes = new LabeledComponent<>("Vonalkód:", new JComboBox<>());
         compDiscount = new LabeledComponent<>("Kedvezmény:", new JSpinner(new SpinnerNumberModel(0, Short.MIN_VALUE,Short.MAX_VALUE,1)));
         cbFree = new JCheckBox("Ingyenes");
-        btnChangeIcon = new JButton("Módosítás");
+        btnChangeIcon = new JButton(new LoadedIcon(basicIcon, DEFAULT_ICON_SIZE).getIcon());
 
         compBarcodes.getComponent().setRenderer(new BarcodeListRenderer());
+
+        btnChangeIcon.setBorder(new EmptyBorder(5,5,5,5));
+        btnChangeIcon.addActionListener(this::updateIconPath);
     }
 
     @Override
@@ -49,13 +54,7 @@ public class DiscountPanel extends AbstractPanel implements WizardPage<Discount>
         cbFree.setSelected(model.isFree());
         compDiscount.getComponent().setValue(model.getDiscount());
         compBarcodes.getComponent().setSelectedItem(model.getBarcode());
-
-        String iconPath = model.getIconPath();
-        if (iconPath == null) {
-            iconPath = basicIcon;
-        }
-        lbPath.setText(iconPath);
-        lbIcon.setIcon(new LoadedIcon(iconPath, DEFAULT_ICON_SIZE).getIcon());
+        refreshIcon(model.getIconPath());
     }
 
     @Override
@@ -96,8 +95,6 @@ public class DiscountPanel extends AbstractPanel implements WizardPage<Discount>
                                         .addComponent(lbPath)
                                         .addGap(0,0,Short.MAX_VALUE)
                                         .addComponent(btnChangeIcon)
-                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(lbIcon)
                         )
                         .addComponent(cbFree)
                         .addGroup(compBarcodes.createParallelLayout(layout))
@@ -112,15 +109,25 @@ public class DiscountPanel extends AbstractPanel implements WizardPage<Discount>
                                 layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                                         .addComponent(lbPath)
                                         .addComponent(btnChangeIcon)
-                                        .addComponent(lbIcon)
                         )
                         .addComponent(cbFree)
                         .addGroup(compBarcodes.createSequentialLayout(layout))
         );
 
         layout.linkSize(compName.getComponent(), compDiscount.getComponent());
-        layout.linkSize(SwingConstants.HORIZONTAL, lbPath, compName.getLabel());
 
+    }
+
+    private void updateIconPath(ActionEvent event) {
+        if (event.getSource().equals(btnChangeIcon)) {
+            choosePictureFromDialog(this, (fileChooser) -> refreshIcon(fileChooser.getSelectedFile().getAbsolutePath()));
+        }
+    }
+
+    private void refreshIcon(String iconPath) {
+        String newIconPath = iconPath == null ? basicIcon : iconPath;
+        lbPath.setText(newIconPath);
+        btnChangeIcon.setIcon(new LoadedIcon(newIconPath, DEFAULT_ICON_SIZE).getIcon());
     }
 
     public void updateBarcodeOptions(BarcodeModel options) {
