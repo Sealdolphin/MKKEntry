@@ -3,14 +3,17 @@ package view.renderer;
 import view.main.panel.utility.LoadedIcon;
 
 import javax.swing.*;
-import java.io.File;
+
+import static view.main.panel.utility.LoadedIcon.SYSTEM_DEFAULT_PATH;
 
 public enum RenderedIcon {
-    BARCODE("Icons" + File.separator + "barcode-solid.png"),
-    TICKET_TYPE("Icons" + File.separator + "ticket-solid.png"),
-    DISCOUNT("Icons" + File.separator + "tag-solid.png"),
-    ENTRYPROFILE("Icons" + File.separator + "id-card-solid.png"),
-    UNDER_EDIT("Icons" + File.separator + "wrench-solid.png");
+    BARCODE(SYSTEM_DEFAULT_PATH + "barcode-solid.png"),
+    TICKET_TYPE(SYSTEM_DEFAULT_PATH + "ticket-solid.png"),
+    DISCOUNT(SYSTEM_DEFAULT_PATH + "tag-solid.png"),
+    ENTRY_PROFILE(SYSTEM_DEFAULT_PATH + "id-card-solid.png"),
+    UNDER_EDIT(SYSTEM_DEFAULT_PATH + "wrench-solid.png"),
+    SAVE(SYSTEM_DEFAULT_PATH + "circle-check-regular.png"),
+    CANCEL(SYSTEM_DEFAULT_PATH + "ban-solid.png");
 
     private final String imagePath;
 

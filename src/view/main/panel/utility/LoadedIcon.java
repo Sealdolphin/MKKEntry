@@ -2,10 +2,13 @@ package view.main.panel.utility;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class LoadedIcon {
 
     private final ImageIcon icon;
+
+    public static final String SYSTEM_DEFAULT_PATH = "Icons" + File.separator + "system" + File.separator;
 
     public static final int DEFAULT_IMAGE_SIZE = 32;
 

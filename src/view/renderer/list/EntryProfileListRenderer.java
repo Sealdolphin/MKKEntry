@@ -5,12 +5,12 @@ import data.entryprofile.EntryProfile;
 import javax.swing.*;
 import java.awt.*;
 
-import static view.renderer.RenderedIcon.ENTRYPROFILE;
+import static view.renderer.RenderedIcon.ENTRY_PROFILE;
 
 public class EntryProfileListRenderer extends DefaultWizardTypeListRenderer<EntryProfile> {
 
     public EntryProfileListRenderer() {
-        super(ENTRYPROFILE);
+        super(ENTRY_PROFILE);
     }
 
     @Override

@@ -3,6 +3,7 @@ package view.main.panel.wizard;
 import control.wizard.AbstractWizard;
 import control.wizard.Wizard;
 import data.wizard.WizardType;
+import view.renderer.RenderedIcon;
 import view.validation.ComponentValidator;
 
 import javax.swing.*;
@@ -17,13 +18,15 @@ public class WizardEditPanel<T extends WizardType> extends JPanel {
     public WizardEditPanel(Wizard wizard, WizardPage<T> editPage, ComponentValidator validator) {
         setLayout(new BorderLayout());
 
-        btnSave = new JButton("Mentés");
+        btnSave = new JButton("Mentés", RenderedIcon.SAVE.getImage());
         btnSave.setActionCommand(String.valueOf(AbstractWizard.WizardCommands.UPDATE));
         btnSave.addActionListener(wizard::handleUserAction);
+        btnSave.setHorizontalTextPosition(SwingConstants.LEFT);
 
-        btnCancel = new JButton("Mégsem");
+        btnCancel = new JButton("Mégsem", RenderedIcon.CANCEL.getImage());
         btnCancel.setActionCommand(String.valueOf(AbstractWizard.WizardCommands.CANCEL));
         btnCancel.addActionListener(wizard::handleUserAction);
+        btnCancel.setHorizontalTextPosition(SwingConstants.LEFT);
 
         editPage.getWizardEditPanel().initializeLayout();
 
@@ -57,7 +60,7 @@ public class WizardEditPanel<T extends WizardType> extends JPanel {
         Box panel = Box.createHorizontalBox();
         panel.add(Box.createGlue());
         panel.add(btnSave);
-        panel.add(Box.createGlue());
+//        panel.add(Box.createGlue());
         panel.add(btnCancel);
         panel.add(Box.createGlue());
         return panel;
