@@ -54,6 +54,7 @@ public class DiscountPanel extends AbstractPanel implements WizardPage<Discount>
         cbFree.setSelected(model.isFree());
         compDiscount.getComponent().setValue(model.getDiscount());
         compBarcodes.getComponent().setSelectedItem(model.getBarcode());
+        compBarcodes.getComponent().invalidate();
         refreshIcon(model.getIconPath());
     }
 

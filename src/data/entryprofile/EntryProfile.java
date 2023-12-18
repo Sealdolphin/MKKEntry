@@ -13,7 +13,7 @@ import data.modifier.Barcode;
 import data.modifier.Discount;
 import data.modifier.TicketType;
 import data.util.ReadingFlag;
-import data.wizard.WizardType;
+import data.wizard.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import view.main.panel.wizard.entryprofile.EntryProfileMainPanel;
@@ -70,14 +70,43 @@ public class EntryProfile implements Serializable, WizardType {
 
     private List<EntryCommand> commandList;
 
+    private final List<Barcode> barcodes;
+
+    private final List<Discount> discounts;
+
+    private final List<TicketType> ticketTypes;
+
     private int entryLimit;
 
     public EntryProfile() {
-        commandList = getDefaultCommands();
+        this("");
     }
 
     public EntryProfile(String name) {
         this.profileName = name;
+        commandList = getDefaultCommands();
+        ticketTypes = new ArrayList<>();
+        discounts = new ArrayList<>();
+        barcodes = new ArrayList<>();
+    }
+
+    public EntryProfile(EntryProfile other){
+        //Reference / primitives
+        name = other.name;
+        codeMask = other.codeMask;
+        modificationMask = other.modificationMask;
+        entryLimit = other.entryLimit;
+        autoDataHandling = other.autoDataHandling;
+        defaultType = other.defaultType;
+        commandCodes = other.commandCodes;
+        password = other.password;
+        nameRequirement = other.nameRequirement;
+        entryModifiesID = other.entryModifiesID;
+        defaultName = other.defaultName;
+        ticketTypes = new ArrayList<>(other.ticketTypes);
+        discounts = new ArrayList<>(other.discounts);
+        barcodes = new ArrayList<>(other.barcodes);
+        exportFilters = other.exportFilters;
     }
 
     public TicketType getDefaultTicketType() {
@@ -110,6 +139,37 @@ public class EntryProfile implements Serializable, WizardType {
 
     public void setProfileMaskForEntry(String profileMaskForEntry) {
         this.profileMaskForEntry = profileMaskForEntry;
+    }
+
+    public BarcodeModel createBarcodeModel() {
+        return new BarcodeModel(barcodes);
+    }
+
+    public void updateBarcodes(BarcodeModel model) {
+        updateFromModel(barcodes, model);
+    }
+
+    public TicketTypeModel createTicketTypeModel() {
+        return new TicketTypeModel(ticketTypes);
+    }
+
+    public void updateTicketTypes(TicketTypeModel model) {
+        updateFromModel(ticketTypes, model);
+    }
+
+    public DiscountModel createDiscountModel() {
+        return new DiscountModel(discounts);
+    }
+
+    public void updateDiscounts(DiscountModel model) {
+        updateFromModel(discounts, model);
+    }
+
+    private static <T extends WizardType> void updateFromModel(List<T> list, DefaultWizardModel<T> model) {
+        list.clear();
+        for (int i = 0; i < model.getSize(); i++) {
+            list.add(model.getElementAt(i));
+        }
     }
 
     @Override
@@ -156,26 +216,11 @@ public class EntryProfile implements Serializable, WizardType {
      * Az exportálási filterek listája
      */
     private List exportFilters;
-    /**
-     * A jegytípusok listája
-     */
-    @Deprecated
-    private List<TicketType> ticketTypes;
+
     /**
      * Az alapméretezett jegytípus
      */
     private TicketType defaultType;
-    /**
-     * A kedvezmények listája
-     */
-    @Deprecated
-    private List<Discount> discounts;
-
-    /**
-     * A vonalkódok listája
-     */
-    @Deprecated
-    private List<Barcode> barCodes;
 
     /**
      * Kötelező-e a név megadása
@@ -198,8 +243,6 @@ public class EntryProfile implements Serializable, WizardType {
     @Deprecated
     private HashMap<String, ReadingFlag> commandCodes;
 
-    private List<EntryCommand> commands;
-
     /**
      * Maximum of actions
      */
@@ -207,28 +250,6 @@ public class EntryProfile implements Serializable, WizardType {
     private final int maxActionCount = 10;
 
     private static final ReadingFlag[] commandJsonKeys = ReadingFlag.values();
-
-    public EntryProfile(EntryProfile other){
-        //Reference / primitives
-        name = other.name;
-        codeMask = other.codeMask;
-        modificationMask = other.modificationMask;
-        entryLimit = other.entryLimit;
-        autoDataHandling = other.autoDataHandling;
-        defaultType = other.defaultType;
-        commandCodes = other.commandCodes;
-        password = other.password;
-        nameRequirement = other.nameRequirement;
-        entryModifiesID = other.entryModifiesID;
-        defaultName = other.defaultName;
-        ticketTypes = new ArrayList<>();
-        discounts = new ArrayList<>();
-        barCodes = new ArrayList<>();
-        for (Barcode barcode : other.barCodes) { barCodes.add(new Barcode(barcode)); }
-        for (Discount discount : other.discounts) { discounts.add(new Discount(discount,this)); }
-        for (TicketType type : other.ticketTypes) { ticketTypes.add(new TicketType(type)); }
-        exportFilters = other.exportFilters;
-    }
 
     public static void loadProfilesFromJson(JSONObject object, List<EntryProfile> profileList) throws IOException{
         if(!object.get("version").toString().equals(UIHandler.uiVersion))
@@ -258,8 +279,8 @@ public class EntryProfile implements Serializable, WizardType {
         //1. code mask comparison
         if(!oldProfile.codeMask.equals(newProfile.codeMask)) return true;
         //2. Barcode list comparision
-        for (Barcode barcode : oldProfile.barCodes) {
-            if(!newProfile.barCodes.contains(barcode)) return true;
+        for (Barcode barcode : oldProfile.barcodes) {
+            if(!newProfile.barcodes.contains(barcode)) return true;
         }
         //3. Discount comparision
         for (Discount discount : oldProfile.discounts) {
@@ -285,7 +306,7 @@ public class EntryProfile implements Serializable, WizardType {
         //Loading Barcodes
         JSONArray jArray = (JSONArray) jsonProfile.get("barCodes");
         for (Object barCodeObject : jArray) {
-            profile.barCodes.add(Barcode.parseBarcodeFromJSON((JSONObject) barCodeObject));
+            profile.barcodes.add(Barcode.parseBarcodeFromJSON((JSONObject) barCodeObject));
         }
 
         //Loading discounts
@@ -323,7 +344,7 @@ public class EntryProfile implements Serializable, WizardType {
      */
     public JPanel getSidePanel() {
         //Setting up layout
-        for(Barcode barcode : barCodes)
+        for(Barcode barcode : barcodes)
             barcode.setLink(false);
 
         JPanel sidePanel = new JPanel();
@@ -336,7 +357,7 @@ public class EntryProfile implements Serializable, WizardType {
         }
 
         sidePanel.add(new JLabel("Parancskódok:"));
-        for (Barcode barcode : barCodes) {
+        for (Barcode barcode : barcodes) {
             if(!barcode.hasLink())
                 sidePanel.add(barcode.createBarcodePanel());
         }
@@ -353,7 +374,7 @@ public class EntryProfile implements Serializable, WizardType {
     }
 
     public Barcode identifyBarcode(String barcodeMeta){
-        return barCodes.stream().filter(barCode -> barCode.getMetaData().equals(barcodeMeta)).findAny().orElse(null);
+        return barcodes.stream().filter(barCode -> barCode.getMetaData().equals(barcodeMeta)).findAny().orElse(null);
     }
 
     public String validateCode(String code) throws IOException{
@@ -386,7 +407,7 @@ public class EntryProfile implements Serializable, WizardType {
     }
 
     public Barcode[] getBarcodes(){
-        return barCodes.toArray(new Barcode[0]);
+        return barcodes.toArray(new Barcode[0]);
     }
 
     public Entry generateNewEntry(String id) {
@@ -445,7 +466,7 @@ public class EntryProfile implements Serializable, WizardType {
             //Adding tabs
             JTabbedPane mainPanel = new JTabbedPane();
             mainPanel.addTab("Általános",null, createMainPanel(),"A profil általános beállításai");
-            mainPanel.addTab("Vonalkódok",null, createListTab(barCodes, new Barcode.BarcodeListener(this)),"A profilhoz tartozó vonalkódok");
+            mainPanel.addTab("Vonalkódok",null, createListTab(barcodes, new Barcode.BarcodeListener(this)),"A profilhoz tartozó vonalkódok");
             mainPanel.addTab("Jegytípusok",null, createListTab(ticketTypes,new TicketType.TicketTypeListener(this)),"A profilhoz tartozó jegytípusok");
             mainPanel.addTab("Kedvezmények",null, createListTab(discounts, new Discount.DiscountListener(this,EntryProfile.this)),"A profilhoz tartozó kedvezmények");
             mainPanel.setMnemonicAt(0, KeyEvent.VK_1);
@@ -458,7 +479,7 @@ public class EntryProfile implements Serializable, WizardType {
                 cbCommandDelete.removeAllItems();
                 cbCommandLeave.removeAllItems();
                 //Fill combo boxes with new things
-                barCodes.forEach(b -> {cbCommandLeave.addItem(b); cbCommandDelete.addItem(b);});
+                barcodes.forEach(b -> {cbCommandLeave.addItem(b); cbCommandDelete.addItem(b);});
                 ticketTypes.forEach(t -> cbTypes.addItem(t));
                 //Set selection to previous
                 cbTypes.setSelectedItem(defaultType);
@@ -481,8 +502,8 @@ public class EntryProfile implements Serializable, WizardType {
             tfName = new JTextField(name,32);
             tfMask = new JTextField(codeMask,32);
             tfModifyMask = new JTextField(modificationMask,32);
-            cbCommandLeave = new JComboBox<>(barCodes.toArray(new Barcode[0]));
-            cbCommandDelete = new JComboBox<>(barCodes.toArray(new Barcode[0]));
+            cbCommandLeave = new JComboBox<>(barcodes.toArray(new Barcode[0]));
+            cbCommandDelete = new JComboBox<>(barcodes.toArray(new Barcode[0]));
             cbTypes = new JComboBox<>(ticketTypes.toArray(new TicketType[0]));
 
             tfCommandDefault = new JTextField();

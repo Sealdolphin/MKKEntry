@@ -60,7 +60,7 @@ public class WizardEditPanel<T extends WizardType> extends JPanel {
         Box panel = Box.createHorizontalBox();
         panel.add(Box.createGlue());
         panel.add(btnSave);
-//        panel.add(Box.createGlue());
+        panel.add(Box.createGlue());
         panel.add(btnCancel);
         panel.add(Box.createGlue());
         return panel;

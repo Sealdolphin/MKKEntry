@@ -2,7 +2,7 @@ package control.wizard;
 
 import data.DataModel;
 import data.entryprofile.EntryProfile;
-import view.main.panel.wizard.WizardEditPanel;
+import view.main.panel.wizard.entryprofile.EntryProfileCardPanel;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -19,13 +19,24 @@ public class EntryProfileWizard extends AbstractWizard<EntryProfile> {
 
     private void openEditDialog() {
         JDialog editDialog = new JDialog();
-        WizardEditPanel<EntryProfile> panel = new WizardEditPanel<>(this, selectionEditor.getWizardPage(), validator);
+        JTabbedPane panel = createEditPanel(selectionEditor.data);
         editDialog.setTitle("Belépőprofil szerkesztése");
+        editDialog.setMinimumSize(new Dimension(640, 300));
         editDialog.add(panel);
         editDialog.pack();
         editDialog.setLocationRelativeTo(null);
         editDialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
         editDialog.setVisible(true);
+    }
+
+    private EntryProfileCardPanel createEditPanel(EntryProfile selection) {
+        BarcodeWizard barcodeWizard = new BarcodeWizard(selection.createBarcodeModel());
+        DiscountWizard discountWizard = new DiscountWizard(selection.createDiscountModel());
+        TicketTypeWizard ticketTypeWizard = new TicketTypeWizard(selection.createTicketTypeModel());
+
+        discountWizard.updateBarcodeOptions(selection.createBarcodeModel());
+
+        return new EntryProfileCardPanel(barcodeWizard.getView(), discountWizard.getView(), ticketTypeWizard.getView());
     }
 
     @Override

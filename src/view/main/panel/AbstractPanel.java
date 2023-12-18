@@ -11,6 +11,7 @@ import data.modifier.TicketType;
 import data.wizard.BarcodeModel;
 import data.wizard.DiscountModel;
 import data.wizard.EntryProfileModel;
+import data.wizard.TicketTypeModel;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -66,7 +67,7 @@ public abstract class AbstractPanel extends JPanel {
         DiscountModel discounts = new DiscountModel(discountList);
 
         DiscountWizard dWizard = new DiscountWizard(discounts);
-        dWizard.updateBarcodeOptions(new BarcodeModel(barcodeList));
+//        dWizard.updateBarcodeOptions(new BarcodeModel(barcodeList));
 
         List<TicketType> ticketTypes = new ArrayList<>();
         ticketTypes.add(new TicketType("TT1", 1000, false, TicketType.DEFAULT_COLOR));
@@ -74,8 +75,13 @@ public abstract class AbstractPanel extends JPanel {
         ticketTypes.add(new TicketType("TT3", 3000, false, TicketType.DEFAULT_COLOR));
         ticketTypes.add(new TicketType("TT4", 4000, false, TicketType.DEFAULT_COLOR));
 
+        EntryProfile szuretiBal = new EntryProfile("MKK Szüreti bál 2023");
+        szuretiBal.updateBarcodes(new BarcodeModel(barcodeList));
+        szuretiBal.updateTicketTypes(new TicketTypeModel(ticketTypes));
+        szuretiBal.updateDiscounts(new DiscountModel(discountList));
+
         List<EntryProfile> profiles = List.of(
-                new EntryProfile("MKK Szüreti bál 2023"),
+                szuretiBal,
                 new EntryProfile("MKK Katalin bál 2023"),
                 new EntryProfile("MKK Farsangi bál 2024")
         );
@@ -86,7 +92,7 @@ public abstract class AbstractPanel extends JPanel {
         frame.add(new EntryProfileWizard(new EntryProfileModel(profiles)).getView());
 //        frame.add(new TicketTypeWizard(new TicketTypeModel(ticketTypes)).getView());
 //        frame.add(dWizard.getView());
-        frame.setMinimumSize(new Dimension(640,480));
+        frame.setMinimumSize(new Dimension(300,480));
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
