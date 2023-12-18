@@ -76,6 +76,8 @@ public class EntryProfile implements Serializable, WizardType {
 
     private final List<TicketType> ticketTypes;
 
+    private final Date createdAt;
+
     private int entryLimit;
 
     public EntryProfile() {
@@ -88,6 +90,7 @@ public class EntryProfile implements Serializable, WizardType {
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
         barcodes = new ArrayList<>();
+        createdAt = new Date();
     }
 
     public EntryProfile(EntryProfile other){
@@ -107,6 +110,7 @@ public class EntryProfile implements Serializable, WizardType {
         discounts = new ArrayList<>(other.discounts);
         barcodes = new ArrayList<>(other.barcodes);
         exportFilters = other.exportFilters;
+        createdAt = other.createdAt;
     }
 
     public TicketType getDefaultTicketType() {
@@ -180,6 +184,10 @@ public class EntryProfile implements Serializable, WizardType {
     @Override
     public WizardEditor<EntryProfile> createWizard() {
         return new EntryProfileEditor(this, new EntryProfileMainPanel());
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
     }
 
 
