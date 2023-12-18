@@ -29,4 +29,13 @@ public class EntryProfileModel extends DefaultWizardModel<EntryProfile> {
     protected void updateRenderers(EntryProfile type) {
 
     }
+
+    @Override
+    protected EntryProfile castModelData(Object data) {
+        EntryProfile modelData = null;
+        if (data instanceof EntryProfile profile) {
+            modelData = profile;
+        }
+        return modelData;
+    }
 }

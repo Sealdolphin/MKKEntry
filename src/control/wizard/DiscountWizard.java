@@ -13,7 +13,12 @@ import javax.swing.event.ListSelectionEvent;
 public class DiscountWizard extends AbstractWizard<Discount> implements ListUpdateListener<Barcode> {
 
     public DiscountWizard(DataModel<Discount> discounts) {
+        this(discounts, new BarcodeModel());
+    }
+
+    public DiscountWizard(DataModel<Discount> discounts, DataModel<Barcode> barcodeModel) {
         super(discounts, new Discount().createWizard());
+        listUpdated(barcodeModel);
     }
 
     @Override

@@ -16,8 +16,13 @@ public class TicketTypeListRenderer extends DefaultWizardTypeListRenderer<Ticket
 
     @Override
     public Component getListCellRendererComponent(JList<? extends TicketType> list, TicketType ticketType, int index, boolean isSelected, boolean cellHasFocus) {
-        lbName.setText(ticketType.getName());
-        lbDescription.setText(String.format("Ár: %d", ticketType.getPrice()));
+        if (ticketType == null) {
+            lbName.setText("Válassz egyet...");
+            lbDescription.setText(null);
+        } else {
+            lbName.setText(ticketType.getName());
+            lbDescription.setText(String.format("Ár: %d", ticketType.getPrice()));
+        }
 
         return super.getListCellRendererComponent(list, ticketType, index, isSelected, cellHasFocus);
     }

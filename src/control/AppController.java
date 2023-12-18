@@ -99,7 +99,7 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
     AppController(AppData model, DataModel<EntryProfile> pData){
         this.model = model;
         profiles = pData;
-        activeProfile = pData.getSelectedData();
+        activeProfile = (EntryProfile) pData.getSelectedItem();
         while(activeProfile == null)
             changeProfile(chooseProfile(),true);
     }
@@ -176,7 +176,7 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
                 JOptionPane.PLAIN_MESSAGE,null,discounts,discounts[0]);
         //after selection is not null
         if (result != null){
-            model.setSelection(entry); //This is thread-safe...
+            model.setSelectedItem(entry); //This is thread-safe...
             receiveBarCode(result.getMeta());
         }
     }
@@ -254,7 +254,7 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
     public String changeProfile(EntryProfile newProfile, boolean restart){
         if (newProfile != null && newProfile != activeProfile) {
             activeProfile = newProfile;
-            profiles.setSelection(activeProfile);
+            profiles.setSelectedItem(activeProfile);
             System.out.println("[INFO]: Profile selected: " + activeProfile);
             JOptionPane.showMessageDialog(null, "Profil aktiválva:\n" + activeProfile, uh.getUIStr("MSG","DONE"), JOptionPane.INFORMATION_MESSAGE);
             if(restart) clearData();
@@ -336,7 +336,7 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
             if(!(barCode.length() > 0)) return;
 
             //Checking for discount codes
-            Entry lastSelection = model.getSelectedData();
+            Entry lastSelection = model.getSelectedItem();
             Discount discount = activeProfile.identifyDiscountMeta(barCode);
             if(discount != null) {
                 if(lastSelection != null) {
@@ -352,15 +352,15 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
             switch (readingFlag) {
                 case FL_DEFAULT -> {
                     Entry entry;
-                    if (model.getSelectedData() != null &&
-                            activeProfile.enteringModifiesEntry(model.getSelectedData().getID())) {                     // Check if Entry Profile modifies ID upon entering (and selected ID matches the required mask)
+                    if (model.getSelectedItem() != null &&
+                            activeProfile.enteringModifiesEntry(model.getSelectedItem().getID())) {                     // Check if Entry Profile modifies ID upon entering (and selected ID matches the required mask)
                         Entry existing = model.getElementById(entryID);                                                    // If true, check if the new entry ID exists already!
                         if (existing != null) {
                             entry = existing;                                                                           // If it does, continue with the existing record!!
                         } else {
-                            entry = activeProfile.generateFromEntry(model.getSelectedData(), entryID);                  // If not, the ID is new, so generate a new entry from the selected record and modify it's ID
-                            saveLastAction(model.getSelectedData(), entry);                                             // Save the action to the ActionQueue
-                            model.replaceData(model.getSelectedData(), entry);                                          // Replace the old Entry with the newly generated Entry!
+                            entry = activeProfile.generateFromEntry(model.getSelectedItem(), entryID);                  // If not, the ID is new, so generate a new entry from the selected record and modify it's ID
+                            saveLastAction(model.getSelectedItem(), entry);                                             // Save the action to the ActionQueue
+                            model.replaceData(model.getSelectedItem(), entry);                                          // Replace the old Entry with the newly generated Entry!
                         }
                     } else {                                                                                            // If Entry Profile does NOT modify ID, or selected ID does not match the mask:
                         entry = model.getElementById(entryID);                                                             // Search for the Entry based on the entered ID
@@ -393,7 +393,7 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
                 model.fireTableRowsUpdated(index,index);
             if(netController != null){
                 try {
-                    netController.updateData(model.getSelectedData());
+                    netController.updateData(model.getSelectedItem());
                 } catch (IOException e) {
                     System.out.println("Networking error happened...");
                     System.out.println("Details: " + e.getMessage());
@@ -421,7 +421,7 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
         System.out.println("Undo Action");
         UserAction action = actionQueue.pop();
         if(action != null) {
-            model.setSelection(action.undo());
+            model.setSelectedItem(action.undo());
             int index = model.getSelectedIndex();
             model.fireTableRowsUpdated(index, index);
         }

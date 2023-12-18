@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BarcodeModel extends DefaultWizardModel<Barcode> implements ComboBoxModel<Barcode> {
+public class BarcodeModel extends DefaultWizardModel<Barcode> {
 
     private final BarcodeListRenderer listRenderer;
 
@@ -30,17 +30,11 @@ public class BarcodeModel extends DefaultWizardModel<Barcode> implements ComboBo
     }
 
     @Override
-    public void setSelectedItem(Object selection) {
-        if (selection instanceof Barcode selectedBarcode) {
-            setSelection(selectedBarcode);
+    protected Barcode castModelData(Object data) {
+        Barcode modelData = null;
+        if (data instanceof Barcode barcode) {
+            modelData = barcode;
         }
-        if (selection == null) {
-            setSelection(null);
-        }
-    }
-
-    @Override
-    public Object getSelectedItem() {
-        return getSelectedData();
+        return modelData;
     }
 }

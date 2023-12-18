@@ -47,18 +47,18 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
     @Override
-    public EntryProfile getSelectedData() {
+    public void setSelectedItem(Object anItem) {
+
+    }
+
+    @Override
+    public EntryProfile getSelectedItem() {
         return activeProfile;
     }
 
     @Override
     public int getSelectedIndex() {
         return profiles.indexOf(activeProfile);
-    }
-
-    @Override
-    public void setSelection(EntryProfile data) {
-        activeProfile = data;
     }
 
     @Override

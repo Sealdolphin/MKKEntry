@@ -52,7 +52,7 @@ public class MainWindow extends JFrame {
         } catch (IndexOutOfBoundsException ex){
             index = -1;
         }
-        System.out.println("SELECTION: " + model.getSelectedData() + " at index " + viewIndex + " ("+index+" in view)");
+        System.out.println("SELECTION: " + model.getSelectedItem() + " at index " + viewIndex + " ("+index+" in view)");
         if(index >= 0) {
             entryView.changeSelection(index, 0, false, false);
         }
@@ -109,7 +109,7 @@ public class MainWindow extends JFrame {
         entryView.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 if((entryView.getSelectedRow() >= 0)){
-                    model.setSelection(model.getElementAt(entryView.convertRowIndexToModel(entryView.getSelectedRow())));
+                    model.setSelectedItem(model.getElementAt(entryView.convertRowIndexToModel(entryView.getSelectedRow())));
                 }
             }
         });
@@ -161,10 +161,10 @@ public class MainWindow extends JFrame {
         JMenuItem miDelete = new JMenuItem("Törlés");
         JMenuItem miDiscounts = new JMenuItem("Kedvezmények módosítása");
 
-        miEnter.addActionListener(e -> controller.flagOperationOnEntry(ReadingFlag.FL_DEFAULT,model.getSelectedData()));
-        miLeave.addActionListener(e -> controller.flagOperationOnEntry(ReadingFlag.FL_IS_LEAVING,model.getSelectedData()));
-        miDelete.addActionListener(e -> controller.flagOperationOnEntry(ReadingFlag.FL_IS_DELETE,model.getSelectedData()));
-        miDiscounts.addActionListener(e -> controller.discountOperationOnEntry(model.getSelectedData()));
+        miEnter.addActionListener(e -> controller.flagOperationOnEntry(ReadingFlag.FL_DEFAULT,model.getSelectedItem()));
+        miLeave.addActionListener(e -> controller.flagOperationOnEntry(ReadingFlag.FL_IS_LEAVING,model.getSelectedItem()));
+        miDelete.addActionListener(e -> controller.flagOperationOnEntry(ReadingFlag.FL_IS_DELETE,model.getSelectedItem()));
+        miDiscounts.addActionListener(e -> controller.discountOperationOnEntry(model.getSelectedItem()));
 
         popupEditRecord.add(miEnter);
         popupEditRecord.add(miLeave);
@@ -385,7 +385,7 @@ public class MainWindow extends JFrame {
             Action actionClearSelection = new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    model.setSelection(null);
+                    model.setSelectedItem(null);
                     entryView.clearSelection();
                 }
             };

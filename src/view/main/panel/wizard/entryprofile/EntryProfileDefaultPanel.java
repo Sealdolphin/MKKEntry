@@ -16,10 +16,10 @@ public class EntryProfileDefaultPanel extends AbstractPanel {
     private final JCheckBox checkEnableEditMask;
 
     public EntryProfileDefaultPanel() {
-        // TODO: use ui.json!!!!!!!!!!!!!
+        //TODO: use ui.json!!!!!!!!!!!!!
         compTitle = new LabeledComponent<>("Profil neve:", new JTextField(TEXT_PANEL_DEFAULT_WIDTH));
         compProfileMask = new LabeledComponent<>("Beléptetési maszk:", new JTextField(TEXT_PANEL_DEFAULT_WIDTH));
-        // TODO: confirm that this feature is needed...
+        //TODO: confirm that this feature is needed...
         compEditMask = new LabeledComponent<>("Új belépést generáló maszk:", new JTextField(TEXT_PANEL_DEFAULT_WIDTH));
 
         checkEnableEditMask = new JCheckBox("Új ID kiosztása belépéskor");

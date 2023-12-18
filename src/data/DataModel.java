@@ -4,15 +4,11 @@ package data;
 import javax.swing.*;
 import java.io.IOException;
 
-public interface DataModel<T> extends ListModel<T> {
+public interface DataModel<T> extends ComboBoxModel<T> {
 
     T getElementById(String id);
 
-    T getSelectedData();
-
     int getSelectedIndex();
-
-    void setSelection(T data);
 
     void addData(T data);
 

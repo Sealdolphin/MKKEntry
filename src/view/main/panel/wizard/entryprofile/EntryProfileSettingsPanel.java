@@ -1,15 +1,20 @@
 package view.main.panel.wizard.entryprofile;
 
+import data.DataModel;
+import data.modifier.TicketType;
+import data.wizard.TicketTypeModel;
 import view.main.panel.AbstractPanel;
 import view.main.panel.utility.LabeledComponent;
+import view.main.panel.wizard.ListUpdateListener;
+import view.renderer.list.TicketTypeListRenderer;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.stream.Stream;
 
-public class EntryProfileSettingsPanel extends AbstractPanel {
+public class EntryProfileSettingsPanel extends AbstractPanel implements ListUpdateListener<TicketType>{
 
-    private final LabeledComponent<JComboBox<String>> compDefaultTicketType;
+    private final LabeledComponent<JComboBox<TicketType>> compDefaultTicketType;
     private final LabeledComponent<JTextField> compCustomName;
     private final LabeledComponent<JSpinner> compNumberOfEntries;
 
@@ -20,7 +25,10 @@ public class EntryProfileSettingsPanel extends AbstractPanel {
     private final JCheckBox checkNoUnknownTypeAtImport;
 
     public EntryProfileSettingsPanel() {
-        compDefaultTicketType = new LabeledComponent<>("Alapértelmezett jegytípus", new JComboBox<>(new String[]{"Testjegytípus 1", "Testjegytípus 2"}));
+        JComboBox<TicketType> ticketTypeChooser = new JComboBox<>();
+        ticketTypeChooser.setRenderer(new TicketTypeListRenderer());
+
+        compDefaultTicketType = new LabeledComponent<>("Alapértelmezett jegytípus", ticketTypeChooser);
         compCustomName = new LabeledComponent<>("Új rekord neve:", new JTextField(TEXT_PANEL_DEFAULT_WIDTH));
         compNumberOfEntries = new LabeledComponent<>("Belépések száma:", new JSpinner(new SpinnerNumberModel(0,0, Short.MAX_VALUE ,STEP_SIZE)));
 
@@ -56,10 +64,29 @@ public class EntryProfileSettingsPanel extends AbstractPanel {
         );
 
 
-        layout.linkSize(Stream.of(compCustomName, compNumberOfEntries, compDefaultTicketType).map(LabeledComponent::getComponent).toArray(JComponent[]::new));
+        layout.linkSize(
+                SwingConstants.HORIZONTAL,
+                Stream.of(compCustomName, compNumberOfEntries, compDefaultTicketType)
+                        .map(LabeledComponent::getComponent)
+                        .toArray(JComponent[]::new)
+        );
+
     }
 
     private void toggleCustomNameEnabled(ActionEvent event) {
         compCustomName.getComponent().setEnabled(!checkUniqueNameRequired.isSelected());
+    }
+
+    public void updateTicketTypes(DataModel<TicketType> model) {
+        if (model instanceof TicketTypeModel ticketTypes) {
+            compDefaultTicketType.getComponent().setModel(ticketTypes);
+        }
+    }
+
+    @Override
+    public void listUpdated(DataModel<TicketType> model) {
+        if (model instanceof TicketTypeModel ticketTypes) {
+            compDefaultTicketType.getComponent().setModel(ticketTypes);
+        }
     }
 }

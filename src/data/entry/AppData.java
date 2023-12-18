@@ -90,18 +90,18 @@ public class AppData extends DefaultTableModel implements Serializable, DataMode
     }
 
     @Override
-    public Entry getSelectedData() {
+    public void setSelectedItem(Object anItem) {
+
+    }
+
+    @Override
+    public Entry getSelectedItem() {
         return lastSelectedEntry;
     }
 
     @Override
     public int getSelectedIndex(){
         return lastSelectedEntry != null ? entryList.indexOf(lastSelectedEntry) : -1;
-    }
-
-    @Override
-    public void setSelection(Entry data) {
-        lastSelectedEntry = data;
     }
 
     @Override

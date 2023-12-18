@@ -29,4 +29,13 @@ public class DiscountModel extends DefaultWizardModel<Discount> {
     protected void updateRenderers(Discount discount) {
         listRenderer.updateRenderer(discount);
     }
+
+    @Override
+    protected Discount castModelData(Object data) {
+        Discount modelData = null;
+        if (data instanceof Discount discount) {
+            modelData = discount;
+        }
+        return modelData;
+    }
 }

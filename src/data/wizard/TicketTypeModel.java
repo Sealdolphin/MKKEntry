@@ -29,4 +29,13 @@ public class TicketTypeModel extends DefaultWizardModel<TicketType> {
     protected void updateRenderers(TicketType ticketType) {
         listRenderer.updateRenderer(ticketType);
     }
+
+    @Override
+    protected TicketType castModelData(Object data) {
+        TicketType modelData = null;
+        if (data instanceof TicketType ticketType) {
+            modelData = ticketType;
+        }
+        return modelData;
+    }
 }

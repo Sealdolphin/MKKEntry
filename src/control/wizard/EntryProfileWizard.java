@@ -30,14 +30,21 @@ public class EntryProfileWizard extends AbstractWizard<EntryProfile> {
     }
 
     private JTabbedPane createEditPanel(EntryProfile selection) {
+        // Create wizard guild
         BarcodeWizard barcodeWizard = new BarcodeWizard(selection.createBarcodeModel());
-        DiscountWizard discountWizard = new DiscountWizard(selection.createDiscountModel());
+        DiscountWizard discountWizard = new DiscountWizard(selection.createDiscountModel(), selection.createBarcodeModel());
         TicketTypeWizard ticketTypeWizard = new TicketTypeWizard(selection.createTicketTypeModel());
-        EntryProfileMainPanel settingsPanel = new EntryProfileMainPanel();
+        EntryProfileMainPanel settingsPanel = new EntryProfileMainPanel(selection.createTicketTypeModel(), selection.createBarcodeModel());
 
-        discountWizard.updateBarcodeOptions(selection.createBarcodeModel());
+        // Setup Discount Wizard barcodes
         settingsPanel.initializeLayout();
+
+        // Connect listeners
         barcodeWizard.addListUpdateListener(discountWizard);
+        barcodeWizard.addListUpdateListener(settingsPanel.asBarcodeUpdater());
+        ticketTypeWizard.addListUpdateListener(settingsPanel.asTicketTypeUpdater());
+
+        // TODO: add initial update
 
         JTabbedPane cardPanel = new JTabbedPane();
         cardPanel.addTab("Beállítások", settingsPanel);

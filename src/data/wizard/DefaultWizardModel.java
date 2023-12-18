@@ -28,7 +28,7 @@ public abstract class DefaultWizardModel<T extends WizardType> implements DataMo
     }
 
     @Override
-    public T getSelectedData() {
+    public T getSelectedItem() {
         return selection;
     }
 
@@ -41,9 +41,10 @@ public abstract class DefaultWizardModel<T extends WizardType> implements DataMo
     }
 
     @Override
-    public void setSelection(T data) {
-        selection = data;
-        refreshEditCache(data, false);
+    public void setSelectedItem(Object data) {
+        T typedData = castModelData(data);
+        selection = typedData;
+        refreshEditCache(typedData, false);
     }
 
     @Override
@@ -81,7 +82,7 @@ public abstract class DefaultWizardModel<T extends WizardType> implements DataMo
         if (selection != null) {
             removeData(selection);
         }
-        setSelection(null);
+        setSelectedItem(null);
     }
 
     @Override
@@ -117,6 +118,8 @@ public abstract class DefaultWizardModel<T extends WizardType> implements DataMo
     }
 
     protected abstract void updateRenderers(T type);
+
+    protected abstract T castModelData(Object data);
 
     /**
      * Updates the Edit cache. This is a value that changes based on the signaling data

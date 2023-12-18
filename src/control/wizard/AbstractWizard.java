@@ -96,7 +96,7 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
 
     protected void setSelection(T element) {
         validator.resetAll();
-        dataList.setSelection(element);
+        dataList.setSelectedItem(element);
         selectionEditor.updateSelection(element);
     }
 
