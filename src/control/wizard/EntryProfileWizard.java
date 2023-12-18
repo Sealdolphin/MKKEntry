@@ -2,7 +2,7 @@ package control.wizard;
 
 import data.DataModel;
 import data.entryprofile.EntryProfile;
-import view.main.panel.wizard.entryprofile.EntryProfileCardPanel;
+import view.main.panel.wizard.entryprofile.EntryProfileMainPanel;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -29,14 +29,23 @@ public class EntryProfileWizard extends AbstractWizard<EntryProfile> {
         editDialog.setVisible(true);
     }
 
-    private EntryProfileCardPanel createEditPanel(EntryProfile selection) {
+    private JTabbedPane createEditPanel(EntryProfile selection) {
         BarcodeWizard barcodeWizard = new BarcodeWizard(selection.createBarcodeModel());
         DiscountWizard discountWizard = new DiscountWizard(selection.createDiscountModel());
         TicketTypeWizard ticketTypeWizard = new TicketTypeWizard(selection.createTicketTypeModel());
+        EntryProfileMainPanel settingsPanel = new EntryProfileMainPanel();
 
         discountWizard.updateBarcodeOptions(selection.createBarcodeModel());
+        settingsPanel.initializeLayout();
+        barcodeWizard.addListUpdateListener(discountWizard);
 
-        return new EntryProfileCardPanel(barcodeWizard.getView(), discountWizard.getView(), ticketTypeWizard.getView());
+        JTabbedPane cardPanel = new JTabbedPane();
+        cardPanel.addTab("Beállítások", settingsPanel);
+        cardPanel.addTab("Vonalkódok", barcodeWizard.getView());
+        cardPanel.addTab("Kedvezmények", discountWizard.getView());
+        cardPanel.addTab("Jegytípusok", ticketTypeWizard.getView());
+
+        return cardPanel;
     }
 
     @Override

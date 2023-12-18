@@ -4,11 +4,14 @@ import data.DataModel;
 import data.wizard.WizardType;
 import view.main.panel.wizard.AbstractWizardView;
 import view.main.panel.wizard.DataListView;
+import view.main.panel.wizard.ListUpdateListener;
 import view.main.panel.wizard.WizardEditPanel;
 import view.validation.ComponentValidator;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractWizard<T extends WizardType> implements Wizard {
 
@@ -24,6 +27,7 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
     protected final WizardEditor<T> selectionEditor;
     protected final DataModel<T> dataList;
     protected final ComponentValidator validator = new ComponentValidator();
+    private final List<ListUpdateListener<T>> updateListeners;
 
     protected AbstractWizard(DataModel<T> dataList, WizardEditor<T> selectionEditor) {
         selectionEditor.getWizardPage().setupValidation(validator);
@@ -32,6 +36,7 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
         this.selectionEditor = selectionEditor;
         this.view = new DataListView<>(dataList);
         this.dataList = dataList;
+        updateListeners = new ArrayList<>();
 
         setupUniqueValidation();
         view.setListSelectionListener(this::selectElement);
@@ -85,6 +90,7 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
             T updatedData = selectionEditor.loadBackEditCache();
             dataList.updateSelected(updatedData);
             view.invalidate();
+            updateListeners.forEach(l -> l.listUpdated(dataList));
         }
     }
 
@@ -99,5 +105,9 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
     public JPanel getView() {
         WizardEditPanel<T> editPanel = new WizardEditPanel<>(this, selectionEditor.getWizardPage(), validator);
         return new AbstractWizardView(view, editPanel);
+    }
+
+    public void addListUpdateListener(ListUpdateListener<T> listener) {
+        updateListeners.add(listener);
     }
 }
