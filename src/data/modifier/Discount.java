@@ -143,10 +143,10 @@ public class Discount implements Serializable, Modifier, WizardType {
 
         try {
             discount.setName(jsonObject.get("name").toString());
-            discount.setIconPath("Icons" + File.separator + jsonObject.get("icon").toString());
-            discount.setDiscount(Integer.parseInt(jsonObject.get("discount").toString()));
-            discount.setBarcode(profile.identifyBarcode(jsonObject.get("barCode").toString()));
-            discount.setFree(Boolean.parseBoolean(jsonObject.get("isFree").toString()));
+            discount.setIconPath("Icons" + File.separator + jsonObject.optString("icon", basicIcon));
+            discount.setDiscount(jsonObject.optInt("discount", 0));
+            discount.setBarcode(profile.identifyBarcode(jsonObject.getString("barCode")));
+            discount.setFree(jsonObject.optBoolean("isFree", false));
         } catch (Exception other){
             //Show warning message
             JOptionPane.showMessageDialog(new JFrame(),profile.toString()+ ":\nA(z) '" + discount.getName() +

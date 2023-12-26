@@ -1,6 +1,5 @@
 package view.main.panel;
 
-import control.wizard.DiscountWizard;
 import control.wizard.EntryProfileWizard;
 import data.entry.AppData;
 import data.entry.Entry;
@@ -64,11 +63,6 @@ public abstract class AbstractPanel extends JPanel {
         discountList.add(createDiscount("Büfé",codeFood,"Icons\\DIS_PIE.png",500,false));
         discountList.add(createDiscount("Támogató",codeSupport,"Icons\\DIS_MONEY.png",0,false));
 
-        DiscountModel discounts = new DiscountModel(discountList);
-
-        DiscountWizard dWizard = new DiscountWizard(discounts);
-//        dWizard.updateBarcodeOptions(new BarcodeModel(barcodeList));
-
         List<TicketType> ticketTypes = new ArrayList<>();
         ticketTypes.add(createTicket("TT1", 1000, false, TicketType.DEFAULT_COLOR));
         ticketTypes.add(createTicket("TT4", 10, false, TicketType.DEFAULT_COLOR));
@@ -81,17 +75,13 @@ public abstract class AbstractPanel extends JPanel {
         szuretiBal.updateDiscounts(new DiscountModel(discountList));
 
         List<EntryProfile> profiles = List.of(
-                szuretiBal,
-                new EntryProfile("MKK Katalin bál 2023"),
-                new EntryProfile("MKK Farsangi bál 2024")
+                szuretiBal
         );
 
 
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.add(new EntryProfileWizard(new EntryProfileModel(profiles)).getView());
-//        frame.add(new TicketTypeWizard(new TicketTypeModel(ticketTypes)).getView());
-//        frame.add(dWizard.getView());
         frame.setMinimumSize(new Dimension(300,480));
         frame.pack();
         frame.setLocationRelativeTo(null);

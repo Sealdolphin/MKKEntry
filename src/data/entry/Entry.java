@@ -4,7 +4,7 @@ import control.utility.file.EntryFilter;
 import data.entryprofile.EntryProfile;
 import data.modifier.Discount;
 import data.modifier.TicketType;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.time.LocalDateTime;

@@ -1,6 +1,6 @@
 package control;
 
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -13,17 +13,17 @@ public class UIHandler {
         if(!options.get("version").toString().equals(uiVersion))
             throw new IOException("Version mismatch. Correct API version: " + uiVersion);
 
-        JSONObject map = (JSONObject) options.get("ui");
-        for (Object key : map.keySet()) {
-            uiStrings.put(key.toString(),map.get(key).toString());
+        JSONObject map = options.getJSONObject("ui");
+        for (String key : map.keySet() ) {
+            uiStrings.put(key, map.getString(key));
         }
-        map = (JSONObject) options.get("error");
-        for (Object key : map.keySet()) {
-            uiErrors.put(key.toString(),map.get(key).toString());
+        map = options.getJSONObject("error");
+        for (String key : map.keySet()) {
+            uiErrors.put(key, map.getString(key));
         }
-        map = (JSONObject) options.get("msg");
-        for (Object key : map.keySet()) {
-            uiMsg.put(key.toString(),map.get(key).toString());
+        map = options.getJSONObject("msg");
+        for (String key : map.keySet()) {
+            uiMsg.put(key, map.getString(key));
         }
 
     }

@@ -117,10 +117,10 @@ public class Barcode implements Serializable, Modifier, WizardType {
 
     public static Barcode parseBarcodeFromJSON(JSONObject jsonObject){
         Barcode barcode = new Barcode();
-        barcode.setName(jsonObject.get("name").toString());
-        barcode.setMetaData(jsonObject.get("meta").toString());
-        barcode.setDescription(jsonObject.get("description").toString());
-        barcode.setImagePath("Barcodes" + File.separator + jsonObject.get("imagePath").toString());
+        barcode.setName(jsonObject.optString("name", "undefined"));
+        barcode.setMetaData(jsonObject.optString("meta", "UNKNOWN"));
+        barcode.setDescription(jsonObject.optString("description", ""));
+        barcode.setImagePath("Barcodes" + File.separator + jsonObject.getString("imagePath"));
         return barcode;
     }
 
