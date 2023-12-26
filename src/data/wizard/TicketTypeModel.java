@@ -38,4 +38,9 @@ public class TicketTypeModel extends DefaultWizardModel<TicketType> {
         }
         return modelData;
     }
+
+    @Override
+    public DefaultWizardModel<TicketType> copyList() {
+        return new TicketTypeModel(new ArrayList<>(dataList));
+    }
 }

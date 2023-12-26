@@ -5,6 +5,7 @@ import data.DataModel;
 import data.entry.EntryCommand;
 import data.modifier.Barcode;
 import data.wizard.BarcodeModel;
+import data.wizard.DefaultWizardModel;
 import data.wizard.EntryProfileCommandList;
 import view.main.panel.AbstractPanel;
 import view.main.panel.utility.LabeledComponent;
@@ -75,7 +76,7 @@ public class EntryProfileCommandPanel extends AbstractPanel implements WizardPag
     @Override
     public void listUpdated(DataModel<Barcode> model) {
         if (model instanceof BarcodeModel barcodeModel) {
-            components.forEach(command -> command.getComponent().setModel(barcodeModel));
+            components.forEach(command -> command.getComponent().setModel(barcodeModel.copyList()));
         }
     }
 }

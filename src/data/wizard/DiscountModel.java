@@ -38,4 +38,9 @@ public class DiscountModel extends DefaultWizardModel<Discount> {
         }
         return modelData;
     }
+
+    @Override
+    public DefaultWizardModel<Discount> copyList() {
+        return new DiscountModel(new ArrayList<>(dataList));
+    }
 }

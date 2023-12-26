@@ -38,4 +38,9 @@ public class EntryProfileModel extends DefaultWizardModel<EntryProfile> {
         }
         return modelData;
     }
+
+    @Override
+    public DefaultWizardModel<EntryProfile> copyList() {
+        return new EntryProfileModel(new ArrayList<>(dataList));
+    }
 }

@@ -37,4 +37,9 @@ public class BarcodeModel extends DefaultWizardModel<Barcode> {
         }
         return modelData;
     }
+
+    @Override
+    public DefaultWizardModel<Barcode> copyList() {
+        return new BarcodeModel(new ArrayList<>(dataList));
+    }
 }

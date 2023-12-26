@@ -121,6 +121,8 @@ public abstract class DefaultWizardModel<T extends WizardType> implements DataMo
 
     protected abstract T castModelData(Object data);
 
+    public abstract DefaultWizardModel<T> copyList();
+
     /**
      * Updates the Edit cache. This is a value that changes based on the signaling data
      * If the model have been changed, the cache must be updated (if it's a new data then it's updated, if the
