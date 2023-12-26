@@ -7,7 +7,7 @@ import control.modifier.ModifierWizardEditor;
 import control.modifier.TicketTypeEditor;
 import control.wizard.WizardEditor;
 import data.wizard.WizardType;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import view.main.panel.wizard.tickettype.TicketTypePanel;
 
 import javax.swing.*;

@@ -8,7 +8,7 @@ import control.modifier.ModifierWizardEditor;
 import control.utility.devices.BarCodeReaderListenerFactory;
 import control.wizard.WizardEditor;
 import data.wizard.WizardType;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import view.BarcodePanel;
 import view.main.panel.utility.JImagePanel;
 

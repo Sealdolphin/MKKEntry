@@ -7,7 +7,7 @@ import control.modifier.ModifierWizardEditor;
 import control.wizard.WizardEditor;
 import data.entryprofile.EntryProfile;
 import data.wizard.WizardType;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import view.BarcodePanel;
 import view.main.panel.wizard.discount.DiscountPanel;
 
@@ -146,9 +146,7 @@ public class Discount implements Serializable, Modifier, WizardType {
             discount.setIconPath("Icons" + File.separator + jsonObject.get("icon").toString());
             discount.setDiscount(Integer.parseInt(jsonObject.get("discount").toString()));
             discount.setBarcode(profile.identifyBarcode(jsonObject.get("barCode").toString()));
-            jsonObject.getOrDefault("isFree", Boolean.FALSE);
-
-            discount.setFree(Boolean.parseBoolean(jsonObject.getOrDefault("isFree", "false").toString()));
+            discount.setFree(Boolean.parseBoolean(jsonObject.get("isFree").toString()));
         } catch (Exception other){
             //Show warning message
             JOptionPane.showMessageDialog(new JFrame(),profile.toString()+ ":\nA(z) '" + discount.getName() +

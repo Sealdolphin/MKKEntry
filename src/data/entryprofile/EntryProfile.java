@@ -14,8 +14,8 @@ import data.modifier.Discount;
 import data.modifier.TicketType;
 import data.util.ReadingFlag;
 import data.wizard.*;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
+import org.json.JSONArray;
 import view.main.panel.wizard.entryprofile.EntryProfileMainPanel;
 import view.renderer.ModifierValidationRenderer;
 
