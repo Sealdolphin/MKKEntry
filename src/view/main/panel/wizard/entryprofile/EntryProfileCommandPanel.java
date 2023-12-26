@@ -5,7 +5,6 @@ import data.DataModel;
 import data.entry.EntryCommand;
 import data.modifier.Barcode;
 import data.wizard.BarcodeModel;
-import data.wizard.DefaultWizardModel;
 import data.wizard.EntryProfileCommandList;
 import view.main.panel.AbstractPanel;
 import view.main.panel.utility.LabeledComponent;
