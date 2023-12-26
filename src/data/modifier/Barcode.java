@@ -47,14 +47,6 @@ public class Barcode implements Serializable, Modifier, WizardType {
 
     public Barcode() {}
 
-    @Deprecated
-    public Barcode(String name, String meta, String picture, String desc){
-        setName(name);
-        setMetaData(meta);
-        setImagePath(picture);
-        setDescription(desc);
-    }
-
     public Barcode(Barcode other) {
         setName(other.getName());
         setMetaData(other.getMetaData());
@@ -124,12 +116,12 @@ public class Barcode implements Serializable, Modifier, WizardType {
     }
 
     public static Barcode parseBarcodeFromJSON(JSONObject jsonObject){
-        String name, meta, desc, picture;
-        name = jsonObject.get("name").toString();
-        meta = jsonObject.get("meta").toString();
-        desc = jsonObject.get("description").toString();
-        picture = "Barcodes" + File.separator + jsonObject.get("imagePath").toString();
-        return new Barcode(name,meta,picture,desc);
+        Barcode barcode = new Barcode();
+        barcode.setName(jsonObject.get("name").toString());
+        barcode.setMetaData(jsonObject.get("meta").toString());
+        barcode.setDescription(jsonObject.get("description").toString());
+        barcode.setImagePath("Barcodes" + File.separator + jsonObject.get("imagePath").toString());
+        return barcode;
     }
 
     /**
@@ -174,7 +166,7 @@ public class Barcode implements Serializable, Modifier, WizardType {
 
         @Override
         public void createNew(List<Barcode> objectList) {
-            Barcode newCode = new Barcode("", "", "", "");
+            Barcode newCode = new Barcode();
             ModifierDialog wizard = newCode.getModifierWizard(null);
             int result = wizard.open();
             if(result == 0){

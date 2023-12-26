@@ -48,10 +48,10 @@ public abstract class AbstractPanel extends JPanel {
 
         List<Barcode> barcodeList = new ArrayList<>();
 
-        Barcode codeHelper = new Barcode("Segítő", "HELPER", "Barcodes\\helpSale.png", "Jelentkezett segítőnek");
-        Barcode codeFood = new Barcode("Büfé", "FOOD", "Barcodes\\foodSale.png", "Hozott sütit / üdítőt");
-        Barcode codeSupport = new Barcode("Támogató", "SUPPORT", "Barcodes\\vipTicket.png", "Támogató <3");
-        Barcode codeRandom = new Barcode("Random", "FOOD", "Barcodes\\vipTicket.png", "Valami...");
+        Barcode codeHelper = createBarcode("Segítő", "HELPER", "Barcodes\\helpSale.png", "Jelentkezett segítőnek");
+        Barcode codeFood = createBarcode("Büfé", "FOOD", "Barcodes\\foodSale.png", "Hozott sütit / üdítőt");
+        Barcode codeSupport = createBarcode("Támogató", "SUPPORT", "Barcodes\\vipTicket.png", "Támogató <3");
+        Barcode codeRandom = createBarcode("Random", "FOOD", "Barcodes\\vipTicket.png", "Valami...");
 
         barcodeList.add(codeHelper);
         barcodeList.add(codeFood);
@@ -60,9 +60,9 @@ public abstract class AbstractPanel extends JPanel {
 
         List<Discount> discountList = new ArrayList<>();
 
-        discountList.add(new Discount("Segítő",codeHelper,"Icons\\DIS_HELP.png",500,false));
-        discountList.add(new Discount("Büfé",codeFood,"Icons\\DIS_PIE.png",500,false));
-        discountList.add(new Discount("Támogató",codeSupport,"Icons\\DIS_MONEY.png",0,false));
+        discountList.add(createDiscount("Segítő",codeHelper,"Icons\\DIS_HELP.png",500,false));
+        discountList.add(createDiscount("Büfé",codeFood,"Icons\\DIS_PIE.png",500,false));
+        discountList.add(createDiscount("Támogató",codeSupport,"Icons\\DIS_MONEY.png",0,false));
 
         DiscountModel discounts = new DiscountModel(discountList);
 
@@ -70,10 +70,10 @@ public abstract class AbstractPanel extends JPanel {
 //        dWizard.updateBarcodeOptions(new BarcodeModel(barcodeList));
 
         List<TicketType> ticketTypes = new ArrayList<>();
-        ticketTypes.add(new TicketType("TT1", 1000, false, TicketType.DEFAULT_COLOR));
-        ticketTypes.add(new TicketType("TT4", 10, false, TicketType.DEFAULT_COLOR));
-        ticketTypes.add(new TicketType("TT3", 3000, false, TicketType.DEFAULT_COLOR));
-        ticketTypes.add(new TicketType("TT4", 4000, false, TicketType.DEFAULT_COLOR));
+        ticketTypes.add(createTicket("TT1", 1000, false, TicketType.DEFAULT_COLOR));
+        ticketTypes.add(createTicket("TT4", 10, false, TicketType.DEFAULT_COLOR));
+        ticketTypes.add(createTicket("TT3", 3000, false, TicketType.DEFAULT_COLOR));
+        ticketTypes.add(createTicket("TT4", 4000, false, TicketType.DEFAULT_COLOR));
 
         EntryProfile szuretiBal = new EntryProfile("MKK Szüreti bál 2023");
         szuretiBal.updateBarcodes(new BarcodeModel(barcodeList));
@@ -96,6 +96,34 @@ public abstract class AbstractPanel extends JPanel {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    public static Barcode createBarcode(String name,String metaData, String imgPath, String description) {
+        Barcode barcode = new Barcode();
+        barcode.setName(name);
+        barcode.setDescription(description);
+        barcode.setImagePath(imgPath);
+        barcode.setMetaData(metaData);
+        return barcode;
+    }
+
+    public static Discount createDiscount(String name, Barcode barcode, String iconPath, int price, boolean free) {
+        Discount discount = new Discount();
+        discount.setDiscount(price);
+        discount.setFree(free);
+        discount.setName(name);
+        discount.setIconPath(iconPath);
+        discount.setBarcode(barcode);
+        return discount;
+    }
+
+    public static TicketType createTicket(String name, int price, boolean stat, Color color) {
+        TicketType ticket = new TicketType();
+        ticket.setName(name);
+        ticket.setPrice(price);
+        ticket.setBackgroundColor(color);
+        ticket.setStatisticsEnabled(stat);
+        return ticket;
     }
 
     protected GroupLayout layout;

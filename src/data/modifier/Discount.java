@@ -90,10 +90,6 @@ public class Discount implements Serializable, Modifier, WizardType {
 
     public Discount() {}
 
-    public Discount(String name, Barcode barcode , String iconPath, int price, boolean isFree) {
-        this(name, barcode, iconPath, price, isFree, null);
-    }
-
     public Discount(Discount other) {
         this(other, null);
     }
@@ -104,7 +100,12 @@ public class Discount implements Serializable, Modifier, WizardType {
      * @param profile the profile you want to copy to
      */
     public Discount(Discount other, EntryProfile profile) {
-        this(other.name,other.barcode,other.iconPath,other.discount,other.free, profile);
+        name = other.name;
+        barcode = other.barcode;
+        iconPath = other.iconPath;
+        discount = other.discount;
+        free = other.free;
+        this.profile = profile;
     }
 
     @Override
@@ -138,25 +139,24 @@ public class Discount implements Serializable, Modifier, WizardType {
      * @return the parsed Discount class reference
      */
     public static Discount parseDiscountFromJson(JSONObject jsonObject, EntryProfile profile) {
-        String name;
-        name = "undefined";
-        String icon = null;
-        Barcode barcode = new Barcode(name, "", "", "");
-        int price = 0;
-        boolean isFree = false;
+        Discount discount = new Discount();
+
         try {
-            name = jsonObject.get("name").toString();
-            icon = "Icons" + File.separator + jsonObject.get("icon").toString();
-            price = Integer.parseInt(jsonObject.get("discount").toString());
-            barcode = profile.identifyBarcode(jsonObject.get("barCode").toString());
-            isFree = Boolean.parseBoolean(jsonObject.getOrDefault("isFree", false).toString());
+            discount.setName(jsonObject.get("name").toString());
+            discount.setIconPath("Icons" + File.separator + jsonObject.get("icon").toString());
+            discount.setDiscount(Integer.parseInt(jsonObject.get("discount").toString()));
+            discount.setBarcode(profile.identifyBarcode(jsonObject.get("barCode").toString()));
+            jsonObject.getOrDefault("isFree", Boolean.FALSE);
+
+            discount.setFree(Boolean.parseBoolean(jsonObject.getOrDefault("isFree", "false").toString()));
         } catch (Exception other){
             //Show warning message
-            JOptionPane.showMessageDialog(new JFrame(),profile.toString()+ ":\nA(z) '" + name +
+            JOptionPane.showMessageDialog(new JFrame(),profile.toString()+ ":\nA(z) '" + discount.getName() +
                     "' kedvezmény importálása közben hiba történt.\n" +
                     "Az importálás nem sikerült. Részletek:\n" + other,"Hiba",ERROR_MESSAGE);
         }
-        return new Discount(name,barcode,icon,price,isFree,profile);
+
+        return discount;
     }
 
 
@@ -291,7 +291,7 @@ public class Discount implements Serializable, Modifier, WizardType {
 
         @Override
         public void createNew(List<Discount> objectList) {
-            Discount newDiscount = new Discount("",null,basicIcon,0,false,profile);
+            Discount newDiscount = new Discount();
             ModifierDialog wizard = newDiscount.getModifierWizard(null);
             int result = wizard.open();
             if(result == 0){
@@ -372,7 +372,7 @@ public class Discount implements Serializable, Modifier, WizardType {
                 //Close dialog
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(this,"Not a valid discount!","ERROR",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,"Not a valid discount!","ERROR", ERROR_MESSAGE);
             }
         }
 
