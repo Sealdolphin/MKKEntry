@@ -41,7 +41,7 @@ public abstract class DefaultWizardTypeListRenderer<T extends WizardType> extend
     @Override
     public Component getListCellRendererComponent(JList<? extends T> list, T value, int index, boolean isSelected, boolean cellHasFocus) {
         if (isSelected) {
-            if (value.equals(typeUnderEdit)) {
+            if (value != null && value.equals(typeUnderEdit)) {
                 lbName.setIcon(UNDER_EDIT.getImage());
                 lbName.setText("<Üres>");
                 lbDescription.setText("Szerkesztés alatt...");

@@ -5,8 +5,8 @@ import data.entryprofile.EntryProfile;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import static control.Application.uh;
