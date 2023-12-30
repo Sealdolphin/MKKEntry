@@ -14,9 +14,9 @@ import data.modifier.Discount;
 import data.modifier.TicketType;
 import data.util.ReadingFlag;
 import data.wizard.*;
-import org.json.JSONObject;
 import org.json.JSONArray;
-import view.main.panel.wizard.entryprofile.EntryProfileMainPanel;
+import org.json.JSONObject;
+import view.main.panel.wizard.entryprofile.EntryProfileWizardPane;
 import view.renderer.ModifierValidationRenderer;
 
 import javax.swing.*;
@@ -183,7 +183,7 @@ public class EntryProfile implements Serializable, WizardType {
 
     @Override
     public WizardEditor<EntryProfile> createWizard() {
-        return new EntryProfileEditor(this, new EntryProfileMainPanel());
+        return new EntryProfileEditor(this, new EntryProfileWizardPane());
     }
 
     public Date getCreatedAt() {

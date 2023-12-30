@@ -2,57 +2,16 @@ package control.wizard;
 
 import data.DataModel;
 import data.entryprofile.EntryProfile;
-import view.main.panel.wizard.entryprofile.EntryProfileMainPanel;
+import view.main.panel.wizard.DialogWizardView;
+import view.main.panel.wizard.WizardEditPanel;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class EntryProfileWizard extends AbstractWizard<EntryProfile> {
 
     public EntryProfileWizard(DataModel<EntryProfile> dataList) {
         super(dataList, new EntryProfile().createWizard());
-        view.setListDoubleClickListener(new EditDialogCreator());
-    }
-
-    private void openEditDialog() {
-        JDialog editDialog = new JDialog();
-        JTabbedPane panel = createEditPanel(selectionEditor.data);
-        editDialog.setTitle("Belépőprofil szerkesztése");
-        editDialog.setMinimumSize(new Dimension(640, 300));
-        editDialog.add(panel);
-        editDialog.pack();
-        editDialog.setLocationRelativeTo(null);
-        editDialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-        editDialog.setVisible(true);
-    }
-
-    private JTabbedPane createEditPanel(EntryProfile selection) {
-        // Create wizard guild
-        BarcodeWizard barcodeWizard = new BarcodeWizard(selection.createBarcodeModel());
-        DiscountWizard discountWizard = new DiscountWizard(selection.createDiscountModel(), selection.createBarcodeModel());
-        TicketTypeWizard ticketTypeWizard = new TicketTypeWizard(selection.createTicketTypeModel());
-        EntryProfileMainPanel settingsPanel = new EntryProfileMainPanel(selection.createTicketTypeModel(), selection.createBarcodeModel());
-
-        // Setup Discount Wizard barcodes
-        settingsPanel.initializeLayout();
-
-        // Connect listeners
-        barcodeWizard.addListUpdateListener(discountWizard);
-        barcodeWizard.addListUpdateListener(settingsPanel.asBarcodeUpdater());
-        ticketTypeWizard.addListUpdateListener(settingsPanel.asTicketTypeUpdater());
-
-        // TODO: add initial update
-
-        JTabbedPane cardPanel = new JTabbedPane();
-        cardPanel.addTab("Beállítások", settingsPanel);
-        cardPanel.addTab("Vonalkódok", barcodeWizard.getView());
-        cardPanel.addTab("Kedvezmények", discountWizard.getView());
-        cardPanel.addTab("Jegytípusok", ticketTypeWizard.getView());
-
-        return cardPanel;
     }
 
     @Override
@@ -74,17 +33,7 @@ public class EntryProfileWizard extends AbstractWizard<EntryProfile> {
 
     @Override
     public JPanel getView() {
-        return view.createListPanel();
-    }
-
-    private class EditDialogCreator extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent mouseEvent) {
-            if (mouseEvent.getSource() instanceof JList<?>) {
-                if (mouseEvent.getClickCount() == 2) {
-                    openEditDialog();
-                }
-            }
-        }
+        WizardEditPanel<EntryProfile> editPanel = new WizardEditPanel<>(this, selectionEditor.getWizardPage(), validator);
+        return new DialogWizardView(view, editPanel, "Belépőprofil szerkesztése");
     }
 }
