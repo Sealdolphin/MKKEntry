@@ -13,7 +13,9 @@ public enum RenderedIcon {
     ENTRY_PROFILE(SYSTEM_DEFAULT_PATH + "id-card-solid.png"),
     UNDER_EDIT(SYSTEM_DEFAULT_PATH + "wrench-solid.png"),
     SAVE(SYSTEM_DEFAULT_PATH + "circle-check-regular.png"),
-    CANCEL(SYSTEM_DEFAULT_PATH + "ban-solid.png");
+    CANCEL(SYSTEM_DEFAULT_PATH + "ban-solid.png"),
+    WIFI(SYSTEM_DEFAULT_PATH + "wifi-solid.png"),
+    WIFI_SLASH(SYSTEM_DEFAULT_PATH + "wifi-solid-slash.png");
 
     private final String imagePath;
 
