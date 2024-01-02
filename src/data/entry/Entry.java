@@ -125,7 +125,7 @@ public class Entry extends Vector<String> {
 
         // Registrating discounts if any
         for (int i = lastIndex; i < importVector.length; i++) {
-            importedEntry.applyDiscount(profile.identifyDiscountMeta(importVector[i]));
+            importedEntry.applyDiscount(profile.identifyDiscount(importVector[i]));
         }
 
         return importedEntry;

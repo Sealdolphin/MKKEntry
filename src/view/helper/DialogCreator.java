@@ -19,11 +19,17 @@ public abstract class DialogCreator {
         return fc;
     }
 
-    public static int choosePictureFromDialog(Component parent, Consumer<JFileChooser> action) {
-        JFileChooser fc = getPictureChooser();
-        int dialogResult = fc.showOpenDialog(parent);
+    public static JFileChooser getImportFileChooser() {
+        JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.addChoosableFileFilter(new ExtensionFilter(new String[]{"json"}, "JSON fájl"));
+        return fc;
+    }
+
+    public static int openDialogWithAction(Component parent, JFileChooser dialog, Consumer<JFileChooser> action) {
+        int dialogResult = dialog.showOpenDialog(parent);
         if (dialogResult == JFileChooser.APPROVE_OPTION) {
-            action.accept(fc);
+            action.accept(dialog);
         }
         return dialogResult;
     }

@@ -142,14 +142,15 @@ public class Discount implements Serializable, Modifier, WizardType {
         Discount discount = new Discount();
 
         try {
-            discount.setName(jsonObject.get("name").toString());
+            discount.setName(jsonObject.getString("name"));
             discount.setIconPath("Icons" + File.separator + jsonObject.optString("icon", basicIcon));
             discount.setDiscount(jsonObject.optInt("discount", 0));
-            discount.setBarcode(profile.identifyBarcode(jsonObject.getString("barCode")));
+            discount.setBarcode(profile.identifyBarcode(jsonObject.getString("barcode")));
             discount.setFree(jsonObject.optBoolean("isFree", false));
+
         } catch (Exception other){
             //Show warning message
-            JOptionPane.showMessageDialog(new JFrame(),profile.toString()+ ":\nA(z) '" + discount.getName() +
+            JOptionPane.showMessageDialog(new JFrame(), "Hiba :\nA(z) '" + discount.getName() +
                     "' kedvezmény importálása közben hiba történt.\n" +
                     "Az importálás nem sikerült. Részletek:\n" + other,"Hiba",ERROR_MESSAGE);
         }

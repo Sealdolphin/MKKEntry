@@ -337,7 +337,7 @@ public class AppController implements ProgramStateListener, EntryCodeReader {
 
             //Checking for discount codes
             Entry lastSelection = model.getSelectedItem();
-            Discount discount = activeProfile.identifyDiscountMeta(barCode);
+            Discount discount = activeProfile.identifyDiscount(barCode);
             if(discount != null) {
                 if(lastSelection != null) {
                     lastSelection.applyDiscount(discount);

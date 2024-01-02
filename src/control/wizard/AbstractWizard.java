@@ -20,7 +20,8 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
         UPDATE,
         MOVE,
         DELETE,
-        CANCEL
+        CANCEL,
+        IMPORT;
     }
 
     protected final DataListView<T> view;
@@ -73,9 +74,12 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
 
     @Override
     public void createNewElement() {
-        T newData = getNewElement();
-        dataList.addData(newData);
-        setSelection(newData);
+        addNewElement(getNewElement());
+    }
+
+    protected void addNewElement(T element) {
+        dataList.addData(element);
+        setSelection(element);
     }
 
     @Override
@@ -85,13 +89,15 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
     }
 
     @Override
-    public void updateElement() {
-        if (selectionEditor.data != null  && validator.validate()) {
+    public boolean updateElement() {
+        boolean success = selectionEditor.data != null  && validator.validate();
+        if (success) {
             T updatedData = selectionEditor.loadBackEditCache();
             dataList.updateSelected(updatedData);
             view.invalidate();
             updateListeners.forEach(l -> l.listUpdated(dataList));
         }
+        return success;
     }
 
     protected void setSelection(T element) {

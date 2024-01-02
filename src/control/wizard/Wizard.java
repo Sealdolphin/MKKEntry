@@ -13,5 +13,5 @@ public interface Wizard {
 
     void deleteElement();
 
-    void updateElement();
+    boolean updateElement();
 }

@@ -10,7 +10,7 @@ public class DialogWizardView extends JPanel {
 
     public DialogWizardView(DataListView<?> view, WizardEditPanel<?> wizardEditPanel, String title) {
         setLayout(new BorderLayout());
-        add(view.createListPanel(), BorderLayout.CENTER);
+        add(view.createListPanel(true), BorderLayout.CENTER);
 
         this.editDialog = new JDialog();
         createEditDialog(wizardEditPanel, title);
@@ -29,6 +29,10 @@ public class DialogWizardView extends JPanel {
         editDialog.pack();
         editDialog.setLocationRelativeTo(null);
         editDialog.setVisible(true);
+    }
+
+    public void closeDialog() {
+        editDialog.dispose();
     }
 
     private class EditDialogCreator extends MouseAdapter {

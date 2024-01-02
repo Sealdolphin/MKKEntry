@@ -5,6 +5,7 @@ import control.wizard.WizardEditor;
 import data.modifier.Barcode;
 import data.modifier.Discount;
 import data.wizard.BarcodeModel;
+import view.helper.DialogCreator;
 import view.main.panel.AbstractPanel;
 import view.main.panel.utility.LabeledComponent;
 import view.main.panel.utility.LoadedIcon;
@@ -17,7 +18,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
-import static view.helper.DialogCreator.choosePictureFromDialog;
+import static view.helper.DialogCreator.openDialogWithAction;
 
 public class DiscountPanel extends AbstractPanel implements WizardPage<Discount> {
 
@@ -121,7 +122,7 @@ public class DiscountPanel extends AbstractPanel implements WizardPage<Discount>
 
     private void updateIconPath(ActionEvent event) {
         if (event.getSource().equals(btnChangeIcon)) {
-            choosePictureFromDialog(this, (fileChooser) -> refreshIcon(fileChooser.getSelectedFile().getAbsolutePath()));
+            openDialogWithAction(this, DialogCreator.getPictureChooser(), (fileChooser) -> refreshIcon(fileChooser.getSelectedFile().getAbsolutePath()));
         }
     }
 

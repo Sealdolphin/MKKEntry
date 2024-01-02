@@ -4,6 +4,7 @@ import control.modifier.BarcodeEditor;
 import control.utility.devices.BasicSerialPortReader;
 import control.wizard.WizardEditor;
 import data.modifier.Barcode;
+import view.helper.DialogCreator;
 import view.main.panel.AbstractPanel;
 import view.main.panel.utility.JImagePanel;
 import view.main.panel.utility.LabeledComponent;
@@ -14,7 +15,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 import static javax.swing.JFileChooser.APPROVE_OPTION;
-import static view.helper.DialogCreator.choosePictureFromDialog;
+import static view.helper.DialogCreator.openDialogWithAction;
 
 public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
 
@@ -39,7 +40,7 @@ public class BarcodePanel extends AbstractPanel implements WizardPage<Barcode> {
 
     private void selectBarcodePicture(ActionEvent event) {
 
-        int result = choosePictureFromDialog(this, (fileChooser) -> imgBarcodePicture.changePicture(fileChooser.getSelectedFile().getAbsolutePath()));
+        int result = openDialogWithAction(this, DialogCreator.getPictureChooser(), (fileChooser) -> imgBarcodePicture.changePicture(fileChooser.getSelectedFile().getAbsolutePath()));
 
         if(result == APPROVE_OPTION) {
             compBtnBrowse.getLabel().setText(imgBarcodePicture.getPath());

@@ -88,39 +88,35 @@ public class TicketType implements Serializable, Modifier, WizardType {
      * name : String
      * price : Integer
      * fee : Boolean
-     * @param jsonObject the JSON object to be parsed
+     * @param ticketObject the JSON object to be parsed
      * @return a valid TicketType
      */
-    public static TicketType parseTicketTypeFromJson(JSONObject jsonObject, String profileName) {
-        String name = "undefined";
-        int price = 0;
-        boolean fee = false;
-        Color bgColor = DEFAULT_COLOR;
+    public static TicketType parseTicketTypeFromJson(JSONObject ticketObject) {
+        TicketType ticketType = new TicketType();
         try {
-            name = jsonObject.get("name").toString();
-            price = Integer.parseInt(jsonObject.get("price").toString());
-            fee = Boolean.parseBoolean(jsonObject.get("fee").toString());
-            JSONObject colorObject = (JSONObject) jsonObject.get("color");
-            if (colorObject != null) {
-                int red = Integer.parseInt(colorObject.get("red").toString());
-                int green = Integer.parseInt(colorObject.get("green").toString());
-                int blue = Integer.parseInt(colorObject.get("blue").toString());
-                bgColor = new Color(red, green, blue);
-            }
+            ticketType.setName(ticketObject.getString("name"));
+            ticketType.setPrice(ticketObject.getInt("price"));
+            ticketType.setStatisticsEnabled(ticketObject.optBoolean("statistics", false));
+            JSONObject colorObject = ticketObject.optJSONObject("color", new JSONObject());
+            ticketType.setBackgroundColor(new Color(
+                    colorObject.optInt("r", DEFAULT_COLOR.getRed()),
+                    colorObject.optInt("g", DEFAULT_COLOR.getGreen()),
+                    colorObject.optInt("b", DEFAULT_COLOR.getBlue())
+            ));
         } catch (NumberFormatException num) {
             //Show warning message
-            JOptionPane.showMessageDialog(new JFrame(),profileName +
-                    ":\nA(z) '" + name +
+            JOptionPane.showMessageDialog(new JFrame(),
+                    "Hiba :\nA(z) '" + ticketType.getName() +
                     "' jegytípushoz csatolt ár formátuma hibás.\n" +
                     "Az importálás nem sikerült, az alap beállítás lesz alkalmazva.","Hiba",ERROR_MESSAGE);
         } catch (Exception other){
             //Show warning message
-            JOptionPane.showMessageDialog(new JFrame(),profileName+ ":\nA(z) '" + name +
+            JOptionPane.showMessageDialog(new JFrame(),"Hiba :\nA(z) '" + ticketType.getName() +
                     "' jegytípus importálása közben hiba történt.\n" +
                     "Az importálás nem sikerült. Részletek:\n" + other,"Hiba",ERROR_MESSAGE);
         }
 
-        return new TicketType(name,price,fee, bgColor);
+        return ticketType;
     }
 
     @Override

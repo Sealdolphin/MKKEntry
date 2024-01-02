@@ -15,6 +15,7 @@ import data.modifier.TicketType;
 import data.util.ReadingFlag;
 import data.wizard.*;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import view.main.panel.wizard.entryprofile.EntryProfileWizardPane;
 import view.renderer.ModifierValidationRenderer;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.*;
+import java.util.function.Function;
 
 import static control.Application.uh;
 import static data.entry.EntryCommand.getDefaultCommands;
@@ -190,11 +192,50 @@ public class EntryProfile implements Serializable, WizardType {
         return createdAt;
     }
 
+    public Discount identifyDiscount(String discountMeta){
+        return discounts.stream().filter(discount -> discount.getMeta().equals(discountMeta)).findAny().orElse(null);
+    }
+
+    public TicketType identifyTicketType(String ticketType) {
+        return ticketTypes.stream().filter(type -> type.getName().equals(ticketType)).findAny().orElse(null);
+    }
+
+    public Barcode identifyBarcode(String barcodeMeta){
+        return barcodes.stream().filter(barCode -> barCode.getMetaData().equals(barcodeMeta)).findAny().orElse(null);
+    }
+
+    public static EntryProfile parseProfileFromJson(JSONObject jsonProfile) throws JSONException {
+        EntryProfile profile = new EntryProfile();
+
+        profile.setProfileName(jsonProfile.getString("name"));
+        profile.setProfileMask(jsonProfile.getString("mask"));
+        profile.setProfileMaskForEntry(jsonProfile.optString("maskForEntry", ""));
+
+        profile.barcodes.addAll(parseJSONArray(jsonProfile.getJSONArray("barcodes"), Barcode::parseBarcodeFromJSON));
+        profile.ticketTypes.addAll(parseJSONArray(jsonProfile.getJSONArray("tickets"), TicketType::parseTicketTypeFromJson));
+        profile.discounts.addAll(
+                parseJSONArray(jsonProfile.getJSONArray("discounts"), obj -> Discount.parseDiscountFromJson(obj, profile))
+        );
+
+        profile.setDefaultTicketType(profile.identifyTicketType(jsonProfile.optString("defaultType", null)));
+
+        return profile;
+    }
+
+    private static <T> List<T> parseJSONArray(JSONArray array, Function<JSONObject, T> parser) {
+        List<T> list = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++) {
+            list.add(parser.apply(array.getJSONObject(i)));
+        }
+        return list;
+    }
+
 
     /**
      * #################################### OLD STUFF BELOW ##################################
      */
 
+    @Deprecated
     private String password = "";
 
     @Deprecated
@@ -219,30 +260,38 @@ public class EntryProfile implements Serializable, WizardType {
      * true = Automatikus kezelés. Az adatot figyelmen kívül hagyja, vagy az alapméretezett beállításokkal dolgozik.
      * false = Egyéni kezelés. A felhasználó dönti el
      */
+    @Deprecated
     private boolean autoDataHandling;
     /**
      * Az exportálási filterek listája
      */
+
+    @Deprecated
     private List exportFilters;
 
     /**
      * Az alapméretezett jegytípus
      */
+
+    @Deprecated
     private TicketType defaultType;
 
     /**
      * Kötelező-e a név megadása
      */
+    @Deprecated
     private boolean nameRequirement;
 
     /**
      * Belépéskor új ID-t kap a kijelölt rekord
      */
+    @Deprecated
     private boolean entryModifiesID;
 
     /**
      * A lecserélendő ID-k maszkja
      */
+    @Deprecated
     private String modificationMask;
 
     /**
@@ -257,8 +306,7 @@ public class EntryProfile implements Serializable, WizardType {
     @Deprecated
     private final int maxActionCount = 10;
 
-    private static final ReadingFlag[] commandJsonKeys = ReadingFlag.values();
-
+    @Deprecated
     public static void loadProfilesFromJson(JSONObject object, List<EntryProfile> profileList) throws IOException{
         if(!object.get("version").toString().equals(UIHandler.uiVersion))
             throw new IOException(uh.getUIStr("ERR","VERSION_MISMATCH") + UIHandler.uiVersion);
@@ -302,54 +350,11 @@ public class EntryProfile implements Serializable, WizardType {
         return false;
     }
 
-    private static EntryProfile parseProfileFromJson(JSONObject jsonProfile) {
-        //Loading basic information
-        EntryProfile profile = new EntryProfile();
-
-        profile.name = jsonProfile.get("name").toString();
-        profile.codeMask = jsonProfile.get("mask").toString();
-        profile.modificationMask = jsonProfile.get("modificationMask").toString();
-        profile.entryModifiesID = !Objects.equals(profile.modificationMask, "");
-
-        //Loading Barcodes
-        JSONArray jArray = (JSONArray) jsonProfile.get("barCodes");
-        for (Object barCodeObject : jArray) {
-            profile.barcodes.add(Barcode.parseBarcodeFromJSON((JSONObject) barCodeObject));
-        }
-
-        //Loading discounts
-        jArray = (JSONArray) jsonProfile.get("discounts");
-        for (Object discountObject : jArray) {
-            profile.discounts.add(Discount.parseDiscountFromJson((JSONObject) discountObject, profile));
-        }
-        //Loading Ticket types
-        jArray = (JSONArray) jsonProfile.get("tickets");
-        for (Object discountObject : jArray) {
-            profile.ticketTypes.add(TicketType.parseTicketTypeFromJson((JSONObject) discountObject, profile.name));
-        }
-
-        //Setting the default ticket type
-        String defType = jsonProfile.get("defaultType").toString();
-        profile.defaultType = profile.ticketTypes.stream().filter(ticketType -> ticketType.toString().equals(defType))
-                .findAny().orElse(profile.ticketTypes.get(0));
-
-        //Loading default commands
-        HashMap<String, ReadingFlag> commands = new HashMap<>();
-        for (ReadingFlag commandFlag : commandJsonKeys) {
-            // FIXME: parsing should yield Optional and default values!
-            Object flag = ((JSONObject) jsonProfile.get("commands")).get(commandFlag.getMeta());
-            String key = flag != null ? flag.toString() : "";
-            commands.put(key, commandFlag);
-        }
-        profile.commandCodes = commands;
-
-        return profile;
-    }
-
     /**
      * Creates a side menu with additional attributes and options
      * @return a JPanel containing the sideBar components
      */
+    @Deprecated
     public JPanel getSidePanel() {
         //Setting up layout
         for(Barcode barcode : barcodes)
@@ -373,18 +378,7 @@ public class EntryProfile implements Serializable, WizardType {
         return sidePanel;
     }
 
-    public Discount identifyDiscountMeta(String discountMeta){
-        return discounts.stream().filter(discount -> discount.getMeta().equals(discountMeta)).findAny().orElse(null);
-    }
-
-    public TicketType identifyTicketType(String unknownType) {
-        return ticketTypes.stream().filter(type -> type.toString().equals(unknownType)).findAny().orElse(defaultType);
-    }
-
-    public Barcode identifyBarcode(String barcodeMeta){
-        return barcodes.stream().filter(barCode -> barCode.getMetaData().equals(barcodeMeta)).findAny().orElse(null);
-    }
-
+    @Deprecated
     public String validateCode(String code) throws IOException{
         //Checking constraints
         String startCode = getEntryCode();
@@ -393,31 +387,32 @@ public class EntryProfile implements Serializable, WizardType {
         return validID;
     }
 
+    @Deprecated
     public ReadingFlag validateCommand(String code) {
         return commandCodes.get(code.toUpperCase());
     }
 
+    @Deprecated
     public String getEntryCode(){
         return commandCodes.entrySet().stream().filter(c -> c.getValue().equals(FL_DEFAULT)).map(Map.Entry::getKey).findAny().orElse("");
     }
 
-    @Override
-    public String toString(){
-        return name;
-    }
-
+    @Deprecated
     public int getMaxActionCount() {
         return maxActionCount;
     }
 
+    @Deprecated
     public Discount[] getDiscounts(){
         return discounts.toArray(new Discount[0]);
     }
 
+    @Deprecated
     public Barcode[] getBarcodes(){
         return barcodes.toArray(new Barcode[0]);
     }
 
+    @Deprecated
     public Entry generateNewEntry(String id) {
         String inputName = defaultName;
         if(nameRequirement) {
@@ -427,10 +422,12 @@ public class EntryProfile implements Serializable, WizardType {
         return new Entry(id,inputName,defaultType);
     }
 
+    @Deprecated
     public Entry generateFromEntry(Entry entry, String id) {
         return new Entry(id, entry);
     }
 
+    @Deprecated
     public boolean enteringModifiesEntry(String id) {
         return entryModifiesID && id.matches(modificationMask);
     }

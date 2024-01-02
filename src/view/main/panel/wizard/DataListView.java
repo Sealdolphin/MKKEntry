@@ -14,10 +14,10 @@ import java.awt.event.MouseListener;
 public class DataListView<T extends WizardType> extends JPanel {
 
     private final JList<T> list;
-
     private final JButton btnAdd;
-
     private final JButton btnRemove;
+
+    private final JButton btnImport;
 
     public DataListView(DataModel<T> model) {
         list = new JList<>(model);
@@ -27,22 +27,41 @@ public class DataListView<T extends WizardType> extends JPanel {
 
         btnRemove = new JButton("Törlés");
         btnRemove.setActionCommand(AbstractWizard.WizardCommands.DELETE.name());
+        btnRemove.addActionListener(this::refreshDeleteBtn);
+
+        btnImport = new JButton("Importálás");
+        btnImport.setActionCommand(AbstractWizard.WizardCommands.IMPORT.name());
+
+        refreshDeleteBtn(new ActionEvent(this, 0, AbstractWizard.WizardCommands.DELETE.name()));
 
         list.setCellRenderer(model.createListRenderer());
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
+    private void refreshDeleteBtn(ActionEvent event) {
+        if (event.getActionCommand().equals(AbstractWizard.WizardCommands.DELETE.name())) {
+            btnRemove.setEnabled(list.getModel().getSize() > 0);
+        }
+    }
+
     public JPanel createListPanel() {
+        return createListPanel(false);
+    }
+
+    public JPanel createListPanel(boolean importEnabled) {
         JPanel listPanel = new JPanel(new BorderLayout());
         listPanel.add(new JScrollPane(list), BorderLayout.CENTER);
-        listPanel.add(createEditPanel(), BorderLayout.SOUTH);
+        listPanel.add(createEditPanel(importEnabled), BorderLayout.SOUTH);
         return listPanel;
     }
 
-    private Box createEditPanel() {
+    private Box createEditPanel(boolean importEnabled) {
         Box editPanel = Box.createHorizontalBox();
         editPanel.add(Box.createGlue());
         editPanel.add(btnAdd);
+        if (importEnabled) {
+            editPanel.add(btnImport);
+        }
         editPanel.add(btnRemove);
         editPanel.add(Box.createGlue());
         return editPanel;
@@ -55,6 +74,7 @@ public class DataListView<T extends WizardType> extends JPanel {
     public void setButtonActions(ActionListener listener) {
         btnAdd.addActionListener(listener);
         btnRemove.addActionListener(listener);
+        btnImport.addActionListener(listener);
     }
 
     private void selectNewData(ActionEvent event) {
@@ -62,6 +82,7 @@ public class DataListView<T extends WizardType> extends JPanel {
             ListModel<T> model = list.getModel();
             int selectionIndex = model.getSize() - 1;
             list.setSelectedValue(model.getElementAt(selectionIndex), true);
+            btnRemove.setEnabled(model.getSize() > 0);
         }
     }
 
