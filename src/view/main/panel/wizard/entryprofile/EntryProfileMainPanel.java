@@ -1,6 +1,5 @@
 package view.main.panel.wizard.entryprofile;
 
-import data.DataModel;
 import data.entryprofile.EntryProfile;
 import data.modifier.Barcode;
 import data.modifier.TicketType;
@@ -18,16 +17,12 @@ public class EntryProfileMainPanel extends AbstractPanel implements EntryProfile
     private final EntryProfileSettingsPanel settingsPanel;
     private final JScrollPane scrollWheel;
 
-    public EntryProfileMainPanel(DataModel<Barcode> barcodes, DataModel<TicketType> ticketTypes) {
+    public EntryProfileMainPanel() {
         super(true, false);
 
         topPanel = new EntryProfileDefaultPanel();
-        // TODO: get default commands from somewhere (schema or have default commands)
         commandPanel = new EntryProfileCommandPanel(getDefaultCommands());
         settingsPanel = new EntryProfileSettingsPanel();
-
-        commandPanel.listUpdated(barcodes);
-        settingsPanel.listUpdated(ticketTypes);
 
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));

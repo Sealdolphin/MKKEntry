@@ -78,21 +78,23 @@ public class EntryProfileSettingsPanel extends AbstractPanel implements ListUpda
         compCustomName.getComponent().setEnabled(!checkUniqueNameRequired.isSelected());
     }
 
-    public void updateTicketTypes(DataModel<TicketType> model) {
-        if (model instanceof TicketTypeModel ticketTypes) {
-            compDefaultTicketType.getComponent().setModel(ticketTypes);
-        }
-    }
-
     @Override
     public void listUpdated(DataModel<TicketType> model) {
+        Object selection = compDefaultTicketType.getComponent().getSelectedItem();
         if (model instanceof TicketTypeModel ticketTypes) {
-            compDefaultTicketType.getComponent().setModel(ticketTypes);
+            compDefaultTicketType.getComponent().setModel(ticketTypes.copyList());
+            compDefaultTicketType.getComponent().setSelectedItem(selection);
         }
     }
 
     @Override
     public void updateView(EntryProfile model) {
-        // TODO: implement this
+        listUpdated(model.createTicketTypeModel());
+
+        compDefaultTicketType.getComponent().setSelectedItem(model.getDefaultTicketType());
+        checkUniqueNameRequired.setSelected(model.getProfileSettings().isNameRequired());
+        checkNoDuplicatesAtImport.setSelected(model.getProfileSettings().isDiscardingDuplicatesOnImport());
+        checkNoUnknownTypeAtImport.setSelected(model.getProfileSettings().isDiscardingUnknownOnImport());
+
     }
 }

@@ -82,6 +82,6 @@ public class EntryProfileCommandPanel extends AbstractPanel implements WizardPag
 
     @Override
     public void updateView(EntryProfile model) {
-        // TODO: implement this
+        listUpdated(model.createBarcodeModel());
     }
 }

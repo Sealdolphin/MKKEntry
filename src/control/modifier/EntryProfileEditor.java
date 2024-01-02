@@ -28,13 +28,14 @@ public class EntryProfileEditor extends WizardEditor<EntryProfile> {
     }
 
     private void updateWizards() {
-        if (data != null) {
+        if (cachedEdit != null) {
 
-            BarcodeWizard barcodeWizard = new BarcodeWizard(data.createBarcodeModel());
-            DiscountWizard discountWizard = new DiscountWizard(data.createDiscountModel(), data.createBarcodeModel());
-            TicketTypeWizard ticketTypeWizard = new TicketTypeWizard(data.createTicketTypeModel());
+            BarcodeWizard barcodeWizard = new BarcodeWizard(cachedEdit.createBarcodeModel());
+            DiscountWizard discountWizard = new DiscountWizard(cachedEdit.createDiscountModel());
+            TicketTypeWizard ticketTypeWizard = new TicketTypeWizard(cachedEdit.createTicketTypeModel());
 
-            barcodeWizard.addListUpdateListener(discountWizard);
+            discountWizard.listUpdated(cachedEdit.createBarcodeModel());
+
             wizardPage.updateWizardListeners(barcodeWizard, ticketTypeWizard, discountWizard);
 
         }

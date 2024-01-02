@@ -4,12 +4,7 @@ import control.wizard.BarcodeWizard;
 import control.wizard.DiscountWizard;
 import control.wizard.TicketTypeWizard;
 import control.wizard.WizardEditor;
-import data.DataModel;
 import data.entryprofile.EntryProfile;
-import data.modifier.Barcode;
-import data.modifier.TicketType;
-import data.wizard.BarcodeModel;
-import data.wizard.TicketTypeModel;
 import view.main.panel.AbstractPanel;
 import view.main.panel.wizard.WizardPage;
 import view.renderer.RenderedIcon;
@@ -23,29 +18,23 @@ public class EntryProfileWizardPane extends AbstractPanel implements WizardPage<
 
     private JTabbedPane tabbedPane;
 
-    public EntryProfileWizardPane() {
-        this(new BarcodeModel(), new TicketTypeModel());
-    }
-
     @Override
     public void initializeLayout() {
         mainPanel.initializeLayout();
     }
 
-    public EntryProfileWizardPane(DataModel<Barcode> barcodes, DataModel<TicketType> ticketTypes) {
-        mainPanel = new EntryProfileMainPanel(barcodes, ticketTypes);
-
-        tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Beállítások", mainPanel);
-
-        setSingleComponentLayout(tabbedPane);
+    public EntryProfileWizardPane() {
+        mainPanel = new EntryProfileMainPanel();
     }
 
     public void updateWizardListeners(BarcodeWizard barcodeWizard, TicketTypeWizard ticketTypeWizard, DiscountWizard discountWizard) {
+        barcodeWizard.addListUpdateListener(discountWizard);
         barcodeWizard.addListUpdateListener(mainPanel.asBarcodeUpdater());
         ticketTypeWizard.addListUpdateListener(mainPanel.asTicketTypeUpdater());
 
-        remove(tabbedPane);
+        if (tabbedPane != null) {
+            remove(tabbedPane);
+        }
         tabbedPane = new JTabbedPane();
         setSingleComponentLayout(tabbedPane);
 

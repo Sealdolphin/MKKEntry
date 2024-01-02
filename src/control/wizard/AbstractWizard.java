@@ -21,7 +21,7 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
         MOVE,
         DELETE,
         CANCEL,
-        IMPORT;
+        IMPORT
     }
 
     protected final DataListView<T> view;
@@ -85,6 +85,7 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
     @Override
     public void deleteElement() {
         dataList.deleteSelected();
+        updateListeners.forEach(this::updateListInListener);
         setSelection(null);
     }
 
@@ -95,9 +96,13 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
             T updatedData = selectionEditor.loadBackEditCache();
             dataList.updateSelected(updatedData);
             view.invalidate();
-            updateListeners.forEach(l -> l.listUpdated(dataList));
+            updateListeners.forEach(this::updateListInListener);
         }
         return success;
+    }
+
+    public void updateListInListener(ListUpdateListener<T> listener) {
+        listener.listUpdated(dataList);
     }
 
     protected void setSelection(T element) {
