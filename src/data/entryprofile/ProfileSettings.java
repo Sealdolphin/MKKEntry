@@ -1,5 +1,7 @@
 package data.entryprofile;
 
+import org.json.JSONObject;
+
 public class ProfileSettings {
 
     private boolean newIdGeneratedUponEntry;
@@ -9,10 +11,6 @@ public class ProfileSettings {
     private boolean discardingUnknownOnImport;
 
     private boolean nameRequired;
-
-    public ProfileSettings() {
-
-    }
 
     public boolean isNewIdGeneratedUponEntry() {
         return newIdGeneratedUponEntry;
@@ -44,5 +42,16 @@ public class ProfileSettings {
 
     public void setNameRequired(boolean nameRequired) {
         this.nameRequired = nameRequired;
+    }
+
+    public static ProfileSettings parseProfileSettingsFromJSON(JSONObject settingsJson) {
+        ProfileSettings settings = new ProfileSettings();
+
+        settings.setNameRequired(settingsJson.optBoolean("nameRequired", true));
+        settings.setDiscardingDuplicatesOnImport(settingsJson.optBoolean("discardDuplicates", true));
+        settings.setDiscardingUnknownOnImport(settingsJson.optBoolean("discardUnknown", true));
+        settings.setNewIdGeneratedUponEntry(settingsJson.optBoolean("generateNewId", false));
+
+        return settings;
     }
 }

@@ -31,17 +31,16 @@ public class DataListView<T extends WizardType> extends JPanel {
 
         btnImport = new JButton("Importálás");
         btnImport.setActionCommand(AbstractWizard.WizardCommands.IMPORT.name());
+        btnImport.addActionListener(this::refreshDeleteBtn);
 
-        refreshDeleteBtn(new ActionEvent(this, 0, AbstractWizard.WizardCommands.DELETE.name()));
+        refreshDeleteBtn(null);
 
         list.setCellRenderer(model.createListRenderer());
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
     private void refreshDeleteBtn(ActionEvent event) {
-        if (event.getActionCommand().equals(AbstractWizard.WizardCommands.DELETE.name())) {
-            btnRemove.setEnabled(list.getModel().getSize() > 0);
-        }
+        btnRemove.setEnabled(list.getModel().getSize() > 0);
     }
 
     public JPanel createListPanel() {

@@ -171,6 +171,14 @@ public class EntryProfile implements Serializable, WizardType {
         updateFromModel(discounts, model);
     }
 
+    public void setProfileSettings(ProfileSettings profileSettings) {
+        this.profileSettings = profileSettings;
+    }
+
+    public ProfileSettings getProfileSettings() {
+        return this.profileSettings;
+    }
+
     private static <T extends WizardType> void updateFromModel(List<T> list, DefaultWizardModel<T> model) {
         list.clear();
         for (int i = 0; i < model.getSize(); i++) {
@@ -204,20 +212,22 @@ public class EntryProfile implements Serializable, WizardType {
         return barcodes.stream().filter(barCode -> barCode.getMetaData().equals(barcodeMeta)).findAny().orElse(null);
     }
 
-    public static EntryProfile parseProfileFromJson(JSONObject jsonProfile) throws JSONException {
+    public static EntryProfile parseProfileFromJson(JSONObject profileJson) throws JSONException {
         EntryProfile profile = new EntryProfile();
 
-        profile.setProfileName(jsonProfile.getString("name"));
-        profile.setProfileMask(jsonProfile.getString("mask"));
-        profile.setProfileMaskForEntry(jsonProfile.optString("maskForEntry", ""));
+        profile.setProfileName(profileJson.getString("name"));
+        profile.setProfileMask(profileJson.getString("mask"));
+        profile.setProfileMaskForEntry(profileJson.optString("maskForEntry", ""));
 
-        profile.barcodes.addAll(parseJSONArray(jsonProfile.getJSONArray("barcodes"), Barcode::parseBarcodeFromJSON));
-        profile.ticketTypes.addAll(parseJSONArray(jsonProfile.getJSONArray("tickets"), TicketType::parseTicketTypeFromJson));
+        profile.barcodes.addAll(parseJSONArray(profileJson.getJSONArray("barcodes"), Barcode::parseBarcodeFromJSON));
+        profile.ticketTypes.addAll(parseJSONArray(profileJson.getJSONArray("tickets"), TicketType::parseTicketTypeFromJson));
         profile.discounts.addAll(
-                parseJSONArray(jsonProfile.getJSONArray("discounts"), obj -> Discount.parseDiscountFromJson(obj, profile))
+                parseJSONArray(profileJson.getJSONArray("discounts"), obj -> Discount.parseDiscountFromJson(obj, profile))
         );
 
-        profile.setDefaultTicketType(profile.identifyTicketType(jsonProfile.optString("defaultType", null)));
+        profile.setDefaultTicketType(profile.identifyTicketType(profileJson.optString("defaultType", null)));
+
+        profile.setProfileSettings(ProfileSettings.parseProfileSettingsFromJSON(profileJson.optJSONObject("settings", new JSONObject())));
 
         return profile;
     }
