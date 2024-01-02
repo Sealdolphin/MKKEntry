@@ -1,6 +1,7 @@
 package view.main.panel.wizard.entryprofile;
 
 import data.DataModel;
+import data.entryprofile.EntryProfile;
 import data.modifier.TicketType;
 import data.wizard.TicketTypeModel;
 import view.main.panel.AbstractPanel;
@@ -12,7 +13,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.stream.Stream;
 
-public class EntryProfileSettingsPanel extends AbstractPanel implements ListUpdateListener<TicketType>{
+public class EntryProfileSettingsPanel extends AbstractPanel implements ListUpdateListener<TicketType>, EntryProfilePagePart {
 
     private final LabeledComponent<JComboBox<TicketType>> compDefaultTicketType;
     private final LabeledComponent<JTextField> compCustomName;
@@ -88,5 +89,10 @@ public class EntryProfileSettingsPanel extends AbstractPanel implements ListUpda
         if (model instanceof TicketTypeModel ticketTypes) {
             compDefaultTicketType.getComponent().setModel(ticketTypes);
         }
+    }
+
+    @Override
+    public void updateView(EntryProfile model) {
+        // TODO: implement this
     }
 }

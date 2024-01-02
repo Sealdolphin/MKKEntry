@@ -12,6 +12,15 @@ public class ProfileSettings {
 
     private boolean nameRequired;
 
+    public ProfileSettings() {}
+
+    public ProfileSettings(ProfileSettings other) {
+        this.nameRequired = other.nameRequired;
+        this.discardingDuplicatesOnImport = other.discardingDuplicatesOnImport;
+        this.discardingUnknownOnImport = other.discardingUnknownOnImport;
+        this.newIdGeneratedUponEntry = other.newIdGeneratedUponEntry;
+    }
+
     public boolean isNewIdGeneratedUponEntry() {
         return newIdGeneratedUponEntry;
     }

@@ -57,7 +57,7 @@ public class EntryProfileWizardPane extends AbstractPanel implements WizardPage<
 
     @Override
     public void refreshPage(EntryProfile model) {
-
+        mainPanel.updateView(model);
     }
 
     @Override

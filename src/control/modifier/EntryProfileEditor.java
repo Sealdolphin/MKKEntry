@@ -42,17 +42,14 @@ public class EntryProfileEditor extends WizardEditor<EntryProfile> {
 
     @Override
     protected EntryProfile cacheEditData() {
-//        return new EntryProfile(data);
-        return data;
+        return new EntryProfile(data);
     }
 
     @Override
     protected EntryProfile loadBackEditCache() {
-        // Do nothing
+        // TODO: implement load back
+
         return data;
     }
 
-    /**
-     * TODO: create setters for EntryProfile (including Entryprofile.ProfileSettings)
-     */
 }

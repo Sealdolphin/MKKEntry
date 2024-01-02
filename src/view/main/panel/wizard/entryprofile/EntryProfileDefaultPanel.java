@@ -1,5 +1,6 @@
 package view.main.panel.wizard.entryprofile;
 
+import data.entryprofile.EntryProfile;
 import view.main.panel.AbstractPanel;
 import view.main.panel.utility.LabeledComponent;
 
@@ -7,7 +8,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.stream.Stream;
 
-public class EntryProfileDefaultPanel extends AbstractPanel {
+public class EntryProfileDefaultPanel extends AbstractPanel implements EntryProfilePagePart {
 
     private final LabeledComponent<JTextField> compTitle;
     private final LabeledComponent<JTextField> compProfileMask;
@@ -55,4 +56,12 @@ public class EntryProfileDefaultPanel extends AbstractPanel {
         compEditMask.getComponent().setEnabled(checkEnableEditMask.isSelected());
     }
 
+    @Override
+    public void updateView(EntryProfile model) {
+        compTitle.getComponent().setText(model.getProfileName());
+        compProfileMask.getComponent().setText(model.getProfileMask());
+        compEditMask.getComponent().setText(model.getProfileMaskForEntry());
+        checkEnableEditMask.setSelected(model.getProfileSettings().isNewIdGeneratedUponEntry());
+        toggleEditMask(new ActionEvent(this, 0, ""));
+    }
 }

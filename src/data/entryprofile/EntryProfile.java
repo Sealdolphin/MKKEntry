@@ -88,6 +88,7 @@ public class EntryProfile implements Serializable, WizardType {
 
     public EntryProfile(String name) {
         this.profileName = name;
+        this.profileSettings = new ProfileSettings();
         commandList = getDefaultCommands();
         ticketTypes = new ArrayList<>();
         discounts = new ArrayList<>();
@@ -97,6 +98,18 @@ public class EntryProfile implements Serializable, WizardType {
 
     public EntryProfile(EntryProfile other){
         //Reference / primitives
+        setProfileSettings(new ProfileSettings(other.getProfileSettings()));
+        setProfileName(other.getProfileName());
+        setProfileMaskForEntry(other.getProfileMaskForEntry());
+        setDefaultTicketType(other.getDefaultTicketType());
+        setProfileMask(other.getProfileMask());
+        commandList = new ArrayList<>(other.commandList);
+        ticketTypes = new ArrayList<>(other.ticketTypes);
+        discounts = new ArrayList<>(other.discounts);
+        barcodes = new ArrayList<>(other.barcodes);
+        createdAt = other.createdAt;
+
+        // Copy deprecated fields
         name = other.name;
         codeMask = other.codeMask;
         modificationMask = other.modificationMask;
@@ -108,11 +121,7 @@ public class EntryProfile implements Serializable, WizardType {
         nameRequirement = other.nameRequirement;
         entryModifiesID = other.entryModifiesID;
         defaultName = other.defaultName;
-        ticketTypes = new ArrayList<>(other.ticketTypes);
-        discounts = new ArrayList<>(other.discounts);
-        barcodes = new ArrayList<>(other.barcodes);
         exportFilters = other.exportFilters;
-        createdAt = other.createdAt;
     }
 
     public TicketType getDefaultTicketType() {

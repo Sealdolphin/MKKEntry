@@ -3,6 +3,7 @@ package view.main.panel.wizard.entryprofile;
 import control.wizard.WizardEditor;
 import data.DataModel;
 import data.entry.EntryCommand;
+import data.entryprofile.EntryProfile;
 import data.modifier.Barcode;
 import data.wizard.BarcodeModel;
 import data.wizard.EntryProfileCommandList;
@@ -16,7 +17,7 @@ import view.validation.ComponentValidator;
 import javax.swing.*;
 import java.util.List;
 
-public class EntryProfileCommandPanel extends AbstractPanel implements WizardPage<EntryProfileCommandList>, ListUpdateListener<Barcode> {
+public class EntryProfileCommandPanel extends AbstractPanel implements WizardPage<EntryProfileCommandList>, ListUpdateListener<Barcode>, EntryProfilePagePart {
 
     private final List<LabeledComponent<JComboBox<Barcode>>> components;
 
@@ -77,5 +78,10 @@ public class EntryProfileCommandPanel extends AbstractPanel implements WizardPag
         if (model instanceof BarcodeModel barcodeModel) {
             components.forEach(command -> command.getComponent().setModel(barcodeModel.copyList()));
         }
+    }
+
+    @Override
+    public void updateView(EntryProfile model) {
+        // TODO: implement this
     }
 }

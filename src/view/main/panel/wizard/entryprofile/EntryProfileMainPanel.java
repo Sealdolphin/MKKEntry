@@ -1,6 +1,7 @@
 package view.main.panel.wizard.entryprofile;
 
 import data.DataModel;
+import data.entryprofile.EntryProfile;
 import data.modifier.Barcode;
 import data.modifier.TicketType;
 import view.main.panel.AbstractPanel;
@@ -10,7 +11,7 @@ import javax.swing.*;
 
 import static data.entry.EntryCommand.getDefaultCommands;
 
-public class EntryProfileMainPanel extends AbstractPanel {
+public class EntryProfileMainPanel extends AbstractPanel implements EntryProfilePagePart {
 
     private final EntryProfileDefaultPanel topPanel;
     private final EntryProfileCommandPanel commandPanel;
@@ -66,5 +67,12 @@ public class EntryProfileMainPanel extends AbstractPanel {
         settingsPanel.initializeLayout();
 
         setSingleComponentLayout(scrollWheel);
+    }
+
+    @Override
+    public void updateView(EntryProfile model) {
+        topPanel.updateView(model);
+        commandPanel.updateView(model);
+        settingsPanel.updateView(model);
     }
 }
