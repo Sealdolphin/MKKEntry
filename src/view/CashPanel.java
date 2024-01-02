@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import static control.Application.uh;
 
+@Deprecated
 public class CashPanel extends JPanel {
 
     private final JButton btnNewTransaction = new JButton("Új tranzakció");

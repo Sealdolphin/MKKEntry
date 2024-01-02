@@ -32,6 +32,7 @@ import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
  * It also has a bottom info panel which displays the state of the reading
  * @author Márk Mihalovits
  */
+@Deprecated
 public class MainWindow extends JFrame {
 
     private AppData model;
