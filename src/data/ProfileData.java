@@ -1,9 +1,12 @@
 package data;
 
+import data.entryprofile.EntryProfile;
 import view.StartupDialog;
 
+import javax.swing.*;
+import javax.swing.event.ListDataListener;
 import java.io.IOException;
-
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,17 +27,32 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
     @Override
-    public EntryProfile getDataByIndex(int index) {
+    public EntryProfile getElementAt(int index) {
         return profiles.get(index);
     }
 
     @Override
-    public EntryProfile getDataById(String id) {
+    public void addListDataListener(ListDataListener l) {
+
+    }
+
+    @Override
+    public void removeListDataListener(ListDataListener l) {
+
+    }
+
+    @Override
+    public EntryProfile getElementById(String id) {
         return profiles.stream().filter(p -> p.toString().equals(id)).findAny().orElse(null);
     }
 
     @Override
-    public EntryProfile getSelectedData() {
+    public void setSelectedItem(Object anItem) {
+
+    }
+
+    @Override
+    public EntryProfile getSelectedItem() {
         return activeProfile;
     }
 
@@ -44,19 +62,18 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
     @Override
-    public void setSelection(EntryProfile data) {
-        activeProfile = data;
-    }
-
-    @Override
-    public int getDataSize() {
+    public int getSize() {
         return profiles.size();
     }
 
     @Override
-    public void addData(EntryProfile data) throws IOException
+    public void addData(EntryProfile data)
     {
-        if(profiles.stream().filter(p -> p.toString().equals(data.toString())).findAny().orElse(null) != null) throw new IOException(uh.getUIStr("ERR","PROFILE_CONFLICT"));
+        if(profiles.stream().filter(p -> p.toString().equals(data.toString())).findAny().orElse(null) != null) try {
+            throw new IOException(uh.getUIStr("ERR","PROFILE_CONFLICT"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         profiles.add(data);
     }
 
@@ -66,7 +83,22 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
     }
 
     @Override
-    public void replaceData(EntryProfile oldData, EntryProfile newData) throws IOException {
+    public void updateSelected(EntryProfile data) {
+        // Not implemented
+    }
+
+    @Override
+    public void deleteSelected() {
+        // Not implemented
+    }
+
+    @Override
+    public ListCellRenderer<EntryProfile> createListRenderer() {
+        return null;
+    }
+
+    @Override
+    public void replaceData(EntryProfile oldData, EntryProfile newData) {
         if(!oldData.toString().equals(newData.toString())){
             addData(newData);
             removeData(oldData);
@@ -76,12 +108,19 @@ public class ProfileData implements DataModel<EntryProfile>, Serializable {
         }
     }
 
+    @Override
+    public boolean isUnique(EntryProfile other, EntryProfile self) {
+        return false;
+    }
 
+
+    @Serial
     private void writeObject(java.io.ObjectOutputStream out) throws IOException {
         out.writeObject(profiles.toArray());
         out.writeObject(activeProfile);
     }
 
+    @Serial
     private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
         Object[] objs = (Object[]) in.readObject();
         profiles = new ArrayList<>();

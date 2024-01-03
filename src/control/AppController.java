@@ -1,15 +1,20 @@
 package control;
 
-import control.modifier.Discount;
+import com.fazecast.jSerialComm.SerialPort;
 import control.utility.devices.BarCodeReaderListenerFactory;
 import control.utility.file.EntryFilter;
 import control.utility.network.NetworkController;
-import data.*;
-import com.fazecast.jSerialComm.SerialPort;
+import data.DataModel;
+import data.UserAction;
+import data.entry.AppData;
+import data.entry.Entry;
+import data.entryprofile.EntryProfile;
+import data.modifier.Discount;
+import data.util.ReadingFlag;
 import view.StatisticsWindow;
 import view.main.LoadingScreen;
-import view.main.ReadFlagListener;
 import view.main.interactive.EnableWatcher;
+import view.main.interactive.ReadFlagListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,20 +22,20 @@ import java.awt.event.ItemEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 import static control.Application.uh;
-import static javax.swing.JOptionPane.ERROR_MESSAGE;
-import static javax.swing.JOptionPane.OK_OPTION;
-import static javax.swing.JOptionPane.WARNING_MESSAGE;
+import static javax.swing.JOptionPane.*;
 
 /**
  * The main manager class of the program.
  * It soress data and distributes the tasks among other classes
  * @author Mihalovits Márk
  */
-public class AppController implements ProgramStateListener {
+public class AppController implements ProgramStateListener, EntryCodeReader {
 
     /**
      * The model for the entries in the program
@@ -94,13 +99,9 @@ public class AppController implements ProgramStateListener {
     AppController(AppData model, DataModel<EntryProfile> pData){
         this.model = model;
         profiles = pData;
-        activeProfile = pData.getSelectedData();
+        activeProfile = (EntryProfile) pData.getSelectedItem();
         while(activeProfile == null)
             changeProfile(chooseProfile(),true);
-    }
-
-    public void addListener(ReadFlagListener l){
-        listenerList.add(l);
     }
 
     public void addActionWatcher(EnableWatcher watcher) {
@@ -147,6 +148,7 @@ public class AppController implements ProgramStateListener {
 
     /**
      * A user can execute a list operation on a record
+     * 
      * @param flag the operation flag (Enter, Leave or Delete)
      * @param entry the entry the operation is executed on. (For thread-safe measures (see: online-mode))
      */
@@ -157,6 +159,7 @@ public class AppController implements ProgramStateListener {
 
     /**
      * A user can execute a discount application or removal in a record
+     * 
      * @param entry the entry the discount is applied to or removed from. (For thread-safe measures (see: online-mode))
      */
     public void discountOperationOnEntry(Entry entry){
@@ -173,16 +176,16 @@ public class AppController implements ProgramStateListener {
                 JOptionPane.PLAIN_MESSAGE,null,discounts,discounts[0]);
         //after selection is not null
         if (result != null){
-            model.setSelection(entry); //This is thread-safe...
+            model.setSelectedItem(entry); //This is thread-safe...
             receiveBarCode(result.getMeta());
         }
     }
 
     public EntryProfile chooseProfile(){
         //Choosing profile
-        Object[] profileObjs = new Object[profiles.getDataSize()];
+        Object[] profileObjs = new Object[profiles.getSize()];
         for (int i = 0; i < profileObjs.length; i++) {
-            profileObjs[i] = profiles.getDataByIndex(i);
+            profileObjs[i] = profiles.getElementAt(i);
         }
         return (EntryProfile) JOptionPane.showInputDialog(
                 null,
@@ -192,6 +195,7 @@ public class AppController implements ProgramStateListener {
                 profileObjs, profileObjs[0]);
     }
 
+    @Override
     public void setReadingFlag(ReadingFlag newFlag){
         readingFlag = newFlag;
         for (ReadFlagListener l: listenerList) {
@@ -199,6 +203,7 @@ public class AppController implements ProgramStateListener {
         }
     }
 
+    @Override
     public void readEntryCode(String text) {
         receiveBarCode(activeProfile.getEntryCode() + text);
     }
@@ -245,37 +250,11 @@ public class AppController implements ProgramStateListener {
         }
     }
 
-    /**
-     *  For the different reading operations
-     */
-    public enum ReadingFlag{
-        FL_IS_LEAVING("leave","Kilépésre vár",new Color(0xffcc00),Color.BLACK),
-        FL_IS_DELETE("delete","Törlésre vár",new Color(0xaa0000),Color.WHITE),
-        FL_DEFAULT("default","Belépésre vár",new Color(0x00aa00),Color.BLACK);
-
-        private final String flagMeta;
-        private final String labelInfo;
-        private final Color labelColor;
-        private final Color fgColor;
-
-        ReadingFlag(String meta, String info, Color color, Color fg){
-            flagMeta = meta;
-            labelInfo = info;
-            labelColor = color;
-            fgColor = fg;
-        }
-
-        public String getInfo(){ return labelInfo; }
-        public String getMeta(){ return flagMeta; }
-        public Color getColor(){ return labelColor; }
-        public Color getTextColor(){ return fgColor; }
-    }
-
     @Override
     public String changeProfile(EntryProfile newProfile, boolean restart){
         if (newProfile != null && newProfile != activeProfile) {
             activeProfile = newProfile;
-            profiles.setSelection(activeProfile);
+            profiles.setSelectedItem(activeProfile);
             System.out.println("[INFO]: Profile selected: " + activeProfile);
             JOptionPane.showMessageDialog(null, "Profil aktiválva:\n" + activeProfile, uh.getUIStr("MSG","DONE"), JOptionPane.INFORMATION_MESSAGE);
             if(restart) clearData();
@@ -286,10 +265,10 @@ public class AppController implements ProgramStateListener {
     @Override
     public void exportList(PrintWriter writer, EntryFilter filter) {
         LoadingScreen progress = new LoadingScreen();
-        progress.setTasks(model.getDataSize());
-        for (int i = 0; i < model.getDataSize(); i++) {
-            progress.setProgress("Rekordok exportálása: 1" + i + "/" + model.getDataSize());
-            Entry data = model.getDataByIndex(i);
+        progress.setTasks(model.getSize());
+        for (int i = 0; i < model.getSize(); i++) {
+            progress.setProgress("Rekordok exportálása: 1" + i + "/" + model.getSize());
+            Entry data = model.getElementAt(i);
             writer.println(data.applyFilter(filter));
         }
         progress.done("Az Exportálás befejeződött!");
@@ -328,7 +307,7 @@ public class AppController implements ProgramStateListener {
     @Override
     public void updateEntry(String id, Entry newData) {
         try {
-            model.replaceData(model.getDataById(id), newData);
+            model.replaceData(model.getElementById(id), newData);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -357,8 +336,8 @@ public class AppController implements ProgramStateListener {
             if(!(barCode.length() > 0)) return;
 
             //Checking for discount codes
-            Entry lastSelection = model.getSelectedData();
-            Discount discount = activeProfile.identifyDiscountMeta(barCode);
+            Entry lastSelection = model.getSelectedItem();
+            Discount discount = activeProfile.identifyDiscount(barCode);
             if(discount != null) {
                 if(lastSelection != null) {
                     lastSelection.applyDiscount(discount);
@@ -370,39 +349,40 @@ public class AppController implements ProgramStateListener {
             String entryID = activeProfile.validateCode(barCode);
 
             //Check for reading flag
-            switch (readingFlag){
-                default:
-                case FL_DEFAULT:
+            switch (readingFlag) {
+                case FL_DEFAULT -> {
                     Entry entry;
-                    if (model.getSelectedData() != null &&
-                            activeProfile.enteringModifiesEntry(model.getSelectedData().getID())) {                     // Check if Entry Profile modifies ID upon entering (and selected ID matches the required mask)
-                        Entry existing = model.getDataById(entryID);                                                    // If true, check if the new entry ID exists already!
-                        if(existing != null) {
+                    if (model.getSelectedItem() != null &&
+                            activeProfile.enteringModifiesEntry(model.getSelectedItem().getID())) {                     // Check if Entry Profile modifies ID upon entering (and selected ID matches the required mask)
+                        Entry existing = model.getElementById(entryID);                                                    // If true, check if the new entry ID exists already!
+                        if (existing != null) {
                             entry = existing;                                                                           // If it does, continue with the existing record!!
                         } else {
-                            entry = activeProfile.generateFromEntry(model.getSelectedData(), entryID);                  // If not, the ID is new, so generate a new entry from the selected record and modify it's ID
-                            saveLastAction(model.getSelectedData(), entry);                                             // Save the action to the ActionQueue
-                            model.replaceData(model.getSelectedData(), entry);                                          // Replace the old Entry with the newly generated Entry!
+                            entry = activeProfile.generateFromEntry(model.getSelectedItem(), entryID);                  // If not, the ID is new, so generate a new entry from the selected record and modify it's ID
+                            saveLastAction(model.getSelectedItem(), entry);                                             // Save the action to the ActionQueue
+                            model.replaceData(model.getSelectedItem(), entry);                                          // Replace the old Entry with the newly generated Entry!
                         }
                     } else {                                                                                            // If Entry Profile does NOT modify ID, or selected ID does not match the mask:
-                        entry = model.getDataById(entryID);                                                             // Search for the Entry based on the entered ID
+                        entry = model.getElementById(entryID);                                                             // Search for the Entry based on the entered ID
                         if (entry == null) {
                             entry = activeProfile.generateNewEntry(entryID);                                            // If entered ID does not exist, create a new Entry with said ID
-                            if (entry == null) break;                                                                   // If generating fails interrupt execution
+                            if (entry == null)
+                                break;                                                                   // If generating fails interrupt execution
                         }
                     }
                     model.addData(entry);                                                                               // Add new Entry to the model (select if already exists)
-                    entry.Enter();                                                                                      // Enter selected Entry
-                    break;
-                case FL_IS_DELETE:
-                    if(JOptionPane.showConfirmDialog(null,uh.getUIStr("MSG","CONFIRM"),uh.getUIStr("MSG","DELETE"), JOptionPane.OK_CANCEL_OPTION,WARNING_MESSAGE) == OK_OPTION)
-                        model.removeData(model.getDataById(entryID));
-                    break;
-                case FL_IS_LEAVING:
-                    Entry leaving = model.getDataById(entryID);
-                    if(leaving == null) throw new IOException(uh.getUIStr("ERR","NO_MATCH"));
-                    leaving.Leave();
-                    break;
+                    entry.doEnter();                                                                                      // Enter selected Entry
+                }
+                case FL_IS_DELETE -> {
+                    if (JOptionPane.showConfirmDialog(null, uh.getUIStr("MSG", "CONFIRM"), uh.getUIStr("MSG", "DELETE"), JOptionPane.OK_CANCEL_OPTION, WARNING_MESSAGE) == OK_OPTION)
+                        model.removeData(model.getElementById(entryID));
+                }
+                case FL_IS_LEAVING -> {
+                    Entry leaving = model.getElementById(entryID);
+                    if (leaving == null) throw new IOException(uh.getUIStr("ERR", "NO_MATCH"));
+                    leaving.doLeave();
+                }
+                case FL_GENERATE_NEW -> receiveBarCode(model.generateNewID());
             }
         } catch (IOException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage(),"Figyelem", JOptionPane.WARNING_MESSAGE);
@@ -413,7 +393,7 @@ public class AppController implements ProgramStateListener {
                 model.fireTableRowsUpdated(index,index);
             if(netController != null){
                 try {
-                    netController.updateData(model.getSelectedData());
+                    netController.updateData(model.getSelectedItem());
                 } catch (IOException e) {
                     System.out.println("Networking error happened...");
                     System.out.println("Details: " + e.getMessage());
@@ -422,6 +402,11 @@ public class AppController implements ProgramStateListener {
             }
         }
 
+    }
+
+    @Override
+    public void addReadingFlagListener(ReadFlagListener listener) {
+        listenerList.add(listener);
     }
 
     public void saveLastAction(Entry previousEntry, Entry nextEntry) {
@@ -436,7 +421,7 @@ public class AppController implements ProgramStateListener {
         System.out.println("Undo Action");
         UserAction action = actionQueue.pop();
         if(action != null) {
-            model.setSelection(action.undo());
+            model.setSelectedItem(action.undo());
             int index = model.getSelectedIndex();
             model.fireTableRowsUpdated(index, index);
         }

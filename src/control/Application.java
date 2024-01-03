@@ -1,14 +1,12 @@
 package control;
 
-import control.modifier.Barcode;
 import control.utility.devices.BarCodeReaderListenerFactory;
-import data.AppData;
 import data.ProfileData;
+import data.entry.AppData;
+import data.modifier.Barcode;
+import org.json.*;
 import view.main.LoadingScreen;
 import view.main.MainWindow;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,22 +47,23 @@ public class Application {
         //It contains the static string messages.
         try {
             // Parsing uh Handler from file
-            JSONParser parser = new JSONParser();
             BufferedReader optionsReader = new BufferedReader(new InputStreamReader(new FileInputStream("ui.json"), StandardCharsets.UTF_8));
-            JSONObject optionsJSON = (JSONObject) parser.parse(optionsReader);
+            JSONTokener optionsTokener = new JSONTokener(optionsReader);
+
+            //JSONObject optionsJSON = (JSONObject) optionsTokener.parse(optionsReader);
 
             Application.loadingScreen.setProgress("UI betöltése...");
 
             //Loading options
             uh = new UIHandler();
-            uh.refreshOptions(optionsJSON);
+            uh.refreshOptions(new JSONObject());
 
             Application.loadingScreen.setProgress("L&F betöltése...");
             // Set System L&F
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
         }
-        catch (ParseException | IOException e) {
+        catch (IOException e) {
             Application.loadingScreen.setInterruptMessage("Nem tudtam betölteni a beállításokat a 'uh.json' fáljból.\n" +
                     "Az alkalmazás ezért nem tud elindulni.\n" +
                     "Részletek:\n" + e);

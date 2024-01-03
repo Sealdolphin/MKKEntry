@@ -1,19 +1,20 @@
 package view;
 
-import control.modifier.Modifier;
 import control.modifier.Transaction;
 import data.DataModel;
-import data.Entry;
-import data.EntryProfile;
+import data.entry.Entry;
+import data.entryprofile.EntryProfile;
 import view.renderer.TransactionRenderer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import static control.Application.uh;
 
+@Deprecated
 public class CashPanel extends JPanel {
 
     private final JButton btnNewTransaction = new JButton("Új tranzakció");
@@ -33,7 +34,7 @@ public class CashPanel extends JPanel {
     }
 
     private JList<Transaction> createList(EntryProfile profile, DataModel<Entry> data, Transaction.TransactionListener editor) {
-        List<Transaction> transactionModel = profile.getTransactions();
+        List<Transaction> transactionModel = new ArrayList<>();
         JList<Transaction> transactions = new JList<>(transactionModel.toArray(new Transaction[0]));
         transactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         transactions.setCellRenderer(new TransactionRenderer());
@@ -83,8 +84,8 @@ public class CashPanel extends JPanel {
             total += transaction.getValue();
         }
         //Calculate tickets
-        for (int i = 0; i < data.getDataSize(); i++) {
-            total += data.getDataByIndex(i).getAllFees();
+        for (int i = 0; i < data.getSize(); i++) {
+            total += data.getElementAt(i).getAllFees();
         }
         setCashValue(total);
     }

@@ -1,25 +1,27 @@
 package data;
 
 
+import javax.swing.*;
 import java.io.IOException;
 
-public interface DataModel<T> {
+public interface DataModel<T> extends ComboBoxModel<T> {
 
-    T getDataByIndex(int index);
-
-    T getDataById(String id);
-
-    T getSelectedData();
+    T getElementById(String id);
 
     int getSelectedIndex();
 
-    void setSelection(T data);
-
-    int getDataSize();
-
-    void addData(T data) throws IOException;
+    void addData(T data);
 
     void removeData(T data);
 
+    void updateSelected(T data);
+
+    void deleteSelected();
+
+    ListCellRenderer<T> createListRenderer();
+
+    @Deprecated
     void replaceData(T oldData, T newData) throws IOException;
+
+    boolean isUnique(T other, T self);
 }

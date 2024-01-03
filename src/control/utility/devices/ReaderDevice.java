@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.function.Consumer;
 
+@Deprecated
 public class ReaderDevice implements BarcodeReaderListener {
 
     private final Consumer<String> action;

@@ -6,7 +6,7 @@ import java.io.File;
 
 public class LoadingScreen extends JFrame {
 
-    private JProgressBar progress;
+    private final JProgressBar progress;
     private String interruptMsg = "The task was interrupted.";
 
     public LoadingScreen(){

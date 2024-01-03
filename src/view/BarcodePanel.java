@@ -1,11 +1,13 @@
 package view;
 
-import javax.swing.*;
+import view.main.panel.utility.JImagePanel;
 
+import javax.swing.*;
 import java.awt.*;
 
 import static javax.swing.BoxLayout.PAGE_AXIS;
 
+@Deprecated
 public class BarcodePanel extends JPanel {
 
     public BarcodePanel(String imagePath, String tooltip) {
@@ -16,7 +18,7 @@ public class BarcodePanel extends JPanel {
         lbTooltip.setFont(new Font(lbTooltip.getFont().getName(),Font.PLAIN,20));
         lbTooltip.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        add(new ImagePanel(imagePath));
+        add(new JImagePanel(imagePath));
         add(lbTooltip);
 
     }

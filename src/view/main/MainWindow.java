@@ -1,19 +1,23 @@
 package view.main;
 
 
-
 import control.AppController;
 import control.MenuHandler;
-import control.modifier.Discount;
-import data.AppData;
-import data.EntryProfile;
-import view.DiscountRenderer;
+import data.entry.AppData;
+import data.entryprofile.EntryProfile;
+import data.modifier.Discount;
+import data.util.ReadingFlag;
 import view.main.interactive.InteractiveJMenuItem;
+import view.main.interactive.ReadFlagListener;
+import view.main.panel.mainwindow.QuickSearchPanel;
+import view.renderer.DiscountRenderer;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 
 import static control.Application.uh;
@@ -28,6 +32,7 @@ import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
  * It also has a bottom info panel which displays the state of the reading
  * @author Márk Mihalovits
  */
+@Deprecated
 public class MainWindow extends JFrame {
 
     private AppData model;
@@ -48,7 +53,7 @@ public class MainWindow extends JFrame {
         } catch (IndexOutOfBoundsException ex){
             index = -1;
         }
-        System.out.println("SELECTION: " + model.getSelectedData() + " at index " + viewIndex + " ("+index+" in view)");
+        System.out.println("SELECTION: " + model.getSelectedItem() + " at index " + viewIndex + " ("+index+" in view)");
         if(index >= 0) {
             entryView.changeSelection(index, 0, false, false);
         }
@@ -85,7 +90,7 @@ public class MainWindow extends JFrame {
         //Create components
         setLayout(new BorderLayout());
         InfoPanel infoPanel = new InfoPanel();
-        controller.addListener(infoPanel);
+        controller.addReadingFlagListener(infoPanel);
         setJMenuBar(new MainMenu().createMenu(controller));
         //Create popup-menu (TEMP)
         JPopupMenu popupEditRecord = createPopUpMenu(controller);
@@ -105,7 +110,7 @@ public class MainWindow extends JFrame {
         entryView.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 if((entryView.getSelectedRow() >= 0)){
-                    model.setSelection(model.getDataByIndex(entryView.convertRowIndexToModel(entryView.getSelectedRow())));
+                    model.setSelectedItem(model.getElementAt(entryView.convertRowIndexToModel(entryView.getSelectedRow())));
                 }
             }
         });
@@ -157,10 +162,10 @@ public class MainWindow extends JFrame {
         JMenuItem miDelete = new JMenuItem("Törlés");
         JMenuItem miDiscounts = new JMenuItem("Kedvezmények módosítása");
 
-        miEnter.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_DEFAULT,model.getSelectedData()));
-        miLeave.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_IS_LEAVING,model.getSelectedData()));
-        miDelete.addActionListener(e -> controller.flagOperationOnEntry(AppController.ReadingFlag.FL_IS_DELETE,model.getSelectedData()));
-        miDiscounts.addActionListener(e -> controller.discountOperationOnEntry(model.getSelectedData()));
+        miEnter.addActionListener(e -> controller.flagOperationOnEntry(ReadingFlag.FL_DEFAULT,model.getSelectedItem()));
+        miLeave.addActionListener(e -> controller.flagOperationOnEntry(ReadingFlag.FL_IS_LEAVING,model.getSelectedItem()));
+        miDelete.addActionListener(e -> controller.flagOperationOnEntry(ReadingFlag.FL_IS_DELETE,model.getSelectedItem()));
+        miDiscounts.addActionListener(e -> controller.discountOperationOnEntry(model.getSelectedItem()));
 
         popupEditRecord.add(miEnter);
         popupEditRecord.add(miLeave);
@@ -327,13 +332,13 @@ public class MainWindow extends JFrame {
         /**
          * Creates the CHARTS menu for the menu bar
          * TODO: waiting for implementation
-         * @param handler the event handler handling the action events
+         * @param controller the event handler handling the action events
          * @return the CHARTS menu
          */
-        private JMenu createChartsMenu(AppController handler){
+        private JMenu createChartsMenu(AppController controller){
             JMenu menuStats = new JMenu("Statisztikák");
             JMenuItem miStats = new JMenuItem("Statisztikák megtekintése");
-            miStats.addActionListener(e -> handler.createStatistics());
+            miStats.addActionListener(e -> controller.createStatistics());
             menuStats.add(miStats);
             return menuStats;
         }
@@ -341,10 +346,10 @@ public class MainWindow extends JFrame {
         /**
          * Creates the EDIT menu for the menu bar
          * TODO: waiting for implementation
-         * @param handler the event handler handling the action events
+         * @param controller the event handler handling the action events
          * @return the EDIT menu
          */
-        private JMenu createTransactionsMenu(AppController handler){
+        private JMenu createTransactionsMenu(AppController controller){
             return new JMenu("Tranzakciók");
         }
     }
@@ -365,7 +370,7 @@ public class MainWindow extends JFrame {
             Action deleteAction = new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    controller.setReadingFlag(AppController.ReadingFlag.FL_IS_DELETE);
+                    controller.setReadingFlag(ReadingFlag.FL_IS_DELETE);
                 }
             };
 
@@ -381,7 +386,7 @@ public class MainWindow extends JFrame {
             Action actionClearSelection = new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    model.setSelection(null);
+                    model.setSelectedItem(null);
                     entryView.clearSelection();
                 }
             };
@@ -392,16 +397,18 @@ public class MainWindow extends JFrame {
             btnDelete.setBackground(new Color(0xff6666));
             btnDelete.addActionListener(deleteAction);
             JButton btnLeave = new JButton("Kiléptet");
-            btnLeave.addActionListener(e -> controller.setReadingFlag(AppController.ReadingFlag.FL_IS_LEAVING));
+            btnLeave.addActionListener(e -> controller.setReadingFlag(ReadingFlag.FL_IS_LEAVING));
 
             JButton btnSendCode = new JButton("Olvas");
             JButton btnClearSelection = new JButton("Kiválasztást megszüntet");
 
             btnSendCode.addActionListener(actionSendCode);
             btnClearSelection.addActionListener(actionClearSelection);
+
             getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_ENTER,0),"sendCode");
             getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_DELETE,0),"deleteCode");
             getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(VK_ESCAPE,0),"clearSelection");
+
             getActionMap().put("sendCode",actionSendCode);
             getActionMap().put("deleteCode",deleteAction);
             getActionMap().put("clearSelection",actionClearSelection);
@@ -420,7 +427,7 @@ public class MainWindow extends JFrame {
             //Assembling body components
             add(spTable,BorderLayout.CENTER);
             add(inputPanel,BorderLayout.SOUTH);
-            add(new QuickSearchHeader(model,entryView),BorderLayout.NORTH);
+            add(new QuickSearchPanel(),BorderLayout.NORTH);
 
 
         }
@@ -431,7 +438,7 @@ public class MainWindow extends JFrame {
      * It reacts to the barcode reading operations and behaves correctly.
      * Shows the current state of reading, with color codes.
      */
-    private static class InfoPanel extends JPanel implements ReadFlagListener{
+    private static class InfoPanel extends JPanel implements ReadFlagListener {
 
         private final JLabel lbInfo;
 
@@ -444,11 +451,11 @@ public class MainWindow extends JFrame {
             add(Box.createGlue());
             add(lbInfo);
             add(Box.createGlue());
-            readingFlagChanged(AppController.ReadingFlag.FL_DEFAULT);
+            readingFlagChanged(ReadingFlag.FL_DEFAULT);
         }
 
         @Override
-        public void readingFlagChanged(AppController.ReadingFlag flag){
+        public void readingFlagChanged(ReadingFlag flag){
             System.out.println("FLAG READ: " + flag.toString());
             lbInfo.setText(flag.getInfo());
             setBackground(flag.getColor());

@@ -1,12 +1,10 @@
 package control.utility.network;
 
 import control.AppController;
-import data.Entry;
-import data.EntryProfile;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import data.entry.Entry;
+import data.entryprofile.EntryProfile;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -45,7 +43,7 @@ public class NetworkController {
     private void receiveDataUpdate(String entryData) {
         try {
             StringBuilder vectorBuilder = new StringBuilder();
-            JSONObject entryObject = (JSONObject) new JSONParser().parse(entryData);
+            JSONObject entryObject = new JSONObject();
             String id = (String) entryObject.get("id");
             vectorBuilder.append(id).append(",");
             vectorBuilder.append((String) entryObject.get("entry")).append(",");
@@ -58,8 +56,6 @@ public class NetworkController {
             Entry newData = Entry.importEntry(vector,profile);
             controller.updateEntry(id,newData);
 
-        } catch (ParseException e) {
-            System.out.println("ERROR: Couldn't parse socket message!");
         } catch (IOException e) {
             System.out.println("ERROR: Couldn't create Entry from parsed data!");
             System.out.println("DETAILS: " + e.getMessage());
