@@ -22,6 +22,8 @@ public abstract class AbstractWizard<T extends WizardType> implements Wizard {
         DELETE,
         CANCEL,
         IMPORT
+
+        // FIXME: Need Select
     }
 
     protected final DataListView<T> view;

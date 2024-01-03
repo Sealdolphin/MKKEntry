@@ -70,7 +70,7 @@ public class EntryProfile implements Serializable, WizardType {
 
     private TicketType defaultTicketType;
 
-    private List<EntryCommand> commandList;
+    private final List<EntryCommand> commandList;
 
     private final List<Barcode> barcodes;
 

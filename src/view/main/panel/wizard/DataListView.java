@@ -33,6 +33,8 @@ public class DataListView<T extends WizardType> extends JPanel {
         btnImport.setActionCommand(AbstractWizard.WizardCommands.IMPORT.name());
         btnImport.addActionListener(this::refreshDeleteBtn);
 
+        // FIXME: need another optional button: Select!
+
         refreshDeleteBtn(null);
 
         list.setCellRenderer(model.createListRenderer());
@@ -47,6 +49,7 @@ public class DataListView<T extends WizardType> extends JPanel {
         return createListPanel(false);
     }
 
+    // FIXME: Also need select enabled
     public JPanel createListPanel(boolean importEnabled) {
         JPanel listPanel = new JPanel(new BorderLayout());
         listPanel.add(new JScrollPane(list), BorderLayout.CENTER);

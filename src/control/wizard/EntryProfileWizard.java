@@ -86,6 +86,7 @@ public class EntryProfileWizard extends AbstractWizard<EntryProfile> {
                 dialogView.showDialog();
             }
             case IMPORT -> importElement();
+            // FIXME: implement selection
             default -> super.handleUserAction(event);
         }
     }
